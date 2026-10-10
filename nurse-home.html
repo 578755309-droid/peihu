@@ -186,6 +186,13 @@
     .chip-lbl { font-size: 10px; color: var(--text3); font-weight: 600; margin-bottom: 3px; }
     .chip-val { font-size: 13px; color: var(--text); font-weight: 800; }
     .chip-val.accent { color: var(--purple); }
+    .care-needs { margin-bottom: 14px; padding: 10px 11px; border-radius: var(--r-sm); background: #FFF9ED; border: 1px solid #FDE7B0; }
+    .care-needs-title { font-size: 10px; color: var(--amber); font-weight: 800; margin-bottom: 8px; }
+    .care-needs-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+    .care-need { min-width: 0; padding: 7px 6px; border-radius: 8px; background: rgba(255,255,255,.82); }
+    .care-need-label { display: block; color: #A87628; font-size: 9px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .care-need-value { display: block; margin-top: 3px; color: var(--text); font-size: 11px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .care-need-value.warn { color: var(--red); }
 
     /* Action buttons */
     .action-row { display: flex; gap: 10px; }
@@ -469,6 +476,15 @@
                 <div class="info-chip">
                   <div class="chip-lbl">预计收入</div>
                   <div class="chip-val accent">¥224/天</div>
+                </div>
+              </div>
+
+              <div class="care-needs" aria-label="客户护理要点">
+                <div class="care-needs-title">客户护理要点</div>
+                <div class="care-needs-list">
+                  <div class="care-need"><span class="care-need-label">自理能力</span><span class="care-need-value">半自理</span></div>
+                  <div class="care-need"><span class="care-need-label">管路</span><span class="care-need-value warn">有</span></div>
+                  <div class="care-need"><span class="care-need-label">传染性疾病</span><span class="care-need-value">无</span></div>
                 </div>
               </div>
 
