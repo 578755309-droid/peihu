@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <link rel="stylesheet" href="admin-shell.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1280" />
+    <title>用户详情 · 多康运营后台</title>
+    <style>
+      :root {
+        --blue: #224cd3;
+        --nav: #002141;
+        --bg: #eff6ff;
+        --card: #fff;
+        --text: #172033;
+        --muted: #8f9bb0;
+        --border: #d7e8fa;
+        --shadow: 0 2px 16px rgba(37, 99, 235, 0.1);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+          sans-serif;
+        min-width: 1100px;
+      }
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+      .sidebar {
+        width: 220px;
+        position: fixed;
+        inset: 0 auto 0 0;
+        background: var(--nav);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+      }
+      .brand {
+        padding: 24px 20px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .brand-title {
+        font-size: 18px;
+        font-weight: 900;
+      }
+      .brand-sub {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.45);
+        margin-top: 3px;
+      }
+      .nav {
+        flex: 1;
+        padding: 16px 0;
+      }
+      .label {
+        padding: 14px 20px 6px;
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.3);
+        font-weight: 800;
+      }
+      .link {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin: 2px 10px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .link:hover,
+      .link.active {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+      }
+      .link.active {
+        box-shadow: inset 3px 0 #93c5fd;
+      }
+      .badge {
+        margin-left: auto;
+        background: #ef4444;
+        border-radius: 9px;
+        min-width: 20px;
+        height: 18px;
+        display: grid;
+        place-items: center;
+        font-size: 10px;
+      }
+      .admin {
+        padding: 16px 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .admin-av,
+      .top-av {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--blue);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+      }
+      .admin-name {
+        font-size: 13px;
+        font-weight: 800;
+      }
+      .admin-role {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.4);
+        margin-top: 2px;
+      }
+      .logout {
+        margin-left: auto;
+        width: 28px;
+        height: 28px;
+        border: 0;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+      .main {
+        margin-left: 220px;
+        flex: 1;
+      }
+      .topbar {
+        height: 60px;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 28px;
+        gap: 16px;
+        box-shadow: 0 1px 8px rgba(37, 99, 235, 0.08);
+      }
+      .crumb {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .crumb .current {
+        color: var(--text);
+      }
+      .top-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .date {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+      .page {
+        padding: 24px 28px;
+      }
+      .back {
+        border: 0;
+        background: none;
+        color: var(--blue);
+        font: 700 13px inherit;
+        cursor: pointer;
+        margin-bottom: 14px;
+      }
+      .detail-shell {
+        display: grid;
+        grid-template-columns: 290px minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+      }
+      .identity {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        padding: 24px;
+        text-align: center;
+        position: sticky;
+        top: 84px;
+      }
+      .avatar {
+        width: 78px;
+        height: 78px;
+        border-radius: 24px;
+        margin: 0 auto 14px;
+        background: #e7f1fd;
+        color: var(--blue);
+        display: grid;
+        place-items: center;
+        font-size: 30px;
+        font-weight: 900;
+      }
+      .name {
+        font-size: 21px;
+        font-weight: 900;
+      }
+      .id {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+      .state {
+        display: inline-flex;
+        margin: 14px 0 20px;
+        padding: 6px 13px;
+        border-radius: 18px;
+        background: #dcfce7;
+        color: #16a34a;
+        font-size: 11px;
+        font-weight: 800;
+      }
+      .identity-list {
+        text-align: left;
+        border-top: 1px solid #eef5fc;
+        padding-top: 12px;
+      }
+      .identity-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        font-size: 12px;
+      }
+      .identity-row span:first-child {
+        color: var(--muted);
+      }
+      .identity-row span:last-child {
+        font-weight: 800;
+        color: #657087;
+      }
+      .identity-actions {
+        display: grid;
+        gap: 9px;
+        margin-top: 16px;
+      }
+      .btn {
+        height: 36px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: #fff;
+        color: #657087;
+        font: 700 12px inherit;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background: var(--blue);
+        border-color: var(--blue);
+        color: #fff;
+      }
+      .content {
+        min-width: 0;
+      }
+      .content-head {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 16px 16px 0 0;
+        padding: 20px 22px;
+        border-bottom: 0;
+      }
+      .content-title {
+        font-size: 18px;
+        font-weight: 900;
+      }
+      .content-sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .tabs {
+        display: flex;
+        gap: 24px;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-top: 0;
+        padding: 0 22px;
+      }
+      .tab {
+        border: 0;
+        background: none;
+        padding: 0 0 14px;
+        color: var(--muted);
+        font: 800 13px inherit;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+      }
+      .tab.active {
+        color: var(--blue);
+        border-color: var(--blue);
+      }
+      .panel {
+        display: none;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-top: 0;
+        border-radius: 0 0 16px 16px;
+        box-shadow: var(--shadow);
+        padding: 20px 22px;
+      }
+      .panel.active {
+        display: block;
+      }
+      .section-title {
+        font-size: 14px;
+        font-weight: 900;
+        margin-bottom: 14px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+      .kv {
+        padding: 13px;
+        background: #f4f8fd;
+        border-radius: 10px;
+      }
+      .k {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+      .v {
+        font-size: 14px;
+        color: #657087;
+        font-weight: 800;
+        margin-top: 5px;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .table th,
+      .table td {
+        text-align: left;
+        padding: 12px 10px;
+        border-bottom: 1px solid #eef5fc;
+        font-size: 12px;
+      }
+      .table th {
+        color: var(--muted);
+        background: #f8fbff;
+      }
+      .table td {
+        color: #657087;
+        font-weight: 600;
+      }
+      .tag {
+        padding: 4px 8px;
+        border-radius: 14px;
+        background: #e7f1fd;
+        color: var(--blue);
+        font-size: 10px;
+        font-weight: 800;
+      }
+      .positive {
+        color: #16a34a !important;
+        font-weight: 900 !important;
+      }
+      .negative {
+        color: #dc2626 !important;
+        font-weight: 900 !important;
+      }
+      @media (max-width: 1050px) {
+        .detail-shell {
+          grid-template-columns: 250px 1fr;
+        }
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      .panel-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+      .panel-toolbar .section-title {
+        margin: 0;
+      }
+      .mini-btn {
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid var(--blue);
+        border-radius: 8px;
+        background: var(--blue);
+        color: #fff;
+        font: 800 12px inherit;
+        cursor: pointer;
+      }
+      .patient-name {
+        font-weight: 800;
+        color: var(--text);
+      }
+      .patient-sub {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+      .patient-demand {
+        max-width: 240px;
+        line-height: 1.5;
+        white-space: normal;
+      }
+      .patient-op {
+        display: flex;
+        gap: 10px;
+      }
+      .patient-op button {
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--blue);
+        font: 700 12px inherit;
+        cursor: pointer;
+      }
+      .patient-op .delete {
+        color: #dc2626;
+      }
+      .patient-modal-mask {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(16, 39, 74, 0.42);
+      }
+      .patient-modal-mask.show {
+        display: flex;
+      }
+      .patient-modal {
+        width: 460px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 18px 56px rgba(16, 39, 74, 0.26);
+        padding: 22px;
+      }
+      .patient-modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+      .patient-modal-title {
+        font-size: 18px;
+        font-weight: 900;
+      }
+      .patient-modal-close {
+        width: 28px;
+        height: 28px;
+        border: 0;
+        border-radius: 8px;
+        background: #eff6ff;
+        color: #657087;
+        font-size: 18px;
+        cursor: pointer;
+      }
+      .patient-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 13px;
+      }
+      .patient-field {
+        display: grid;
+        gap: 6px;
+      }
+      .patient-field.full {
+        grid-column: 1 / -1;
+      }
+      .patient-field label {
+        font-size: 12px;
+        color: #657087;
+        font-weight: 800;
+      }
+      .patient-field input,
+      .patient-field textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 9px 10px;
+        color: var(--text);
+        font: 600 13px inherit;
+        outline: none;
+      }
+      .patient-field input {
+        height: 38px;
+      }
+      .patient-field textarea {
+        height: 74px;
+        resize: none;
+      }
+      .patient-field input:focus,
+      .patient-field textarea:focus {
+        border-color: var(--blue);
+      }
+      .patient-modal-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+        margin-top: 20px;
+      }
+      .patient-modal-foot button {
+        height: 36px;
+        padding: 0 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #fff;
+        color: #657087;
+        font: 700 12px inherit;
+        cursor: pointer;
+      }
+      .patient-modal-foot .save {
+        background: var(--blue);
+        border-color: var(--blue);
+        color: #fff;
+      }
+    </style>
+    <script defer src="admin-sidebar.js"></script>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-title">多康</div>
+          <div class="brand-sub">运营管理后台</div>
+        </div>
+        <nav class="nav">
+          <div class="label">概览</div>
+          <a class="link" href="admin.html">数据总览</a>
+          <div class="label">业务管理</div>
+          <a class="link" href="admin-orders.html"
+            >订单管理<span class="badge">12</span></a
+          ><a class="link" href="admin-caregivers.html">陪护员管理</a
+          ><a class="link active" href="admin-users.html">用户管理</a
+          ><a class="link" href="daily-report.html"
+            >日报审核<span class="badge">5</span></a
+          >
+          <div class="label">系统</div>
+          <a class="link" href="profile.html">系统设置</a>
+        </nav>
+        <div class="admin">
+          <div class="admin-av">管</div>
+          <div>
+            <div class="admin-name">管理员</div>
+            <div class="admin-role">超级管理员</div>
+          </div>
+          <button class="logout">↗</button>
+        </div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div class="crumb">
+            <span>业务管理</span><span>›</span><span>用户管理</span
+            ><span>›</span><span class="current">用户详情</span>
+          </div>
+          <div class="top-right">
+            <span class="date">2026年4月12日 星期日</span>
+            <div class="top-av">管</div>
+          </div>
+        </header>
+        <section class="page">
+          <button class="back" onclick="location.href='admin-users.html'">
+            ← 返回用户列表
+          </button>
+          <div class="detail-shell">
+            <aside class="identity">
+              <div class="avatar">王</div>
+              <div class="name">王女士</div>
+              <div class="id">用户 ID · U10001</div>
+              <span class="state">正常</span>
+              <div class="identity-list">
+                <div class="identity-row">
+                  <span>手机号</span><span>138****2468</span>
+                </div>
+                <div class="identity-row">
+                  <span>注册时间</span><span>2026-04-10</span>
+                </div>
+                <div class="identity-row">
+                  <span>邀请人</span><span>—</span>
+                </div>
+                <div class="identity-row">
+                  <span>当前积分</span><span>180 分</span>
+                </div>
+                <div class="identity-row">
+                  <span>累计订单</span><span>3 笔</span>
+                </div>
+              </div>
+              <div class="identity-actions">
+                <button class="btn" onclick="alert('编辑用户')">编辑资料</button
+                ><button class="btn" onclick="alert('邀请关系')">
+                  查看邀请关系</button
+                ><button class="btn btn-primary" onclick="alert('禁用用户')">
+                  禁用用户
+                </button>
+              </div>
+            </aside>
+            <div class="content">
+              <div class="content-head">
+                <div class="content-title">王女士的用户档案</div>
+                <div class="content-sub">
+                  统一查看用户资料、推荐关系、订单及积分流水
+                </div>
+              </div>
+              <div class="tabs">
+                <button class="tab active" data-tab="base">基础信息</button
+                ><button class="tab" data-tab="recommend">推荐用户</button
+                ><button class="tab" data-tab="orders">订单记录</button
+                ><button class="tab" data-tab="points">积分明细</button
+                ><button class="tab" data-tab="patients">就诊人信息</button>
+              </div>
+              <div class="panel active" id="base">
+                <div class="section-title">基础信息</div>
+                <div class="grid">
+                  <div class="kv">
+                    <div class="k">昵称</div>
+                    <div class="v">王女士</div>
+                  </div>
+                  <div class="kv">
+                    <div class="k">手机号</div>
+                    <div class="v">138****2468</div>
+                  </div>
+                  <div class="kv">
+                    <div class="k">注册时间</div>
+                    <div class="v">2026-04-10</div>
+                  </div>
+                  <div class="kv">
+                    <div class="k">最近登录</div>
+                    <div class="v">2026-04-12 09:41</div>
+                  </div>
+                  <div class="kv">
+                    <div class="k">服务偏好</div>
+                    <div class="v">住院陪护、陪诊服务</div>
+                  </div>
+                  <div class="kv">
+                    <div class="k">账号状态</div>
+                    <div class="v">正常</div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel" id="recommend">
+                <div class="section-title">推荐用户</div>
+                <table class="table">
+                  <tr>
+                    <th>昵称</th>
+                    <th>手机号</th>
+                    <th>注册时间</th>
+                    <th>获得积分</th>
+                    <th>状态</th>
+                  </tr>
+                  <tr>
+                    <td>李先生</td>
+                    <td>139****8572</td>
+                    <td>2026-04-08</td>
+                    <td class="positive">+30</td>
+                    <td><span class="tag">正常</span></td>
+                  </tr>
+                  <tr>
+                    <td>刘女士</td>
+                    <td>177****9183</td>
+                    <td>2026-02-22</td>
+                    <td class="positive">+30</td>
+                    <td><span class="tag">正常</span></td>
+                  </tr>
+                </table>
+              </div>
+              <div class="panel" id="orders">
+                <div class="section-title">订单记录</div>
+                <table class="table">
+                  <tr>
+                    <th>订单号</th>
+                    <th>服务项目</th>
+                    <th>服务时间</th>
+                    <th>金额</th>
+                    <th>状态</th>
+                  </tr>
+                  <tr>
+                    <td>AKB-20260412-001</td>
+                    <td>住院陪护 · 12小时/天</td>
+                    <td>2026-04-12</td>
+                    <td>¥360</td>
+                    <td><span class="tag">服务中</span></td>
+                  </tr>
+                  <tr>
+                    <td>AKB-20260408-023</td>
+                    <td>陪诊服务 · 贵宾陪诊</td>
+                    <td>2026-04-08</td>
+                    <td>¥298</td>
+                    <td><span class="tag">已完成</span></td>
+                  </tr>
+                </table>
+              </div>
+              <div class="panel" id="points">
+                <div class="section-title">积分明细</div>
+                <table class="table">
+                  <tr>
+                    <th>时间</th>
+                    <th>来源/用途</th>
+                    <th>说明</th>
+                    <th>变动</th>
+                    <th>余额</th>
+                  </tr>
+                  <tr>
+                    <td>2026-04-08</td>
+                    <td>推荐获取</td>
+                    <td>邀请李先生注册</td>
+                    <td class="positive">+30</td>
+                    <td>180</td>
+                  </tr>
+                  <tr>
+                    <td>2026-04-07</td>
+                    <td>使用扣除</td>
+                    <td>订单 AKB-20260407-011</td>
+                    <td class="negative">-50</td>
+                    <td>150</td>
+                  </tr>
+                </table>
+              </div>
+              <div class="panel" id="patients">
+                <div class="panel-toolbar">
+                  <div>
+                    <div class="section-title">就诊人信息</div>
+                    <div class="content-sub">
+                      维护该用户下单时可选择的就诊人档案
+                    </div>
+                  </div>
+                  <button
+                    class="mini-btn"
+                    type="button"
+                    onclick="openPatientModal()"
+                  >
+                    ＋ 新增就诊人
+                  </button>
+                </div>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>就诊人</th>
+                      <th>身份证号</th>
+                      <th>性别</th>
+                      <th>年龄</th>
+                      <th>健康情况及服务需求</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="patientRows"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div
+      class="patient-modal-mask"
+      id="patientModal"
+      onclick="closePatientModalOnMask(event)"
+    >
+      <section class="patient-modal">
+        <div class="patient-modal-head">
+          <div class="patient-modal-title" id="patientModalTitle">
+            新增就诊人
+          </div>
+          <button
+            class="patient-modal-close"
+            type="button"
+            onclick="closePatientModal()"
+          >
+            ×
+          </button>
+        </div>
+        <div class="patient-form-grid">
+          <div class="patient-field">
+            <label for="patientName">姓名</label
+            ><input id="patientName" maxlength="20" placeholder="请输入姓名" />
+          </div>
+          <div class="patient-field">
+            <label for="patientIdNo">身份证号</label
+            ><input
+              id="patientIdNo"
+              maxlength="18"
+              placeholder="请输入18位身份证号"
+              oninput="syncPatientIdentity()"
+            />
+          </div>
+          <div class="patient-field">
+            <label for="patientGender">性别</label
+            ><input id="patientGender" readonly placeholder="自动识别" />
+          </div>
+          <div class="patient-field">
+            <label for="patientAge">年龄</label
+            ><input id="patientAge" readonly placeholder="自动识别" />
+          </div>
+          <div class="patient-field full">
+            <label for="patientDemand">健康情况及服务需求</label
+            ><textarea
+              id="patientDemand"
+              maxlength="160"
+              placeholder="请输入健康情况、病症及服务需求"
+            ></textarea>
+          </div>
+        </div>
+        <div class="patient-modal-foot">
+          <button type="button" onclick="closePatientModal()">取消</button
+          ><button class="save" type="button" onclick="savePatient()">
+            保存
+          </button>
+        </div>
+      </section>
+    </div>
+    <script>
+      const patients = [
+        {
+          id: "P1001",
+          name: "张爷爷",
+          idNo: "110101195803180013",
+          gender: "男",
+          age: 68,
+          demand: "骨折术后恢复期，需协助翻身、起身及日常照护",
+        },
+        {
+          id: "P1002",
+          name: "李女士",
+          idNo: "110101197204080026",
+          gender: "女",
+          age: 54,
+          demand: "慢性病住院观察，需协助日常照护",
+        },
+      ];
+      let editingPatientId = "";
+      function escapeHtml(value) {
+        return String(value || "").replace(
+          /[&<>"']/g,
+          (char) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[char],
+        );
+      }
+      function parseIdNo(value) {
+        const id = String(value || "")
+          .toUpperCase()
+          .replace(/[^0-9X]/g, "")
+          .slice(0, 18);
+        const match = /^(\d{6})(\d{4})(\d{2})(\d{2})\d{3}[\dX]$/.exec(id);
+        if (!match) return null;
+        const birth = new Date(
+          Number(match[2]),
+          Number(match[3]) - 1,
+          Number(match[4]),
+        );
+        if (
+          birth.getFullYear() !== Number(match[2]) ||
+          birth.getMonth() !== Number(match[3]) - 1 ||
+          birth.getDate() !== Number(match[4]) ||
+          birth > new Date()
+        )
+          return null;
+        const now = new Date();
+        let age = now.getFullYear() - birth.getFullYear();
+        if (
+          now.getMonth() < birth.getMonth() ||
+          (now.getMonth() === birth.getMonth() &&
+            now.getDate() < birth.getDate())
+        )
+          age--;
+        return { id, gender: Number(id.charAt(16)) % 2 ? "男" : "女", age };
+      }
+      function renderPatients() {
+        const rows = document.getElementById("patientRows");
+        rows.innerHTML = patients.length
+          ? patients
+              .map(
+                (patient) =>
+                  `<tr><td><span class="patient-name">${escapeHtml(patient.name)}</span><span class="patient-sub">档案编号 ${patient.id}</span></td><td>${escapeHtml(patient.idNo.slice(0, 6) + "********" + patient.idNo.slice(-4))}</td><td>${patient.gender}</td><td>${patient.age} 岁</td><td class="patient-demand">${escapeHtml(patient.demand)}</td><td><div class="patient-op"><button onclick="openPatientModal('${patient.id}')">编辑</button><button class="delete" onclick="deletePatient('${patient.id}')">删除</button></div></td></tr>`,
+              )
+              .join("")
+          : '<tr><td colspan="6" style="text-align:center;color:#8F9BB0;padding:34px">暂无就诊人信息</td></tr>';
+      }
+      function syncPatientIdentity() {
+        const input = document.getElementById("patientIdNo");
+        const parsed = parseIdNo(input.value);
+        input.value = String(input.value || "")
+          .toUpperCase()
+          .replace(/[^0-9X]/g, "")
+          .slice(0, 18);
+        document.getElementById("patientGender").value = parsed
+          ? parsed.gender
+          : "";
+        document.getElementById("patientAge").value = parsed
+          ? parsed.age + " 岁"
+          : "";
+      }
+      function openPatientModal(id) {
+        editingPatientId = id || "";
+        const patient = patients.find((item) => item.id === id);
+        document.getElementById("patientModalTitle").textContent = patient
+          ? "编辑就诊人"
+          : "新增就诊人";
+        document.getElementById("patientName").value = patient
+          ? patient.name
+          : "";
+        document.getElementById("patientIdNo").value = patient
+          ? patient.idNo
+          : "";
+        document.getElementById("patientDemand").value = patient
+          ? patient.demand
+          : "";
+        syncPatientIdentity();
+        document.getElementById("patientModal").classList.add("show");
+        document.getElementById("patientName").focus();
+      }
+      function closePatientModal() {
+        document.getElementById("patientModal").classList.remove("show");
+        editingPatientId = "";
+      }
+      function closePatientModalOnMask(event) {
+        if (event.target === event.currentTarget) closePatientModal();
+      }
+      function savePatient() {
+        const name = document.getElementById("patientName").value.trim();
+        const identity = parseIdNo(
+          document.getElementById("patientIdNo").value,
+        );
+        const demand = document.getElementById("patientDemand").value.trim();
+        if (!name) {
+          alert("请填写就诊人姓名");
+          return;
+        }
+        if (!identity) {
+          alert("请填写有效的18位身份证号");
+          return;
+        }
+        if (!demand) {
+          alert("请填写健康情况及服务需求");
+          return;
+        }
+        const record = {
+          id: editingPatientId || "P" + Date.now(),
+          name,
+          idNo: identity.id,
+          gender: identity.gender,
+          age: identity.age,
+          demand,
+        };
+        const index = patients.findIndex(
+          (item) => item.id === editingPatientId,
+        );
+        if (index > -1) patients[index] = record;
+        else patients.push(record);
+        renderPatients();
+        closePatientModal();
+      }
+      function deletePatient(id) {
+        const patient = patients.find((item) => item.id === id);
+        if (
+          !patient ||
+          !confirm("确认删除“" + patient.name + "”的就诊人档案？")
+        )
+          return;
+        patients.splice(
+          patients.findIndex((item) => item.id === id),
+          1,
+        );
+        renderPatients();
+      }
+      document.querySelectorAll(".tab").forEach(
+        (tab) =>
+          (tab.onclick = () => {
+            document
+              .querySelectorAll(".tab")
+              .forEach((item) => item.classList.remove("active"));
+            document
+              .querySelectorAll(".panel")
+              .forEach((item) => item.classList.remove("active"));
+            tab.classList.add("active");
+            document.getElementById(tab.dataset.tab).classList.add("active");
+          }),
+      );
+      renderPatients();
+    </script>
+  </body>
+</html>

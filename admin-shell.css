@@ -1,0 +1,30 @@
+/* Shared admin navigation shell */
+:root{--admin-nav:#002141;--admin-blue:#224CD3;--admin-sidebar-w:220px}
+body{min-width:1100px}
+.sidebar{width:var(--admin-sidebar-w)!important;background:var(--admin-nav)!important;position:fixed!important;inset:0 auto 0 0!important;z-index:100!important;display:flex!important;flex-direction:column!important;color:#fff!important}
+.sidebar *{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+.main{margin-left:var(--admin-sidebar-w)!important}
+.brand,.sb-logo{padding:24px 20px 20px!important;border-bottom:1px solid rgba(255,255,255,.08)!important}
+.brand-title,.sb-logo-title{font-size:18px!important;font-weight:900!important;color:#fff!important;letter-spacing:.3px}
+.brand-sub,.sb-logo-sub{font-size:11px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;margin-top:3px!important}
+.nav,.sb-nav{flex:1!important;padding:16px 0!important;overflow-y:auto}
+.nav-label,.label,.lbl,.sb-section-lbl{padding:14px 20px 6px!important;font-size:10px!important;letter-spacing:1px!important;color:rgba(255,255,255,.3)!important;font-weight:800!important}
+.nav-link,.link{display:flex!important;align-items:center!important;gap:11px!important;margin:2px 10px!important;padding:10px 20px!important;border-radius:10px!important;color:rgba(255,255,255,.6)!important;font-size:13px!important;font-weight:700!important;text-decoration:none!important}
+.nav-link svg,.link svg{width:20px!important;height:20px!important;flex:0 0 20px!important;display:block!important}
+.nav-link:hover,.nav-link.active,.link:hover,.link.active{background:rgba(255,255,255,.15)!important;color:#fff!important}
+.nav-link.active,.link.active{box-shadow:inset 3px 0 #93C5FD!important}
+.nav-badge,.badge{margin-left:auto!important;background:#EF4444!important;color:#fff!important;border-radius:9px!important;min-width:20px!important;height:18px!important;display:grid!important;place-items:center!important;font-size:10px!important}
+.user,.admin,.sb-user{padding:16px 20px!important;border-top:1px solid rgba(255,255,255,.08)!important;display:flex!important;align-items:center!important;gap:10px!important}
+.user-av,.admin-av,.sb-av{width:36px!important;height:36px!important;border-radius:10px!important;background:rgba(255,255,255,.2)!important;color:#fff!important;display:grid!important;place-items:center!important;font-weight:900!important}
+.user-role,.admin-role,.sb-urole{font-size:11px!important;color:rgba(255,255,255,.4)!important;margin-top:2px!important}
+.logout,.sb-logout{margin-left:auto!important;width:28px!important;height:28px!important;border:0!important;border-radius:8px!important;background:rgba(255,255,255,.1)!important;color:rgba(255,255,255,.6)!important}
+.topbar{height:60px!important;padding:0 28px!important;gap:16px!important;box-shadow:0 1px 8px rgba(37,99,235,.08)!important}
+.pc-terminal-links{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.pc-terminal-link{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 13px;border:1px solid transparent;border-radius:999px;text-decoration:none;white-space:nowrap;font-size:13px;font-weight:800;transition:filter .15s,transform .15s}
+.pc-terminal-link:hover{filter:brightness(.97);transform:translateY(-1px)}
+.pc-terminal-link:focus-visible{outline:3px solid rgba(34,76,211,.22);outline-offset:2px}
+.nurse-terminal{color:#168675;background:#EDF8F5;border-color:#D5ECE6}
+.user-terminal{color:#4778D5;background:#EEF3FF;border-color:#D9E4FF}
+.top-av,.tb-av{width:36px!important;height:36px!important;border-radius:10px!important;background:var(--admin-blue)!important;color:#fff!important}
+.sb-nav{overflow-y:auto!important}.sb-nav::-webkit-scrollbar{display:none}.sb-logo-title{line-height:1.2!important}.sb-user{min-height:72px!important}.sb-uname{font-size:13px!important;font-weight:800!important;color:#fff!important}.sb-urole{font-size:11px!important;color:rgba(255,255,255,.4)!important}
+@media(max-width:900px){.sidebar{width:190px!important}.main{margin-left:190px!important}}

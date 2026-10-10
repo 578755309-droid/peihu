@@ -1,0 +1,1444 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>住院陪护 · 单页下单</title>
+  <style>
+    :root {
+      --purple:       #8655C5;
+      --purple-dark:  #6B3FAA;
+      --purple-light: #EDE6F7;
+      --purple-bg:    #F5F3FA;
+      --card:         #FFFFFF;
+      --text:         #1A1828;
+      --text2:        #6B6880;
+      --text3:        #AEACC0;
+      --border:       #EDE9F5;
+      --red:          #EF4444;
+      --green:        #22C55E;
+      --r-sm:  10px;
+      --r-md:  16px;
+      --r-lg:  20px;
+      --sh:    0 2px 16px rgba(100,60,160,.08);
+      --sh-md: 0 6px 24px rgba(100,60,160,.13);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--purple-bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Desktop phone frame ── */
+    .frame { display: flex; justify-content: center; min-height: 100vh; background: #E4DDF0; }
+    .phone {
+      width: 100%; max-width: 430px;
+      display: flex; flex-direction: column;
+      background: var(--purple-bg); min-height: 100vh;
+      position: relative; overflow: hidden;
+    }
+    @media (min-width: 520px) {
+      .frame { align-items: flex-start; padding: 20px 0 40px; }
+      .phone {
+        height: 900px; min-height: unset;
+        border-radius: 42px;
+        box-shadow: 0 24px 72px rgba(80,40,140,.22), 0 2px 8px rgba(0,0,0,.06);
+      }
+    }
+
+    /* ── Scroll area ── */
+    .scroll-area {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* ── Status bar ── */
+    .status-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 13px 22px 8px; font-size: 13px; font-weight: 700;
+      background: var(--card); letter-spacing: .2px;
+    }
+    .status-right { display: flex; align-items: center; gap: 5px; }
+    .status-right svg { width: 17px; height: 17px; }
+
+    /* ── Nav bar ── */
+    .navbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px 12px; background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .back-btn {
+      width: 36px; height: 36px; border: none; cursor: pointer;
+      background: var(--purple-light); border-radius: 11px;
+      display: grid; place-items: center;
+      -webkit-tap-highlight-color: transparent; transition: background .1s;
+    }
+    .back-btn:active { background: #D9CFF0; }
+    .back-btn svg { width: 20px; height: 20px; }
+    .nav-title { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: .3px; }
+    .nav-ph { width: 36px; }
+
+    /* ── Stepper ── */
+    .stepper {
+      display:flex; align-items:flex-start;
+      padding:14px 20px 13px; background:var(--card);
+      border-bottom:1px solid var(--border);
+    }
+    .step-item { display:flex; flex-direction:column; align-items:center; gap:5px; }
+    .step-conn {
+      flex:1; height:2px; margin-top:13px; border-radius:1px;
+      background:var(--border); transition:background .35s;
+    }
+    .step-conn.done { background:var(--purple); }
+    .step-dot {
+      width:28px; height:28px; border-radius:50%;
+      border:2px solid var(--border);
+      display:grid; place-items:center;
+      font-size:12px; font-weight:800; color:var(--text3);
+      transition:all .28s;
+    }
+    .step-dot.active {
+      border-color:var(--purple); background:var(--purple);
+      color:#fff; box-shadow:0 3px 10px rgba(134,85,197,.3);
+    }
+    .step-dot.done { border-color:var(--purple); background:var(--purple); color:#fff; }
+    .step-lbl { font-size:10px; font-weight:700; color:var(--text3); white-space:nowrap; }
+    .step-item.active .step-lbl, .step-item.done .step-lbl { color:var(--purple); }
+    /* ── Step panels ── */
+    .step-panel { display:none; }
+    .step-panel.active { display:block; animation:panelIn .22s ease; }
+    .step-panel.back   { animation:panelBack .22s ease; }
+    @keyframes panelIn   { from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:none} }
+    @keyframes panelBack { from{opacity:0;transform:translateX(-16px)} to{opacity:1;transform:none} }
+
+    /* ── Page content ── */
+    .content { padding: 16px 0 24px; }
+
+    /* ── Module card ── */
+    .module {
+      background: var(--card); border-radius: var(--r-lg);
+      margin: 0 14px 14px; padding: 18px 16px;
+      box-shadow: var(--sh);
+    }
+    .module-title {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 16px; font-weight: 800; color: var(--text);
+      margin-bottom: 16px;
+    }
+    .module-title::before {
+      content: ''; width: 4px; height: 19px;
+      background: var(--purple); border-radius: 2px; flex-shrink: 0;
+    }
+    .module-num {
+      width: 22px; height: 22px; border-radius: 7px;
+      background: var(--purple); color: #fff;
+      font-size: 12px; font-weight: 800;
+      display: grid; place-items: center; flex-shrink: 0;
+    }
+
+    /* ── Hospital search ── */
+    .search-box {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--purple-bg); border: 1.5px solid var(--border);
+      border-radius: 13px; padding: 11px 14px; margin-bottom: 14px;
+      transition: border-color .15s;
+    }
+    .search-box:focus-within { border-color: var(--purple); }
+    .search-box svg { width: 17px; height: 17px; flex-shrink: 0; }
+    .search-box input {
+      border: none; background: transparent; outline: none;
+      font-size: 14px; color: var(--text); width: 100%;
+      font-family: inherit;
+    }
+    .search-box input::placeholder { color: var(--text3); }
+
+    /* Selectable hospital card */
+    .hosp-opt {
+      display: flex; align-items: center; gap: 13px;
+      border: 2px solid var(--border); border-radius: 14px;
+      padding: 13px 14px; margin-bottom: 10px; cursor: pointer;
+      transition: border-color .15s, background .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hosp-opt:last-child { margin-bottom: 0; }
+    .hosp-opt.sel { border-color: var(--purple); background: #F7F3FD; }
+    .hosp-logo-sm {
+      width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+      display: grid; place-items: center;
+      font-size: 13px; font-weight: 900; color: #fff; letter-spacing: .3px;
+    }
+    .hosp-info { flex: 1; min-width: 0; }
+    .hosp-info-name { font-size: 14px; font-weight: 800; color: var(--text); }
+    .hosp-info-addr { font-size: 12px; color: var(--text3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hosp-badges { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+    .badge {
+      font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px;
+    }
+    .badge-partner { background: #DCFCE7; color: #16A34A; }
+    .badge-3a { background: #EDE6F7; color: var(--purple); }
+    .hosp-radio {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+      border: 2px solid var(--border);
+      display: grid; place-items: center; transition: border-color .15s;
+    }
+    .hosp-opt.sel .hosp-radio { border-color: var(--purple); }
+    .hosp-radio-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--purple); opacity: 0; transition: opacity .15s;
+    }
+    .hosp-opt.sel .hosp-radio-dot { opacity: 1; }
+    .hosp-custom {
+      border: 1.5px dashed var(--border); border-radius: 13px;
+      padding: 11px 14px; display: flex; align-items: center; gap: 10px;
+      margin-top: 10px;
+    }
+    .hosp-custom svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .hosp-custom input {
+      border: none; background: transparent; outline: none;
+      font-size: 14px; color: var(--text); width: 100%; font-family: inherit;
+    }
+    .hosp-custom input::placeholder { color: var(--text3); }
+
+    /* ── Form fields ── */
+    .form-row { margin-bottom: 14px; }
+    .form-row:last-child { margin-bottom: 0; }
+    .form-label {
+      font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: 7px;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .req { color: var(--red); font-size: 14px; line-height: 1; }
+    .f-input {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 13px;
+      padding: 12px 14px; font-size: 15px; color: var(--text);
+      outline: none; font-family: inherit; background: #fff;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .f-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(134,85,197,.10); }
+    .f-input::placeholder { color: var(--text3); font-size: 14px; }
+    .f-input.invalid { border-color: var(--red); box-shadow: 0 0 0 3px rgba(239,68,68,.08); }
+    textarea.f-input { resize: none; height: 90px; line-height: 1.5; }
+    .patient-inline-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .patient-readonly { color:var(--text2); background:var(--purple-bg); }
+    .patient-tip { margin-top:7px; font-size:11px; color:var(--text3); line-height:1.45; }
+
+    /* Gender pill toggle */
+    .gender-toggle { display: flex; gap: 10px; }
+    .gender-pill {
+      flex: 1; height: 46px; border-radius: 13px;
+      border: 1.5px solid var(--border); background: #fff;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      font-size: 15px; font-weight: 700; color: var(--text2);
+      cursor: pointer; transition: border-color .15s, background .15s, color .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .gender-pill svg { width: 18px; height: 18px; }
+    .gender-pill.sel { border-color: var(--purple); background: var(--purple-light); color: var(--purple); }
+
+    /* ── Nurse section ── */
+    .tab-bar {
+      display: flex; background: var(--purple-bg);
+      border-radius: 12px; padding: 4px; margin-bottom: 14px;
+    }
+    .tab {
+      flex: 1; padding: 9px 6px; border-radius: 9px;
+      font-size: 13px; font-weight: 700; color: var(--text3);
+      text-align: center; cursor: pointer;
+      transition: background .15s, color .15s, box-shadow .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tab.on {
+      background: var(--purple); color: #fff;
+      box-shadow: 0 3px 12px rgba(134,85,197,.28);
+    }
+    .nurse-list { display: flex; flex-direction: column; gap: 12px; }
+    .nurse-card {
+      background: var(--card); border-radius: 16px;
+      padding: 16px; cursor: pointer;
+      border: 2px solid var(--border);
+      box-shadow: 0 2px 12px rgba(100,60,160,.06);
+      transition: border-color .18s, box-shadow .18s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nurse-card.sel {
+      border-color: var(--purple);
+      box-shadow: 0 4px 20px rgba(134,85,197,.16);
+    }
+    /* Header: photo + info */
+    .nc-hd {
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .nc-avatar {
+      width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0;
+      display: grid; place-items: center;
+      font-size: 24px; font-weight: 900; color: #fff;
+      box-shadow: 0 4px 14px rgba(100,60,160,.16);
+    }
+    .nc-right { flex: 1; min-width: 0; }
+    .nc-row1 {
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 3px; flex-wrap: wrap;
+    }
+    .nc-name { font-size: 16px; font-weight: 900; color: var(--text); }
+    .nc-title {
+      font-size: 11px; font-weight: 700; color: var(--text2);
+    }
+    .nc-dept {
+      font-size: 11px; font-weight: 700; color: var(--text3);
+    }
+    .nc-sep { color: var(--text3); font-size: 11px; margin: 0 1px; }
+    .nc-row2 {
+      display: flex; align-items: center; gap: 5px;
+      margin-bottom: 6px; flex-wrap: wrap;
+    }
+    .nc-hosp {
+      font-size: 12px; font-weight: 700; color: var(--text2);
+    }
+    .nc-badge {
+      font-size: 9px; font-weight: 800; padding: 2px 6px;
+      border-radius: 4px; border: 1px solid; line-height: 1.2;
+    }
+    .nc-badge.gold { border-color: #E1C16E; color: #A67C00; background: #FFF9E6; }
+    .nc-badge.blue { border-color: #93C5FD; color: #1D4ED8; background: #EFF6FF; }
+    /* Honor tags */
+    .nc-honors {
+      display: flex; flex-wrap: wrap; gap: 5px;
+    }
+    .nc-honor {
+      font-size: 10px; font-weight: 800; padding: 3px 8px;
+      border-radius: 6px; line-height: 1.2;
+    }
+    .nc-honor.purple { background: var(--purple-light); color: var(--purple); }
+    .nc-honor.teal   { background: #E4F8F7; color: #2BB5AD; }
+    .nc-honor.amber  { background: #FEF3C7; color: #B45309; }
+    /* Bio quote */
+    .nc-bio {
+      margin-top: 10px; padding: 10px 12px;
+      background: var(--purple-bg); border-radius: 10px;
+      font-size: 12px; line-height: 1.65; color: var(--text2);
+      position: relative;
+    }
+    .nc-bio::before {
+      content: '\201C'; position: absolute; top: 4px; left: 10px;
+      font-size: 22px; font-weight: 900; color: var(--purple); opacity: .35;
+      line-height: 1;
+    }
+    .nc-bio-text { padding-left: 14px; }
+    /* Bottom row */
+    .nc-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 12px; padding-top: 11px;
+      border-top: 1px solid var(--border);
+    }
+    .nc-rating {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 600; color: var(--text3);
+    }
+    .nc-rating-val {
+      font-size: 18px; font-weight: 900; color: var(--text);
+    }
+    .nc-rating svg { width: 13px; height: 13px; fill: #F59E0B; }
+    .nc-actions { display: flex; gap: 8px; }
+    .nc-btn {
+      height: 32px; padding: 0 14px; border-radius: 10px;
+      font-size: 12px; font-weight: 800; font-family: inherit;
+      display: flex; align-items: center; gap: 5px;
+      cursor: pointer; transition: all .12s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nc-btn svg { width: 14px; height: 14px; }
+    .nc-btn-select {
+      border: 1.5px solid var(--purple); background: #fff;
+      color: var(--purple);
+    }
+    .nc-btn-select:active { background: var(--purple-light); }
+    .nurse-card.sel .nc-btn-select {
+      background: var(--purple); color: #fff; border-color: var(--purple);
+    }
+    .nc-btn-busy {
+      border: 1.5px solid var(--border); background: #fff;
+      color: var(--text3); pointer-events: none;
+    }
+    /* Status dot */
+    .nc-status-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .nc-status-dot.green { background: #22C55E; box-shadow: 0 0 6px rgba(34,197,94,.4); }
+    .nc-status-dot.red   { background: #EF4444; box-shadow: 0 0 6px rgba(239,68,68,.4); }
+
+    /* ── Duration cards ── */
+    .duration-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dur-card {
+      border: 2px solid var(--border); border-radius: var(--r-lg);
+      padding: 18px 14px 16px; text-align: center; cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: border-color .15s, background .15s, box-shadow .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .dur-card.sel {
+      border-color: var(--purple);
+      background: linear-gradient(160deg, #F5F0FD 0%, #EDE6F7 100%);
+      box-shadow: 0 4px 16px rgba(134,85,197,.16);
+    }
+    .dur-check {
+      position: absolute; top: 10px; right: 10px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--purple); display: grid; place-items: center;
+      opacity: 0; transition: opacity .15s; transform: scale(.7);
+      transition: opacity .15s, transform .2s;
+    }
+    .dur-card.sel .dur-check { opacity: 1; transform: scale(1); }
+    .dur-check svg { width: 11px; height: 11px; }
+    .dur-icon {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: var(--purple-light); margin: 0 auto 10px;
+      display: grid; place-items: center;
+    }
+    .dur-icon svg { width: 24px; height: 24px; }
+    .dur-card.sel .dur-icon { background: rgba(134,85,197,.15); }
+    .dur-name { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .dur-price { font-size: 22px; font-weight: 900; color: var(--purple); }
+    .dur-price span { font-size: 12px; font-weight: 600; color: var(--text3); }
+    .dur-desc { font-size: 11px; color: var(--text3); margin-top: 5px; line-height: 1.4; }
+
+    /* ── Time & address picker ── */
+    .time-grid { display:grid; gap:14px; }
+    .hours-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .field-label { display:block; font-size:12px; color:var(--text2); font-weight:700; margin:0 0 6px; }
+    .field-input, .address-input {
+      width:100%; height:44px; border:1.5px solid var(--border); border-radius:12px;
+      background:var(--purple-bg); color:var(--text); padding:0 12px; font:600 14px inherit;
+      outline:none;
+    }
+    .field-input:focus, .address-input:focus { border-color:var(--purple); background:#fff; }
+    .hour-option { height:44px; border:1.5px solid var(--border); border-radius:12px; background:var(--purple-bg); color:var(--text2); font:700 14px inherit; cursor:pointer; }
+    .hour-option.sel { border-color:var(--purple); background:var(--purple); color:#fff; box-shadow:0 4px 12px rgba(134,85,197,.22); }
+    .unit-switch { display:flex; gap:8px; margin-bottom:10px; }
+    .unit-pill { flex:1; height:36px; border:1.5px solid var(--border); border-radius:10px; background:var(--purple-bg); color:var(--text2); font:700 13px inherit; cursor:pointer; }
+    .unit-pill.sel { border-color:var(--purple); background:var(--purple-light); color:var(--purple); }
+    .duration-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .custom-count { display:none; align-items:center; gap:10px; margin-top:10px; padding:10px 12px; border:1.5px solid var(--purple-light); border-radius:12px; background:#fff; }
+    .custom-count.show { display:flex; }
+    .custom-count-label { flex:1; font-size:12px; color:var(--text2); font-weight:700; }
+    .custom-count-input { width:74px; height:36px; border:1.5px solid var(--border); border-radius:9px; padding:0 8px; color:var(--text); font:800 14px inherit; text-align:center; outline:0; }
+    .custom-count-input:focus { border-color:var(--purple); }
+    .custom-count-unit { color:var(--text2); font-size:13px; font-weight:700; }
+    .time-summary { margin-top:12px; padding:11px 12px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:12px; font-weight:700; text-align:center; }
+    .points-card { margin-top:12px; padding:13px 14px; border:1.5px solid var(--border); border-radius:14px; background:#fff; }
+    .points-check { display:flex; align-items:center; gap:10px; cursor:pointer; }
+    .points-check input { width:19px; height:19px; accent-color:var(--purple); flex-shrink:0; }
+    .points-main { flex:1; font-size:14px; color:var(--text); font-weight:800; }
+    .points-balance { font-size:12px; color:var(--text3); font-weight:600; }
+    .points-detail { margin:8px 0 0 29px; font-size:12px; color:var(--text2); }
+    .points-detail strong { color:var(--purple); font-size:13px; }
+    .price-save { margin-top:2px; color:var(--green); font-size:12px; font-weight:700; text-align:center; }
+    .address-list { display:grid; gap:10px; }
+    .address-card { display:flex; align-items:flex-start; gap:10px; border:2px solid var(--border); border-radius:14px; padding:12px; cursor:pointer; }
+    .address-card.sel { border-color:var(--purple); background:#F7F3FD; }
+    .address-radio { width:18px; height:18px; border:1.5px solid var(--text3); border-radius:50%; flex-shrink:0; margin-top:2px; display:grid; place-items:center; }
+    .address-card.sel .address-radio { border-color:var(--purple); box-shadow:inset 0 0 0 4px #fff; background:var(--purple); }
+    .address-main { font-size:14px; font-weight:800; color:var(--text); }
+    .address-sub { margin-top:4px; font-size:12px; color:var(--text3); line-height:1.4; }
+    .address-main-row { display:flex; align-items:center; gap:7px; }
+    .address-type-tag { display:inline-flex; align-items:center; height:20px; padding:0 7px; border-radius:7px; font-size:10px; font-weight:800; flex-shrink:0; }
+    .address-type-tag.home { color:#4D936F; background:#E7F7ED; }
+    .address-type-tag.hospital { color:#4F6FBE; background:#EAF0FF; }
+    .address-add { margin-top:10px; width:100%; height:42px; border:1.5px dashed var(--purple); border-radius:12px; background:#fff; color:var(--purple); font:700 13px inherit; cursor:pointer; }
+    .selector-trigger { width:100%; min-height:74px; padding:12px 13px; display:flex; align-items:center; gap:11px; border:1.5px solid var(--border); border-radius:15px; background:#FCFBFE; color:var(--text); text-align:left; font-family:inherit; cursor:pointer; transition:border-color .15s, box-shadow .15s, background .15s; }
+    .selector-trigger:hover { border-color:#D3BEEB; }
+    .selector-trigger:active { background:var(--purple-bg); border-color:var(--purple); box-shadow:0 0 0 3px rgba(134,85,197,.08); }
+    .selector-marker { width:38px; height:38px; border-radius:12px; background:var(--purple-light); color:var(--purple); display:grid; place-items:center; flex-shrink:0; font-size:16px; font-weight:900; }
+    .selector-copy { min-width:0; flex:1; overflow:hidden; }
+    .selector-value { display:block; max-width:100%; font-size:14px; color:var(--text); font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .selector-meta { display:block; max-width:100%; margin-top:4px; font-size:12px; color:var(--text3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .selector-arrow { width:24px; color:#9B91AC; font-size:25px; line-height:1; font-weight:400; text-align:center; }
+    .selection-drawer { position:fixed; inset:auto; z-index:90; overflow:hidden; display:flex; align-items:flex-end; justify-content:center; background:rgba(24,18,40,.42); opacity:0; pointer-events:none; transition:opacity .2s; }
+    .selection-drawer.show { opacity:1; pointer-events:auto; }
+    .selection-sheet { width:100%; max-width:100%; max-height:calc(100% - 12px); overflow:auto; overscroll-behavior:contain; padding:10px 16px calc(20px + env(safe-area-inset-bottom)); border-radius:26px 26px 0 0; background:#fff; box-shadow:0 -14px 42px rgba(35,22,55,.22); transform:translateY(100%); transition:transform .26s cubic-bezier(.22,.88,.36,1); }
+    .selection-drawer.show .selection-sheet { transform:translateY(0); }
+    .sheet-grip { width:38px; height:4px; margin:0 auto 16px; border-radius:5px; background:#D8D1E1; }
+    .sheet-head { display:flex; align-items:center; justify-content:space-between; min-height:34px; margin-bottom:14px; }
+    .sheet-title { font-size:18px; color:var(--text); font-weight:900; letter-spacing:.1px; }
+    .sheet-close { width:34px; height:34px; border:0; border-radius:11px; background:#F5F2FA; color:#766C87; font:700 21px/1 inherit; cursor:pointer; }
+    .sheet-close:active { background:#EAE3F4; }
+    .drawer-list { display:grid; gap:10px; }
+    .drawer-list .address-card, .drawer-list .patient-card { padding:13px; background:#FCFBFE; border-color:#EEEAF4; }
+    .drawer-list .address-card.sel, .drawer-list .patient-card.sel { border-color:var(--purple); background:#FAF7FE; box-shadow:0 5px 14px rgba(104,63,172,.10); }
+    .drawer-list .address-main-row { align-items:flex-start; }
+    .address-card > div:last-child, .patient-card > div:last-child { min-width:0; flex:1; }
+    .drawer-list .address-main { min-width:0; flex:1; line-height:1.45; white-space:normal; overflow-wrap:anywhere; }
+    .drawer-list .address-type-tag { margin-top:1px; }
+    .drawer-list .address-sub, .drawer-list .patient-card-sub { padding-right:3px; }
+    .drawer-list .patient-card-sub { overflow-wrap:anywhere; }
+    .drawer-form { margin-top:12px; padding-top:14px; border-top:1px solid var(--border); }
+    .drawer-form[hidden] { display:none; }
+    .drawer-save { width:100%; height:48px; margin-top:12px; border:0; border-radius:14px; background:var(--purple); color:#fff; font:800 15px inherit; cursor:pointer; box-shadow:0 8px 18px rgba(107,63,170,.22); }
+    .patient-list { display:grid; gap:10px; }
+    .patient-card { display:flex; align-items:flex-start; gap:10px; border:2px solid var(--border); border-radius:14px; padding:12px; cursor:pointer; }
+    .patient-card.sel { border-color:var(--purple); background:#F7F3FD; }
+    .patient-radio { width:18px; height:18px; border:1.5px solid var(--text3); border-radius:50%; flex-shrink:0; margin-top:2px; display:grid; place-items:center; }
+    .patient-card.sel .patient-radio { border-color:var(--purple); box-shadow:inset 0 0 0 4px #fff; background:var(--purple); }
+    .patient-card-main { font-size:14px; color:var(--text); font-weight:800; }
+    .patient-card-sub { margin-top:4px; font-size:12px; color:var(--text3); line-height:1.45; }
+    .patient-editor { margin-top:10px; padding-top:2px; }
+    .patient-editor[hidden] { display:none; }
+
+    /* ── Bottom note ── */
+    .note-bar {
+      text-align:center; margin:6px 14px 14px;
+      font-size:12px; color:var(--text3); line-height:1.6;
+    }
+    .note-bar strong { color:var(--text2); }
+    /* ── Navigation bar (prev / next) ── */
+    .nav-bar {
+      flex-shrink:0;
+      padding:10px 16px calc(12px + env(safe-area-inset-bottom));
+      background:var(--card); border-top:1px solid var(--border);
+    }
+    .price-row {
+      display:flex; align-items:baseline; justify-content:center;
+      gap:4px; margin-bottom:10px;
+    }
+    .price-lbl  { font-size:13px; color:var(--text3); font-weight:600; }
+    .price-num  { font-size:26px; font-weight:900; color:var(--purple); }
+    .price-unit { font-size:13px; color:var(--text3); font-weight:600; }
+    .btn-row { display:flex; gap:10px; }
+    .btn-ghost {
+      flex:1; height:52px; border-radius:16px;
+      border:2px solid var(--purple); background:transparent;
+      color:var(--purple); font-size:16px; font-weight:800;
+      font-family:inherit; cursor:pointer;
+      -webkit-tap-highlight-color:transparent; transition:background .12s;
+    }
+    .btn-ghost:active { background:var(--purple-light); }
+    .btn-primary {
+      flex:2; height:52px; border-radius:16px; border:none;
+      background:linear-gradient(135deg,#9060D0 0%,#6B3FAA 100%);
+      color:#fff; font-size:16px; font-weight:800; letter-spacing:.5px;
+      font-family:inherit; cursor:pointer;
+      box-shadow:0 8px 22px rgba(107,63,170,.28);
+      -webkit-tap-highlight-color:transparent;
+      transition:transform .12s, filter .12s;
+    }
+    .btn-primary:active { transform:scale(.98); filter:brightness(.95); }
+    /* Single-page ordering: keep the existing card language, show all selections together. */
+    .stepper { display:none; }
+    .step-panel { display:block; animation:none; }
+    #p2 { display:none !important; }
+    .step-panel + .step-panel { margin-top:0; }
+    .single-page-needs { margin-top:0; }
+    .single-page-needs .module-title { margin-bottom:14px; }
+    .need-group + .need-group { margin-top:16px; }
+    .need-label { display:block; margin-bottom:8px; color:var(--text2); font-size:12px; font-weight:700; }
+    .need-label .req { color:#D93025; margin-right:3px; }
+    .need-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+    .need-option { min-height:40px; padding:0 8px; border:1.5px solid var(--border); border-radius:11px; background:var(--purple-bg); color:var(--text2); font:700 12px inherit; cursor:pointer; }
+    .need-option.sel { border-color:var(--purple); background:var(--purple-light); color:var(--purple); box-shadow:0 3px 9px rgba(134,85,197,.12); }
+    .need-textarea { width:100%; min-height:72px; resize:vertical; padding:10px 11px; border:1.5px solid var(--border); border-radius:12px; background:var(--purple-bg); color:var(--text); font:600 13px/1.5 inherit; outline:none; }
+    .need-textarea:focus { border-color:var(--purple); background:#fff; }
+    .service-mode-note { padding:11px 12px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:12px; font-weight:800; text-align:center; }
+    .needs-price-card { display:block; }
+    .needs-price-card.ready { display:block; }
+
+    /* ── Payment success overlay ── */
+    .pay-overlay {
+      position:fixed; inset:auto; z-index:100;
+      background:rgba(30,20,50,.45);
+      display:flex; align-items:flex-end; justify-content:center;
+      opacity:0; pointer-events:none;
+      transition:opacity .28s;
+    }
+    .pay-overlay.show { opacity:1; pointer-events:auto; }
+    .pay-sheet {
+      width:100%; max-width:430px;
+      background:#fff; border-radius:28px 28px 0 0;
+      padding:32px 28px calc(36px + env(safe-area-inset-bottom));
+      transform:translateY(100%);
+      transition:transform .32s cubic-bezier(.22,.88,.36,1);
+      text-align:center;
+    }
+    .pay-overlay.show .pay-sheet { transform:translateY(0); }
+    .pay-circle {
+      width:76px; height:76px; border-radius:50%;
+      background:linear-gradient(135deg,#7FD98A,#2EAA5A);
+      display:grid; place-items:center;
+      margin:0 auto 18px;
+      box-shadow:0 8px 28px rgba(46,170,90,.28);
+      animation:popIn .4s .15s both cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
+    .pay-circle svg { width:38px; height:38px; }
+    .pay-title { font-size:22px; font-weight:900; color:var(--text); margin-bottom:6px; }
+    .pay-sub   { font-size:14px; color:var(--text2); line-height:1.6; margin-bottom:24px; }
+    .pay-card  {
+      background:var(--purple-bg); border-radius:16px;
+      padding:16px 18px; margin-bottom:24px; text-align:left;
+    }
+    .pay-row   { display:flex; justify-content:space-between; align-items:center; padding:5px 0; }
+    .pay-row + .pay-row { border-top:1px solid var(--border); }
+    .pay-key   { font-size:13px; color:var(--text3); font-weight:600; }
+    .pay-val   { max-width:62%; font-size:13px; color:var(--text); font-weight:700; text-align:right; overflow-wrap:anywhere; }
+    .pay-val.purple { color:var(--purple); font-size:15px; font-weight:900; }
+    .pay-home  {
+      width:100%; height:52px; border-radius:16px; border:none;
+      background:linear-gradient(135deg,#9060D0 0%,#6B3FAA 100%);
+      color:#fff; font-size:16px; font-weight:800; letter-spacing:.5px;
+      font-family:inherit; cursor:pointer;
+      box-shadow:0 8px 22px rgba(107,63,170,.25);
+      -webkit-tap-highlight-color:transparent;
+      transition:transform .12s, filter .12s;
+    }
+    .pay-home:active { transform:scale(.98); filter:brightness(.95); }
+    .pay-order-num { font-size:12px; color:var(--text3); margin-top:14px; }
+  </style>
+</head>
+<body>
+<div class="frame">
+  <div class="phone">
+
+    <!-- Scroll area -->
+    <div class="scroll-area">
+
+      <!-- iOS status bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-right">
+          <svg viewBox="0 0 17 12" fill="currentColor">
+            <rect x="0" y="3" width="3" height="9" rx="1"/>
+            <rect x="4.5" y="1.5" width="3" height="10.5" rx="1"/>
+            <rect x="9" y="0" width="3" height="12" rx="1"/>
+            <rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".28"/>
+          </svg>
+          <svg viewBox="0 0 17 13" fill="none" stroke="currentColor" stroke-linecap="round">
+            <path d="M8.5 9.5a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8z" fill="currentColor" stroke="none"/>
+            <path d="M5.2 7a4.7 4.7 0 016.6 0" stroke-width="1.5"/>
+            <path d="M2 4a8.8 8.8 0 0113 0" stroke-width="1.5"/>
+          </svg>
+          <svg viewBox="0 0 24 12" fill="none">
+            <rect x=".6" y=".6" width="20" height="10.8" rx="2.8" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="21.2" y="3.6" width="2.2" height="4.8" rx="1.1" fill="currentColor"/>
+            <rect x="2" y="2" width="15" height="8" rx="1.8" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Nav bar -->
+      <div class="navbar">
+        <button class="back-btn" onclick="history.length>1?history.back():location.href='home.html'" aria-label="返回">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path d="M13 4.5L7.5 10 13 15.5" stroke="#8655C5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="nav-title" id="servicePageTitle">住院陪护下单</span>
+        <div class="nav-ph"></div>
+      </div>
+
+      <!-- Stepper -->
+      <div class="stepper">
+        <div class="step-item active" id="si1">
+          <div class="step-dot active" id="sd1">1</div>
+          <div class="step-lbl" id="stepLocationLbl">服务地址</div>
+        </div>
+        <div class="step-conn" id="sc1"></div>
+        <div class="step-item" id="si2">
+          <div class="step-dot" id="sd2">2</div>
+          <div class="step-lbl">护理员</div>
+        </div>
+        <div class="step-conn" id="sc2"></div>
+        <div class="step-item" id="si3">
+          <div class="step-dot" id="sd3">3</div>
+          <div class="step-lbl">服务时间</div>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <div class="step-panel active" id="p1">
+        <!-- ① 选择服务地址 -->
+        <div class="module">
+          <div class="module-title">
+            <div class="module-num">1</div>
+            <span id="locationTitle">选择服务地址</span>
+          </div>
+          <button class="selector-trigger" type="button" onclick="openAddressDrawer()">
+            <span class="selector-marker">地</span>
+            <span class="selector-copy"><span class="selector-value" id="selectedAddressValue">请选择服务地址</span><span class="selector-meta" id="selectedAddressMeta">医院或家</span></span>
+            <span class="selector-arrow">›</span>
+          </button>
+        </div>
+
+        <div class="module" id="patientInfoModule">
+          <div class="module-title">
+            <div class="module-num">2</div>
+            <span id="patientTitle">选择服务对象</span>
+          </div>
+          <button class="selector-trigger" type="button" onclick="openPatientDrawer()">
+            <span class="selector-marker">人</span>
+            <span class="selector-copy"><span class="selector-value" id="selectedPatientValue">请选择服务对象</span><span class="selector-meta" id="selectedPatientMeta">选择已有档案或新增</span></span>
+            <span class="selector-arrow">›</span>
+          </button>
+        </div>
+        </div><!-- /p1 -->
+
+        <div class="step-panel" id="p2">
+        <!-- ③ 选择护理员 -->
+        <div class="module">
+          <div class="module-title">
+            <div class="module-num">2</div>
+            选择护理员
+          </div>
+
+          <!-- Nurse cards -->
+          <div class="nurse-list" id="nurseList0">
+
+            <!-- 李桂芳 -->
+            <div class="nurse-card sel" onclick="selNurse(this)">
+              <div class="nc-hd">
+                <div class="nc-avatar" style="background:linear-gradient(140deg,#7B3FBE,#AA7AE0)">李</div>
+                <div class="nc-right">
+                  <div class="nc-row1">
+                    <span class="nc-name">李桂芳</span>
+                    <span class="nc-title">高级护理师</span>
+                    <span class="nc-sep">|</span>
+                    <span class="nc-dept">住院专护</span>
+                  </div>
+                  <div class="nc-row2">
+                    <span class="nc-hosp">北京协和医院</span>
+                    <span class="nc-badge gold">持证</span>
+                    <span class="nc-badge blue">5年经验</span>
+                  </div>
+                  <div class="nc-honors">
+                    <span class="nc-honor purple">优秀护理员</span>
+                    <span class="nc-honor teal">术后康复</span>
+                  </div>
+                </div>
+              </div>
+              <div class="nc-bio">
+                <div class="nc-bio-text">拥有护理学专业背景，擅长住院患者日常护理、术后康复指导及老年人陪护。细心耐心，获得多次家属好评。</div>
+              </div>
+              <div class="nc-foot">
+                <div class="nc-rating">
+                  <svg viewBox="0 0 13 13"><path d="M6.5 1l1.4 3.1 3.2.3-2.4 2.2.7 3.2L6.5 8.1 3.6 9.8l.7-3.2L2 4.4z"/></svg>
+                  患友推荐分 <span class="nc-rating-val">4.9</span>
+                </div>
+                <div class="nc-actions">
+                  <button class="nc-btn nc-btn-select">
+                    <span class="nc-status-dot green"></span> 可选
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 张秀英 -->
+            <div class="nurse-card" onclick="selNurse(this)">
+              <div class="nc-hd">
+                <div class="nc-avatar" style="background:linear-gradient(140deg,#1A9896,#38CFC7)">张</div>
+                <div class="nc-right">
+                  <div class="nc-row1">
+                    <span class="nc-name">张秀英</span>
+                    <span class="nc-title">中级护理师</span>
+                    <span class="nc-sep">|</span>
+                    <span class="nc-dept">术后康复</span>
+                  </div>
+                  <div class="nc-row2">
+                    <span class="nc-hosp">北京红十字医院</span>
+                    <span class="nc-badge gold">持证</span>
+                    <span class="nc-badge blue">3年经验</span>
+                  </div>
+                  <div class="nc-honors">
+                    <span class="nc-honor purple">康复认证</span>
+                    <span class="nc-honor teal">居家护理</span>
+                  </div>
+                </div>
+              </div>
+              <div class="nc-bio">
+                <div class="nc-bio-text">专注术后康复护理，熟悉骨科、普外科护理流程，可协助患者进行早期功能锻炼，服务细致周到。</div>
+              </div>
+              <div class="nc-foot">
+                <div class="nc-rating">
+                  <svg viewBox="0 0 13 13"><path d="M6.5 1l1.4 3.1 3.2.3-2.4 2.2.7 3.2L6.5 8.1 3.6 9.8l.7-3.2L2 4.4z"/></svg>
+                  患友推荐分 <span class="nc-rating-val">4.8</span>
+                </div>
+                <div class="nc-actions">
+                  <button class="nc-btn nc-btn-select">
+                    <span class="nc-status-dot green"></span> 可选
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 王美玲 -->
+            <div class="nurse-card" onclick="selNurse(this)">
+              <div class="nc-hd">
+                <div class="nc-avatar" style="background:linear-gradient(140deg,#C75510,#F4A030)">王</div>
+                <div class="nc-right">
+                  <div class="nc-row1">
+                    <span class="nc-name">王美玲</span>
+                    <span class="nc-title">高级护理师</span>
+                    <span class="nc-sep">|</span>
+                    <span class="nc-dept">重症陪护</span>
+                  </div>
+                  <div class="nc-row2">
+                    <span class="nc-hosp">解放军总医院</span>
+                    <span class="nc-badge gold">高级</span>
+                    <span class="nc-badge blue">8年经验</span>
+                  </div>
+                  <div class="nc-honors">
+                    <span class="nc-honor amber">金牌护理</span>
+                    <span class="nc-honor purple">重症专护</span>
+                  </div>
+                </div>
+              </div>
+              <div class="nc-bio">
+                <div class="nc-bio-text">拥有8年重症护理经验，可独立处理管道护理、压疮预防等专业护理，获得“金牌护理员”称号。</div>
+              </div>
+              <div class="nc-foot">
+                <div class="nc-rating">
+                  <svg viewBox="0 0 13 13"><path d="M6.5 1l1.4 3.1 3.2.3-2.4 2.2.7 3.2L6.5 8.1 3.6 9.8l.7-3.2L2 4.4z"/></svg>
+                  患友推荐分 <span class="nc-rating-val">4.9</span>
+                </div>
+                <div class="nc-actions">
+                  <button class="nc-btn nc-btn-busy">
+                    <span class="nc-status-dot red"></span> 服务中
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          </div>
+        </div>
+        </div><!-- /p2 -->
+
+        <div class="step-panel" id="p3">
+        <!-- ④ 服务时间 -->
+        <div class="module">
+          <div class="module-title">
+            <div class="module-num">3</div>
+            选择服务时间
+          </div>
+          <div class="time-grid">
+            <div><label class="field-label" for="serviceDate">1. 选择服务日期</label><input class="field-input" id="serviceDate" type="date" /></div>
+            <div>
+              <div class="service-mode-note" id="serviceModeNote">服务方式：24 小时/天</div>
+              <span class="field-label" id="countLabel">选择服务天数</span>
+              <div class="duration-grid" id="countGrid">
+                <button class="hour-option sel" type="button" onclick="selectCount(this,1)">1 天</button>
+                <button class="hour-option" type="button" onclick="selectCount(this,2)">2 天</button>
+                <button class="hour-option" type="button" onclick="selectCount(this,3)">3 天</button>
+                <button class="hour-option" type="button" onclick="selectCount(this,5)">5 天</button>
+                <button class="hour-option" type="button" onclick="selectCount(this,7)">7 天</button>
+                <button class="hour-option" type="button" onclick="selectCustomCount(this)">自定义天数</button>
+              </div>
+              <div class="custom-count" id="customCountGroup">
+                <span class="custom-count-label" id="customCountLabel">自定义服务天数</span>
+                <input class="custom-count-input" id="customCountInput" type="number" min="1" max="365" value="1" inputmode="numeric" oninput="setCustomCount(this.value)" />
+                <span class="custom-count-unit" id="customCountUnit">天</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="module single-page-needs">
+          <div class="module-title"><div class="module-num">4</div><span>护理需求</span></div>
+          <div class="need-group">
+            <span class="need-label"><span class="req">*</span>患者自理等级</span>
+            <div class="need-options" id="independencePicker">
+              <button class="need-option sel" type="button" data-value="independent" onclick="selectNeedOption('independence',this)">完全自理</button>
+              <button class="need-option" type="button" data-value="partial" onclick="selectNeedOption('independence',this)">半自理</button>
+              <button class="need-option" type="button" data-value="dependent" onclick="selectNeedOption('independence',this)">完全失能</button>
+            </div>
+          </div>
+          <div class="need-group">
+            <span class="need-label"><span class="req">*</span>有无管路</span>
+            <div class="need-options" id="tubePicker">
+              <button class="need-option sel" type="button" data-value="none" onclick="selectNeedOption('tube',this)">无</button>
+              <button class="need-option" type="button" data-value="has" onclick="selectNeedOption('tube',this)">有</button>
+            </div>
+          </div>
+          <div class="need-group">
+            <span class="need-label"><span class="req">*</span>有无传染性疾病</span>
+            <div class="need-options" id="infectionPicker">
+              <button class="need-option sel" type="button" data-value="none" onclick="selectNeedOption('infection',this)">无</button>
+              <button class="need-option" type="button" data-value="has" onclick="selectNeedOption('infection',this)">有</button>
+            </div>
+          </div>
+          <div class="need-group">
+            <label class="need-label" for="otherNeeds">其他诉求 <span style="color:var(--text3);font-weight:600">（非必填）</span></label>
+            <textarea class="need-textarea" id="otherNeeds" maxlength="200" placeholder="请填写其他照护偏好或需要特别注意的事项"></textarea>
+          </div>
+          <div class="needs-price-card" id="needsPriceCard">
+            <div class="time-summary" id="timeSummary">24 小时/天 · 1 天 · 预计 ¥300</div>
+            <div class="points-card">
+              <label class="points-check" for="usePoints">
+                <input id="usePoints" type="checkbox" onchange="togglePoints()" />
+                <span class="points-main">使用积分抵扣</span>
+                <span class="points-balance" id="pointsBalance">可用 0 积分</span>
+              </label>
+              <div class="points-detail" id="pointsDetail">本单最多可抵 ¥0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Note -->
+        <div class="note-bar">
+          <strong id="timeNoteTitle">按服务天数计费</strong><br/>
+          <span id="timeNoteText">服务开始后如需调整，将按实际服务时长计算费用</span>
+        </div>
+
+        <div style="height: 12px;"></div>
+        </div><!-- /p3 -->
+
+      </div><!-- .content -->
+
+      <!-- Navigation bar -->
+      <div class="nav-bar">
+        <div class="price-row" id="priceRow" style="display:none">
+          <span class="price-lbl" id="priceLabel">应付金额</span>
+          <span class="price-num" id="priceNum">¥336</span>
+        </div>
+        <div class="price-save" id="priceSave" style="display:none"></div>
+        <div class="btn-row">
+          <button class="btn-ghost" id="prevBtn" onclick="prevStep()" style="display:none">上一步</button>
+          <button class="btn-primary" id="nextBtn" onclick="nextStep()">下一步</button>
+        </div>
+      </div>
+
+    </div><!-- .scroll-area -->
+
+  <div class="selection-drawer" id="addressDrawer" onclick="closeDrawerOnBackdrop(event, 'addressDrawer')">
+    <section class="selection-sheet" aria-label="选择服务地址">
+      <div class="sheet-grip"></div>
+      <div class="sheet-head"><div class="sheet-title">选择服务地址</div><button class="sheet-close" type="button" onclick="closeDrawer('addressDrawer')" aria-label="关闭">×</button></div>
+      <div class="drawer-list" id="drawerAddressList"></div>
+      <button class="address-add" type="button" onclick="goAddAddress()">＋ 新增服务地址</button>
+    </section>
+  </div>
+
+  <div class="selection-drawer" id="patientDrawer" onclick="closeDrawerOnBackdrop(event, 'patientDrawer')">
+    <section class="selection-sheet" aria-label="选择服务对象">
+      <div class="sheet-grip"></div>
+      <div class="sheet-head"><div class="sheet-title" id="drawerPatientTitle">选择服务对象</div><button class="sheet-close" type="button" onclick="closeDrawer('patientDrawer')" aria-label="关闭">×</button></div>
+      <div class="drawer-list patient-list" id="patientList"></div>
+      <button class="address-add" type="button" onclick="showPatientEditor()">＋ 新增服务对象</button>
+      <div class="drawer-form" id="patientEditor" hidden>
+        <div class="form-row">
+          <label class="form-label" for="patientName">姓名 <span class="req">*</span></label>
+          <input class="f-input" id="patientName" type="text" maxlength="20" autocomplete="name" placeholder="请输入姓名" />
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="patientIdNo">身份证号 <span class="req">*</span></label>
+          <input class="f-input" id="patientIdNo" type="text" maxlength="18" inputmode="text" autocomplete="off" placeholder="请输入18位身份证号" oninput="syncPatientFromId(this.value)" />
+          <div class="patient-tip">填写有效身份证号后，将自动识别年龄与性别。</div>
+        </div>
+        <div class="patient-inline-grid form-row">
+          <div><label class="form-label" for="patientAge">年龄</label><input class="f-input patient-readonly" id="patientAge" type="text" readonly placeholder="自动识别" /></div>
+          <div><label class="form-label" for="patientGender">性别</label><input class="f-input patient-readonly" id="patientGender" type="text" readonly placeholder="自动识别" /></div>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="patientCondition">健康情况及服务需求 <span class="req">*</span></label>
+          <textarea class="f-input" id="patientCondition" maxlength="160" placeholder="例如：术后恢复期，需协助翻身、起身及日常照护"></textarea>
+        </div>
+        <button class="drawer-save" type="button" onclick="savePatientFromDrawer()">保存并选择</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Payment success overlay -->
+  <div class="pay-overlay" id="payOverlay">
+    <div class="pay-sheet">
+      <div class="pay-circle">
+        <svg viewBox="0 0 38 38" fill="none">
+          <path d="M9 19l7 7 13-13" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="pay-title">支付成功</div>
+      <div class="pay-sub">订单已提交，护理员将在<strong>30分钟内</strong>与您确认</div>
+      <div class="pay-card">
+        <div class="pay-row">
+          <span class="pay-key">服务类型</span>
+          <span class="pay-val" id="payService">住院陪护</span>
+        </div>
+        <div class="pay-row">
+          <span class="pay-key" id="payLocationKey">服务地址</span>
+          <span class="pay-val" id="payHosp">—</span>
+        </div>
+        <div class="pay-row" id="payPatientRow" style="display:none">
+          <span class="pay-key" id="payPatientKey">就诊人</span>
+          <span class="pay-val" id="payPatient">—</span>
+        </div>
+        <div class="pay-row" id="payConditionRow" style="display:none">
+          <span class="pay-key" id="payConditionKey">健康情况</span>
+          <span class="pay-val" id="payCondition">—</span>
+        </div>
+        <div class="pay-row">
+          <span class="pay-key">护理需求</span>
+          <span class="pay-val" id="payCareNeeds">—</span>
+        </div>
+        <div class="pay-row" id="payOtherNeedsRow" style="display:none">
+          <span class="pay-key">其他诉求</span>
+          <span class="pay-val" id="payOtherNeeds">—</span>
+        </div>
+        <div class="pay-row">
+          <span class="pay-key">服务时长</span>
+          <span class="pay-val" id="payDur">2026-09-02（4小时）</span>
+        </div>
+        <div class="pay-row" id="payPointsRow" style="display:none">
+          <span class="pay-key">积分抵扣</span>
+          <span class="pay-val" id="payPoints">-¥0</span>
+        </div>
+        <div class="pay-row">
+          <span class="pay-key">实付金额</span>
+          <span class="pay-val purple" id="payAmt">¥336</span>
+        </div>
+      </div>
+      <button class="pay-home" onclick="location.href='home.html'">返回首页</button>
+      <div class="pay-order-num" id="payOrderNum">订单号：AKB-2026-000001</div>
+    </div>
+  </div>
+
+  </div><!-- .phone -->
+</div><!-- .frame -->
+
+<script src="points-store.js"></script><script src="service-catalog.js"></script>
+<script>
+  /* ── Step wizard ── */
+  let step = 1;
+  const TOTAL = 3;
+
+  function updateUI(dir) {
+    /* panels */
+    document.querySelectorAll('.step-panel').forEach((p, i) => {
+      p.classList.remove('active', 'back');
+      if (i + 1 === step) {
+        p.classList.add('active');
+        if (dir === 'back') p.classList.add('back');
+      }
+    });
+    /* stepper dots */
+    for (let i = 1; i <= TOTAL; i++) {
+      const dot  = document.getElementById('sd' + i);
+      const item = document.getElementById('si' + i);
+      dot.classList.toggle('active', i === step);
+      dot.classList.toggle('done',   i < step);
+      item.classList.toggle('active', i === step);
+      item.classList.toggle('done',   i < step);
+      if (i < step) {
+        dot.innerHTML = '<svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      } else {
+        dot.textContent = i;
+      }
+      if (i < TOTAL) document.getElementById('sc' + i).classList.toggle('done', i < step);
+    }
+    /* bottom bar */
+    document.getElementById('prevBtn').style.display = 'none';
+    document.getElementById('nextBtn').textContent = '立即支付';
+    document.getElementById('priceRow').style.display = careNeedsReady() ? '' : 'none';
+  }
+
+  function nextStep() {
+    if (!selectedAddressId) { alert('请先选择或新增服务地址'); return; }
+    if (!selectedPatientId) { alert('请先选择或新增' + patientDisplayName()); return; }
+    if (!validatePatientInfo()) return;
+    if (!document.getElementById('serviceDate').value) { alert('请选择服务日期'); document.getElementById('serviceDate').focus(); return; }
+    if (!validateCareNeeds()) return;
+    submitOrder();
+  }
+  function prevStep() {
+    if (step > 1) { step--; updateUI('back'); }
+  }
+
+  function parseChineseIdCard(value) {
+    const id = String(value || '').trim().toUpperCase();
+    const matched = /^(\d{6})(\d{4})(\d{2})(\d{2})\d{3}[\dX]$/.exec(id);
+    if (!matched) return null;
+    const year = Number(matched[2]);
+    const month = Number(matched[3]);
+    const day = Number(matched[4]);
+    const birthday = new Date(year, month - 1, day);
+    const today = new Date();
+    if (birthday.getFullYear() !== year || birthday.getMonth() !== month - 1 || birthday.getDate() !== day || birthday > today) return null;
+    let age = today.getFullYear() - year;
+    if (today.getMonth() + 1 < month || (today.getMonth() + 1 === month && today.getDate() < day)) age--;
+    return { id: id, age: age, gender: Number(id.charAt(16)) % 2 ? '男' : '女' };
+  }
+
+  function syncPatientFromId(value) {
+    const input = document.getElementById('patientIdNo');
+    const normalized = String(value || '').toUpperCase().replace(/[^0-9X]/g, '').slice(0, 18);
+    input.value = normalized;
+    const patient = parseChineseIdCard(normalized);
+    document.getElementById('patientAge').value = patient ? patient.age + ' 岁' : '';
+    document.getElementById('patientGender').value = patient ? patient.gender : '';
+    input.classList.toggle('invalid', normalized.length === 18 && !patient);
+  }
+
+  function validatePatientInfo() {
+    const name = document.getElementById('patientName').value.trim();
+    const patient = parseChineseIdCard(document.getElementById('patientIdNo').value);
+    const condition = document.getElementById('patientCondition').value.trim();
+    if (!name) { alert('请填写服务对象姓名'); document.getElementById('patientName').focus(); return false; }
+    if (!patient) { alert('请填写有效的18位身份证号'); document.getElementById('patientIdNo').focus(); return false; }
+    if (!condition) { alert('请填写健康情况及服务需求'); document.getElementById('patientCondition').focus(); return false; }
+    if (!selectedPatientId) {
+      const patients = getSavedPatients();
+      selectedPatientId = 'P' + Date.now();
+      patients.push({ id: selectedPatientId, name: name, idNo: patient.id, condition: condition });
+      setSavedPatients(patients);
+      isCreatingPatient = false;
+    }
+    updatePatientSummary();
+    return true;
+  }
+
+  /* ── Gender ── */
+  function selGender(el) {
+    el.closest('.gender-toggle').querySelectorAll('.gender-pill').forEach(p => p.classList.remove('sel'));
+    el.classList.add('sel');
+  }
+
+  /* ── Nurse selection ── */
+  function selNurse(el) {
+    if (el.classList.contains('busy-card')) return;
+    document.querySelectorAll('.nurse-card').forEach(c => c.classList.remove('sel'));
+    el.classList.add('sel');
+  }
+
+  /* ── Service / address / time ── */
+  const randomRate = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
+  const visitServiceId = new URLSearchParams(location.search).get('visitService');
+  const VISIT_SERVICE_CONFIG = {
+    vip:            { name:'贵宾陪诊', price:298 },
+    premium:        { name:'优享陪诊', price:698 },
+    medicine:       { name:'代买药', price:99 },
+    'exam-booking': { name:'代约检查', price:169 },
+    result:         { name:'代看检查结果', price:169 },
+    admission:      { name:'代办住院手续', price:300 },
+    discharge:      { name:'代办出院手续', price:300 },
+    'ring-pickup':  { name:'三环内接/送患者', price:150 },
+    airport:        { name:'机场接/送患者', price:380 },
+    report:         { name:'代取报告', price:89 },
+    station:        { name:'西安北站接送患者', price:200 }
+  };
+  const selectedVisitService = VISIT_SERVICE_CONFIG[visitServiceId] || null;
+  const SERVICE_CONFIG = {
+    hospital: { name:'住院陪护', location:'hospital', durationMode:'daily', prices:{ half:randomRate(260,320), full:randomRate(480,600) } },
+    home:     { name:'居家陪护', location:'address', durationMode:'daily', prices:{ half:randomRate(220,280), full:randomRate(400,520) } },
+    visit:    { name:selectedVisitService ? selectedVisitService.name : '陪诊服务', location:'hospital', durationMode:'session', price:selectedVisitService ? selectedVisitService.price : randomRate(160,220) },
+    bath:     { name:'上门助浴', location:'address', durationMode:'session', price:randomRate(220,300) }
+  };
+  (function(){
+    const catalog = window.AKBServiceCatalog && window.AKBServiceCatalog.get();
+    if (!catalog) return;
+    const cats = {}; catalog.categories.forEach(c => cats[c.id] = c);
+    ['hospital','home','bath'].forEach(k => { if (cats[k] && cats[k].status === 'on') SERVICE_CONFIG[k].name = cats[k].name; });
+    const visitItems = {}; catalog.services.filter(s => s.category === 'visit').forEach(s => visitItems[s.id] = s);
+    Object.keys(VISIT_SERVICE_CONFIG).forEach(k => { if (visitItems[k] && visitItems[k].status === 'on') VISIT_SERVICE_CONFIG[k].name = visitItems[k].name; });
+  })();
+  const serviceKey = new URLSearchParams(location.search).get('service') || 'hospital';
+  const service = SERVICE_CONFIG[serviceKey] || SERVICE_CONFIG.hospital;
+  let selectedDailyType = 'full';
+  let selectedCount = 1;
+  let isCustomCount = false;
+  let basePrice = 0;
+  let currentPrice = 0;
+  let pointsDiscount = 0;
+  let pointsUsed = 0;
+  const careNeeds = { independence:'independent', tube:'none', infection:'none' };
+  let availablePoints = AKBPoints.get().balance;
+  const ADDRESS_KEY = 'ankebang_saved_addresses';
+  const PATIENT_KEY = 'ankebang_saved_patients';
+  const fallbackAddresses = [
+    { id: 1, detail: '北京市朝阳区望京街道 88 号 2 单元 1602', contact: '张女士', phone: '138****2468', addressType: 'home' },
+    { id: 2, detail: '北京市朝阳区建国路 66 号 北京协和医院东院区', contact: '张女士', phone: '138****2468', addressType: 'hospital' }
+  ];
+  function getSavedAddresses() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(ADDRESS_KEY));
+      if (!Array.isArray(saved)) return fallbackAddresses.slice();
+      const list = saved.map(function(address) { return Object.assign({ addressType: 'home' }, address); });
+      if (!list.some(function(address) { return address.addressType === 'hospital'; })) list.push(fallbackAddresses[1]);
+      return list;
+    } catch(e) { return fallbackAddresses.slice(); }
+  }
+  function setSavedAddresses(list) { localStorage.setItem(ADDRESS_KEY, JSON.stringify(list)); }
+
+  const fallbackPatients = [
+    { id: 'P1001', name: '张爷爷', idNo: '110101195803180013', condition: '骨折术后恢复期，需协助翻身、起身及日常照护' },
+    { id: 'P1002', name: '李女士', idNo: '110101197204080026', condition: '慢性病住院观察，需协助日常照护' }
+  ];
+  let selectedPatientId = '';
+  let isCreatingPatient = false;
+  let selectedAddressId = '';
+  function getSavedPatients() { try { const v = JSON.parse(localStorage.getItem(PATIENT_KEY)); return Array.isArray(v) ? v : fallbackPatients.slice(); } catch(e) { return fallbackPatients.slice(); } }
+  function setSavedPatients(list) { localStorage.setItem(PATIENT_KEY, JSON.stringify(list)); }
+  function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, function(char) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]; }); }
+  function fillPatientForm(patient) {
+    document.getElementById('patientName').value = patient.name || '';
+    document.getElementById('patientIdNo').value = patient.idNo || '';
+    document.getElementById('patientCondition').value = patient.condition || '';
+    syncPatientFromId(patient.idNo || '');
+  }
+  function updatePatientSummary() {
+    const patient = getSavedPatients().find(function(item) { return String(item.id) === String(selectedPatientId); });
+    const value = document.getElementById('selectedPatientValue');
+    const meta = document.getElementById('selectedPatientMeta');
+    if (!patient) { value.textContent = '请选择' + patientDisplayName(); meta.textContent = '选择已有档案或新增'; return; }
+    const parsed = parseChineseIdCard(patient.idNo);
+    value.textContent = patient.name;
+    meta.textContent = (parsed ? parsed.gender + ' · ' + parsed.age + '岁' : '身份信息待完善') + (patient.condition ? ' · ' + patient.condition : '');
+  }
+  function patientDisplayName() { return ['hospital', 'visit'].includes(serviceKey) ? '就诊人' : '服务对象'; }
+  function renderPatients() {
+    const box = document.getElementById('patientList');
+    if (!box) return;
+    const patients = getSavedPatients();
+    if (!selectedPatientId && patients.length && !isCreatingPatient) selectedPatientId = patients[0].id;
+    box.innerHTML = patients.map(function(patient) {
+      const parsed = parseChineseIdCard(patient.idNo);
+      const isSelected = patient.id === selectedPatientId;
+      const profile = (parsed ? parsed.gender + ' · ' + parsed.age + '岁' : '身份信息待完善') + (patient.condition ? ' · ' + escapeHtml(patient.condition) : '');
+      return '<div class="patient-card ' + (isSelected ? 'sel' : '') + '" onclick="selectPatient(\'' + escapeHtml(patient.id) + '\')"><div class="patient-radio"></div><div><div class="patient-card-main">' + escapeHtml(patient.name) + '</div><div class="patient-card-sub">' + profile + '</div></div></div>';
+    }).join('');
+    const selected = patients.find(function(patient) { return patient.id === selectedPatientId; });
+    if (selected) {
+      fillPatientForm(selected);
+    }
+    document.getElementById('patientEditor').hidden = !isCreatingPatient;
+    updatePatientSummary();
+  }
+  function selectPatient(id) {
+    isCreatingPatient = false;
+    selectedPatientId = id;
+    renderPatients();
+    closeDrawer('patientDrawer');
+  }
+  function showPatientEditor() {
+    selectedPatientId = '';
+    isCreatingPatient = true;
+    document.getElementById('patientName').value = '';
+    document.getElementById('patientIdNo').value = '';
+    document.getElementById('patientAge').value = '';
+    document.getElementById('patientGender').value = '';
+    document.getElementById('patientCondition').value = '';
+    renderPatients();
+    document.getElementById('patientEditor').hidden = false;
+    document.getElementById('patientName').focus();
+  }
+  function savePatientFromDrawer() {
+    if (!validatePatientInfo()) return;
+    renderPatients();
+    closeDrawer('patientDrawer');
+  }
+
+  function updateAddressSummary() {
+    const address = getSavedAddresses().find(function(item) { return String(item.id) === String(selectedAddressId); });
+    const value = document.getElementById('selectedAddressValue');
+    const meta = document.getElementById('selectedAddressMeta');
+    if (!address) { value.textContent = '请选择服务地址'; meta.textContent = '医院或家'; return; }
+    value.textContent = address.detail;
+    meta.textContent = (address.addressType === 'hospital' ? '医院' : '家') + ' · ' + (address.contact || '') + (address.phone ? ' · ' + address.phone : '');
+  }
+  function renderOrderAddresses() {
+    const box = document.getElementById('drawerAddressList');
+    if (!box) return;
+    const addressType = service.location === 'hospital' ? 'hospital' : 'home';
+    const list = getSavedAddresses().filter(function(address) { return address.addressType === addressType; });
+    const typeLabel = addressType === 'hospital' ? '医院' : '家';
+    if (!selectedAddressId && list.length) selectedAddressId = list[0].id;
+    box.innerHTML = list.length ? list.map(function(a) { return '<div class="address-card ' + (String(a.id) === String(selectedAddressId) ? 'sel' : '') + '" onclick="selectAddress(\'' + escapeHtml(a.id) + '\')"><div class="address-radio"></div><div><div class="address-main-row"><div class="address-main">' + escapeHtml(a.detail) + '</div><span class="address-type-tag ' + addressType + '">' + typeLabel + '</span></div><div class="address-sub">' + escapeHtml(a.contact || '') + (a.phone ? ' · ' + escapeHtml(a.phone) : '') + '</div></div></div>'; }).join('') : '<div style="text-align:center;color:var(--text3);font-size:12px;padding:10px 0">暂无' + typeLabel + '类型服务地址，请新增</div>';
+    updateAddressSummary();
+  }
+  function selectAddress(id) { selectedAddressId = id; renderOrderAddresses(); closeDrawer('addressDrawer'); }
+  function goAddAddress() { const type = service.location === 'hospital' ? 'hospital' : 'home'; const visitParam = visitServiceId ? '&visitService=' + encodeURIComponent(visitServiceId) : ''; location.href = 'address-edit.html?return=care&service=' + encodeURIComponent(serviceKey) + visitParam + '&type=' + type; }
+  function fitOverlayToPhone(id) {
+    const phone = document.querySelector('.phone');
+    const overlay = document.getElementById(id);
+    if (!phone || !overlay) return;
+    const rect = phone.getBoundingClientRect();
+    overlay.style.left = Math.round(rect.left) + 'px';
+    overlay.style.top = Math.round(rect.top) + 'px';
+    overlay.style.width = Math.round(rect.width) + 'px';
+    overlay.style.height = Math.round(rect.height) + 'px';
+  }
+  function openAddressDrawer() { renderOrderAddresses(); fitOverlayToPhone('addressDrawer'); document.getElementById('addressDrawer').classList.add('show'); }
+  function openPatientDrawer() { renderPatients(); fitOverlayToPhone('patientDrawer'); document.getElementById('patientDrawer').classList.add('show'); }
+  function closeDrawer(id) { document.getElementById(id).classList.remove('show'); }
+  function closeDrawerOnBackdrop(event, id) { if (event.target === event.currentTarget) closeDrawer(id); }
+
+  function durationLabel() {
+    if (service.durationMode === 'daily') return '24 小时/天 · ' + (isCustomCount ? '自定义 ' : '') + selectedCount + ' 天';
+    return (isCustomCount ? '自定义 ' : '') + selectedCount + ' 次';
+  }
+
+  function careNeedsReady() { return Boolean(careNeeds.independence && careNeeds.tube && careNeeds.infection); }
+  function dailyUnitPrice() {
+    const base = careNeeds.independence === 'independent' ? 300 : careNeeds.independence === 'partial' ? 400 : 500;
+    return base + (careNeeds.infection === 'has' ? 200 : 0);
+  }
+
+  function updateTimePrice() {
+    availablePoints = AKBPoints.get().balance;
+    const isDaily = service.durationMode === 'daily';
+    const ready = careNeedsReady();
+    const unitPrice = isDaily ? dailyUnitPrice() : service.price;
+    basePrice = unitPrice * selectedCount;
+    const maxDiscount = Math.min(basePrice, availablePoints);
+    const usePoints = document.getElementById('usePoints').checked;
+    pointsDiscount = ready && usePoints ? maxDiscount : 0;
+    pointsUsed = pointsDiscount;
+    currentPrice = ready ? basePrice - pointsDiscount : 0;
+    const priceCard = document.getElementById('needsPriceCard');
+    if (priceCard) priceCard.classList.toggle('ready', ready);
+    document.getElementById('priceRow').style.display = ready ? '' : 'none';
+    document.getElementById('timeSummary').textContent = durationLabel() + ' · ¥' + basePrice + '（¥' + unitPrice + (isDaily ? '/天' : '/次') + '）';
+    document.getElementById('pointsBalance').textContent = '可用 ' + availablePoints + ' 积分';
+    document.getElementById('pointsDetail').innerHTML = usePoints ? '已使用 <strong>' + pointsUsed + ' 积分</strong>，优惠后 <strong>¥' + currentPrice + '</strong>' : '本单最多可抵 ¥' + maxDiscount + '（' + maxDiscount + ' 积分）';
+    document.getElementById('priceLabel').textContent = '应付金额';
+    document.getElementById('priceNum').textContent = '¥' + currentPrice;
+    const save = document.getElementById('priceSave');
+    save.style.display = usePoints ? '' : 'none';
+    save.textContent = usePoints ? '积分已抵扣 ¥' + pointsDiscount : '';
+  }
+
+  function selectDailyType(el, type) {
+    selectedDailyType = type;
+    document.querySelectorAll('#dailyTypePicker .unit-pill').forEach(btn => btn.classList.remove('sel'));
+    el.classList.add('sel');
+    updateTimePrice();
+  }
+
+  function selectCount(el, count) {
+    selectedCount = count;
+    isCustomCount = false;
+    document.querySelectorAll('#countGrid .hour-option').forEach(btn => btn.classList.remove('sel'));
+    el.classList.add('sel');
+    document.getElementById('customCountGroup').classList.remove('show');
+    updateTimePrice();
+  }
+
+  function selectCustomCount(el) {
+    isCustomCount = true;
+    document.querySelectorAll('#countGrid .hour-option').forEach(btn => btn.classList.remove('sel'));
+    el.classList.add('sel');
+    const group = document.getElementById('customCountGroup');
+    const input = document.getElementById('customCountInput');
+    group.classList.add('show');
+    selectedCount = Math.max(1, Math.min(365, Number.parseInt(input.value, 10) || 1));
+    input.value = selectedCount;
+    updateTimePrice();
+    input.focus();
+  }
+
+  function setCustomCount(value) {
+    const count = Number.parseInt(value, 10);
+    if (!Number.isFinite(count) || count < 1) return;
+    selectedCount = Math.min(365, count);
+    updateTimePrice();
+  }
+
+  function togglePoints() { updateTimePrice(); }
+
+  function selectNeedOption(type, el) {
+    careNeeds[type] = el.dataset.value;
+    el.closest('.need-options').querySelectorAll('.need-option').forEach(function(option) { option.classList.toggle('sel', option === el); });
+    updateTimePrice();
+  }
+  function careNeedLabel(type, value) {
+    const labels = { independence:{independent:'完全自理',partial:'半自理',dependent:'完全失能'}, tube:{none:'无',has:'有'}, infection:{none:'无',has:'有'} };
+    return labels[type] && labels[type][value] ? labels[type][value] : '未选择';
+  }
+  function validateCareNeeds() {
+    if (!careNeeds.independence || !careNeeds.tube || !careNeeds.infection) { alert('请完成护理需求选择'); return false; }
+    return true;
+  }
+
+  function initService() {
+    document.getElementById('servicePageTitle').textContent = service.name + '下单';
+    document.getElementById('payService').textContent = service.name;
+    const isMedicalService = serviceKey === 'hospital' || serviceKey === 'visit';
+    const patientName = isMedicalService ? '就诊人' : '服务对象';
+    document.getElementById('patientTitle').textContent = '选择' + patientName;
+    document.getElementById('drawerPatientTitle').textContent = '选择' + patientName;
+    document.querySelector('#patientDrawer .address-add').textContent = '＋ 新增' + patientName;
+    document.getElementById('payPatientKey').textContent = patientName;
+    document.getElementById('payConditionKey').textContent = isMedicalService ? '病症需求' : '健康情况';
+    document.getElementById('payPatientRow').style.display = '';
+    document.getElementById('payConditionRow').style.display = '';
+    document.getElementById('locationTitle').textContent = '选择服务地址';
+    document.getElementById('stepLocationLbl').textContent = '服务地址';
+    document.getElementById('payLocationKey').textContent = '服务地址';
+    renderOrderAddresses();
+    renderPatients();
+    const d = new Date();
+    const date = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    const dateInput = document.getElementById('serviceDate');
+    dateInput.value = date; dateInput.min = date;
+    const isDaily = service.durationMode === 'daily';
+    document.getElementById('serviceModeNote').textContent = isDaily ? '服务方式：24 小时/天' : '服务方式：按次服务';
+    document.getElementById('countLabel').textContent = isDaily ? '选择服务天数' : '选择服务次数';
+    document.getElementById('countGrid').innerHTML = (isDaily ? [1, 2, 3, 5, 7].map((n, i) => '<button class="hour-option ' + (i === 0 ? 'sel' : '') + '" type="button" onclick="selectCount(this,' + n + ')">' + n + ' 天</button>').join('') + '<button class="hour-option" type="button" onclick="selectCustomCount(this)">自定义天数</button>' : [1, 3, 5, 10].map((n, i) => '<button class="hour-option ' + (i === 0 ? 'sel' : '') + '" type="button" onclick="selectCount(this,' + n + ')">' + n + ' 次</button>').join('') + '<button class="hour-option" type="button" onclick="selectCustomCount(this)">自定义次数</button>');
+    document.getElementById('customCountGroup').classList.toggle('show', false);
+    document.getElementById('customCountGroup').style.display = '';
+    document.getElementById('customCountLabel').textContent = isDaily ? '自定义服务天数' : '自定义服务次数';
+    document.getElementById('customCountUnit').textContent = isDaily ? '天' : '次';
+    document.getElementById('timeNoteTitle').textContent = isDaily ? '按服务类型与天数计费' : '按服务次数计费';
+    document.getElementById('timeNoteText').textContent = isDaily ? '服务开始后如需调整，将按实际服务时长计算费用' : '单次服务完成后将自动核销对应次数';
+    document.getElementById('serviceDate').addEventListener('change', updateTimePrice);
+    selectedDailyType = 'full';
+    selectedCount = 1;
+    isCustomCount = false;
+    document.getElementById('customCountInput').value = 1;
+    document.getElementById('usePoints').checked = false;
+    updateTimePrice();
+  }
+
+  /* ── Submit ── */
+  function submitOrder() {
+    /* populate summary */
+    const address = getSavedAddresses().find(function(item) { return String(item.id) === String(selectedAddressId); });
+    if (address) document.getElementById('payHosp').textContent = address.detail;
+    const patient = parseChineseIdCard(document.getElementById('patientIdNo').value);
+    document.getElementById('payPatient').textContent = document.getElementById('patientName').value.trim() + ' · ' + patient.gender + ' · ' + patient.age + '岁';
+    document.getElementById('payCondition').textContent = document.getElementById('patientCondition').value.trim();
+    document.getElementById('payCareNeeds').textContent = careNeedLabel('independence', careNeeds.independence) + ' · 管路' + careNeedLabel('tube', careNeeds.tube) + ' · 传染性疾病' + careNeedLabel('infection', careNeeds.infection);
+    const otherNeeds = document.getElementById('otherNeeds').value.trim();
+    document.getElementById('payOtherNeedsRow').style.display = otherNeeds ? '' : 'none';
+    document.getElementById('payOtherNeeds').textContent = otherNeeds || '—';
+    const date = document.getElementById('serviceDate').value;
+    document.getElementById('payDur').textContent = date + '（' + durationLabel() + '）';
+    if (pointsUsed) {
+      const actualPoints = AKBPoints.spend(pointsUsed, service.name + '订单');
+      pointsDiscount = actualPoints;
+      pointsUsed = actualPoints;
+      currentPrice = basePrice - actualPoints;
+    }
+    document.getElementById('payPointsRow').style.display = pointsDiscount ? '' : 'none';
+    document.getElementById('payPoints').textContent = '-¥' + pointsDiscount + '（' + pointsUsed + '积分）';
+    document.getElementById('payAmt').textContent  = '¥' + currentPrice;
+    document.getElementById('payOrderNum').textContent =
+      '订单号：AKB-' + new Date().getFullYear() + '-' +
+      String(Math.floor(Math.random() * 999999)).padStart(6, '0');
+    /* show overlay */
+    const ov = document.getElementById('payOverlay');
+    fitOverlayToPhone('payOverlay');
+    ov.classList.add('show');
+  }
+
+  window.addEventListener('resize', function() {
+    ['addressDrawer', 'patientDrawer', 'payOverlay'].forEach(function(id) {
+      const overlay = document.getElementById(id);
+      if (overlay && overlay.classList.contains('show')) fitOverlayToPhone(id);
+    });
+  });
+
+  initService();
+  updateUI();
+</script>
+</body>
+</html>

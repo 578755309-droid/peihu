@@ -1,0 +1,1031 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>我的订单</title>
+  <style>
+    :root {
+      --purple:       #8655C5;
+      --purple-dark:  #6B3FAA;
+      --purple-light: #EDE6F7;
+      --purple-bg:    #F5F3FA;
+      --card:         #FFFFFF;
+      --text:         #1A1828;
+      --text2:        #6B6880;
+      --text3:        #AEACC0;
+      --border:       #EDE9F5;
+      --red:          #EF4444;
+      --green:        #22C55E;
+      --sh: 0 2px 16px rgba(100,60,160,.08);
+      --r-lg: 20px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--purple-bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Desktop frame */
+    .frame { display: flex; justify-content: center; width: 100%; min-width: 0; min-height: 100vh; overflow: hidden; background: #E4DDF0; }
+    .phone {
+      width: 100%; max-width: 430px;
+      display: flex; flex-direction: column; background: var(--purple-bg); min-height: 100vh;
+      min-width: 0;
+    }
+    @media (min-width: 520px) {
+      .frame { align-items: flex-start; padding: 20px 0 40px; }
+      .phone {
+        height: 900px; min-height: unset; border-radius: 42px; overflow: hidden;
+        box-shadow: 0 24px 72px rgba(80,40,140,.22), 0 2px 8px rgba(0,0,0,.06);
+      }
+    }
+
+    .scroll-area { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* Status bar */
+    .status-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 13px 22px 8px; font-size: 13px; font-weight: 700;
+      background: var(--card); letter-spacing: .2px;
+    }
+    .status-right { display: flex; align-items: center; gap: 5px; }
+    .status-right svg { width: 17px; height: 17px; }
+
+    /* Navbar */
+    .navbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px 12px; background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .back-btn {
+      width: 36px; height: 36px; border: none; cursor: pointer;
+      background: var(--purple-light); border-radius: 11px;
+      display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
+    }
+    .back-btn svg { width: 20px; height: 20px; }
+    .nav-title { font-size: 17px; font-weight: 800; color: var(--text); }
+    .nav-ph { width: 36px; }
+
+    /* Tab filter */
+    .order-type-tabs {
+      display: flex; background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 0 32px; position: sticky; top: 56px; z-index: 10; min-width: 0;
+    }
+    .order-type-tab {
+      flex: 1; padding: 12px 4px 10px; text-align: center;
+      font-size: 14px; font-weight: 800; color: var(--text3);
+      border: 0; border-bottom: 2.5px solid transparent; background: transparent;
+      cursor: pointer; transition: color .15s, border-color .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .order-type-tab.on { color: var(--purple); border-bottom-color: var(--purple); }
+    .tab-filter {
+      display: flex; background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 8px;
+      position: sticky; top: 99px; z-index: 9;
+      min-width: 0;
+    }
+    .tab-filter[hidden] { display: none; }
+    .mall-tab-filter .tf.on { color: #F05A3C; border-bottom-color: #F05A3C; }
+    .mall-order-card { overflow: hidden; cursor: pointer; }
+    .mall-order-main { padding: 15px 16px 12px; }
+    .mall-order-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .mall-order-no { color: var(--text3); font-size: 11px; font-weight: 600; }
+    .mall-state { padding: 4px 9px; border-radius: 14px; font-size: 11px; font-weight: 800; }
+    .mall-state.payment { color: #D97706; background: #FEF3C7; }
+    .mall-state.shipping { color: #397EED; background: #E8F1FF; }
+    .mall-state.receiving { color: #C26C16; background: #FFF1DD; }
+    .mall-state.done { color: #16A34A; background: #DCFCE7; }
+    .mall-product-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+    .mall-product-thumb { width: 66px; height: 66px; flex: 0 0 66px; display: grid; place-items: center; border-radius: 14px; background: var(--purple-light); color: var(--purple); }
+    .mall-product-thumb.blue { background: #E8F1FF; color: #397EED; }
+    .mall-product-thumb.green { background: #E8F8F0; color: #18A365; }
+    .mall-product-thumb.orange { background: #FFF1DD; color: #D97706; }
+    .mall-product-thumb svg { width: 42px; height: 42px; }
+    .mall-product-thumb img { width: 54px; height: 54px; object-fit: contain; }
+    .mall-product-copy { min-width: 0; flex: 1; }
+    .mall-product-name { font-size: 15px; font-weight: 900; line-height: 1.3; }
+    .mall-product-desc { margin-top: 5px; color: var(--text2); font-size: 11px; line-height: 1.4; }
+    .mall-product-price { align-self: flex-start; color: var(--text); font-size: 14px; font-weight: 900; white-space: nowrap; }
+    .mall-product-price small { font-size: 11px; }
+    .mall-order-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--border); color: var(--text2); font-size: 11px; }
+    .mall-order-meta strong { color: var(--text); font-size: 14px; }
+    .mall-order-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 0 16px 14px; }
+    .mall-action { min-width: 82px; height: 34px; padding: 0 12px; border: 1px solid var(--border); border-radius: 18px; background: #fff; color: var(--text2); font: 700 11px inherit; cursor: pointer; }
+    .mall-action.primary { border-color: #F05A3C; background: #F05A3C; color: #fff; }
+    .mall-action:active { transform: scale(.97); }
+    .mall-empty { margin: 16px 14px; padding: 36px 16px; text-align: center; color: var(--text3); font-size: 12px; background: var(--card); border-radius: 16px; }
+    @media (max-width: 360px) {
+      .order-type-tabs { padding: 0 22px; }
+      .tf { font-size: 10px; }
+    }
+    .tf {
+      flex: 1; min-width: 0; padding: 11px 4px 10px; text-align: center;
+      font-size: 11px; font-weight: 700; color: var(--text3);
+      border-bottom: 2.5px solid transparent;
+      cursor: pointer; transition: color .15s, border-color .15s;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tf.on { color: var(--purple); border-bottom-color: var(--purple); }
+
+    .content { padding: 14px 0 24px; }
+
+    /* Order card */
+    .order-card {
+      background: var(--card); border-radius: var(--r-lg);
+      margin: 0 14px 14px; box-shadow: var(--sh); overflow: hidden;
+    }
+    .card-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
+    }
+    .order-no { font-size: 12px; color: var(--text3); font-weight: 600; }
+
+    /* Status badges */
+    .status-badge {
+      display: flex; align-items: center; gap: 5px;
+      padding: 4px 11px; border-radius: 20px;
+      font-size: 12px; font-weight: 800; letter-spacing: .2px;
+    }
+    .badge-pending { background: #FEF3C7; color: #D97706; }
+    .badge-payment { background: #FEE2E2; color: #DC2626; }
+    .badge-active  { background: #DCFCE7; color: #16A34A; }
+    .badge-done    { background: #F1F5F9; color: #64748B; }
+    .badge-refund  { background: var(--purple-light); color: var(--purple); }
+    .countdown { font-family: 'SF Mono', 'Courier New', monospace; font-size: 13px; letter-spacing: 1px; }
+
+    /* Card body */
+    .card-body { padding: 14px 16px 0; }
+
+    /* Service-first summary */
+    .service-overview { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+    .service-visual { width:72px; height:72px; border-radius:15px; flex:0 0 72px; display:grid; place-items:center; color:#fff; box-shadow:0 6px 16px rgba(72,44,120,.14); }
+    .service-visual svg { width:46px; height:46px; }
+    .service-visual.visit { background:linear-gradient(145deg,#6B3FAA,#A77AD6); }
+    .service-visual.care { background:linear-gradient(145deg,#2C8A87,#65C7B4); }
+    .service-visual.home { background:linear-gradient(145deg,#D97706,#F4B55C); }
+    .service-visual.bath { background:linear-gradient(145deg,#2F78B7,#70B9E8); }
+    .service-copy { min-width:0; flex:1; }
+    .service-type { font-size:11px; color:var(--purple); font-weight:800; margin-bottom:3px; }
+    .service-project { font-size:17px; line-height:1.25; font-weight:900; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .service-desc { margin-top:4px; font-size:11px; color:var(--text2); line-height:1.4; }
+
+    /* Hospital row */
+    .hosp-row { display: flex; align-items: center; gap: 9px; margin: 0 0 11px; padding: 0 0 10px; border-bottom: 1px solid var(--border); }
+    .hosp-logo {
+      width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+      display: grid; place-items: center;
+      font-size: 11px; font-weight: 900; color: #fff;
+    }
+    .hosp-name { font-size: 12px; font-weight: 800; color: var(--text2); }
+    .hosp-ward { font-size: 11px; color: var(--text3); margin-top: 1px; }
+    .home-location { background:linear-gradient(140deg,#D97706,#F4B55C); }
+    .bath-location { background:linear-gradient(140deg,#2F78B7,#70B9E8); }
+
+    .divider { height: 1px; background: var(--border); margin-bottom: 14px; }
+    .hosp-row + .divider { display:none; }
+
+    /* Nurse row */
+    .nurse-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .nurse-av {
+      width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+      display: grid; place-items: center;
+      font-size: 17px; font-weight: 900; color: #fff;
+      box-shadow: 0 3px 10px rgba(100,60,160,.18);
+    }
+    .nurse-info { flex: 1; }
+    .nurse-name { font-size: 14px; font-weight: 800; color: var(--text); }
+    .nurse-meta { display: flex; align-items: center; gap: 7px; margin-top: 4px; }
+    .nurse-rate {
+      display: flex; align-items: center; gap: 3px;
+      font-size: 12px; font-weight: 700; color: var(--purple);
+    }
+    .nurse-rate svg { width: 12px; height: 12px; fill: #F59E0B; }
+    .nurse-spec {
+      font-size: 10px; font-weight: 700;
+      background: var(--purple-light); color: var(--purple);
+      padding: 2px 8px; border-radius: 20px;
+    }
+    .call-btn {
+      width: 38px; height: 38px; border-radius: 50%; border: none;
+      background: var(--purple-light); display: grid; place-items: center;
+      cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+      transition: background .12s;
+    }
+    .call-btn:active { background: #D9CFF0; }
+    .call-btn svg { width: 18px; height: 18px; }
+
+    /* Service chips */
+    .svc-chips { display: flex; gap: 0; margin-bottom: 12px; border-radius: 11px; background: var(--purple-bg); padding: 8px 4px; }
+    .chip {
+      flex: 1; min-width:0; background: transparent; border-radius: 0;
+      padding: 2px 8px; display: flex; flex-direction: column; gap: 2px;
+      border-right:1px solid var(--border);
+    }
+    .chip:last-child { border-right:0; }
+    .chip-lbl { font-size: 10px; color: var(--text3); font-weight: 600; }
+    .chip-val { font-size: 12px; color: var(--text); font-weight: 800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .chip-val.accent { color: var(--purple); }
+
+    /* Countdown chip special */
+    .chip.chip-timer { background: #FEF3C7; }
+    .chip.chip-timer .chip-lbl { color: #B45309; }
+
+    /* Action buttons */
+    .action-bar {
+      border-top: 1px solid var(--border);
+      padding: 10px 0 12px;
+      display: flex; gap: 7px;
+    }
+    .act-btn {
+      flex: 1; height: 36px; border-radius: 10px; border: none;
+      font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 3px;
+      -webkit-tap-highlight-color: transparent; transition: transform .1s, filter .1s;
+      white-space: nowrap;
+    }
+    .act-btn:active { transform: scale(.97); filter: brightness(.93); }
+    .act-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+    .act-ghost   { background: var(--purple-bg); color: var(--text2); }
+    .act-purple  { background: var(--purple-light); color: var(--purple); }
+    .act-primary {
+      background: linear-gradient(135deg,#9060D0,#6B3FAA); color: #fff;
+      box-shadow: 0 4px 14px rgba(107,63,170,.25);
+    }
+    .act-danger  { background: #FEE2E2; color: #DC2626; }
+    .act-full { flex: 2; }
+
+    /* Action modal */
+    .action-modal { position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(25,15,45,.48); opacity:0; pointer-events:none; transition:opacity .2s; }
+    .action-modal.show { opacity:1; pointer-events:auto; }
+    .action-sheet { width:min(360px,100%); background:#fff; border-radius:22px; padding:22px 18px 16px; box-shadow:0 18px 60px rgba(35,18,70,.25); transform:translateY(12px) scale(.98); transition:transform .2s; }
+    .action-modal.show .action-sheet { transform:none; }
+    .action-icon { width:46px; height:46px; margin:0 auto 10px; border-radius:15px; display:grid; place-items:center; background:var(--purple-light); color:var(--purple); font-size:23px; }
+    .action-title { text-align:center; font-size:17px; font-weight:900; }
+    .action-desc { margin:9px 4px 18px; color:var(--text2); font-size:13px; line-height:1.6; text-align:center; white-space:pre-line; }
+    .action-actions { display:flex; gap:9px; }
+    .action-actions button { flex:1; height:42px; border:0; border-radius:12px; font:800 13px inherit; cursor:pointer; }
+    .modal-cancel { background:var(--purple-bg); color:var(--text2); }
+    .modal-confirm { background:linear-gradient(135deg,#9060D0,#6B3FAA); color:#fff; }
+    .refund-form { display:none; margin:0 2px 15px; text-align:left; }
+    .refund-form.show { display:block; }
+    .refund-form label { display:block; font-size:12px; color:var(--text2); font-weight:800; margin:0 0 6px; }
+    .refund-form select, .refund-form textarea { width:100%; border:1.5px solid var(--border); border-radius:10px; background:#FAF9FC; color:var(--text); padding:10px; font:500 13px inherit; outline:none; }
+    .refund-form textarea { height:65px; resize:none; margin-top:9px; }
+    .after-sale-note { margin:0 0 12px; padding:9px 11px; border-radius:10px; background:var(--purple-light); color:var(--purple-dark); font-size:12px; font-weight:700; }
+    .refund-btn[disabled] { opacity:.62; cursor:default; }
+    .rating-form { display:none; margin:2px 0 17px; text-align:center; }
+    .rating-form.show { display:block; }
+    .rating-hint { color:var(--text2); font-size:12px; line-height:1.5; }
+    .rating-stars { display:flex; justify-content:center; gap:6px; margin-top:13px; }
+    .rating-star { width:35px; height:35px; padding:0; border:0; background:transparent; color:#D7D2E4; font-size:28px; line-height:1; cursor:pointer; transition:transform .15s,color .15s; }
+    .rating-star.selected,.rating-star:hover { color:#F3B63F; transform:scale(1.08); }
+    .rating-score { margin-top:8px; color:var(--purple); font-size:12px; font-weight:800; min-height:18px; }
+    .order-v2-btn.evaluated { border-color:#D9F0E5; background:#F0FBF5; color:#16965A; cursor:default; }
+
+    /* Bottom nav */
+    .bottom-nav {
+      flex-shrink: 0; display: flex; background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      cursor: pointer; padding: 4px 0; -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+    }
+    .nav-ico { width: 26px; height: 26px; }
+    .nav-lbl { font-size: 11px; font-weight: 700; color: var(--text3); }
+    .nav-item.active .nav-lbl { color: var(--purple); }
+    .nav-item.active .ni { stroke: var(--purple) !important; }
+    .nav-item.active .nif { fill: var(--purple) !important; }
+  </style>
+</head>
+<body>
+<div class="frame">
+  <div class="phone">
+    <div class="scroll-area">
+
+      <!-- iOS status bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-right">
+          <svg viewBox="0 0 17 12" fill="currentColor">
+            <rect x="0" y="3" width="3" height="9" rx="1"/>
+            <rect x="4.5" y="1.5" width="3" height="10.5" rx="1"/>
+            <rect x="9" y="0" width="3" height="12" rx="1"/>
+            <rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".28"/>
+          </svg>
+          <svg viewBox="0 0 17 13" fill="none" stroke="currentColor" stroke-linecap="round">
+            <path d="M8.5 9.5a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8z" fill="currentColor" stroke="none"/>
+            <path d="M5.2 7a4.7 4.7 0 016.6 0" stroke-width="1.5"/>
+            <path d="M2 4a8.8 8.8 0 0113 0" stroke-width="1.5"/>
+          </svg>
+          <svg viewBox="0 0 24 12" fill="none">
+            <rect x=".6" y=".6" width="20" height="10.8" rx="2.8" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="21.2" y="3.6" width="2.2" height="4.8" rx="1.1" fill="currentColor"/>
+            <rect x="2" y="2" width="15" height="8" rx="1.8" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Navbar -->
+      <div class="navbar">
+        <button class="back-btn" onclick="location.href='home.html'" aria-label="返回">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path d="M13 4.5L7.5 10 13 15.5" stroke="#8655C5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="nav-title">我的订单</span>
+        <div class="nav-ph"></div>
+      </div>
+
+      <!-- Order type tabs -->
+      <div class="order-type-tabs" role="tablist" aria-label="订单类型">
+        <button class="order-type-tab on" type="button" role="tab" aria-selected="true" data-order-type="service" onclick="switchOrderType('service')">服务订单</button>
+        <button class="order-type-tab" type="button" role="tab" aria-selected="false" data-order-type="mall" onclick="switchOrderType('mall')">商城订单</button>
+      </div>
+
+      <!-- Service order status filter -->
+      <div class="tab-filter service-tab-filter" role="tablist" aria-label="服务订单状态">
+        <div class="tf on" onclick="filterTab(this,'payment')">待支付</div>
+        <div class="tf" onclick="filterTab(this,'pending-service')">待服务</div>
+        <div class="tf" onclick="filterTab(this,'active')">服务中</div>
+        <div class="tf" onclick="filterTab(this,'done')">已完成</div>
+        <div class="tf" onclick="filterTab(this,'refund')">退款/售后</div>
+      </div>
+
+      <!-- Mall order status filter -->
+      <div class="tab-filter mall-tab-filter" role="tablist" aria-label="商城订单状态" hidden>
+        <div class="tf on" onclick="filterTab(this,'all')">全部</div>
+        <div class="tf" onclick="filterTab(this,'payment')">待付款</div>
+        <div class="tf" onclick="filterTab(this,'shipping')">待发货</div>
+        <div class="tf" onclick="filterTab(this,'receiving')">待收货</div>
+        <div class="tf" onclick="filterTab(this,'done')">已完成</div>
+      </div>
+
+      <div class="content" id="orderList">
+
+        <!-- ─── Order 0: 待支付 ─── -->
+        <div class="order-card" data-status="payment">
+          <div class="card-top">
+            <span class="order-no">订单号 AKB-2026-039105</span>
+            <div class="status-badge badge-payment">待支付</div>
+          </div>
+          <div class="card-body">
+            <div class="service-overview">
+              <div class="service-visual visit" aria-hidden="true">
+                <svg viewBox="0 0 52 52" fill="none"><circle cx="26" cy="19" r="8" fill="rgba(255,255,255,.92)"/><path d="M13 42c1.9-7.1 6.2-10.7 13-10.7S37.1 34.9 39 42" stroke="rgba(255,255,255,.92)" stroke-width="4" stroke-linecap="round"/><path d="M35 13l3 3 6-6" stroke="#EADFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div class="service-copy">
+                <div class="service-type">陪诊服务</div>
+                <div class="service-project">贵宾陪诊</div>
+                <div class="service-desc">门诊全程陪同 · 预约待支付</div>
+              </div>
+            </div>
+            <div class="hosp-row">
+              <div class="hosp-logo" style="background:linear-gradient(140deg,#2350A8,#547FD8)">协和</div>
+              <div><div class="hosp-name">北京协和医院</div><div class="hosp-ward">门诊部 · 陪诊服务 · 王女士</div></div>
+            </div>
+            <div class="svc-chips">
+              <div class="chip"><span class="chip-lbl">服务类型</span><span class="chip-val">贵宾陪诊</span></div>
+              <div class="chip"><span class="chip-lbl">预约日期</span><span class="chip-val">04/12</span></div>
+              <div class="chip"><span class="chip-lbl">待付金额</span><span class="chip-val accent">¥298</span></div>
+            </div>
+            <div class="action-bar">
+              <button class="act-btn act-ghost" onclick="cancelPendingPayment(this)">取消订单</button>
+              <button class="act-btn act-primary act-full" onclick="openActionModal('pay',this)">立即支付</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Order 1: 待服务 ─── -->
+        <div class="order-card" data-status="pending-service">
+          <div class="card-top">
+            <span class="order-no">订单号 AKB-2026-038421</span>
+            <div class="status-badge badge-pending">
+              <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                <circle cx="7" cy="7" r="5.8" stroke="#D97706" stroke-width="1.4"/>
+                <path d="M7 4v3l2 1.5" stroke="#D97706" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+              待服务
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="service-overview">
+              <div class="service-visual care" aria-hidden="true">
+                <svg viewBox="0 0 52 52" fill="none"><path d="M26 42S10 32.4 10 20.5C10 14.7 14 11 19 11c3.2 0 5.7 1.6 7 4 1.3-2.4 3.8-4 7-4 5 0 9 3.7 9 9.5C42 32.4 26 42 26 42z" fill="rgba(255,255,255,.92)"/><path d="M26 18v13M19.5 24.5h13" stroke="#3E9A91" stroke-width="3" stroke-linecap="round"/></svg>
+              </div>
+              <div class="service-copy">
+                <div class="service-type">住院陪护</div>
+                <div class="service-project">住院专护</div>
+                <div class="service-desc">12小时/天 · 04/10 开始服务</div>
+              </div>
+            </div>
+
+            <!-- Service location -->
+            <div class="hosp-row">
+              <div class="hosp-logo" style="background:linear-gradient(140deg,#C92B2B,#E86060)">红会</div>
+              <div>
+                <div class="hosp-name">北京红十字医院</div>
+                <div class="hosp-ward">内科 5楼 · 3床 · 张先生</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Nurse -->
+            <div class="nurse-row">
+              <div class="nurse-av" style="background:linear-gradient(140deg,#7B3FBE,#AA7AE0)">李</div>
+              <div class="nurse-info">
+                <div class="nurse-name">李桂芳</div>
+                <div class="nurse-meta">
+                  <span class="nurse-rate">
+                    <svg viewBox="0 0 13 13"><path d="M6.5 1l1.4 3.1 3.2.3-2.4 2.2.7 3.2L6.5 8.1 3.6 9.8l.7-3.2L2 4.4z"/></svg>
+                    98%
+                  </span>
+                  <span class="nurse-spec">住院专护 · 5年</span>
+                </div>
+              </div>
+              <button class="call-btn" onclick="openActionModal('call')" title="联系护理员">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M4 4.5C4 4 4.5 3 6 3.5c1 .3 2.5 2 2.5 3 0 .7-.5 1-1 1.5s-.5 1 0 2c.5.8 1.5 2 2.5 2.5s1.3.5 2 0 .8-1 1.5-1c1 0 2.7 1.5 3 2.5.5 1.5-.5 2-1 2C13 17 4 12 4 4.5z" stroke="#8655C5" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Service info chips -->
+            <div class="svc-chips">
+              <div class="chip">
+                <span class="chip-lbl">服务时长</span>
+                <span class="chip-val">12小时/天</span>
+              </div>
+              <div class="chip">
+                <span class="chip-lbl">预约日期</span>
+                <span class="chip-val">04/10 开始</span>
+              </div>
+              <div class="chip">
+                <span class="chip-lbl">实付金额</span>
+                <span class="chip-val accent">¥280/天</span>
+              </div>
+            </div>
+
+            <!-- Service notice -->
+            <div style="display:flex;align-items:center;gap:6px;background:#EDE6F7;border-radius:10px;padding:9px 12px;margin-bottom:14px;">
+              <svg viewBox="0 0 16 16" fill="none" width="15" height="15">
+                <circle cx="8" cy="8" r="6.5" stroke="#8655C5" stroke-width="1.3"/>
+                <path d="M8 5v3l2 1.5" stroke="#8655C5" stroke-width="1.3" stroke-linecap="round"/>
+              </svg>
+              <span style="font-size:12px;font-weight:700;color:#6B3FAA;">护理员已接单，将于 04/10 08:00 开始服务</span>
+            </div>
+
+            <!-- Actions -->
+            <div class="action-bar">
+              <button class="act-btn act-ghost" onclick="location.href='daily-report.html'">
+                <svg viewBox="0 0 15 15" fill="none">
+                  <rect x="2" y="1.5" width="11" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/>
+                  <path d="M5 5h5M5 8h5M5 11h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                查看日报
+              </button>
+              <button class="act-btn act-primary" onclick="openActionModal('renew')">
+                <svg viewBox="0 0 15 15" fill="none">
+                  <path d="M2 7.5a5.5 5.5 0 1010.5 2" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
+                  <path d="M12.5 3v4.5L8 7.5" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                续&nbsp;费
+              </button>
+              <button class="act-btn act-danger refund-btn" onclick="openActionModal('refund',this)">
+                <svg viewBox="0 0 15 15" fill="none">
+                  <circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.3"/>
+                  <path d="M5.5 9.5l4-4M9.5 9.5l-4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+                退款/售后
+              </button>
+              <button class="act-btn act-purple" onclick="openActionModal('call')">
+                <svg viewBox="0 0 15 15" fill="none">
+                  <path d="M3 3.5C3 3 3.4 2 4.5 2.5c.8.3 2 1.6 2 2.5 0 .6-.4.8-.8 1.2s-.4.8 0 1.6c.4.7 1.2 1.6 2 2s1 .4 1.6 0 .6-.8 1.2-.8c.8 0 2.1 1.2 2.4 2 .4 1.2-.4 1.6-.8 1.6-2 .5-9-4-9-11z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+                联系护理员
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Order 2: 服务中 ─── -->
+        <div class="order-card" data-status="active">
+          <div class="card-top">
+            <span class="order-no">订单号 AKB-2026-031085</span>
+            <div class="status-badge badge-active">
+              <svg viewBox="0 0 14 14" fill="none" width="13" height="13">
+                <circle cx="7" cy="7" r="5.8" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.2"/>
+                <path d="M4.5 7l2 2 3-3" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              服务中
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="service-overview">
+              <div class="service-visual care" aria-hidden="true">
+                <svg viewBox="0 0 52 52" fill="none"><path d="M26 42S10 32.4 10 20.5C10 14.7 14 11 19 11c3.2 0 5.7 1.6 7 4 1.3-2.4 3.8-4 7-4 5 0 9 3.7 9 9.5C42 32.4 26 42 26 42z" fill="rgba(255,255,255,.92)"/><path d="M26 18v13M19.5 24.5h13" stroke="#3E9A91" stroke-width="3" stroke-linecap="round"/></svg>
+              </div>
+              <div class="service-copy">
+                <div class="service-type">住院陪护</div>
+                <div class="service-project">重症陪护</div>
+                <div class="service-desc">24小时/天 · 已服务 2 天</div>
+              </div>
+            </div>
+            <div class="hosp-row">
+              <div class="hosp-logo" style="background:linear-gradient(140deg,#2350A8,#547FD8)">协和</div>
+              <div>
+                <div class="hosp-name">北京协和医院</div>
+                <div class="hosp-ward">外科 8楼 · 12床 · 王奶奶</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="nurse-row">
+              <div class="nurse-av" style="background:linear-gradient(140deg,#C75510,#F4A030)">王</div>
+              <div class="nurse-info">
+                <div class="nurse-name">王美玲</div>
+                <div class="nurse-meta">
+                  <span class="nurse-rate">
+                    <svg viewBox="0 0 13 13"><path d="M6.5 1l1.4 3.1 3.2.3-2.4 2.2.7 3.2L6.5 8.1 3.6 9.8l.7-3.2L2 4.4z"/></svg>
+                    99%
+                  </span>
+                  <span class="nurse-spec">重症陪护 · 8年</span>
+                </div>
+              </div>
+              <button class="call-btn" onclick="openActionModal('call')" title="联系护理员">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M4 4.5C4 4 4.5 3 6 3.5c1 .3 2.5 2 2.5 3 0 .7-.5 1-1 1.5s-.5 1 0 2c.5.8 1.5 2 2.5 2.5s1.3.5 2 0 .8-1 1.5-1c1 0 2.7 1.5 3 2.5.5 1.5-.5 2-1 2C13 17 4 12 4 4.5z" stroke="#8655C5" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <div class="svc-chips">
+              <div class="chip">
+                <span class="chip-lbl">服务时长</span>
+                <span class="chip-val">24小时/天</span>
+              </div>
+              <div class="chip">
+                <span class="chip-lbl">已服务</span>
+                <span class="chip-val">2天</span>
+              </div>
+              <div class="chip">
+                <span class="chip-lbl">实付金额</span>
+                <span class="chip-val accent">¥480/天</span>
+              </div>
+            </div>
+
+            <div class="action-bar">
+              <button class="act-btn act-ghost" onclick="location.href='daily-report.html'">
+                <svg viewBox="0 0 15 15" fill="none">
+                  <rect x="2" y="1.5" width="11" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/>
+                  <path d="M5 5h5M5 8h5M5 11h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                查看日报
+              </button>
+              <button class="act-btn act-primary" onclick="openActionModal('renew')">
+                <svg viewBox="0 0 15 15" fill="none">
+                  <path d="M2 7.5a5.5 5.5 0 1010.5 2" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/>
+                  <path d="M12.5 3v4.5L8 7.5" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                续&nbsp;费
+              </button>
+              <button class="act-btn act-danger refund-btn" onclick="openActionModal('refund',this)">
+                <svg viewBox="0 0 15 15" fill="none">
+                  <circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.3"/>
+                  <path d="M5.5 9.5l4-4M9.5 9.5l-4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+                退款/售后
+              </button>
+              <button class="act-btn act-purple" onclick="openActionModal('call')">
+                <svg viewBox="0 0 15 15" fill="none">
+                  <path d="M3 3.5C3 3 3.4 2 4.5 2.5c.8.3 2 1.6 2 2.5 0 .6-.4.8-.8 1.2s-.4.8 0 1.6c.4.7 1.2 1.6 2 2s1 .4 1.6 0 .6-.8 1.2-.8c.8 0 2.1 1.2 2.4 2 .4 1.2-.4 1.6-.8 1.6-2 .5-9-4-9-11z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+                联系护理员
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Order 3: 已完成 ─── -->
+        <div class="order-card" data-status="done">
+          <div class="card-top">
+            <span class="order-no">订单号 AKB-2026-022301</span>
+            <div class="status-badge badge-done">✓ 已完成</div>
+          </div>
+
+          <div class="card-body">
+            <div class="service-overview">
+              <div class="service-visual home" aria-hidden="true">
+                <svg viewBox="0 0 52 52" fill="none"><path d="M11 25.5L26 12l15 13.5V41H11V25.5z" fill="rgba(255,255,255,.92)"/><path d="M21 41V28h10v13" stroke="#D97706" stroke-width="3"/><path d="M18 22h16" stroke="#F4B55C" stroke-width="3" stroke-linecap="round"/></svg>
+              </div>
+              <div class="service-copy">
+                <div class="service-type">住院陪护</div>
+                <div class="service-project">基础陪护</div>
+                <div class="service-desc">12小时/天 · 服务已完成</div>
+              </div>
+            </div>
+            <div class="hosp-row">
+              <div class="hosp-logo" style="background:linear-gradient(140deg,#166B35,#2EAA5A)">解放</div>
+              <div>
+                <div class="hosp-name">解放军总医院</div>
+                <div class="hosp-ward">骨科 3楼 · 7床 · 李先生</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="nurse-row">
+              <div class="nurse-av" style="background:linear-gradient(140deg,#1A9896,#38CFC7)">张</div>
+              <div class="nurse-info">
+                <div class="nurse-name">张秀英</div>
+                <div class="nurse-meta">
+                  <span class="nurse-rate">
+                    <svg viewBox="0 0 13 13"><path d="M6.5 1l1.4 3.1 3.2.3-2.4 2.2.7 3.2L6.5 8.1 3.6 9.8l.7-3.2L2 4.4z"/></svg>
+                    97%
+                  </span>
+                  <span class="nurse-spec">术后康复 · 3年</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="svc-chips">
+              <div class="chip">
+                <span class="chip-lbl">服务时长</span>
+                <span class="chip-val">12小时/天</span>
+              </div>
+              <div class="chip">
+                <span class="chip-lbl">服务天数</span>
+                <span class="chip-val">3 天</span>
+              </div>
+              <div class="chip">
+                <span class="chip-lbl">累计支出</span>
+                <span class="chip-val accent">¥840</span>
+              </div>
+            </div>
+
+            <div class="action-bar">
+              <button class="act-btn act-ghost" onclick="location.href='daily-report.html'">
+                <svg viewBox="0 0 15 15" fill="none">
+                  <rect x="2" y="1.5" width="11" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/>
+                  <path d="M5 5h5M5 8h5M5 11h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                查看日报
+              </button>
+              <button class="act-btn act-purple" onclick="location.href='hospital-care.html'">
+                <svg viewBox="0 0 15 15" fill="none">
+                  <path d="M7.5 2v11M2 7.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                再次预约
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─── Order 4: 居家陪护 ─── -->
+        <div class="order-card" data-status="pending-service">
+          <div class="card-top">
+            <span class="order-no">订单号 AKB-2026-041206</span>
+            <div class="status-badge badge-pending">待服务</div>
+          </div>
+          <div class="card-body">
+            <div class="service-overview">
+              <div class="service-visual home" aria-hidden="true">
+                <svg viewBox="0 0 52 52" fill="none"><path d="M10 24.5L26 11l16 13.5V41H10V24.5z" fill="rgba(255,255,255,.94)"/><path d="M20 41V28h12v13" stroke="#D97706" stroke-width="3"/><path d="M17 22h18" stroke="#F4B55C" stroke-width="3" stroke-linecap="round"/></svg>
+              </div>
+              <div class="service-copy">
+                <div class="service-type">居家陪护</div>
+                <div class="service-project">12小时居家陪护</div>
+                <div class="service-desc">12小时/天 · 04/15 开始服务</div>
+              </div>
+            </div>
+            <div class="hosp-row">
+              <div class="hosp-logo home-location">家</div>
+              <div><div class="hosp-name">西安市雁塔区 · 王女士家</div><div class="hosp-ward">家庭地址 · 已选择常用地址</div></div>
+            </div>
+            <div class="nurse-row">
+              <div class="nurse-av" style="background:linear-gradient(140deg,#D97706,#F4B55C)">赵</div>
+              <div class="nurse-info"><div class="nurse-name">赵阿姨</div><div class="nurse-meta"><span class="nurse-rate">98%</span><span class="nurse-spec">居家照护 · 6年</span></div></div>
+              <button class="call-btn" onclick="openActionModal('call')" title="联系护理员"><svg viewBox="0 0 20 20" fill="none"><path d="M4 4.5C4 4 4.5 3 6 3.5c1 .3 2.5 2 2.5 3 0 .7-.5 1-1 1.5s-.5 1 0 2c.5.8 1.5 2 2.5 2.5s1.3.5 2 0 .8-1 1.5-1c1 0 2.7 1.5 3 2.5.5 1.5-.5 2-1 2C13 17 4 12 4 4.5z" stroke="#8655C5" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+            </div>
+            <div class="svc-chips"><div class="chip"><span class="chip-lbl">服务时长</span><span class="chip-val">12小时/天</span></div><div class="chip"><span class="chip-lbl">服务天数</span><span class="chip-val">3 天</span></div><div class="chip"><span class="chip-lbl">实付金额</span><span class="chip-val accent">¥260/天</span></div></div>
+            <div class="action-bar"><button class="act-btn act-danger refund-btn" onclick="openActionModal('refund',this)">退款/售后</button><button class="act-btn act-purple" onclick="openActionModal('call')">联系护理员</button></div>
+          </div>
+        </div>
+
+        <!-- ─── Order 5: 上门助浴 ─── -->
+        <div class="order-card" data-status="done">
+          <div class="card-top">
+            <span class="order-no">订单号 AKB-2026-040318</span>
+            <div class="status-badge badge-done">✓ 已完成</div>
+          </div>
+          <div class="card-body">
+            <div class="service-overview">
+              <div class="service-visual bath" aria-hidden="true">
+                <svg viewBox="0 0 52 52" fill="none"><path d="M10 29h32v3a8 8 0 01-8 8H18a8 8 0 01-8-8v-3z" fill="rgba(255,255,255,.94)"/><path d="M14 29V17a6 6 0 0111.5-2.3M14 20h17M19 11c0-2 2-3 2-5" stroke="#2F78B7" stroke-width="3" stroke-linecap="round"/><path d="M18 42h16" stroke="rgba(255,255,255,.94)" stroke-width="3" stroke-linecap="round"/></svg>
+              </div>
+              <div class="service-copy">
+                <div class="service-type">上门助浴</div>
+                <div class="service-project">上门助浴 · 1次</div>
+                <div class="service-desc">上门服务 · 服务已完成</div>
+              </div>
+            </div>
+            <div class="hosp-row">
+              <div class="hosp-logo bath-location">家</div>
+              <div><div class="hosp-name">西安市高新区 · 刘先生家</div><div class="hosp-ward">服务地址 · 已完成上门服务</div></div>
+            </div>
+            <div class="nurse-row">
+              <div class="nurse-av" style="background:linear-gradient(140deg,#2F78B7,#70B9E8)">陈</div>
+              <div class="nurse-info"><div class="nurse-name">陈护理师</div><div class="nurse-meta"><span class="nurse-rate">99%</span><span class="nurse-spec">助浴护理 · 5年</span></div></div>
+            </div>
+            <div class="svc-chips"><div class="chip"><span class="chip-lbl">服务次数</span><span class="chip-val">1 次</span></div><div class="chip"><span class="chip-lbl">预约日期</span><span class="chip-val">04/03</span></div><div class="chip"><span class="chip-lbl">实付金额</span><span class="chip-val accent">¥129</span></div></div>
+            <div class="action-bar"><button class="act-btn act-ghost" onclick="location.href='home.html'">再次预约</button><button class="act-btn act-purple" onclick="openActionModal('call')">联系客服</button></div>
+          </div>
+        </div>
+
+      </div><!-- .content -->
+    </div><!-- .scroll-area -->
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <a class="nav-item" href="home.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
+          <path class="ni" d="M4.5 13.2L13 5.8l8.5 7.4V22a1.4 1.4 0 01-1.4 1.4H16V18h-6v5.4H5.9A1.4 1.4 0 014.5 22z"
+                stroke="#AEACC0" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-lbl">首页</span>
+      </a>
+      <a class="nav-item" href="mall.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
+          <path class="ni" d="M5 9h16l-1 13H6L5 9zM9 10V7a4 4 0 018 0v3" stroke="#AEACC0" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-lbl">商城</span>
+      </a>
+      <a class="nav-item active" href="orders.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
+          <rect class="ni" x="4.5" y="5.5" width="17" height="16" rx="3" stroke="#AEACC0" stroke-width="1.8"/>
+          <path class="ni" d="M8.5 2.5v5M17.5 2.5v5M4.5 12h17" stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/>
+          <path class="ni" d="M9 16.5h8M9 20h5" stroke="#AEACC0" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-lbl">订单</span>
+      </a>
+      <a class="nav-item" href="ai-health.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
+          <path class="ni" d="M5 6.5A3.5 3.5 0 018.5 3h9A3.5 3.5 0 0121 6.5v7a3.5 3.5 0 01-3.5 3.5H12l-4.5 4v-4.2A3.5 3.5 0 015 13.5z" stroke="#AEACC0" stroke-width="1.7" stroke-linejoin="round"/>
+          <path class="ni" d="M13 6.7v5.6M10.2 9.5h5.6" stroke="#AEACC0" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-lbl">AI健康咨询</span>
+      </a>
+      <a class="nav-item" href="profile.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
+          <circle class="ni" cx="13" cy="10" r="4.2" stroke="#AEACC0" stroke-width="1.8"/>
+          <path class="ni" d="M5 22.5c1.6-3.8 4.6-6 8-6s6.4 2.2 8 6" stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-lbl">我的</span>
+      </a>
+    </div>
+
+  </div><!-- .phone -->
+</div><!-- .frame -->
+
+<div class="action-modal" id="actionModal" onclick="closeActionModal(event)">
+  <div class="action-sheet">
+    <div class="action-icon" id="actionIcon">⌁</div>
+    <div class="action-title" id="actionTitle">操作确认</div>
+    <div class="action-desc" id="actionDesc"></div>
+    <div class="rating-form" id="ratingForm">
+      <div class="rating-hint">请为本次陪护服务打分</div>
+      <div class="rating-stars" role="radiogroup" aria-label="服务星级">
+        <button class="rating-star" type="button" data-rating="1" onclick="selectServiceRating(1)" aria-label="1星">★</button>
+        <button class="rating-star" type="button" data-rating="2" onclick="selectServiceRating(2)" aria-label="2星">★</button>
+        <button class="rating-star" type="button" data-rating="3" onclick="selectServiceRating(3)" aria-label="3星">★</button>
+        <button class="rating-star" type="button" data-rating="4" onclick="selectServiceRating(4)" aria-label="4星">★</button>
+        <button class="rating-star" type="button" data-rating="5" onclick="selectServiceRating(5)" aria-label="5星">★</button>
+      </div>
+      <div class="rating-score" id="ratingScore">请选择星级</div>
+    </div>
+    <div class="refund-form" id="refundForm">
+      <label for="refundReason">退款原因</label>
+      <select id="refundReason">
+        <option>行程或服务计划变更</option>
+        <option>服务时间无法协调</option>
+        <option>服务内容不符合预期</option>
+        <option>其他原因</option>
+      </select>
+      <textarea id="refundRemark" placeholder="可补充退款说明（选填）"></textarea>
+    </div>
+    <div class="action-actions">
+      <button class="modal-cancel" onclick="closeActionModal()">取消</button>
+      <button class="modal-confirm" id="actionConfirm" onclick="confirmAction()">知道了</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── Order type and status filters ── */
+  let activeOrderType = 'service';
+  function switchOrderType(type) {
+    activeOrderType = type === 'mall' ? 'mall' : 'service';
+    document.querySelectorAll('.order-type-tab').forEach(tab => {
+      const isActive = tab.dataset.orderType === activeOrderType;
+      tab.classList.toggle('on', isActive);
+      tab.setAttribute('aria-selected', String(isActive));
+    });
+    document.querySelector('.service-tab-filter').hidden = activeOrderType !== 'service';
+    document.querySelector('.mall-tab-filter').hidden = activeOrderType !== 'mall';
+    if (typeof window.renderOrderType === 'function') {
+      window.renderOrderType(activeOrderType);
+      return;
+    }
+    const filter = activeOrderType === 'mall' ? document.querySelector('.mall-tab-filter') : document.querySelector('.service-tab-filter');
+    const status = activeOrderType === 'mall' ? 'all' : 'payment';
+    filterTab(filter.querySelector('.tf'), status);
+  }
+  function filterTab(el, status) {
+    if (!el) return;
+    const filter = el.closest('.tab-filter');
+    (filter || document).querySelectorAll('.tf').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+    document.querySelectorAll('#orderList .order-card').forEach(card => {
+      card.style.display = status === 'all' || card.dataset.status === status ? '' : 'none';
+    });
+  }
+  function initializeOrderTab() {
+    const params = new URLSearchParams(location.search);
+    const type = params.get('type') === 'mall' ? 'mall' : 'service';
+    const tab = params.get('tab') || (type === 'mall' ? 'all' : 'payment');
+    switchOrderType(type);
+    const filter = type === 'mall' ? document.querySelector('.mall-tab-filter') : document.querySelector('.service-tab-filter');
+    const target = Array.from(filter.querySelectorAll('.tf')).find(item => item.getAttribute('onclick').includes("'" + tab + "'"));
+    filterTab(target || filter.querySelector('.tf'), tab);
+  }
+
+  /* ── Order actions ── */
+  let modalAction = '';
+  let modalOrder = null;
+  let ratingOrderId = '';
+  let ratingValue = 0;
+  function readServiceRatings() {
+    try { const value = JSON.parse(localStorage.getItem('akb_service_ratings_v2') || '{}'); return value && typeof value === 'object' ? value : {}; }
+    catch (error) { return {}; }
+  }
+  function ratingStars(score) {
+    const filled = Math.max(0, Math.min(5, Math.round(Number(score) || 0)));
+    return '★'.repeat(filled) + '☆'.repeat(5 - filled);
+  }
+  function weightedServiceRating(orderId, userScore) {
+    const card = document.querySelector('.order-card-v2[data-order-id="'+orderId+'"]');
+    const yearsText = card && card.dataset.years ? card.dataset.years : '';
+    const years = parseInt(yearsText, 10) || 3;
+    const qualification = 4.8;
+    const careAbility = Math.min(5, 3.8 + years * 0.2);
+    return Number((qualification * .3 + careAbility * .3 + userScore * .4).toFixed(1));
+  }
+  function openRatingModal(orderId, trigger) {
+    const ratings = readServiceRatings();
+    if (ratings[orderId]) return;
+    ratingOrderId = orderId;
+    ratingValue = 0;
+    modalAction = 'rate';
+    modalOrder = trigger ? trigger.closest('.order-card') : null;
+    document.getElementById('actionIcon').textContent = '★';
+    document.getElementById('actionTitle').textContent = '服务评价';
+    document.getElementById('actionDesc').textContent = '你的评价将参与生成护理员的综合陪护星级。';
+    document.getElementById('actionConfirm').textContent = '提交评价';
+    document.getElementById('actionConfirm').onclick = confirmAction;
+    document.getElementById('refundForm').classList.remove('show');
+    document.getElementById('ratingForm').classList.add('show');
+    selectServiceRating(0);
+    document.getElementById('actionModal').classList.add('show');
+  }
+  function selectServiceRating(value) {
+    ratingValue = Number(value) || 0;
+    document.querySelectorAll('#ratingForm .rating-star').forEach(function(star) {
+      star.classList.toggle('selected', Number(star.dataset.rating) <= ratingValue);
+    });
+    document.getElementById('ratingScore').textContent = ratingValue ? ratingValue + ' 星' : '请选择星级';
+  }
+  function submitServiceRating() {
+    if (!ratingValue) { document.getElementById('ratingScore').textContent = '请选择星级后提交'; return; }
+    const ratings = readServiceRatings();
+    const total = weightedServiceRating(ratingOrderId, ratingValue);
+    ratings[ratingOrderId] = { userScore: ratingValue, total: total, stars: ratingStars(total) };
+    localStorage.setItem('akb_service_ratings_v2', JSON.stringify(ratings));
+    document.getElementById('ratingForm').classList.remove('show');
+    if (typeof window.renderOrderType === 'function') window.renderOrderType('service');
+    else if (typeof window.refreshOrderFilter === 'function') window.refreshOrderFilter();
+    showActionResult('评价已提交', '综合陪护星级  ' + ratings[ratingOrderId].stars + '\n' + total + ' 分');
+  }
+  const actionCopy = {
+    renew:  { icon:'↻', title:'续费服务', desc:'续费功能即将上线，届时可在这里继续购买服务时长。', confirm:'知道了' },
+    refund: { icon:'⊗', title:'申请退款/售后', desc:'请填写售后申请信息，提交后平台将在 1-3 个工作日内审核。', confirm:'提交申请' },
+    call:   { icon:'⌕', title:'联系护理员', desc:'护理员电话：138****2468\n现在拨打电话吗？', confirm:'拨打电话' },
+    pay:    { icon:'¥', title:'确认支付', desc:'请确认支付本次服务订单。', confirm:'确认支付' },
+    'mall-pay':     { icon:'¥', title:'确认付款', desc:'请确认支付本次商城订单。', confirm:'确认付款' },
+    'mall-remind':  { icon:'⌁', title:'提醒发货', desc:'已为你记录发货提醒，商家发货后会及时通知。', confirm:'知道了' },
+    'mall-receive': { icon:'✓', title:'确认收货', desc:'确认已收到商品且包装完好？', confirm:'确认收货' }
+  };
+  function openActionModal(type, trigger) {
+    modalAction = type;
+    modalOrder = trigger ? trigger.closest('.order-card') : null;
+    const c = actionCopy[type] || actionCopy.renew;
+    document.getElementById('actionIcon').textContent = c.icon;
+    document.getElementById('actionTitle').textContent = c.title;
+    document.getElementById('actionDesc').textContent = c.desc;
+    document.getElementById('actionConfirm').textContent = c.confirm;
+    document.getElementById('actionConfirm').onclick = confirmAction;
+    document.getElementById('refundForm').classList.toggle('show', type === 'refund');
+    document.getElementById('ratingForm').classList.remove('show');
+    document.getElementById('actionModal').classList.add('show');
+  }
+  function closeActionModal(e) {
+    if (e && e.target !== document.getElementById('actionModal')) return;
+    document.getElementById('actionModal').classList.remove('show');
+  }
+  function showActionResult(title, desc) {
+    document.getElementById('actionTitle').textContent = title;
+    document.getElementById('actionDesc').textContent = desc;
+    document.getElementById('actionConfirm').textContent = '完成';
+    document.getElementById('actionConfirm').onclick = () => closeActionModal();
+  }
+  function confirmAction() {
+    const type = modalAction;
+    if (type === 'rate') { submitServiceRating(); return; }
+    if (type === 'call') { showActionResult('正在联系护理员', '已为你发起电话联系，请留意接听。'); return; }
+    if (type === 'pay') { markPaid(); return; }
+    if (type === 'mall-pay') { markMallPaid(); return; }
+    if (type === 'mall-remind') { showActionResult('提醒已提交', '商家发货后会及时通知你。'); return; }
+    if (type === 'mall-receive') { markMallReceived(); return; }
+    if (type === 'refund') { submitRefundApplication(); return; }
+    closeActionModal();
+  }
+  function markPaid() {
+    if (modalOrder) {
+      modalOrder.dataset.status = 'pending-service';
+      const badge = modalOrder.querySelector('.status-badge');
+      badge.className = 'status-badge badge-pending';
+      badge.textContent = '待服务';
+      modalOrder.querySelector('.action-bar').innerHTML = '<button class="act-btn act-purple act-full" onclick="openActionModal(\'call\',this)">联系护理员</button>';
+    }
+    if (typeof window.refreshOrderFilter === 'function') window.refreshOrderFilter();
+    showActionResult('支付成功', '订单已支付成功，等待护理员为你提供服务。');
+  }
+  function markMallPaid() {
+    if (modalOrder) {
+      modalOrder.dataset.status = 'shipping';
+      const badge = modalOrder.querySelector('.mall-state');
+      if (badge) { badge.className = 'mall-state shipping'; badge.textContent = '待发货'; }
+    }
+    if (typeof window.refreshOrderFilter === 'function') window.refreshOrderFilter();
+    showActionResult('付款成功', '商城订单已支付，等待商家发货。');
+  }
+  function markMallReceived() {
+    if (modalOrder) {
+      modalOrder.dataset.status = 'done';
+      const badge = modalOrder.querySelector('.mall-state');
+      if (badge) { badge.className = 'mall-state done'; badge.textContent = '已完成'; }
+    }
+    if (typeof window.refreshOrderFilter === 'function') window.refreshOrderFilter();
+    showActionResult('已确认收货', '感谢你的购买，订单已完成。');
+  }
+  function cancelPendingPayment(trigger) {
+    const card = trigger.closest('.order-card');
+    card.style.display = 'none';
+  }
+  function submitRefundApplication() {
+    const reason = document.getElementById('refundReason').value;
+    const remark = document.getElementById('refundRemark').value.trim();
+    if (modalOrder) {
+      const badge = modalOrder.querySelector('.status-badge');
+      badge.className = 'status-badge badge-refund';
+      badge.textContent = '退款处理中';
+      modalOrder.dataset.status = 'refund';
+      modalOrder.querySelectorAll('.refund-btn').forEach(btn => { btn.disabled = true; btn.textContent = '退款处理中'; });
+      if (!modalOrder.querySelector('.after-sale-note')) {
+        const note = document.createElement('div');
+        note.className = 'after-sale-note';
+        note.textContent = '售后申请已提交 · ' + reason + (remark ? ' · 已补充说明' : '');
+        modalOrder.querySelector('.card-body').insertBefore(note, modalOrder.querySelector('.action-bar'));
+      }
+    }
+    showActionResult('退款申请已提交', '平台将在 1-3 个工作日内完成审核并原路退回。');
+  }
+  initializeOrderTab();
+</script>
+<script src="orders-list-redesign.js"></script>
+</body>
+</html>

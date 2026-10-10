@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><link rel="stylesheet" href="admin-shell.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>医院管理 · 多康运营后台</title>
+  <style>
+    :root {
+      --purple:       #224CD3;
+      --purple-dark:  #224CD3;
+      --purple-light: #E7F1FD;
+      --purple-bg:    #F4F8FD;
+      --sidebar-w:    220px;
+      --topbar-h:     60px;
+      --card:         #FFFFFF;
+      --text:         #1A1828;
+      --text2:        #6B6880;
+      --text3:        #AEACC0;
+      --border:       #D7E8FA;
+      --green:        #16A34A;
+      --green-bg:     #DCFCE7;
+      --amber:        #D97706;
+      --amber-bg:     #FEF3C7;
+      --red:          #DC2626;
+      --red-bg:       #FEE2E2;
+      --blue:         #224CD3;
+      --blue-bg:      #E7F1FD;
+      --sh: 0 2px 16px rgba(37,99,235,.10);
+      --r-lg: 14px; --r-md: 10px; --r-sm: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #EFF6FF; color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-width: 1100px;
+    }
+
+    /* Layout */
+    .admin-layout { display: flex; min-height: 100vh; }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-w); flex-shrink: 0;
+      background: #002141;
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    }
+    .sb-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .sb-logo-title { font-size: 18px; font-weight: 900; color: #fff; letter-spacing: .3px; }
+    .sb-logo-sub   { font-size: 11px; color: rgba(255,255,255,.45); font-weight: 600; margin-top: 3px; }
+    .sb-nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+    .sb-nav::-webkit-scrollbar { display: none; }
+    .sb-section-lbl {
+      font-size: 10px; font-weight: 800; color: rgba(255,255,255,.3);
+      letter-spacing: 1px; padding: 14px 20px 6px; text-transform: uppercase;
+    }
+    .nav-link {
+      display: flex; align-items: center; gap: 11px;
+      padding: 10px 20px; margin: 2px 10px; border-radius: 10px;
+      font-size: 13px; font-weight: 700; color: rgba(255,255,255,.6);
+      cursor: pointer; transition: all .15s; text-decoration: none;
+    }
+    .nav-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .nav-link:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.9); }
+    .nav-link.active { background: rgba(255,255,255,.15); color: #fff; box-shadow: inset 3px 0 0 #93C5FD; }
+    .nav-badge {
+      margin-left: auto; min-width: 20px; height: 18px; border-radius: 9px;
+      background: #EF4444; color: #fff; font-size: 10px; font-weight: 800;
+      display: grid; place-items: center; padding: 0 5px;
+    }
+    .sb-user {
+      padding: 16px 20px; border-top: 1px solid rgba(255,255,255,.08);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sb-av {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: rgba(255,255,255,.2); display: grid; place-items: center;
+      font-size: 15px; font-weight: 900; color: #fff;
+    }
+    .sb-uname { font-size: 13px; font-weight: 800; color: #fff; }
+    .sb-urole { font-size: 11px; color: rgba(255,255,255,.4); font-weight: 600; margin-top: 2px; }
+    .sb-logout {
+      margin-left: auto; width: 28px; height: 28px; border-radius: 8px;
+      border: none; cursor: pointer; background: rgba(255,255,255,.1);
+      display: grid; place-items: center; color: rgba(255,255,255,.5); transition: all .15s;
+    }
+    .sb-logout:hover { background: rgba(239,68,68,.25); color: #FCA5A5; }
+    .sb-logout svg { width: 15px; height: 15px; }
+
+    /* Main */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Topbar */
+    .topbar {
+      height: var(--topbar-h); background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 28px; gap: 16px;
+      position: sticky; top: 0; z-index: 50;
+      box-shadow: 0 1px 8px rgba(37,99,235,.08);
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--text3); flex: 1; }
+    .breadcrumb .cur { color: var(--text); }
+    .breadcrumb svg { width: 14px; height: 14px; }
+    .tb-search {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--purple-bg); border-radius: 8px;
+      padding: 0 12px; height: 36px; width: 220px;
+      border: 1.5px solid transparent; transition: border-color .2s;
+    }
+    .tb-search:focus-within { border-color: var(--purple); background: #fff; }
+    .tb-search svg { width: 15px; height: 15px; color: var(--text3); flex-shrink: 0; }
+    .tb-search input {
+      flex: 1; border: none; background: transparent; outline: none;
+      font-size: 13px; font-family: inherit; color: var(--text);
+    }
+    .tb-search input::placeholder { color: var(--text3); }
+    .tb-actions { display: flex; align-items: center; gap: 10px; }
+    .tb-btn {
+      width: 36px; height: 36px; border-radius: 9px; border: none; cursor: pointer;
+      background: var(--purple-bg); display: grid; place-items: center;
+      color: var(--text2); transition: background .15s;
+    }
+    .tb-btn:hover { background: var(--purple-light); color: var(--purple); }
+    .tb-btn svg { width: 17px; height: 17px; }
+    .tb-av {
+      width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
+      background: #224CD3;
+      display: grid; place-items: center; font-size: 14px; font-weight: 900; color: #fff;
+    }
+    .tb-date { font-size: 12px; font-weight: 700; color: var(--text3); white-space: nowrap; }
+
+    /* Page */
+    .page { flex: 1; padding: 24px 28px; }
+    .page-hd { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; }
+    .page-title { font-size: 22px; font-weight: 900; color: var(--text); }
+    .page-sub   { font-size: 13px; color: var(--text3); font-weight: 600; margin-top: 4px; }
+    .page-actions { display: flex; gap: 10px; }
+    .btn-outline {
+      height: 36px; padding: 0 16px; border-radius: 9px;
+      border: 1.5px solid var(--border); background: var(--card);
+      font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; color: var(--text2);
+      display: flex; align-items: center; gap: 6px; transition: all .15s;
+    }
+    .btn-outline:hover { border-color: var(--purple); color: var(--purple); }
+    .btn-outline svg { width: 14px; height: 14px; }
+    .btn-primary {
+      height: 36px; padding: 0 18px; border-radius: 9px; border: none; cursor: pointer;
+      background: #224CD3; color: #fff;
+      font-size: 13px; font-weight: 800; font-family: inherit;
+      display: flex; align-items: center; gap: 6px;
+      box-shadow: 0 4px 12px rgba(37,99,235,.25); transition: filter .15s;
+    }
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-primary svg { width: 14px; height: 14px; }
+
+    /* Stats row */
+    .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 20px; }
+    .stat-mini {
+      background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh);
+      padding: 16px 18px; display: flex; align-items: center; gap: 14px;
+    }
+    .stat-mini-ico {
+      width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; flex-shrink: 0;
+    }
+    .stat-mini-ico svg { width: 20px; height: 20px; }
+    .stat-mini-val { font-size: 22px; font-weight: 900; color: var(--text); line-height: 1; }
+    .stat-mini-lbl { font-size: 12px; color: var(--text3); font-weight: 600; margin-top: 3px; }
+
+    /* Filter bar */
+    .filter-bar {
+      background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh);
+      padding: 14px 20px; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .filter-label { font-size: 12px; font-weight: 800; color: var(--text3); white-space: nowrap; }
+    .filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .ftag {
+      padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      border: 1.5px solid var(--border); background: transparent; color: var(--text2);
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .ftag.on { background: var(--purple-light); border-color: var(--purple); color: var(--purple); }
+    .filter-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+    .filter-search {
+      display: flex; align-items: center; gap: 7px; margin-left: auto;
+      background: var(--purple-bg); border-radius: 8px; padding: 0 12px; height: 34px;
+      border: 1.5px solid transparent; transition: border-color .2s; min-width: 200px;
+    }
+    .filter-search:focus-within { border-color: var(--purple); background: #fff; }
+    .filter-search svg { width: 14px; height: 14px; color: var(--text3); }
+    .filter-search input {
+      border: none; background: transparent; outline: none; font-size: 13px;
+      font-family: inherit; color: var(--text); width: 100%;
+    }
+    .filter-search input::placeholder { color: var(--text3); }
+
+    /* Table card */
+    .table-card { background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh); overflow: hidden; }
+    .table-card-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+    }
+    .table-card-title { font-size: 14px; font-weight: 800; color: var(--text); }
+    .table-card-sub { font-size: 12px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--purple-bg); }
+    th {
+      padding: 11px 16px; text-align: left; font-size: 12px; font-weight: 800;
+      color: var(--text3); white-space: nowrap;
+    }
+    td {
+      padding: 14px 16px; font-size: 13px; font-weight: 600; color: var(--text);
+      border-bottom: 1px solid var(--border); vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: var(--purple-bg); }
+
+    /* Hospital avatar */
+    .hosp-av {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: grid; place-items: center; font-size: 14px; font-weight: 900;
+      color: #fff; flex-shrink: 0;
+    }
+    .hosp-cell { display: flex; align-items: center; gap: 11px; }
+    .hosp-name { font-size: 13px; font-weight: 800; color: var(--text); }
+    .hosp-addr { font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+
+    /* Badge */
+    .badge {
+      display: inline-block; padding: 3px 9px; border-radius: 20px;
+      font-size: 11px; font-weight: 800;
+    }
+    .badge-green  { background: var(--green-bg);  color: var(--green); }
+    .badge-amber  { background: var(--amber-bg);  color: var(--amber); }
+    .badge-purple { background: var(--purple-light); color: var(--purple); }
+    .badge-blue   { background: var(--blue-bg);   color: var(--blue); }
+    .badge-red    { background: var(--red-bg);    color: var(--red); }
+
+    /* Grade stars */
+    .grade { font-size: 12px; font-weight: 800; color: var(--amber); letter-spacing: .5px; }
+
+    /* Action buttons */
+    .act-btns { display: flex; gap: 6px; }
+    .act-btn {
+      height: 28px; padding: 0 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+      font-family: inherit; cursor: pointer; border: 1.5px solid var(--border);
+      background: transparent; color: var(--text2); transition: all .15s;
+    }
+    .act-btn:hover { border-color: var(--purple); color: var(--purple); }
+    .act-btn.danger:hover { border-color: var(--red); color: var(--red); }
+
+    /* Pagination */
+    .table-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-top: 1px solid var(--border);
+      font-size: 12px; font-weight: 700; color: var(--text3);
+    }
+    .pagination { display: flex; gap: 4px; }
+    .pg-btn {
+      min-width: 30px; height: 30px; border-radius: 7px; border: 1.5px solid var(--border);
+      background: transparent; font-size: 12px; font-weight: 700;
+      font-family: inherit; cursor: pointer; color: var(--text2); transition: all .15s;
+      display: grid; place-items: center; padding: 0 6px;
+    }
+    .pg-btn.on { background: var(--purple); border-color: var(--purple); color: #fff; }
+    .pg-btn:hover:not(.on) { border-color: var(--purple); color: var(--purple); }
+
+    /* Modal overlay */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.4);
+      display: none; place-items: center; z-index: 200;
+    }
+    .modal-overlay.show { display: grid; }
+    .modal {
+      background: var(--card); border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.2);
+      width: 520px; max-width: 95vw; overflow: hidden;
+      animation: modalIn .22s cubic-bezier(.22,.88,.36,1);
+    }
+    @keyframes modalIn { from{opacity:0;transform:scale(.96)} to{opacity:1;transform:none} }
+    .modal-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px; border-bottom: 1px solid var(--border);
+    }
+    .modal-title { font-size: 16px; font-weight: 900; color: var(--text); }
+    .modal-close {
+      width: 30px; height: 30px; border-radius: 8px; border: none;
+      background: var(--purple-bg); cursor: pointer; display: grid; place-items: center;
+      color: var(--text3); transition: all .15s;
+    }
+    .modal-close:hover { background: var(--red-bg); color: var(--red); }
+    .modal-close svg { width: 14px; height: 14px; }
+    .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-lbl { font-size: 12px; font-weight: 800; color: var(--text2); }
+    .form-input {
+      height: 38px; border-radius: 9px; border: 1.5px solid var(--border);
+      padding: 0 12px; font-size: 13px; font-family: inherit; color: var(--text);
+      background: var(--purple-bg); outline: none; transition: border-color .15s;
+    }
+    .form-input:focus { border-color: var(--purple); background: #fff; }
+    .form-select {
+      height: 38px; border-radius: 9px; border: 1.5px solid var(--border);
+      padding: 0 12px; font-size: 13px; font-family: inherit; color: var(--text);
+      background: var(--purple-bg); outline: none; cursor: pointer; transition: border-color .15s;
+    }
+    .form-select:focus { border-color: var(--purple); background: #fff; }
+    .modal-ft {
+      display: flex; justify-content: flex-end; gap: 10px;
+      padding: 16px 24px; border-top: 1px solid var(--border);
+    }
+
+    /* QR Modal */
+    .qr-modal { width: 380px; }
+    .qr-hosp-info {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 24px; border-bottom: 1px solid var(--border);
+    }
+    .qr-hosp-av {
+      width: 44px; height: 44px; border-radius: 11px; flex-shrink: 0;
+      display: grid; place-items: center; font-size: 15px; font-weight: 900; color: #fff;
+    }
+    .qr-hosp-name { font-size: 14px; font-weight: 800; color: var(--text); }
+    .qr-hosp-sub  { font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+    .qr-body {
+      padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 14px;
+    }
+    .qr-frame {
+      padding: 16px; border-radius: 16px;
+      background: #fff; border: 2px solid var(--border);
+      box-shadow: 0 4px 20px rgba(134,85,197,.12);
+      position: relative;
+    }
+    .qr-frame::before, .qr-frame::after {
+      content:''; position:absolute; width:18px; height:18px;
+      border-color: var(--purple); border-style: solid;
+    }
+    .qr-frame::before { top:6px; left:6px; border-width:3px 0 0 3px; border-radius:4px 0 0 0; }
+    .qr-frame::after  { bottom:6px; right:6px; border-width:0 3px 3px 0; border-radius:0 0 4px 0; }
+    #qrCanvas { display: block; }
+    .qr-label {
+      font-size: 12px; font-weight: 700; color: var(--text2);
+      text-align: center; line-height: 1.6;
+    }
+    .qr-ft {
+      display: flex; gap: 10px; padding: 0 24px 20px; justify-content: center;
+    }
+    .btn-qr-dl {
+      height: 38px; padding: 0 20px; border-radius: 9px; border: none; cursor: pointer;
+      background: #224CD3; color: #fff;
+      font-size: 13px; font-weight: 800; font-family: inherit;
+      display: flex; align-items: center; gap: 7px;
+      box-shadow: 0 4px 12px rgba(37,99,235,.25); transition: filter .15s;
+    }
+    .btn-qr-dl:hover { filter: brightness(1.08); }
+    .btn-qr-dl svg { width: 14px; height: 14px; }
+    .btn-qr-print {
+      height: 38px; padding: 0 20px; border-radius: 9px; cursor: pointer;
+      border: 1.5px solid var(--border); background: var(--card);
+      font-size: 13px; font-weight: 700; font-family: inherit; color: var(--text2);
+      display: flex; align-items: center; gap: 7px; transition: all .15s;
+    }
+    .btn-qr-print:hover { border-color: var(--purple); color: var(--purple); }
+    .btn-qr-print svg { width: 14px; height: 14px; }
+
+    @media print {
+      body > * { display: none !important; }
+      #printArea { display: flex !important; }
+    }
+    #printArea {
+      display: none; position: fixed; inset: 0;
+      flex-direction: column; align-items: center; justify-content: center;
+      background: #fff; z-index: 9999; gap: 16px;
+    }
+    #printArea .print-name { font-size: 20px; font-weight: 900; color: #1A1828; }
+    #printArea .print-sub  { font-size: 13px; color: #6B6880; margin-top: 4px; }
+    #printArea .print-tip  { font-size: 12px; color: #AEACC0; margin-top: 8px; }
+  </style>
+<script defer src="admin-sidebar.js"></script></head>
+<body>
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-title">多康</div>
+      <div class="sb-logo-sub">运营管理后台</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section-lbl">概览</div>
+      <a class="nav-link" href="admin.html">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="1" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="10" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="10" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+        数据总览
+      </a>
+      <div class="sb-section-lbl">业务管理</div>
+      <a class="nav-link" href="admin-orders.html">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="2" y="1.5" width="14" height="15" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M6 6h6M6 9.5h6M6 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        订单管理
+        <span class="nav-badge">12</span>
+      </a>
+      <a class="nav-link" href="admin-caregivers.html">
+        <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6" r="3.5" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 16.5c0-3.5 2.9-6 6.5-6s6.5 2.5 6.5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        护理员管理
+      </a>
+      <a class="nav-link" href="admin-users.html">
+        <svg viewBox="0 0 18 18" fill="none"><circle cx="6.5" cy="6" r="3" stroke="currentColor" stroke-width="1.4"/><circle cx="13" cy="7" r="2.3" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 15.5c.4-3 2.1-4.7 5-4.7s4.6 1.7 5 4.7M11.2 11.5c2.7-.2 4.6 1.1 5.2 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        用户管理
+      </a>
+      <a class="nav-link" href="daily-report.html">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="1.5" y="2" width="15" height="14" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h8M5 10.5h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M12.5 10l1.5 1.5L16 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        日报审核
+        <span class="nav-badge">5</span>
+      </a>
+      <div class="sb-section-lbl">系统</div>
+      <a class="nav-link" href="profile.html">
+        <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.6 3.6l1.4 1.4M13 13l1.4 1.4M3.6 14.4l1.4-1.4M13 5l1.4-1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        系统设置
+      </a>
+    </nav>
+    <div class="sb-user">
+      <div class="sb-av">管</div>
+      <div>
+        <div class="sb-uname">管理员</div>
+        <div class="sb-urole">超级管理员</div>
+      </div>
+      <button class="sb-logout" onclick="if(confirm('确认退出？'))location.href='index.html'">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="breadcrumb">
+        <span>业务管理</span>
+        <svg viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="cur">医院管理</span>
+      </div>
+      <div class="tb-search">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input type="text" placeholder="搜索医院名称…" id="topSearch" oninput="filterTable()" />
+      </div>
+      <div class="tb-actions">
+        <button class="tb-btn" title="刷新">
+          <svg viewBox="0 0 17 17" fill="none"><path d="M14 8.5A5.5 5.5 0 113 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 3v5.5H8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="tb-btn" title="导出">
+          <svg viewBox="0 0 17 17" fill="none"><rect x="2" y="2" width="13" height="13" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 5.5v5M6 9l2.5 2.5L11 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="tb-date" id="tbDate"></div>
+        <div class="tb-av">管</div>
+      </div>
+    </header>
+
+    <!-- Page -->
+    <main class="page">
+
+      <!-- Page header -->
+      <div class="page-hd">
+        <div>
+          <div class="page-title">医院管理</div>
+          <div class="page-sub">管理平台覆盖医院信息及状态</div>
+        </div>
+        <div class="page-actions" id="hospActions">
+          <button class="btn-outline" onclick="alert('导出功能开发中')">
+            <svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 4v4.5M5 7l2 2 2-2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            导出列表
+          </button>
+          <button class="btn-primary" onclick="openAddModal()">
+            <svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            新增医院
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-row">
+        <div class="stat-mini">
+          <div class="stat-mini-ico" style="background:#EDE6F7">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M2 18V8l8-6 8 6v10" stroke="#8655C5" stroke-width="1.6" stroke-linejoin="round"/><rect x="7" y="12" width="6" height="6" rx="1.2" stroke="#8655C5" stroke-width="1.4"/></svg>
+          </div>
+          <div>
+            <div class="stat-mini-val" id="totalCount">—</div>
+            <div class="stat-mini-lbl">覆盖医院总数</div>
+          </div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-ico" style="background:#DCFCE7">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#16A34A" stroke-width="1.6"/><path d="M7 10l2 2 4-4" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div>
+            <div class="stat-mini-val" id="activeCount">—</div>
+            <div class="stat-mini-lbl">合作中</div>
+          </div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-ico" style="background:#DBEAFE">
+            <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="13" rx="2.5" stroke="#2563EB" stroke-width="1.6"/><path d="M2 8h16" stroke="#2563EB" stroke-width="1.4" stroke-linecap="round"/><path d="M6 12h8M6 15h5" stroke="#2563EB" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="stat-mini-val" id="orderCount">837</div>
+            <div class="stat-mini-lbl">本月订单数</div>
+          </div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-ico" style="background:#FEF3C7">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#D97706" stroke-width="1.6"/><path d="M10 6v1.5M10 12v1.5M7.5 8c0-.8.8-1.5 2.5-1.5s2.5.8 2.5 2c0 1.2-2.5 2-2.5 3s.9 1.5 2.5 1.5" stroke="#D97706" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="stat-mini-val">¥23.4万</div>
+            <div class="stat-mini-lbl">本月服务金额</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar">
+        <span class="filter-label">地区</span>
+        <div class="filter-group" id="regionFilter">
+          <button class="ftag on" onclick="setFilter('region',this,'全部')">全部</button>
+          <button class="ftag" onclick="setFilter('region',this,'北京')">北京</button>
+          <button class="ftag" onclick="setFilter('region',this,'上海')">上海</button>
+          <button class="ftag" onclick="setFilter('region',this,'广州')">广州</button>
+          <button class="ftag" onclick="setFilter('region',this,'深圳')">深圳</button>
+        </div>
+        <div class="filter-divider"></div>
+        <span class="filter-label">等级</span>
+        <div class="filter-group" id="gradeFilter">
+          <button class="ftag on" onclick="setFilter('grade',this,'全部')">全部</button>
+          <button class="ftag" onclick="setFilter('grade',this,'三级甲等')">三甲</button>
+          <button class="ftag" onclick="setFilter('grade',this,'三级乙等')">三乙</button>
+          <button class="ftag" onclick="setFilter('grade',this,'二级')">二级</button>
+        </div>
+        <div class="filter-divider"></div>
+        <span class="filter-label">状态</span>
+        <div class="filter-group" id="statusFilter">
+          <button class="ftag on" onclick="setFilter('status',this,'全部')">全部</button>
+          <button class="ftag" onclick="setFilter('status',this,'合作中')">合作中</button>
+          <button class="ftag" onclick="setFilter('status',this,'暂停合作')">暂停合作</button>
+        </div>
+        <div class="filter-search">
+          <svg viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 9.5l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <input type="text" placeholder="搜索医院名称或地址…" id="filterSearch" oninput="filterTable()" />
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-card">
+        <div class="table-card-hd">
+          <div>
+            <div class="table-card-title">医院列表</div>
+            <div class="table-card-sub" id="resultSub">共 10 家医院</div>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>医院信息</th>
+              <th>地区</th>
+              <th>科室覆盖</th>
+              <th>医院等级</th>
+              <th>合作状态</th>
+              <th>本月订单</th>
+              <th>累计订单</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="hospTbody"></tbody>
+        </table>
+        <div class="table-footer">
+          <span id="pageInfo">显示第 1–10 条，共 10 条</span>
+          <div class="pagination" id="pagination"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- QR Code Modal -->
+<div class="modal-overlay" id="qrOverlay" onclick="if(event.target===this)closeQR()">
+  <div class="modal qr-modal">
+    <div class="modal-hd">
+      <span class="modal-title">医院二维码</span>
+      <button class="modal-close" onclick="closeQR()">
+        <svg viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="qr-hosp-info">
+      <div class="qr-hosp-av" id="qrHospAv"></div>
+      <div>
+        <div class="qr-hosp-name" id="qrHospName"></div>
+        <div class="qr-hosp-sub" id="qrHospSub"></div>
+      </div>
+    </div>
+    <div class="qr-body">
+      <div class="qr-frame">
+        <div id="qrCanvas"></div>
+      </div>
+      <div class="qr-label">扫描二维码，立即预约陪护服务<br/><span style="color:var(--purple);font-weight:800" id="qrUrl"></span></div>
+    </div>
+    <div class="qr-ft">
+      <button class="btn-qr-print" onclick="printQR()">
+        <svg viewBox="0 0 14 14" fill="none"><rect x="2" y="4" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M4 4V2h6v2M4 11v1.5h6V11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="10" cy="7" r=".8" fill="currentColor"/></svg>
+        打印
+      </button>
+      <button class="btn-qr-dl" onclick="downloadQR()">
+        <svg viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4.5 7L7 9.5 9.5 7" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 11h10" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>
+        下载 PNG
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Print Area -->
+<div id="printArea">
+  <div id="paAv" style="width:60px;height:60px;border-radius:16px;display:grid;place-items:center;font-size:22px;font-weight:900;color:#fff"></div>
+  <div style="text-align:center">
+    <div class="print-name" id="paName"></div>
+    <div class="print-sub" id="paSub"></div>
+  </div>
+  <div id="paQr"></div>
+  <div class="print-tip">扫描二维码，立即预约多康陪护服务</div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-title" id="modalTitle">新增医院</span>
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group full">
+          <label class="form-lbl">医院名称 *</label>
+          <input class="form-input" id="fName" placeholder="请输入医院全称" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-lbl">所在地区 *</label>
+          <select class="form-select" id="fRegion">
+            <option>北京</option><option>上海</option><option>广州</option><option>深圳</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-lbl">医院等级 *</label>
+          <select class="form-select" id="fGrade">
+            <option>三级甲等</option><option>三级乙等</option><option>二级甲等</option><option>二级乙等</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group full">
+          <label class="form-lbl">详细地址</label>
+          <input class="form-input" id="fAddr" placeholder="请输入详细地址" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-lbl">科室覆盖</label>
+          <input class="form-input" id="fDept" placeholder="如：内科 · 外科 · 骨科" />
+        </div>
+        <div class="form-group">
+          <label class="form-lbl">合作状态</label>
+          <select class="form-select" id="fStatus">
+            <option>合作中</option><option>暂停合作</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn-outline" onclick="closeModal()">取消</button>
+      <button class="btn-primary" onclick="saveHospital()">
+        <svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        保存
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  document.getElementById('tbDate').textContent =
+    new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
+
+  const HOSPITALS = [
+    { id:1, name:'北京红十字会急诊抢救中心', region:'北京', dept:'急诊科 · 重症医学科',  grade:'三级甲等', status:'合作中',   monthOrder:142, totalOrder:1248, color:['#C92B2B','#E86060'], abbr:'红会' },
+    { id:2, name:'北京协和医院',              region:'北京', dept:'内科 · 外科 · 妇产科',  grade:'三级甲等', status:'合作中',   monthOrder:208, totalOrder:2130, color:['#2350A8','#547FD8'], abbr:'协和' },
+    { id:3, name:'解放军总医院',              region:'北京', dept:'骨科 · 神经外科',        grade:'三级甲等', status:'合作中',   monthOrder:176, totalOrder:1560, color:['#166B35','#2EAA5A'], abbr:'解放' },
+    { id:4, name:'上海交通大学医学院附属医院', region:'上海', dept:'心内科 · 肿瘤科',        grade:'三级甲等', status:'合作中',   monthOrder:134, totalOrder:980,  color:['#7B2D9E','#B26FD6'], abbr:'交大' },
+    { id:5, name:'上海瑞金医院',              region:'上海', dept:'血液科 · 内分泌科',      grade:'三级甲等', status:'合作中',   monthOrder:98,  totalOrder:742,  color:['#1C6E8C','#3AACCC'], abbr:'瑞金' },
+    { id:6, name:'广州中山大学附属第一医院',  region:'广州', dept:'器官移植 · 神经科',       grade:'三级甲等', status:'合作中',   monthOrder:56,  totalOrder:420,  color:['#8B4513','#D2691E'], abbr:'中山' },
+    { id:7, name:'深圳市人民医院',            region:'深圳', dept:'急诊科 · 心血管科',       grade:'三级甲等', status:'合作中',   monthOrder:23,  totalOrder:186,  color:['#1A5276','#2E86C1'], abbr:'深人' },
+    { id:8, name:'北京大学第三医院',          region:'北京', dept:'运动医学 · 骨科',         grade:'三级甲等', status:'暂停合作', monthOrder:0,   totalOrder:312,  color:['#6B2FA0','#9B59B6'], abbr:'北医三' },
+    { id:9, name:'广州市第一人民医院',        region:'广州', dept:'内科 · 外科',              grade:'三级乙等', status:'合作中',   monthOrder:18,  totalOrder:95,   color:['#0E6655','#1ABC9C'], abbr:'广一' },
+    { id:10,name:'深圳华为健康中心',          region:'深圳', dept:'全科 · 职业病科',          grade:'二级甲等', status:'暂停合作', monthOrder:0,   totalOrder:44,   color:['#7D6608','#D4AC0D'], abbr:'华健' },
+  ];
+
+  let filters = { region:'全部', grade:'全部', status:'全部' };
+  let editId = null;
+
+  function setFilter(type, el, val) {
+    filters[type] = val;
+    const grp = { region:'regionFilter', grade:'gradeFilter', status:'statusFilter' }[type];
+    document.getElementById(grp).querySelectorAll('.ftag').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+    renderTable();
+  }
+
+  function filterTable() { renderTable(); }
+
+  function getFiltered() {
+    const kw = (document.getElementById('topSearch').value + document.getElementById('filterSearch').value).trim().toLowerCase();
+    return HOSPITALS.filter(h => {
+      if (filters.region !== '全部' && h.region !== filters.region) return false;
+      if (filters.status !== '全部' && h.status !== filters.status) return false;
+      if (filters.grade  !== '全部' && !h.grade.startsWith(filters.grade.slice(0,2))) return false;
+      if (kw && !h.name.includes(kw) && !h.dept.toLowerCase().includes(kw)) return false;
+      return true;
+    });
+  }
+
+  function renderTable() {
+    const data = getFiltered();
+    document.getElementById('totalCount').textContent = HOSPITALS.length;
+    document.getElementById('activeCount').textContent = HOSPITALS.filter(h=>h.status==='合作中').length;
+    document.getElementById('resultSub').textContent = `共 ${data.length} 家医院`;
+    document.getElementById('pageInfo').textContent = `显示第 1–${data.length} 条，共 ${data.length} 条`;
+
+    const tbody = document.getElementById('hospTbody');
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3)">暂无匹配医院</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = data.map(h => `
+      <tr>
+        <td>
+          <div class="hosp-cell">
+            <div class="hosp-av" style="background:${h.color[0]}">${h.abbr}</div>
+            <div>
+              <div class="hosp-name">${h.name}</div>
+              <div class="hosp-addr">${h.region}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge badge-purple">${h.region}</span></td>
+        <td style="color:var(--text2);font-size:12px">${h.dept}</td>
+        <td><span class="grade">★ ${h.grade}</span></td>
+        <td><span class="badge ${h.status==='合作中'?'badge-green':'badge-amber'}">${h.status}</span></td>
+        <td style="font-weight:800">${h.monthOrder}</td>
+        <td style="color:var(--text2)">${h.totalOrder}</td>
+        <td>
+          <div class="act-btns">
+            <button class="act-btn" onclick="showQR(${h.id})" style="color:var(--purple);border-color:var(--purple)">二维码</button>
+            <button class="act-btn" onclick="editHospital(${h.id})">编辑</button>
+            <button class="act-btn" onclick="toggleStatus(${h.id})">${h.status==='合作中'?'暂停':'恢复'}</button>
+            <button class="act-btn danger" onclick="deleteHospital(${h.id})">删除</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function openAddModal() {
+    editId = null;
+    document.getElementById('modalTitle').textContent = '新增医院';
+    document.getElementById('fName').value = '';
+    document.getElementById('fAddr').value = '';
+    document.getElementById('fDept').value = '';
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+
+  function editHospital(id) {
+    const h = HOSPITALS.find(x => x.id === id);
+    if (!h) return;
+    editId = id;
+    document.getElementById('modalTitle').textContent = '编辑医院';
+    document.getElementById('fName').value = h.name;
+    document.getElementById('fRegion').value = h.region;
+    document.getElementById('fGrade').value = h.grade;
+    document.getElementById('fAddr').value = h.region + '市中心区';
+    document.getElementById('fDept').value = h.dept;
+    document.getElementById('fStatus').value = h.status;
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+
+  function saveHospital() {
+    const name = document.getElementById('fName').value.trim();
+    if (!name) { alert('请输入医院名称'); return; }
+    if (editId) {
+      const h = HOSPITALS.find(x => x.id === editId);
+      h.name   = name;
+      h.region = document.getElementById('fRegion').value;
+      h.grade  = document.getElementById('fGrade').value;
+      h.dept   = document.getElementById('fDept').value || h.dept;
+      h.status = document.getElementById('fStatus').value;
+    } else {
+      HOSPITALS.push({
+        id: Date.now(), name,
+        region: document.getElementById('fRegion').value,
+        grade:  document.getElementById('fGrade').value,
+        dept:   document.getElementById('fDept').value || '综合科室',
+        status: document.getElementById('fStatus').value,
+        monthOrder: 0, totalOrder: 0,
+        color: ['#224CD3','#224CD3'], abbr: name.slice(0,2)
+      });
+    }
+    closeModal();
+    renderTable();
+  }
+
+  function toggleStatus(id) {
+    const h = HOSPITALS.find(x => x.id === id);
+    if (!h) return;
+    h.status = h.status === '合作中' ? '暂停合作' : '合作中';
+    renderTable();
+  }
+
+  function deleteHospital(id) {
+    if (!confirm('确认删除该医院？此操作不可恢复。')) return;
+    const idx = HOSPITALS.findIndex(x => x.id === id);
+    if (idx > -1) HOSPITALS.splice(idx, 1);
+    renderTable();
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+  }
+
+  /* ── QR Code ── */
+  let _qrInstance = null;
+
+  function showQR(id) {
+    const h = HOSPITALS.find(x => x.id === id);
+    if (!h) return;
+
+    document.getElementById('qrHospName').textContent = h.name;
+    document.getElementById('qrHospSub').textContent = h.grade + ' · ' + h.region;
+    const av = document.getElementById('qrHospAv');
+    av.textContent = h.abbr;
+    av.style.background = h.color[0];
+
+    const url = `https://ankebang.com/book?hid=${h.id}`;
+    document.getElementById('qrUrl').textContent = url;
+
+    const box = document.getElementById('qrCanvas');
+    box.innerHTML = '';
+    _qrInstance = new QRCode(box, {
+      text: url,
+      width: 180, height: 180,
+      colorDark: '#1A1828', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+
+    document.getElementById('qrOverlay').classList.add('show');
+  }
+
+  function downloadQR() {
+    const canvas = document.querySelector('#qrCanvas canvas');
+    const img    = document.querySelector('#qrCanvas img');
+    let src;
+    if (canvas) {
+      src = canvas.toDataURL('image/png');
+    } else if (img) {
+      src = img.src;
+    } else { return; }
+    const a = document.createElement('a');
+    a.href = src;
+    a.download = (document.getElementById('qrHospName').textContent || 'hospital') + '_二维码.png';
+    a.click();
+  }
+
+  function printQR() {
+    const canvas = document.querySelector('#qrCanvas canvas');
+    const img    = document.querySelector('#qrCanvas img');
+    let src;
+    if (canvas) src = canvas.toDataURL('image/png');
+    else if (img) src = img.src;
+    else return;
+
+    const name = document.getElementById('qrHospName').textContent;
+    const sub  = document.getElementById('qrHospSub').textContent;
+    const av   = document.getElementById('qrHospAv');
+
+    document.getElementById('paName').textContent = name;
+    document.getElementById('paSub').textContent  = sub;
+    const paAv = document.getElementById('paAv');
+    paAv.textContent = av.textContent;
+    paAv.style.background = av.style.background;
+
+    const paQr = document.getElementById('paQr');
+    paQr.innerHTML = `<img src="${src}" style="width:200px;height:200px;display:block" />`;
+
+    const pa = document.getElementById('printArea');
+    pa.style.display = 'flex';
+    window.print();
+    pa.style.display = 'none';
+  }
+
+  function closeQR() {
+    document.getElementById('qrOverlay').classList.remove('show');
+  }
+
+  renderTable();
+
+</script>
+</body>
+</html>

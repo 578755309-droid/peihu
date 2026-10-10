@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><link rel="stylesheet" href="admin-shell.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>陪护公司管理 · 多康运营后台</title>
+  <style>
+    :root {
+      --purple:       #224CD3;
+      --purple-dark:  #224CD3;
+      --purple-light: #E7F1FD;
+      --purple-bg:    #F4F8FD;
+      --sidebar-w:    220px;
+      --topbar-h:     60px;
+      --card:         #FFFFFF;
+      --text:         #1A1828;
+      --text2:        #6B6880;
+      --text3:        #AEACC0;
+      --border:       #D7E8FA;
+      --green:        #16A34A;
+      --green-bg:     #DCFCE7;
+      --amber:        #D97706;
+      --amber-bg:     #FEF3C7;
+      --red:          #DC2626;
+      --red-bg:       #FEE2E2;
+      --blue:         #224CD3;
+      --blue-bg:      #E7F1FD;
+      --sh: 0 2px 16px rgba(37,99,235,.10);
+      --r-lg: 14px; --r-md: 10px; --r-sm: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #EFF6FF; color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      min-width: 1100px;
+    }
+
+    /* Layout */
+    .admin-layout { display: flex; min-height: 100vh; }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-w); flex-shrink: 0;
+      background: #002141;
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    }
+    .sb-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .sb-logo-title { font-size: 18px; font-weight: 900; color: #fff; letter-spacing: .3px; }
+    .sb-logo-sub   { font-size: 11px; color: rgba(255,255,255,.45); font-weight: 600; margin-top: 3px; }
+    .sb-nav { flex: 1; padding: 16px 0; overflow-y: auto; }
+    .sb-nav::-webkit-scrollbar { display: none; }
+    .sb-section-lbl {
+      font-size: 10px; font-weight: 800; color: rgba(255,255,255,.3);
+      letter-spacing: 1px; padding: 14px 20px 6px; text-transform: uppercase;
+    }
+    .nav-link {
+      display: flex; align-items: center; gap: 11px;
+      padding: 10px 20px; margin: 2px 10px; border-radius: 10px;
+      font-size: 13px; font-weight: 700; color: rgba(255,255,255,.6);
+      cursor: pointer; transition: all .15s; text-decoration: none;
+    }
+    .nav-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .nav-link:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.9); }
+    .nav-link.active { background: rgba(255,255,255,.15); color: #fff; box-shadow: inset 3px 0 0 #93C5FD; }
+    .nav-badge {
+      margin-left: auto; min-width: 20px; height: 18px; border-radius: 9px;
+      background: #EF4444; color: #fff; font-size: 10px; font-weight: 800;
+      display: grid; place-items: center; padding: 0 5px;
+    }
+    .sb-user {
+      padding: 16px 20px; border-top: 1px solid rgba(255,255,255,.08);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sb-av {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: rgba(255,255,255,.2); display: grid; place-items: center;
+      font-size: 15px; font-weight: 900; color: #fff;
+    }
+    .sb-uname { font-size: 13px; font-weight: 800; color: #fff; }
+    .sb-urole { font-size: 11px; color: rgba(255,255,255,.4); font-weight: 600; margin-top: 2px; }
+    .sb-logout {
+      margin-left: auto; width: 28px; height: 28px; border-radius: 8px;
+      border: none; cursor: pointer; background: rgba(255,255,255,.1);
+      display: grid; place-items: center; color: rgba(255,255,255,.5); transition: all .15s;
+    }
+    .sb-logout:hover { background: rgba(239,68,68,.25); color: #FCA5A5; }
+    .sb-logout svg { width: 15px; height: 15px; }
+
+    /* Main */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Topbar */
+    .topbar {
+      height: var(--topbar-h); background: var(--card);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 28px; gap: 16px;
+      position: sticky; top: 0; z-index: 50;
+      box-shadow: 0 1px 8px rgba(37,99,235,.08);
+    }
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--text3); flex: 1; }
+    .breadcrumb .cur { color: var(--text); }
+    .breadcrumb svg { width: 14px; height: 14px; }
+    .tb-actions { display: flex; align-items: center; gap: 10px; }
+    .tb-btn {
+      width: 36px; height: 36px; border-radius: 9px; border: none; cursor: pointer;
+      background: var(--purple-bg); display: grid; place-items: center;
+      color: var(--text2); transition: background .15s;
+    }
+    .tb-btn:hover { background: var(--purple-light); color: var(--purple); }
+    .tb-btn svg { width: 17px; height: 17px; }
+    .tb-av {
+      width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
+      background: #224CD3;
+      display: grid; place-items: center; font-size: 14px; font-weight: 900; color: #fff;
+    }
+    .tb-date { font-size: 12px; font-weight: 700; color: var(--text3); white-space: nowrap; }
+
+    /* Page */
+    .page { flex: 1; padding: 24px 28px; }
+    .page-hd { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; }
+    .page-title { font-size: 22px; font-weight: 900; color: var(--text); }
+    .page-sub   { font-size: 13px; color: var(--text3); font-weight: 600; margin-top: 4px; }
+
+    /* ── Highlights ── */
+    .ov-highlights {
+      display: grid; grid-template-columns: repeat(5,1fr); gap: 14px; margin-bottom: 20px;
+    }
+    .ov-hl {
+      background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh);
+      padding: 18px; position: relative; overflow: hidden;
+    }
+    .ov-hl-lbl { font-size: 11px; font-weight: 700; color: var(--text3); margin-bottom: 8px; }
+    .ov-hl-val { font-size: 24px; font-weight: 900; color: var(--text); line-height: 1; }
+    .ov-hl-trend {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 11px; font-weight: 800; margin-top: 8px; padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .ov-hl-trend.up { background: var(--green-bg); color: var(--green); }
+    .ov-hl-trend.down { background: var(--red-bg); color: var(--red); }
+    .ov-hl-trend.neutral { background: var(--purple-light); color: var(--purple); }
+    .ov-hl-trend svg { width: 10px; height: 10px; }
+
+    /* ── Export row ── */
+    .ov-export-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .ov-title { font-size: 15px; font-weight: 900; color: var(--text); }
+    .ov-sub { font-size: 12px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+    .btn-export {
+      height: 38px; padding: 0 20px; border-radius: 9px; border: none; cursor: pointer;
+      background: linear-gradient(135deg,#16A34A,#22C55E); color: #fff;
+      font-size: 13px; font-weight: 800; font-family: inherit;
+      display: flex; align-items: center; gap: 7px;
+      box-shadow: 0 4px 12px rgba(22,163,74,.25); transition: filter .15s;
+    }
+    .btn-export:hover { filter: brightness(1.08); }
+    .btn-export svg { width: 15px; height: 15px; }
+
+    /* ── Table ── */
+    .table-card { background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--purple-bg); }
+    th {
+      padding: 11px 16px; text-align: left; font-size: 12px; font-weight: 800;
+      color: var(--text3); white-space: nowrap;
+    }
+    td {
+      padding: 14px 16px; font-size: 13px; font-weight: 600; color: var(--text);
+      border-bottom: 1px solid var(--border); vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: var(--purple-bg); }
+
+    .hosp-av {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: grid; place-items: center; font-size: 14px; font-weight: 900;
+      color: #fff; flex-shrink: 0;
+    }
+    .hosp-cell { display: flex; align-items: center; gap: 11px; }
+    .hosp-name { font-size: 13px; font-weight: 800; color: var(--text); }
+    .hosp-addr { font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+
+    .badge {
+      display: inline-block; padding: 3px 9px; border-radius: 20px;
+      font-size: 11px; font-weight: 800;
+    }
+    .badge-purple { background: var(--purple-light); color: var(--purple); }
+
+    .ov-rank {
+      width: 24px; height: 24px; border-radius: 7px; display: grid; place-items: center;
+      font-size: 12px; font-weight: 900;
+    }
+    .ov-rank.top1 { background: linear-gradient(135deg,#F59E0B,#FBBF24); color: #fff; }
+    .ov-rank.top2 { background: linear-gradient(135deg,#94A3B8,#CBD5E1); color: #fff; }
+    .ov-rank.top3 { background: linear-gradient(135deg,#D97706,#F59E0B); color: #fff; }
+    .ov-rank.normal { background: var(--purple-bg); color: var(--text3); }
+    .trend-tag {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 8px;
+    }
+    .trend-tag.up { background: var(--green-bg); color: var(--green); }
+    .trend-tag.down { background: var(--red-bg); color: var(--red); }
+    .trend-tag.flat { background: #F1F5F9; color: #94A3B8; }
+    .trend-tag svg { width: 10px; height: 10px; }
+    .rate-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .rate-bar { width: 60px; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+    .rate-bar-fill { height: 100%; border-radius: 3px; }
+    .rate-val { font-size: 13px; font-weight: 900; min-width: 40px; }
+  </style>
+<script defer src="admin-sidebar.js"></script></head>
+<body>
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-title">多康</div>
+      <div class="sb-logo-sub">运营管理后台</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section-lbl">概览</div>
+      <a class="nav-link" href="admin.html">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="1" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="10" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="10" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>
+        数据总览
+      </a>
+      <div class="sb-section-lbl">业务管理</div>
+      <a class="nav-link" href="admin-orders.html">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="2" y="1.5" width="14" height="15" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M6 6h6M6 9.5h6M6 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        订单管理
+        <span class="nav-badge">12</span>
+      </a>
+      <a class="nav-link" href="admin-caregivers.html">
+        <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6" r="3.5" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 16.5c0-3.5 2.9-6 6.5-6s6.5 2.5 6.5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        护理员管理
+      </a>
+      <a class="nav-link" href="admin-users.html">
+        <svg viewBox="0 0 18 18" fill="none"><circle cx="6.5" cy="6" r="3" stroke="currentColor" stroke-width="1.4"/><circle cx="13" cy="7" r="2.3" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 15.5c.4-3 2.1-4.7 5-4.7s4.6 1.7 5 4.7M11.2 11.5c2.7-.2 4.6 1.1 5.2 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        用户管理
+      </a>
+      <a class="nav-link" href="daily-report.html">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="1.5" y="2" width="15" height="14" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h8M5 10.5h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M12.5 10l1.5 1.5L16 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        日报审核
+        <span class="nav-badge">5</span>
+      </a>
+      <div class="sb-section-lbl">系统</div>
+      <a class="nav-link" href="profile.html">
+        <svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.6 3.6l1.4 1.4M13 13l1.4 1.4M3.6 14.4l1.4-1.4M13 5l1.4-1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        系统设置
+      </a>
+    </nav>
+    <div class="sb-user">
+      <div class="sb-av">管</div>
+      <div>
+        <div class="sb-uname">管理员</div>
+        <div class="sb-urole">超级管理员</div>
+      </div>
+      <button class="sb-logout" onclick="if(confirm('确认退出？'))location.href='index.html'">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="breadcrumb">
+        <span>业务管理</span>
+        <svg viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="cur">陪护公司列表</span>
+      </div>
+      <div class="tb-actions">
+        <button class="tb-btn" title="刷新" onclick="renderCompanies()">
+          <svg viewBox="0 0 17 17" fill="none"><path d="M14 8.5A5.5 5.5 0 113 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M14 3v5.5H8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="tb-date" id="tbDate"></div>
+        <div class="tb-av">管</div>
+      </div>
+    </header>
+
+    <!-- Page -->
+    <main class="page">
+      <div class="page-hd">
+        <div>
+          <div class="page-title">陪护公司列表</div>
+          <div class="page-sub">合作陪护公司数据总览，支持导出 Excel</div>
+        </div>
+      </div>
+
+      <!-- Highlights -->
+      <div class="ov-highlights" id="ovHighlights"></div>
+
+      <!-- Export row -->
+      <div class="ov-export-row">
+        <div>
+          <div class="ov-title">陪护公司数据排行</div>
+          <div class="ov-sub">按本月订单量排序 · 数据更新至今日</div>
+        </div>
+        <button class="btn-export" onclick="exportExcel()">
+          <svg viewBox="0 0 15 15" fill="none"><rect x="1.5" y="1.5" width="12" height="12" rx="2" stroke="#fff" stroke-width="1.3"/><path d="M5 5.5h5M5 8h5M5 10.5h3" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/></svg>
+          导出 Excel
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>排名</th>
+              <th>陪护公司名称</th>
+              <th>地区</th>
+              <th>本月订单</th>
+              <th>环比趋势</th>
+              <th>本月金额</th>
+              <th>好评率</th>
+              <th>护理员数</th>
+              <th>平均评分</th>
+            </tr>
+          </thead>
+          <tbody id="ovTbody"></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  document.getElementById('tbDate').textContent =
+    new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric'});
+
+  const COMPANIES = [
+    { id:1, name:'安心护理服务有限公司',     region:'北京', abbr:'安心', color:['#2350A8','#547FD8'], monthOrder:186, status:'合作中' },
+    { id:2, name:'仁爱陪护管理集团',         region:'北京', abbr:'仁爱', color:['#C92B2B','#E86060'], monthOrder:158, status:'合作中' },
+    { id:3, name:'康乐护理服务中心',         region:'上海', abbr:'康乐', color:['#166B35','#2EAA5A'], monthOrder:134, status:'合作中' },
+    { id:4, name:'优护达健康管理有限公司',   region:'上海', abbr:'优护', color:['#7B2D9E','#B26FD6'], monthOrder:112, status:'合作中' },
+    { id:5, name:'博爱护理服务有限公司',     region:'广州', abbr:'博爱', color:['#1C6E8C','#3AACCC'], monthOrder:89,  status:'合作中' },
+    { id:6, name:'和颐康护科技有限公司',     region:'广州', abbr:'和颐', color:['#8B4513','#D2691E'], monthOrder:67,  status:'合作中' },
+    { id:7, name:'深圳市众康陪护服务中心',   region:'深圳', abbr:'众康', color:['#1A5276','#2E86C1'], monthOrder:54,  status:'合作中' },
+    { id:8, name:'北京福寿康护理有限公司',   region:'北京', abbr:'福寿', color:['#6B2FA0','#9B59B6'], monthOrder:37,  status:'暂停合作' },
+  ];
+
+  function getCompanyData() {
+    return COMPANIES.map(c => {
+      const seed = c.id * 7 + 3;
+      const lastOrder = Math.max(1, Math.round(c.monthOrder * (0.75 + (seed % 50) / 100)));
+      const revenue = c.monthOrder * 280;
+      const lastRevenue = lastOrder * 280;
+      const rate = c.status === '合作中' ? (92 + (seed % 7)) : (85 + (seed % 8));
+      const score = c.status === '合作中' ? (4.3 + (seed % 6) * 0.1) : (3.8 + (seed % 5) * 0.1);
+      const nurses = Math.max(3, Math.round(c.monthOrder * 0.25 + (seed % 5)));
+      return { ...c, lastOrder, revenue, lastRevenue, rate, score: +score.toFixed(1), nurses };
+    }).sort((a, b) => b.monthOrder - a.monthOrder);
+  }
+
+  function renderCompanies() {
+    const data = getCompanyData();
+    const totalOrders     = data.reduce((s, c) => s + c.monthOrder, 0);
+    const totalLastOrders = data.reduce((s, c) => s + c.lastOrder, 0);
+    const totalRevenue    = data.reduce((s, c) => s + c.revenue, 0);
+    const totalLastRev    = data.reduce((s, c) => s + c.lastRevenue, 0);
+    const avgRate   = data.length ? (data.reduce((s, c) => s + c.rate, 0) / data.length).toFixed(1) : 0;
+    const totalNurses = data.reduce((s, c) => s + c.nurses, 0);
+    const avgScore  = data.length ? (data.reduce((s, c) => s + c.score, 0) / data.length).toFixed(1) : 0;
+
+    function trendHtml(cur, prev) {
+      if (!prev) return '';
+      const pct = ((cur - prev) / prev * 100).toFixed(1);
+      const up = pct >= 0;
+      const arrow = up
+        ? '<svg viewBox="0 0 10 10"><path d="M5 2l3.5 5H1.5z" fill="currentColor"/></svg>'
+        : '<svg viewBox="0 0 10 10"><path d="M5 8L1.5 3h7z" fill="currentColor"/></svg>';
+      return `<span class="ov-hl-trend ${up?'up':'down'}">${arrow} ${up?'+':''}${pct}%</span>`;
+    }
+
+    document.getElementById('ovHighlights').innerHTML = `
+      <div class="ov-hl">
+        <div class="ov-hl-lbl">本月总订单</div>
+        <div class="ov-hl-val">${totalOrders.toLocaleString()}</div>
+        ${trendHtml(totalOrders, totalLastOrders)}
+      </div>
+      <div class="ov-hl">
+        <div class="ov-hl-lbl">本月总金额</div>
+        <div class="ov-hl-val">¥${(totalRevenue/10000).toFixed(1)}万</div>
+        ${trendHtml(totalRevenue, totalLastRev)}
+      </div>
+      <div class="ov-hl">
+        <div class="ov-hl-lbl">整体好评率</div>
+        <div class="ov-hl-val">${avgRate}%</div>
+        <span class="ov-hl-trend neutral">
+          <svg viewBox="0 0 10 10"><path d="M5 2l3.5 5H1.5z" fill="currentColor"/></svg> 优秀
+        </span>
+      </div>
+      <div class="ov-hl">
+        <div class="ov-hl-lbl">活跃护理员</div>
+        <div class="ov-hl-val">${totalNurses}</div>
+        <span class="ov-hl-trend up">
+          <svg viewBox="0 0 10 10"><path d="M5 2l3.5 5H1.5z" fill="currentColor"/></svg> 在线
+        </span>
+      </div>
+      <div class="ov-hl">
+        <div class="ov-hl-lbl">平均评分</div>
+        <div class="ov-hl-val">${avgScore}</div>
+        <span class="ov-hl-trend neutral">
+          <svg viewBox="0 0 10 10"><path d="M5 2l3.5 5H1.5z" fill="currentColor"/></svg> 稳定
+        </span>
+      </div>`;
+
+    const tbody = document.getElementById('ovTbody');
+    tbody.innerHTML = data.map((c, i) => {
+      const rankCls = i===0?'top1':i===1?'top2':i===2?'top3':'normal';
+      const pct = c.lastOrder ? ((c.monthOrder - c.lastOrder) / c.lastOrder * 100).toFixed(1) : 0;
+      const tUp = pct >= 0;
+      const tCls = c.monthOrder === 0 ? 'flat' : tUp ? 'up' : 'down';
+      const tArrow = c.monthOrder === 0 ? '—'
+        : `<svg viewBox="0 0 10 10"><path d="${tUp?'M5 2l3.5 5H1.5z':'M5 8L1.5 3h7z'}" fill="currentColor"/></svg> ${tUp?'+':''}${pct}%`;
+      const rc = c.rate>=95?'var(--green)':c.rate>=90?'var(--blue)':c.rate>=85?'var(--amber)':'var(--red)';
+      const sc = c.score>=4.5?'var(--green)':c.score>=4.0?'var(--purple)':'var(--amber)';
+      return `<tr>
+        <td><div class="ov-rank ${rankCls}">${i+1}</div></td>
+        <td><div class="hosp-cell">
+          <div class="hosp-av" style="background:${c.color[0]}">${c.abbr}</div>
+          <div><div class="hosp-name">${c.name}</div><div class="hosp-addr">${c.region}</div></div>
+        </div></td>
+        <td><span class="badge badge-purple">${c.region}</span></td>
+        <td style="font-weight:900">${c.monthOrder}</td>
+        <td><span class="trend-tag ${tCls}">${tArrow}</span></td>
+        <td style="font-weight:800">¥${c.revenue.toLocaleString()}</td>
+        <td><div class="rate-bar-wrap"><div class="rate-bar"><div class="rate-bar-fill" style="width:${c.rate}%;background:${rc}"></div></div><span class="rate-val" style="color:${rc}">${c.rate}%</span></div></td>
+        <td>${c.nurses}</td>
+        <td><span style="font-weight:900;color:${sc}">${c.score}</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  renderCompanies();
+
+  function exportExcel() {
+    const data = getCompanyData();
+    const BOM = '\uFEFF';
+    const header = '排名,陪护公司名称,地区,本月订单,上月订单,环比变化(%),本月金额(元),好评率(%),护理员数,平均评分\n';
+    const rows = data.map((c, i) => {
+      const pct = c.lastOrder ? ((c.monthOrder - c.lastOrder) / c.lastOrder * 100).toFixed(1) : '0';
+      return [i+1, '"'+c.name+'"', c.region, c.monthOrder, c.lastOrder, pct, c.revenue, c.rate, c.nurses, c.score].join(',');
+    }).join('\n');
+    const blob = new Blob([BOM + header + rows], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '陪护公司数据总览_' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>

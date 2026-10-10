@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>提交日报</title>
+  <style>
+    :root {
+      --purple:       #8655C5;
+      --purple-dark:  #6B3FAA;
+      --purple-light: #EDE6F7;
+      --purple-bg:    #F5F3FA;
+      --card:         #FFFFFF;
+      --text:         #1A1828;
+      --text2:        #6B6880;
+      --text3:        #AEACC0;
+      --border:       #EDE9F5;
+      --green:        #16A34A;
+      --green-light:  #DCFCE7;
+      --red:          #DC2626;
+      --red-light:    #FEE2E2;
+      --sh: 0 2px 16px rgba(100,60,160,.08);
+      --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--purple-bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .frame { display: flex; justify-content: center; min-height: 100vh; background: #E4DDF0; }
+    .phone {
+      width: 100%; max-width: 430px;
+      display: flex; flex-direction: column; background: var(--purple-bg); min-height: 100vh;
+    }
+    @media (min-width: 520px) {
+      .frame { align-items: flex-start; padding: 20px 0 40px; }
+      .phone {
+        height: 900px; min-height: unset; border-radius: 42px; overflow: hidden;
+        box-shadow: 0 24px 72px rgba(80,40,140,.22), 0 2px 8px rgba(0,0,0,.06);
+      }
+    }
+
+    .scroll-area {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch; padding-bottom: 100px;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* Status bar */
+    .status-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 13px 22px 8px; font-size: 13px; font-weight: 700;
+      background: var(--card);
+    }
+    .status-right { display: flex; align-items: center; gap: 5px; }
+    .status-right svg { width: 17px; height: 17px; }
+
+    /* Navbar */
+    .navbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px 12px; background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .back-btn {
+      width: 36px; height: 36px; border: none; cursor: pointer;
+      background: var(--purple-light); border-radius: 11px;
+      display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
+    }
+    .back-btn svg { width: 20px; height: 20px; }
+    .nav-title { font-size: 17px; font-weight: 800; color: var(--text); }
+    .nav-date { font-size: 12px; color: var(--text3); font-weight: 600; }
+
+    /* Content */
+    .content { padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+
+    /* Card */
+    .card { background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh); overflow: hidden; }
+    .card-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
+    }
+    .card-hd-left { display: flex; align-items: center; gap: 8px; }
+    .sec-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); flex-shrink: 0; }
+    .sec-title { font-size: 14px; font-weight: 800; color: var(--text); }
+    .req { color: #EF4444; margin-left: 2px; }
+
+    /* ── Service status card ── */
+    .patient-strip {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      background: var(--purple-bg);
+    }
+    .pat-av {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      display: grid; place-items: center;
+      font-size: 14px; font-weight: 900; color: #fff;
+      background: linear-gradient(140deg,#3B82F6,#60A5FA);
+    }
+    .pat-name { font-size: 13px; font-weight: 800; color: var(--text); }
+    .pat-meta { font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+    .pat-tag {
+      margin-left: auto; font-size: 10px; font-weight: 700;
+      background: var(--purple-light); color: var(--purple);
+      padding: 3px 9px; border-radius: 20px; flex-shrink: 0;
+    }
+
+    .status-btns { display: flex; gap: 10px; padding: 14px 16px; }
+    .svc-btn {
+      flex: 1; height: 52px; border-radius: 14px; border: none; cursor: pointer;
+      font-size: 14px; font-weight: 800; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      -webkit-tap-highlight-color: transparent; transition: all .18s;
+    }
+    .svc-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+    /* Start button */
+    .btn-start {
+      background: linear-gradient(135deg,#1DB954,#16A34A);
+      color: #fff; box-shadow: 0 5px 16px rgba(22,163,74,.28);
+    }
+    .btn-start:active { transform: scale(.97); filter: brightness(.93); }
+    .btn-start.done {
+      background: var(--green-light); color: var(--green);
+      box-shadow: none; cursor: default;
+    }
+
+    /* End button */
+    .btn-end {
+      background: var(--purple-bg); color: var(--text3);
+      cursor: not-allowed;
+    }
+    .btn-end.active {
+      background: var(--red-light); color: var(--red);
+      cursor: pointer; box-shadow: 0 4px 12px rgba(220,38,38,.15);
+    }
+    .btn-end.active:active { transform: scale(.97); filter: brightness(.93); }
+    .btn-end.done-end {
+      background: #F1F5F9; color: #64748B;
+      cursor: default; box-shadow: none;
+    }
+
+    /* Time display */
+    .time-row {
+      display: flex; gap: 10px; padding: 0 16px 14px;
+    }
+    .time-chip {
+      flex: 1; background: var(--purple-bg); border-radius: var(--r-sm);
+      padding: 9px 12px;
+    }
+    .time-lbl { font-size: 10px; color: var(--text3); font-weight: 600; margin-bottom: 2px; }
+    .time-val { font-size: 13px; font-weight: 800; color: var(--text3); }
+    .time-val.set { color: var(--text); }
+
+    /* ── Textarea ── */
+    .textarea-wrap { padding: 14px 16px; }
+    .f-textarea {
+      width: 100%; min-height: 140px; border: 1.5px solid var(--border);
+      border-radius: var(--r-md); padding: 13px 14px;
+      font-size: 14px; font-family: inherit; color: var(--text);
+      resize: none; outline: none; line-height: 1.7; background: var(--purple-bg);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .f-textarea:focus {
+      border-color: var(--purple); background: #fff;
+      box-shadow: 0 0 0 3px rgba(134,85,197,.1);
+    }
+    .f-textarea::placeholder { color: var(--text3); }
+    .char-count { text-align: right; font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 6px; }
+    .char-count.warn { color: var(--red); }
+
+    /* Quick-fill chips */
+    .quick-fill { display: flex; flex-wrap: wrap; gap: 7px; padding: 0 16px 14px; }
+    .qf-chip {
+      padding: 5px 12px; border-radius: 20px; cursor: pointer;
+      font-size: 12px; font-weight: 700;
+      background: var(--purple-bg); color: var(--text2);
+      border: 1.5px solid var(--border); font-family: inherit;
+      -webkit-tap-highlight-color: transparent; transition: all .12s;
+    }
+    .qf-chip:active { background: var(--purple-light); border-color: var(--purple); color: var(--purple); }
+
+    /* ── Upload grid ── */
+    .upload-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; padding: 14px 16px; }
+    .upload-cell {
+      aspect-ratio: 1; border-radius: var(--r-md);
+      border: 1.5px dashed var(--border); background: var(--purple-bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px; cursor: pointer; position: relative; overflow: hidden;
+      -webkit-tap-highlight-color: transparent; transition: border-color .15s, background .15s;
+    }
+    .upload-cell:active, .upload-cell:hover { border-color: var(--purple); background: var(--purple-light); }
+    .upload-cell svg { width: 26px; height: 26px; color: var(--text3); transition: color .15s; }
+    .upload-cell:active svg, .upload-cell:hover svg { color: var(--purple); }
+    .upload-cell span { font-size: 11px; font-weight: 600; color: var(--text3); }
+
+    /* Filled cell */
+    .upload-cell.filled { border-style: solid; border-color: transparent; }
+    .fill-bg {
+      position: absolute; inset: 0; border-radius: calc(var(--r-md) - 1px);
+    }
+    .fill-del {
+      position: absolute; top: 5px; right: 5px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(0,0,0,.45); border: none; cursor: pointer;
+      display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
+    }
+    .fill-del svg { width: 10px; height: 10px; }
+    .fill-num {
+      position: absolute; bottom: 5px; left: 6px;
+      font-size: 10px; font-weight: 800; color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,.4);
+    }
+
+    /* Video upload */
+    .video-upload { padding: 0 16px 16px; }
+    .video-cell {
+      width: 100%; aspect-ratio: 16/9; border-radius: var(--r-md);
+      border: 1.5px dashed var(--border); background: var(--purple-bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; cursor: pointer; position: relative; overflow: hidden;
+      -webkit-tap-highlight-color: transparent; transition: all .15s;
+    }
+    .video-cell:active { border-color: var(--purple); background: var(--purple-light); }
+    .video-cell.filled { border-style: solid; border-color: transparent; background: #1e1040; }
+    .video-cell svg.vid-ico { width: 36px; height: 36px; color: var(--text3); }
+    .video-cell span { font-size: 13px; font-weight: 700; color: var(--text3); }
+    .video-cell small { font-size: 11px; color: var(--text3); }
+    /* Filled video state */
+    .play-overlay {
+      display: none; position: absolute; inset: 0;
+      flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    }
+    .video-cell.filled .play-overlay { display: flex; }
+    .video-cell.filled svg.vid-ico,
+    .video-cell.filled > span,
+    .video-cell.filled > small { display: none; }
+    .play-circle {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,255,255,.18); border: 2px solid rgba(255,255,255,.4);
+      display: grid; place-items: center;
+    }
+    .play-circle svg { width: 20px; height: 20px; margin-left: 3px; }
+    .video-name { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.75); }
+    .video-del {
+      position: absolute; top: 8px; right: 8px;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: rgba(0,0,0,.45); border: none; cursor: pointer;
+      display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
+    }
+    .video-del svg { width: 12px; height: 12px; }
+    .upload-hint { text-align: center; font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 8px; }
+
+    /* ── Fixed bottom bar ── */
+    .bottom-bar {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 430px;
+      background: var(--card); border-top: 1px solid var(--border);
+      padding: 10px 16px calc(14px + env(safe-area-inset-bottom));
+      z-index: 20;
+    }
+    .submit-btn {
+      width: 100%; height: 52px; border-radius: 16px; border: none; cursor: pointer;
+      font-family: inherit; font-size: 16px; font-weight: 800; letter-spacing: .4px;
+      background: linear-gradient(135deg,#9060D0,#6B3FAA); color: #fff;
+      box-shadow: 0 8px 22px rgba(107,63,170,.28);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      -webkit-tap-highlight-color: transparent; transition: transform .12s, filter .12s;
+    }
+    .submit-btn:active { transform: scale(.98); filter: brightness(.93); }
+    .submit-btn:disabled {
+      background: var(--purple-bg); color: var(--text3);
+      box-shadow: none; cursor: not-allowed;
+    }
+    .submit-btn svg { width: 18px; height: 18px; }
+
+    /* Toast */
+    .toast {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(.85);
+      background: rgba(20,14,40,.88); color: #fff; backdrop-filter: blur(8px);
+      padding: 18px 30px; border-radius: 18px; text-align: center;
+      font-size: 15px; font-weight: 800; z-index: 99;
+      opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    .toast-icon { font-size: 32px; display: block; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+<div class="frame">
+  <div class="phone">
+    <div class="scroll-area">
+
+      <!-- Status bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-right">
+          <svg viewBox="0 0 17 12" fill="currentColor">
+            <rect x="0" y="3" width="3" height="9" rx="1"/>
+            <rect x="4.5" y="1.5" width="3" height="10.5" rx="1"/>
+            <rect x="9" y="0" width="3" height="12" rx="1"/>
+            <rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".28"/>
+          </svg>
+          <svg viewBox="0 0 17 13" fill="none" stroke="currentColor" stroke-linecap="round">
+            <path d="M8.5 9.5a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8z" fill="currentColor" stroke="none"/>
+            <path d="M5.2 7a4.7 4.7 0 016.6 0" stroke-width="1.5"/>
+            <path d="M2 4a8.8 8.8 0 0113 0" stroke-width="1.5"/>
+          </svg>
+          <svg viewBox="0 0 24 12" fill="none">
+            <rect x=".6" y=".6" width="20" height="10.8" rx="2.8" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="21.2" y="3.6" width="2.2" height="4.8" rx="1.1" fill="currentColor"/>
+            <rect x="2" y="2" width="15" height="8" rx="1.8" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Navbar -->
+      <div class="navbar">
+        <button class="back-btn" onclick="history.length>1?history.back():location.href='nurse-home.html'" aria-label="返回">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path d="M13 4.5L7.5 10 13 15.5" stroke="#8655C5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="nav-title">提交日报</span>
+        <span class="nav-date" id="todayDate"></span>
+      </div>
+
+      <div class="content">
+
+        <!-- ① 服务状态 -->
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-hd-left">
+              <div class="sec-dot"></div>
+              <span class="sec-title">服务状态</span>
+            </div>
+            <span style="font-size:12px;color:var(--text3);font-weight:600;" id="svcStatusLabel">未开始</span>
+          </div>
+
+          <!-- Patient strip -->
+          <div class="patient-strip">
+            <div class="pat-av">张</div>
+            <div>
+              <div class="pat-name">张三</div>
+              <div class="pat-meta">北京红十字医院 · 内科5楼3床</div>
+            </div>
+            <div class="pat-tag">住院陪护</div>
+          </div>
+
+          <!-- Buttons -->
+          <div class="status-btns">
+            <button class="svc-btn btn-start" id="btnStart" onclick="startService()">
+              <svg viewBox="0 0 17 17" fill="none">
+                <circle cx="8.5" cy="8.5" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M8.5 5.5v3l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+              开始服务
+            </button>
+            <button class="svc-btn btn-end" id="btnEnd" disabled onclick="endService()">
+              <svg viewBox="0 0 17 17" fill="none">
+                <circle cx="8.5" cy="8.5" r="7" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="6" y="6" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/>
+              </svg>
+              结束服务
+            </button>
+          </div>
+
+          <!-- Time chips -->
+          <div class="time-row">
+            <div class="time-chip">
+              <div class="time-lbl">开始时间</div>
+              <div class="time-val" id="startTime">— —</div>
+            </div>
+            <div class="time-chip">
+              <div class="time-lbl">结束时间</div>
+              <div class="time-val" id="endTime">— —</div>
+            </div>
+            <div class="time-chip">
+              <div class="time-lbl">服务时长</div>
+              <div class="time-val" id="duration">— —</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② 护理记录 -->
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-hd-left">
+              <div class="sec-dot"></div>
+              <span class="sec-title">护理记录<span class="req">*</span></span>
+            </div>
+            <span style="font-size:12px;color:var(--text3);font-weight:600;">详细描述有助家属放心</span>
+          </div>
+
+          <!-- Quick fill -->
+          <div class="quick-fill">
+            <button class="qf-chip" onclick="appendText('饮食正常，进食良好')">饮食正常</button>
+            <button class="qf-chip" onclick="appendText('按时服药，无不良反应')">按时服药</button>
+            <button class="qf-chip" onclick="appendText('情绪稳定，配合良好')">情绪稳定</button>
+            <button class="qf-chip" onclick="appendText('睡眠良好，夜间安静')">睡眠良好</button>
+            <button class="qf-chip" onclick="appendText('协助下床活动，步态稳定')">协助活动</button>
+          </div>
+
+          <div class="textarea-wrap">
+            <textarea class="f-textarea" id="reportText" maxlength="1000"
+              placeholder="请描述今日护理情况，包括饮食、用药、活动、情绪及特殊情况等…"
+              oninput="onTextInput()"></textarea>
+            <div class="char-count" id="charCount">0 / 1000</div>
+          </div>
+        </div>
+
+        <!-- ③ 护理照片 -->
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-hd-left">
+              <div class="sec-dot"></div>
+              <span class="sec-title">护理照片</span>
+            </div>
+            <span style="font-size:12px;color:var(--text3);font-weight:600;" id="photoCount">0 / 6 张</span>
+          </div>
+          <div class="upload-grid" id="photoGrid">
+            <!-- rendered by JS -->
+          </div>
+        </div>
+
+      </div><!-- .content -->
+    </div><!-- .scroll-area -->
+
+    <!-- Fixed submit bar -->
+    <div class="bottom-bar">
+      <button class="submit-btn" id="submitBtn" onclick="submitReport()">
+        <svg viewBox="0 0 18 18" fill="none">
+          <path d="M3 9l4.5 4.5 7.5-8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        提交日报
+      </button>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+      <span class="toast-icon" id="toastIcon"></span>
+      <span id="toastMsg"></span>
+    </div>
+
+  </div><!-- .phone -->
+</div><!-- .frame -->
+
+<script>
+  /* ── Date header ── */
+  const now = new Date();
+  document.getElementById('todayDate').textContent =
+    now.getFullYear() + '-' +
+    String(now.getMonth()+1).padStart(2,'0') + '-' +
+    String(now.getDate()).padStart(2,'0');
+
+  /* ── Toast ── */
+  function showToast(icon, msg, dur=2000) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastIcon').textContent = icon;
+    document.getElementById('toastMsg').textContent  = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
+
+  /* ── Service status ── */
+  let startTs = null, endTs = null;
+
+  function fmt(d) {
+    return String(d.getHours()).padStart(2,'0') + ':' +
+           String(d.getMinutes()).padStart(2,'0');
+  }
+
+  function startService() {
+    startTs = new Date();
+    document.getElementById('startTime').textContent = fmt(startTs);
+    document.getElementById('startTime').classList.add('set');
+    document.getElementById('svcStatusLabel').textContent = '服务中 ●';
+    document.getElementById('svcStatusLabel').style.color = 'var(--green)';
+
+    const bs = document.getElementById('btnStart');
+    bs.classList.add('done');
+    bs.innerHTML = `<svg viewBox="0 0 17 17" fill="none"><path d="M4 8.5l3.5 3.5 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> 已开始`;
+
+    const be = document.getElementById('btnEnd');
+    be.classList.add('active');
+    be.disabled = false;
+
+    showToast('🟢', '服务已开始，祝护理顺利！');
+  }
+
+  function endService() {
+    endTs = new Date();
+    document.getElementById('endTime').textContent = fmt(endTs);
+    document.getElementById('endTime').classList.add('set');
+
+    const mins = Math.round((endTs - startTs) / 60000);
+    const h = Math.floor(mins / 60), m = mins % 60;
+    document.getElementById('duration').textContent = (h ? h + 'h ' : '') + m + 'min';
+    document.getElementById('duration').classList.add('set');
+
+    document.getElementById('svcStatusLabel').textContent = '已结束';
+    document.getElementById('svcStatusLabel').style.color = 'var(--text3)';
+
+    const be = document.getElementById('btnEnd');
+    be.classList.remove('active');
+    be.classList.add('done-end');
+    be.disabled = true;
+    be.innerHTML = `<svg viewBox="0 0 17 17" fill="none"><path d="M4 8.5l3.5 3.5 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> 已结束`;
+
+    showToast('✅', '服务已结束');
+  }
+
+  /* ── Textarea ── */
+  function onTextInput() {
+    const ta  = document.getElementById('reportText');
+    const cnt = document.getElementById('charCount');
+    const len = ta.value.length;
+    cnt.textContent = len + ' / 1000';
+    cnt.classList.toggle('warn', len > 900);
+  }
+
+  function appendText(snippet) {
+    const ta = document.getElementById('reportText');
+    const sep = ta.value && !ta.value.endsWith('，') && !ta.value.endsWith('。') ? '，' : '';
+    ta.value += (ta.value ? sep : '') + snippet;
+    onTextInput();
+    ta.focus();
+  }
+
+  /* ── Photo upload ── */
+  const MAX_PHOTOS = 6;
+  let photos = []; // array of {id, gradient}
+
+  const GRADIENTS = [
+    'linear-gradient(135deg,#C9D6FF,#A0B4FF)',
+    'linear-gradient(135deg,#D4F1C9,#8FD68A)',
+    'linear-gradient(135deg,#FDE8C8,#F4A858)',
+    'linear-gradient(135deg,#F8C8D4,#F47FAA)',
+    'linear-gradient(135deg,#C8EDF8,#60CAF0)',
+    'linear-gradient(135deg,#E8D4F8,#C080F0)',
+  ];
+
+  function renderPhotoGrid() {
+    const grid = document.getElementById('photoGrid');
+    grid.innerHTML = '';
+    document.getElementById('photoCount').textContent = photos.length + ' / ' + MAX_PHOTOS + ' 张';
+
+    photos.forEach((p, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'upload-cell filled';
+      cell.innerHTML = `
+        <div class="fill-bg" style="background:${p.gradient}"></div>
+        <div class="fill-num">${i+1}</div>
+        <button class="fill-del" onclick="removePhoto(${p.id})">
+          <svg viewBox="0 0 10 10" fill="none">
+            <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>`;
+      grid.appendChild(cell);
+    });
+
+    if (photos.length < MAX_PHOTOS) {
+      const add = document.createElement('div');
+      add.className = 'upload-cell';
+      add.onclick = addPhoto;
+      add.innerHTML = `
+        <svg viewBox="0 0 26 26" fill="none">
+          <path d="M13 5v16M5 13h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>添加照片</span>`;
+      grid.appendChild(add);
+    }
+  }
+
+  let photoIdCounter = 0;
+  function addPhoto() {
+    if (photos.length >= MAX_PHOTOS) return;
+    photos.push({ id: ++photoIdCounter, gradient: GRADIENTS[photos.length % GRADIENTS.length] });
+    renderPhotoGrid();
+    showToast('🖼️', '照片已添加');
+  }
+
+  function removePhoto(id) {
+    photos = photos.filter(p => p.id !== id);
+    renderPhotoGrid();
+  }
+
+  renderPhotoGrid();
+
+  /* ── Submit ── */
+  function submitReport() {
+    const text = document.getElementById('reportText').value.trim();
+    if (!text) {
+      showToast('⚠️', '请填写护理记录后提交', 2200);
+      document.getElementById('reportText').focus();
+      return;
+    }
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<svg viewBox="0 0 18 18" fill="none"><path d="M9 1v4M9 13v4M1 9h4M13 9h4" stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/></svg> 提交中…';
+    setTimeout(() => {
+      showToast('✅', '日报提交成功！家属已收到通知', 2500);
+      setTimeout(() => { location.href = 'nurse-home.html'; }, 2600);
+    }, 1200);
+  }
+</script>
+</body>
+</html>

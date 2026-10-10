@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><link rel="stylesheet" href="admin-shell.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>用户管理 · 多康运营后台</title>
+  <style>
+    :root{--blue:#224CD3;--blue-dark:#224CD3;--blue-light:#E7F1FD;--blue-bg:#F4F8FD;--card:#fff;--text:#172033;--text2:#657087;--text3:#9AA7BA;--border:#D7E8FA;--green:#16A34A;--green-bg:#DCFCE7;--red:#DC2626;--red-bg:#FEE2E2;--amber:#D97706;--amber-bg:#FEF3C7;--shadow:0 3px 16px rgba(34,76,211,.10);--sidebar-w:220px}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--blue-bg);color:var(--text);min-width:1100px;-webkit-font-smoothing:antialiased}
+    .layout{display:flex;min-height:100vh}.sidebar{width:var(--sidebar-w);position:fixed;inset:0 auto 0 0;background:#6EA8E8;color:#fff;display:flex;flex-direction:column;z-index:5}.brand{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.22)}.brand-title{font-size:18px;font-weight:900}.brand-sub{font-size:11px;color:rgba(255,255,255,.7);margin-top:4px}.nav{flex:1;padding:16px 0}.nav-label{padding:14px 20px 7px;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.68);font-weight:800}.nav-link{display:flex;align-items:center;gap:10px;margin:2px 10px;padding:10px;border-radius:9px;color:rgba(255,255,255,.78);font-size:13px;font-weight:700;text-decoration:none}.nav-link svg{width:18px;height:18px;flex:none}.nav-link:hover,.nav-link.active{background:rgba(255,255,255,.24);color:#fff}.nav-link.active{box-shadow:inset 3px 0 0 #fff}.nav-badge{margin-left:auto;min-width:20px;height:18px;padding:0 5px;border-radius:9px;background:#fff;color:var(--blue-dark);font-size:10px;display:grid;place-items:center}.user{padding:16px 20px;border-top:1px solid rgba(255,255,255,.2);display:flex;align-items:center;gap:10px}.user-av{width:36px;height:36px;border-radius:10px;background:#8FC1F0;display:grid;place-items:center;font-weight:900}.user-name{font-size:13px;font-weight:800}.user-role{font-size:11px;color:rgba(255,255,255,.68);margin-top:2px}.logout{margin-left:auto;border:0;background:rgba(255,255,255,.18);color:#fff;width:28px;height:28px;border-radius:8px;cursor:pointer}
+    .main{margin-left:var(--sidebar-w);flex:1;min-height:100vh}.topbar{height:60px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px}.crumb{display:flex;gap:7px;align-items:center;color:var(--text3);font-size:13px;font-weight:700}.crumb .current{color:var(--text)}.crumb svg{width:14px;height:14px}.top-actions{margin-left:auto;display:flex;align-items:center;gap:12px}.top-date{font-size:12px;color:var(--text3);font-weight:700}.top-av{width:34px;height:34px;border-radius:9px;background:#8FC1F0;color:#fff;display:grid;place-items:center;font-weight:900}
+    .page{padding:26px 30px}.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}.page-title{font-size:24px;font-weight:900}.page-sub{font-size:13px;color:var(--text3);margin-top:5px}.actions{display:flex;gap:10px}.btn{height:38px;padding:0 15px;border-radius:9px;border:1px solid var(--border);background:#fff;color:var(--text2);font:700 13px inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px}.btn:hover{border-color:var(--blue);color:var(--blue)}.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 4px 12px rgba(74,144,226,.22)}.btn svg{width:15px;height:15px}
+    .filter{background:#fff;border:1px solid var(--border);border-radius:12px;padding:15px 16px;display:flex;align-items:center;gap:12px;margin-bottom:16px;box-shadow:var(--shadow)}.filter-label{font-size:12px;color:var(--text3);font-weight:800}.select{height:36px;border:1px solid var(--border);border-radius:8px;padding:0 11px;color:var(--text2);background:#fff;font:600 12px inherit;min-width:150px;outline:0}.select:focus{border-color:var(--blue)}.result{margin-left:auto;font-size:12px;color:var(--text3);font-weight:700}.result strong{color:var(--blue);font-size:16px}
+    .table-wrap{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}.table{width:100%;border-collapse:collapse}.table th{height:44px;background:#F8FBFF;color:var(--text3);font-size:11px;font-weight:800;text-align:left;padding:0 18px;border-bottom:1px solid var(--border)}.table td{height:68px;padding:0 18px;border-bottom:1px solid #EEF5FC;font-size:13px;color:var(--text2);font-weight:600}.table tr:last-child td{border-bottom:0}.table tr:hover td{background:#FBFDFF}.profile{display:flex;align-items:center;gap:10px}.avatar{width:36px;height:36px;border-radius:10px;background:var(--blue-light);color:var(--blue-dark);display:grid;place-items:center;font-size:14px;font-weight:900}.nickname{font-weight:800;color:var(--text)}.user-id{font-size:10px;color:var(--text3);margin-top:2px}.phone{font-variant-numeric:tabular-nums;letter-spacing:.4px}.status{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800}.status::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.status.enabled{background:var(--green-bg);color:var(--green)}.status.disabled{background:var(--red-bg);color:var(--red)}.inviter{color:var(--text2)}.op{display:flex;gap:8px}.op button{border:0;background:none;color:var(--blue);font:700 12px inherit;cursor:pointer;padding:4px}.op button:hover{text-decoration:underline}.op .danger{color:var(--red)}.empty{padding:55px;text-align:center;color:var(--text3);display:none}.modal-mask{position:fixed;inset:0;background:rgba(18,43,76,.38);display:none;align-items:center;justify-content:center;z-index:20}.modal-mask.show{display:flex}.modal{width:420px;background:#fff;border-radius:16px;box-shadow:0 18px 60px rgba(24,61,105,.22);padding:22px}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.modal-title{font-size:18px;font-weight:900}.modal-close{border:0;background:var(--blue-bg);color:var(--text2);width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:17px}.form-grid{display:grid;gap:13px}.field{display:grid;gap:6px}.field label{font-size:12px;font-weight:800;color:var(--text2)}.field input{height:38px;border:1px solid var(--border);border-radius:8px;padding:0 10px;font:600 13px inherit;outline:0}.field input:focus{border-color:var(--blue)}.modal-foot{display:flex;justify-content:flex-end;gap:9px;margin-top:22px}
+    @media(max-width:900px){.page{padding:22px 18px}.table th,.table td{padding:0 11px}.op{gap:3px}.sidebar{width:190px;--sidebar-w:190px}.main{margin-left:190px}}
+    /* Unified admin colors */
+    :root{--blue:#224CD3;--blue-dark:#224CD3;--shadow:0 3px 16px rgba(34,76,211,.10)}
+    .sidebar{background:#002141!important}.user-av,.top-av{background:#224CD3!important}
+    .btn-primary{background:#224CD3!important;border-color:#224CD3!important;box-shadow:0 4px 12px rgba(34,76,211,.22)!important}
+    /* Match the dashboard template */
+    body{background:#EFF6FF}
+    .topbar{box-shadow:0 1px 8px rgba(37,99,235,.08);gap:16px}
+    .brand{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .brand-sub{color:rgba(255,255,255,.45);font-weight:600}
+    .nav-label{color:rgba(255,255,255,.3);padding:14px 20px 6px}
+    .nav-link{gap:11px;padding:10px 20px;margin:2px 10px;border-radius:10px;color:rgba(255,255,255,.6)}
+    .nav-link:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
+    .nav-link.active{background:rgba(255,255,255,.15);box-shadow:inset 3px 0 0 #93C5FD}
+    .nav-badge{background:#EF4444;color:#fff}
+    .user{border-top:1px solid rgba(255,255,255,.08)}
+    .user-av{background:rgba(255,255,255,.2)!important;color:#fff}
+    .user-role{color:rgba(255,255,255,.4)}
+    .logout{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
+    .page{padding:24px 28px}
+    .page-head{margin-bottom:22px}
+    .page-title{font-size:22px}
+    .btn{height:36px;border-radius:9px}
+    .filter{border-radius:14px;padding:16px 20px}
+    .table-wrap{border-radius:14px}
+    .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}.metric-card{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:17px 18px}.metric-label{font-size:12px;color:var(--text3);font-weight:700}.metric-value{font-size:26px;font-weight:900;color:var(--text);margin-top:8px}.metric-foot{font-size:11px;color:var(--text3);margin-top:6px}.metric-accent{color:var(--blue)}
+    .user-table{min-width:1220px}.table-wrap{overflow-x:auto;overflow-y:hidden}.user-table th{white-space:nowrap}.user-table td{white-space:nowrap}
+  </style>
+<script defer src="admin-sidebar.js"></script></head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-title">多康</div><div class="brand-sub">运营管理后台</div></div>
+    <nav class="nav">
+      <div class="nav-label">概览</div>
+      <a class="nav-link" href="admin.html"><svg viewBox="0 0 18 18" fill="none"><rect x="1" y="1" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="1" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="10" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="10" width="7" height="7" rx="2" stroke="currentColor" stroke-width="1.5"/></svg>数据总览</a>
+      <div class="nav-label">业务管理</div>
+      <a class="nav-link" href="admin-orders.html"><svg viewBox="0 0 18 18" fill="none"><rect x="2" y="1.5" width="14" height="15" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M6 6h6M6 9.5h6M6 13h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>订单管理<span class="nav-badge">12</span></a>
+      <a class="nav-link" href="admin-caregivers.html"><svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="6" r="3.5" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 16.5c0-3.5 2.9-6 6.5-6s6.5 2.5 6.5 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>护理员管理</a>
+      <a class="nav-link active" href="admin-users.html"><svg viewBox="0 0 18 18" fill="none"><circle cx="6.5" cy="6" r="3" stroke="currentColor" stroke-width="1.4"/><circle cx="13" cy="7" r="2.3" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 15.5c.4-3 2.1-4.7 5-4.7s4.6 1.7 5 4.7M11.2 11.5c2.7-.2 4.6 1.1 5.2 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>用户管理</a>
+      <a class="nav-link" href="daily-report.html"><svg viewBox="0 0 18 18" fill="none"><rect x="1.5" y="2" width="15" height="14" rx="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h8M5 10.5h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M12.5 10l1.5 1.5L16 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>日报审核<span class="nav-badge">5</span></a>
+      <div class="nav-label">系统</div>
+      <a class="nav-link" href="profile.html"><svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.6 3.6l1.4 1.4M13 13l1.4 1.4M3.6 14.4l1.4-1.4M13 5l1.4-1.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>系统设置</a>
+    </nav>
+    <div class="user"><div class="user-av">管</div><div><div class="user-name">管理员</div><div class="user-role">超级管理员</div></div><button class="logout" onclick="if(confirm('确认退出？'))location.href='index.html'">↗</button></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div class="crumb"><span>业务管理</span><svg viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span class="current">用户管理</span></div><div class="top-actions"><span class="top-date">2026年4月12日 星期日</span><div class="top-av">管</div></div></header>
+    <section class="page">
+      <div class="page-head"><div><h1 class="page-title">用户管理</h1><p class="page-sub">管理注册用户、账号状态及邀请关系</p></div><div class="actions"><button class="btn btn-primary" onclick="exportUsers()"><svg viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3M3 13.5h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>导出 Excel</button></div></div>
+      <div class="metrics-grid"><div class="metric-card"><div class="metric-label">用户总量</div><div class="metric-value" id="metricTotal">0</div><div class="metric-foot">全部注册用户</div></div><div class="metric-card"><div class="metric-label">正常用户</div><div class="metric-value metric-accent" id="metricEnabled">0</div><div class="metric-foot">可登录、可下单</div></div><div class="metric-card"><div class="metric-label">已禁用</div><div class="metric-value" id="metricDisabled">0</div><div class="metric-foot">已暂停账号权限</div></div><div class="metric-card"><div class="metric-label">邀请用户</div><div class="metric-value metric-accent" id="metricInvited">0</div><div class="metric-foot">通过邀请注册</div></div></div>
+      <div class="filter"><span class="filter-label">筛选</span><select class="select" id="timeFilter"><option value="all">全部时间</option><option value="7">近7天</option><option value="30">近30天</option><option value="90">近90天</option></select><select class="select" id="statusFilter"><option value="all">全部状态</option><option value="enabled">正常</option><option value="disabled">已禁用</option></select><span class="result">共 <strong id="resultCount">0</strong> 位用户</span></div>
+      <div class="table-wrap"><table class="table user-table"><thead><tr><th>头像</th><th>昵称</th><th>真实姓名</th><th>性别</th><th>年龄</th><th>手机号</th><th>注册时间</th><th>状态</th><th>邀请人</th><th>操作</th></tr></thead><tbody id="userTable"></tbody></table><div class="empty" id="empty">暂无符合条件的用户</div></div>
+    </section>
+  </main>
+</div>
+<div class="modal-mask" id="editModal" onclick="if(event.target===this)closeEdit()"><div class="modal"><div class="modal-head"><div class="modal-title">编辑用户</div><button class="modal-close" onclick="closeEdit()">×</button></div><div class="form-grid"><div class="field"><label>昵称</label><input id="editNickname" maxlength="20" /></div><div class="field"><label>手机号</label><input id="editPhone" maxlength="11" /></div><div class="field"><label>邀请人</label><input id="editInviter" disabled /></div></div><div class="modal-foot"><button class="btn" onclick="closeEdit()">取消</button><button class="btn btn-primary" onclick="saveEdit()">保存</button></div></div></div>
+<script>
+  const USERS=[
+    {id:'U10001',avatar:'王',nickname:'暖心小王',realName:'王丽',gender:'女',age:42,phone:'138****2468',registered:'2026-04-10',status:'enabled',inviter:'—'},
+    {id:'U10002',avatar:'李',nickname:'温暖同行',realName:'李伟',gender:'男',age:38,phone:'139****8572',registered:'2026-04-08',status:'enabled',inviter:'暖心小王'},
+    {id:'U10003',avatar:'赵',nickname:'晴天阿姨',realName:'赵敏',gender:'女',age:56,phone:'186****3016',registered:'2026-03-27',status:'enabled',inviter:'—'},
+    {id:'U10004',avatar:'陈',nickname:'陈先生',realName:'陈志强',gender:'男',age:45,phone:'133****6420',registered:'2026-03-14',status:'disabled',inviter:'晴天阿姨'},
+    {id:'U10005',avatar:'刘',nickname:'安心陪诊',realName:'刘芳',gender:'女',age:34,phone:'177****9183',registered:'2026-02-22',status:'enabled',inviter:'暖心小王'},
+    {id:'U10006',avatar:'孙',nickname:'乐享晚年',realName:'孙建国',gender:'男',age:68,phone:'158****5509',registered:'2026-01-19',status:'enabled',inviter:'—'}
+  ];
+  let editingId='';
+  const statusText={enabled:'正常',disabled:'已禁用'};
+  function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+  function filteredUsers(){const days=document.getElementById('timeFilter').value;const status=document.getElementById('statusFilter').value;const now=new Date('2026-04-12T00:00:00');return USERS.filter(u=>{const within=days==='all'||((now-new Date(u.registered+'T00:00:00'))/86400000<=Number(days));return within&&(status==='all'||u.status===status);});}
+  function render(){const data=filteredUsers();document.getElementById('resultCount').textContent=data.length;document.getElementById('metricTotal').textContent=USERS.length;document.getElementById('metricEnabled').textContent=USERS.filter(u=>u.status==='enabled').length;document.getElementById('metricDisabled').textContent=USERS.filter(u=>u.status==='disabled').length;document.getElementById('metricInvited').textContent=USERS.filter(u=>u.inviter!=='—').length;document.getElementById('empty').style.display=data.length?'none':'block';document.getElementById('userTable').innerHTML=data.map(u=>`<tr><td><div class="avatar">${escapeHtml(u.avatar)}</div></td><td><div class="nickname">${escapeHtml(u.nickname)}</div><div class="user-id">${u.id}</div></td><td>${escapeHtml(u.realName)}</td><td>${u.gender}</td><td>${u.age} 岁</td><td class="phone">${u.phone}</td><td>${u.registered}</td><td><span class="status ${u.status}">${statusText[u.status]}</span></td><td class="inviter">${escapeHtml(u.inviter)}</td><td><div class="op"><button onclick="viewUser('${u.id}')">查看</button><button onclick="openEdit('${u.id}')">编辑</button><button class="${u.status==='enabled'?'danger':''}" onclick="toggleUser('${u.id}')">${u.status==='enabled'?'禁用':'启用'}</button></div></td></tr>`).join('');}
+  function viewUser(id){location.href='admin-user-detail.html?id='+encodeURIComponent(id);}
+  function openEdit(id){const u=USERS.find(x=>x.id===id);if(!u)return;editingId=id;document.getElementById('editNickname').value=u.nickname;document.getElementById('editPhone').value=u.phone;document.getElementById('editInviter').value=u.inviter;document.getElementById('editModal').classList.add('show');}
+  function closeEdit(){document.getElementById('editModal').classList.remove('show');editingId='';}
+  function saveEdit(){const u=USERS.find(x=>x.id===editingId);if(!u)return;const nickname=document.getElementById('editNickname').value.trim();const phone=document.getElementById('editPhone').value.trim();if(!nickname||!phone){alert('请完善用户信息');return;}u.nickname=nickname;u.phone=phone;closeEdit();render();}
+  function toggleUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;const next=u.status==='enabled'?'disabled':'enabled';const msg=next==='disabled'?'禁用后该用户将无法登录和下单，确认继续？':'确认恢复该用户的登录和下单权限？';if(!confirm(msg))return;u.status=next;render();}
+  function exportUsers(){const rows=[['头像','昵称','真实姓名','性别','年龄','手机号','注册时间','状态','邀请人'],...filteredUsers().map(u=>[u.avatar,u.nickname,u.realName,u.gender,u.age,u.phone,u.registered,statusText[u.status],u.inviter])];const csv=String.fromCharCode(0xFEFF)+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join(String.fromCharCode(13,10));const blob=new Blob([csv],{type:'application/vnd.ms-excel;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='用户列表.xls';a.click();URL.revokeObjectURL(a.href);}
+  document.getElementById('timeFilter').addEventListener('change',render);document.getElementById('statusFilter').addEventListener('change',render);render();
+</script>
+</body>
+</html>

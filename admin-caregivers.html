@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <link rel="stylesheet" href="admin-shell.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1280" />
+    <title>陪护员管理 · 多康运营后台</title>
+    <style>
+      :root {
+        --b: #224cd3;
+        --nav: #002141;
+        --bg: #eff6ff;
+        --text: #172033;
+        --muted: #8f9bb0;
+        --line: #d7e8fa;
+        --sh: 0 2px 16px rgba(37, 99, 235, 0.1);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei",
+          sans-serif;
+        min-width: 1100px;
+      }
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+      .sidebar {
+        width: 220px;
+        position: fixed;
+        inset: 0 auto 0 0;
+        background: var(--nav);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+      }
+      .brand {
+        padding: 24px 20px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .brand-title {
+        font-size: 18px;
+        font-weight: 900;
+      }
+      .brand-sub {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.45);
+        margin-top: 3px;
+      }
+      .nav {
+        flex: 1;
+        padding: 16px 0;
+      }
+      .lbl {
+        padding: 14px 20px 6px;
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.3);
+        font-weight: 800;
+      }
+      .link {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        margin: 2px 10px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .link.active,
+      .link:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+      }
+      .link.active {
+        box-shadow: inset 3px 0 #93c5fd;
+      }
+      .badge {
+        margin-left: auto;
+        background: #ef4444;
+        border-radius: 9px;
+        min-width: 20px;
+        height: 18px;
+        display: grid;
+        place-items: center;
+        font-size: 10px;
+      }
+      .admin {
+        padding: 16px 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .av,
+      .top-av {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--b);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+      }
+      .role {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.4);
+        margin-top: 2px;
+      }
+      .logout {
+        margin-left: auto;
+        width: 28px;
+        height: 28px;
+        border: 0;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+      .main {
+        margin-left: 220px;
+        flex: 1;
+      }
+      .topbar {
+        height: 60px;
+        background: #fff;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        padding: 0 28px;
+        gap: 16px;
+        box-shadow: 0 1px 8px rgba(37, 99, 235, 0.08);
+      }
+      .crumb {
+        display: flex;
+        gap: 7px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+      .crumb .cur {
+        color: var(--text);
+      }
+      .topright {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .date {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+      .page {
+        padding: 24px 28px;
+      }
+      .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 20px;
+      }
+      .title {
+        font-size: 22px;
+        font-weight: 900;
+      }
+      .sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+      }
+      .btn {
+        height: 36px;
+        padding: 0 16px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        color: #657087;
+        font: 700 13px inherit;
+        cursor: pointer;
+      }
+      .primary {
+        background: var(--b);
+        border-color: var(--b);
+        color: #fff;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      .stat {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: var(--sh);
+        padding: 17px 18px;
+      }
+      .stat-label {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+      .stat-value {
+        font-size: 26px;
+        font-weight: 900;
+        margin-top: 8px;
+      }
+      .stat-value.blue {
+        color: var(--b);
+      }
+      .stat-foot {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+      .filter {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        box-shadow: var(--sh);
+      }
+      .filter-label {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 800;
+      }
+      .select {
+        height: 36px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0 11px;
+        color: #657087;
+        background: #fff;
+        font: 600 12px inherit;
+      }
+      .count {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .count strong {
+        color: var(--b);
+        font-size: 16px;
+      }
+      .table-wrap {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: var(--sh);
+        overflow: hidden;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .table th {
+        height: 44px;
+        background: #f8fbff;
+        color: var(--muted);
+        font-size: 11px;
+        text-align: left;
+        padding: 0 18px;
+      }
+      .table td {
+        height: 68px;
+        padding: 0 18px;
+        border-top: 1px solid #eef5fc;
+        font-size: 13px;
+        color: #657087;
+        font-weight: 600;
+      }
+      .profile {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #e7f1fd;
+        color: var(--b);
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+      }
+      .name {
+        font-weight: 800;
+        color: var(--text);
+      }
+      .small {
+        font-size: 10px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .state {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 800;
+      }
+      .state:before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+      .on {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+      .off {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+      .leave {
+        background: #fef3c7;
+        color: #d97706;
+      }
+      .rating {
+        color: #d97706;
+        font-weight: 900;
+      }
+      .ops {
+        display: flex;
+        gap: 10px;
+      }
+      .ops button {
+        border: 0;
+        background: none;
+        color: var(--b);
+        font: 700 12px inherit;
+        cursor: pointer;
+      }
+    </style>
+    <script defer src="admin-sidebar.js"></script>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-title">多康</div>
+          <div class="brand-sub">运营管理后台</div>
+        </div>
+        <nav class="nav">
+          <div class="lbl">概览</div>
+          <a class="link" href="admin.html">数据总览</a>
+          <div class="lbl">业务管理</div>
+          <a class="link" href="admin-orders.html"
+            >订单管理<span class="badge">12</span></a
+          ><a class="link active" href="admin-caregivers.html">陪护员管理</a
+          ><a class="link" href="admin-users.html">用户管理</a
+          ><a class="link" href="daily-report.html"
+            >日报审核<span class="badge">5</span></a
+          >
+          <div class="lbl">系统</div>
+          <a class="link" href="profile.html">系统设置</a>
+        </nav>
+        <div class="admin">
+          <div class="av">管</div>
+          <div>
+            <div style="font-size: 13px; font-weight: 800">管理员</div>
+            <div class="role">超级管理员</div>
+          </div>
+          <button class="logout">↗</button>
+        </div>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div class="crumb">
+            <span>业务管理</span><span>›</span
+            ><span class="cur">陪护员管理</span>
+          </div>
+          <div class="topright">
+            <span class="date">2026年4月12日 星期日</span>
+            <div class="top-av">管</div>
+          </div>
+        </header>
+        <section class="page">
+          <div class="head">
+            <div>
+              <h1 class="title">陪护员管理</h1>
+              <p class="sub">维护陪护人员档案、资质与服务状态</p>
+            </div>
+            <div class="actions">
+              <button class="btn" onclick="alert('导出陪护员档案')">
+                导出档案</button
+              ><button class="btn primary" onclick="openCaregiverCreate()">
+                + 新增陪护员
+              </button>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-label">陪护员总量</div>
+              <div class="stat-value" id="total">0</div>
+              <div class="stat-foot">已建立完整档案</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">当前在岗</div>
+              <div class="stat-value blue" id="onDuty">0</div>
+              <div class="stat-foot">可接收新订单</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">平均评分</div>
+              <div class="stat-value blue">4.8</div>
+              <div class="stat-foot">近 30 天服务评价</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">累计服务订单</div>
+              <div class="stat-value" id="orders">0</div>
+              <div class="stat-foot">全平台陪护订单</div>
+            </div>
+          </div>
+          <div class="filter">
+            <span class="filter-label">筛选</span
+            ><select class="select" id="state">
+              <option value="all">全部在岗状态</option>
+              <option value="on">在岗</option>
+              <option value="leave">休息</option>
+              <option value="off">停用</option></select
+            ><select class="select" id="skill">
+              <option value="all">全部服务技能</option>
+              <option>住院陪护</option>
+              <option>居家陪护</option>
+              <option>陪诊服务</option>
+              <option>上门助浴</option></select
+            ><span class="count"
+              >共 <strong id="count">0</strong> 位陪护员</span
+            >
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>陪护员</th>
+                  <th>手机号</th>
+                  <th>服务技能</th>
+                  <th>服务评分</th>
+                  <th>累计订单</th>
+                  <th>在岗状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script>
+      const DATA = [
+        {
+          id: "N1001",
+          name: "张阿姨",
+          phone: "138****2468",
+          skills: ["住院陪护", "居家陪护"],
+          rating: "4.9",
+          orders: 128,
+          state: "on",
+        },
+        {
+          id: "N1002",
+          name: "李师傅",
+          phone: "139****8572",
+          skills: ["陪诊服务"],
+          rating: "4.8",
+          orders: 96,
+          state: "on",
+        },
+        {
+          id: "N1003",
+          name: "王阿姨",
+          phone: "186****3016",
+          skills: ["上门助浴", "居家陪护"],
+          rating: "4.7",
+          orders: 74,
+          state: "leave",
+        },
+        {
+          id: "N1004",
+          name: "赵姐",
+          phone: "133****6420",
+          skills: ["住院陪护"],
+          rating: "4.6",
+          orders: 52,
+          state: "off",
+        },
+        {
+          id: "N1005",
+          name: "陈阿姨",
+          phone: "177****9183",
+          skills: ["居家陪护"],
+          rating: "4.9",
+          orders: 88,
+          state: "on",
+        },
+      ];
+      const st = {
+        on: ["在岗", "on"],
+        leave: ["休息", "leave"],
+        off: ["停用", "off"],
+      };
+      function render() {
+        const s = state.value,
+          k = skill.value,
+          d = DATA.filter(
+            (x) =>
+              (s === "all" || x.state === s) &&
+              (k === "all" || x.skills.includes(k)),
+          );
+        count.textContent = d.length;
+        total.textContent = DATA.length;
+        onDuty.textContent = DATA.filter((x) => x.state === "on").length;
+        orders.textContent = DATA.reduce((a, x) => a + x.orders, 0);
+        rows.innerHTML = d
+          .map(
+            (x) =>
+              `<tr><td><div class="profile"><div class="avatar">${x.name.slice(0, 1)}</div><div><div class="name">${x.name}</div><div class="small">档案编号 ${x.id}</div></div></div></td><td>${x.phone}</td><td>${x.skills.join("、")}</td><td class="rating">★ ${x.rating}</td><td>${x.orders} 单</td><td><span class="state ${st[x.state][1]}">${st[x.state][0]}</span></td><td><div class="ops"><button onclick="location.href='admin-caregiver-detail.html?id=${x.id}'">查看档案</button><button onclick="alert('编辑陪护员')">编辑</button></div></td></tr>`,
+          )
+          .join("");
+      }
+      state.onchange = render;
+      skill.onchange = render;
+      render();
+    </script>
+    <script src="admin-caregiver-create.js"></script>
+  </body>
+</html>

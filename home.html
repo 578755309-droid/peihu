@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>多康陪护服务 · 首页</title>
+  <style>
+    :root {
+      --purple:       #8655C5;
+      --purple-dark:  #6B3FAA;
+      --purple-dim:   #9E72D2;
+      --purple-light: #EDE6F7;
+      --purple-bg:    #F5F3FA;
+      --teal:         #2BB5AD;
+      --card:         #FFFFFF;
+      --text:         #1A1828;
+      --text2:        #6B6880;
+      --text3:        #AEACC0;
+      --border:       #EDE9F5;
+      --r-sm:  10px;
+      --r-md:  16px;
+      --r-lg:  22px;
+      --r-xl:  30px;
+      --sh-sm: 0 2px 14px rgba(100,60,160,.07);
+      --sh-md: 0 5px 22px rgba(100,60,160,.11);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--purple-bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Desktop phone frame ── */
+    .frame {
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      background: #E4DDF0;
+    }
+    .phone {
+      width: 100%;
+      max-width: 430px;
+      display: flex;
+      flex-direction: column;
+      background: var(--purple-bg);
+      min-height: 100vh;
+      position: relative;
+    }
+    @media (min-width: 520px) {
+      .frame { align-items: flex-start; padding: 20px 0 40px; }
+      .phone {
+        height: 900px;
+        min-height: unset;
+        border-radius: 42px;
+        overflow: hidden;
+        box-shadow:
+          0 24px 72px rgba(80,40,140,.22),
+          0 2px 8px rgba(0,0,0,.06);
+      }
+    }
+
+    /* ── Scrollable area ── */
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* ── iOS status bar ── */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 22px 8px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--card);
+      letter-spacing: .2px;
+    }
+    .status-right { display: flex; align-items: center; gap: 5px; }
+    .status-right svg { width: 17px; height: 17px; }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px 12px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand { display: flex; align-items: center; gap: 9px; }
+    .brand-logo {
+      width: 36px; height: 36px;
+      border-radius: 11px;
+      background: var(--purple-light);
+      display: grid; place-items: center;
+    }
+    .brand-logo svg { width: 22px; height: 22px; }
+    .brand-name {
+      font-size: 17px; font-weight: 800;
+      color: var(--purple-dark); letter-spacing: .4px;
+    }
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .icon-btn {
+      background: none; border: none; cursor: pointer;
+      width: 36px; height: 36px; border-radius: 11px;
+      background: var(--purple-light);
+      display: grid; place-items: center;
+      -webkit-tap-highlight-color: transparent;
+      transition: background .1s;
+    }
+    .icon-btn:active { background: #D9CFF0; }
+    .icon-btn svg { width: 19px; height: 19px; }
+
+    /* ── Greeting strip ── */
+    .greeting {
+      background: var(--card);
+      padding: 12px 18px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .greeting-left { display: flex; flex-direction: column; gap: 4px; }
+    .location-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 12px; font-weight: 700; color: var(--purple);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      background: var(--purple-light); border-radius: 20px;
+      padding: 3px 9px 3px 6px; width: fit-content;
+      transition: background .12s;
+    }
+    .location-pill:active { background: #D9CFF0; }
+    .location-pill svg { width: 13px; height: 13px; flex-shrink: 0; }
+    .location-pill .loc-chevron { width: 11px; height: 11px; opacity: .6; }
+    .greeting-hi { font-size: 15px; font-weight: 800; color: var(--text); }
+    .greeting-sub { font-size: 12px; color: var(--text3); }
+
+    /* ── City picker overlay ── */
+    .city-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(20,12,40,.5);
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .city-overlay.show { opacity: 1; pointer-events: auto; }
+    .city-sheet {
+      width: 100%; max-width: 430px; background: #fff;
+      border-radius: 24px 24px 0 0;
+      padding: 0 0 calc(24px + env(safe-area-inset-bottom));
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.22,.88,.36,1);
+      max-height: 72vh; display: flex; flex-direction: column;
+    }
+    .city-overlay.show .city-sheet { transform: translateY(0); }
+    .city-sheet-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .city-sheet-title { font-size: 16px; font-weight: 900; color: var(--text); }
+    .city-close {
+      width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer;
+      background: var(--purple-bg); display: grid; place-items: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .city-close svg { width: 14px; height: 14px; }
+    .city-body { overflow-y: auto; padding: 14px 20px; flex: 1; }
+    .city-section-lbl {
+      font-size: 11px; font-weight: 800; color: var(--text3);
+      letter-spacing: .5px; margin: 10px 0 8px;
+    }
+    .city-section-lbl:first-child { margin-top: 0; }
+    .city-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .city-tag {
+      padding: 7px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+      font-size: 13px; font-weight: 700; color: var(--text2);
+      cursor: pointer; background: #fff; font-family: inherit;
+      -webkit-tap-highlight-color: transparent; transition: all .12s;
+    }
+    .city-tag:active { background: var(--purple-light); border-color: var(--purple); }
+    .city-tag.sel { background: var(--purple-light); border-color: var(--purple); color: var(--purple); }
+    .streak {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--purple-light);
+      padding: 6px 13px; border-radius: 20px;
+    }
+    .streak svg { width: 15px; height: 15px; }
+    .streak-txt { font-size: 12px; font-weight: 700; color: var(--purple-dark); }
+
+    /* ── Page content ── */
+    .content { padding: 0 0 20px; }
+
+    /* ── Carousel ── */
+    .carousel-wrap { padding: 16px 16px 0; }
+    .carousel {
+      position: relative;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      height: 176px;
+      touch-action: pan-y;
+    }
+    .c-track {
+      display: flex; height: 100%;
+      transition: transform .44s cubic-bezier(.4,0,.2,1);
+      will-change: transform;
+    }
+    .slide {
+      flex-shrink: 0; width: 100%; height: 100%;
+      position: relative; overflow: hidden;
+    }
+    .slide-1 { background: linear-gradient(130deg, #6B3DAE 0%, #A574DC 100%); }
+    .slide-2 { background: linear-gradient(130deg, #1A9896 0%, #38CFC7 100%); }
+    .slide-3 { background: linear-gradient(130deg, #D85A14 0%, #F9A63C 100%); }
+    .slide-blob {
+      position: absolute; right: -20px; bottom: -24px;
+      opacity: .18; pointer-events: none;
+    }
+    .slide-inner {
+      position: absolute; inset: 0;
+      padding: 0 22px 20px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+    }
+    .slide-badge {
+      display: inline-flex; align-items: center;
+      background: rgba(255,255,255,.28); backdrop-filter: blur(4px);
+      color: #fff; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
+      margin-bottom: 9px; width: fit-content;
+    }
+    .slide-title {
+      font-size: 20px; font-weight: 900; color: #fff;
+      line-height: 1.25; letter-spacing: .3px;
+    }
+    .slide-sub { font-size: 12px; color: rgba(255,255,255,.82); margin-top: 5px; }
+    /* dots */
+    .c-dots {
+      display: flex; justify-content: center; gap: 5px; margin-top: 12px;
+    }
+    .dot {
+      width: 6px; height: 6px; border-radius: 3px;
+      background: #CBBFE6;
+      transition: width .3s ease, background .3s ease;
+    }
+    .dot.on { width: 20px; background: var(--purple); }
+
+    /* ── Section shared ── */
+    .sec { padding: 20px 16px 0; }
+    .sec-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .sec-title { font-size: 17px; font-weight: 800; letter-spacing: .2px; }
+    .more-btn {
+      display: flex; align-items: center; gap: 2px;
+      background: none; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 700; color: var(--purple);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .more-btn svg { width: 14px; height: 14px; stroke: var(--purple); stroke-width: 2; fill: none; }
+
+    /* ── Core service grid ── */
+    .svc-grid {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 10px;
+    }
+    .svc-card {
+      background: var(--card); border-radius: var(--r-md);
+      padding: 18px 4px 15px;
+      display: flex; flex-direction: column; align-items: center; gap: 9px;
+      box-shadow: var(--sh-sm); cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .13s, box-shadow .13s;
+    }
+    .svc-card:active { transform: scale(.96); box-shadow: var(--sh-md); }
+    .svc-icon {
+      width: 54px; height: 54px; border-radius: 16px;
+      background: var(--purple-light); display: grid; place-items: center;
+    }
+    .svc-icon svg { width: 30px; height: 30px; }
+    .svc-name { font-size: 13px; font-weight: 800; color: var(--text); text-align: center; }
+    .svc-desc { font-size: 11px; color: var(--text3); text-align: center; }
+    @media (max-width: 360px) { .svc-card { padding-left: 8px; padding-right: 8px; } }
+    .nurse-feature-list { display:grid; gap:10px; }
+    .nurse-feature-card { display:flex; align-items:center; gap:12px; padding:13px; background:var(--card); border-radius:var(--r-md); box-shadow:var(--sh-sm); cursor:pointer; -webkit-tap-highlight-color:transparent; transition:transform .13s,box-shadow .13s; }
+    .nurse-feature-card:active { transform:scale(.98); box-shadow:var(--sh-md); }
+    .nurse-feature-avatar { width:52px; height:52px; display:grid; place-items:center; flex:0 0 52px; border-radius:16px; color:#fff; font-size:20px; font-weight:900; }
+    .nurse-feature-main { min-width:0; flex:1; }
+    .nurse-feature-name { font-size:15px; font-weight:900; }
+    .nurse-feature-meta { margin-top:4px; color:var(--text2); font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .nurse-feature-tags { display:flex; gap:5px; margin-top:7px; overflow:hidden; }
+    .nurse-feature-tag { padding:3px 6px; border-radius:5px; background:var(--purple-light); color:var(--purple); font-size:10px; font-weight:800; white-space:nowrap; }
+    .nurse-feature-tag.green { background:#E7F7ED; color:#32956B; }
+    .nurse-feature-score { align-self:flex-start; color:#C17A24; font-size:12px; font-weight:900; white-space:nowrap; }
+    .nurse-feature-score small { color:var(--text3); font-size:10px; font-weight:700; }
+    /* 一键预约 special card */
+    .svc-card.svc-highlight {
+      background: linear-gradient(140deg,#8655C5 0%,#6B3FAA 100%);
+      box-shadow: 0 6px 20px rgba(107,63,170,.30);
+    }
+    .svc-card.svc-highlight .svc-icon {
+      background: rgba(255,255,255,.18);
+    }
+    .svc-card.svc-highlight .svc-icon svg { stroke: #fff; }
+    .svc-card.svc-highlight .svc-name { color: #fff; }
+    .svc-card.svc-highlight .svc-desc { color: rgba(255,255,255,.65); }
+
+    /* ── Booking confirm overlay ── */
+    .book-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(20,12,40,.5);
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+    }
+    .book-overlay.show { opacity: 1; pointer-events: auto; }
+    .book-sheet {
+      width: 100%; max-width: 430px;
+      background: #fff; border-radius: 26px 26px 0 0;
+      padding: 28px 24px calc(32px + env(safe-area-inset-bottom));
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.22,.88,.36,1);
+      text-align: center;
+    }
+    .book-overlay.show .book-sheet { transform: translateY(0); }
+    .book-icon-wrap {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: var(--purple-light);
+      display: grid; place-items: center;
+      margin: 0 auto 16px;
+    }
+    .book-icon-wrap svg { width: 32px; height: 32px; }
+    .book-title { font-size: 19px; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+    .book-sub {
+      font-size: 13px; color: var(--text2); line-height: 1.65;
+      margin-bottom: 24px;
+    }
+    .book-btns { display: flex; gap: 10px; }
+    .book-cancel {
+      flex: 1; height: 50px; border-radius: 14px;
+      border: 1.5px solid var(--border); background: #fff;
+      font-size: 15px; font-weight: 800; color: var(--text2);
+      font-family: inherit; cursor: pointer;
+      -webkit-tap-highlight-color: transparent; transition: background .12s;
+    }
+    .book-cancel:active { background: var(--purple-bg); }
+    .book-confirm {
+      flex: 2; height: 50px; border-radius: 14px; border: none;
+      background: linear-gradient(135deg,#9060D0,#6B3FAA); color: #fff;
+      font-size: 15px; font-weight: 800; font-family: inherit; cursor: pointer;
+      box-shadow: 0 6px 18px rgba(107,63,170,.28);
+      -webkit-tap-highlight-color: transparent; transition: filter .12s;
+    }
+    .book-confirm:active { filter: brightness(.93); }
+
+    /* ── Horizontal scroll list ── */
+    .h-list {
+      display: flex; gap: 12px;
+      overflow-x: auto; padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .h-list::-webkit-scrollbar { display: none; }
+
+    /* Hospital card */
+    .hosp-card {
+      flex-shrink: 0; width: 144px;
+      background: var(--card); border-radius: var(--r-md);
+      padding: 16px 12px 14px;
+      display: flex; flex-direction: column; align-items: center; gap: 9px;
+      box-shadow: var(--sh-sm); cursor: pointer;
+      transition: transform .12s;
+    }
+    .hosp-card:active { transform: scale(.97); }
+    .hosp-logo {
+      width: 54px; height: 54px; border-radius: 16px;
+      display: grid; place-items: center;
+      font-size: 15px; font-weight: 900; color: #fff;
+      letter-spacing: .5px;
+    }
+    .hosp-name {
+      font-size: 13px; font-weight: 700; color: var(--text);
+      text-align: center; line-height: 1.35;
+    }
+    .hosp-tag {
+      font-size: 11px; font-weight: 700;
+      color: var(--purple); background: var(--purple-light);
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      flex-shrink: 0;
+      display: flex;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 4px 0; cursor: pointer; text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-ico { width: 26px; height: 26px; }
+    .nav-lbl { font-size: 11px; font-weight: 700; color: var(--text3); }
+    .nav-item.act .nav-lbl { color: var(--purple); }
+    .nav-item.act .ni { stroke: var(--purple) !important; }
+    .nav-item.act .nif { fill: var(--purple) !important; }
+
+    /* Banner 下方的一键预约 */
+    .banner-book {
+      margin: 12px 0 18px;
+      width: 100%; height: 52px; border: none; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      background: linear-gradient(100deg, #9060D0 0%, #6B3FAA 100%);
+      color: #fff; font: 800 15px inherit; letter-spacing: .5px;
+      box-shadow: 0 7px 18px rgba(107,63,170,.25);
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: transform .12s, filter .12s;
+    }
+    .banner-book:active { transform: translateY(1px); filter: brightness(.96); }
+    .banner-book svg { width: 21px; height: 21px; }
+    .banner-book-note { margin: 0 20px; color: var(--text3); font-size: 11px; line-height: 1.55; text-align: center; }
+
+    /* ── Visual polish ── */
+    .phone { background: linear-gradient(180deg, #F8F5FC 0%, var(--purple-bg) 46%, #F1EDF8 100%); }
+    .header { box-shadow: 0 3px 16px rgba(83,47,130,.06); }
+    .greeting { padding: 18px 18px 16px; }
+    .greeting-hi { font-size: 22px; letter-spacing: -.2px; }
+    .greeting-sub { margin-top: 5px; color: #85819A; }
+    .header .brand { gap: 10px; }
+    .header .brand-name { white-space: nowrap; }
+    .header .location-pill { margin-left: 2px; }
+    .carousel-wrap { padding: 8px 16px 0; }
+    .carousel { height: 184px; border-radius: 24px; box-shadow: 0 10px 26px rgba(95,57,150,.16); }
+    .c-dots { padding-top: 10px; }
+    .banner-book { margin: 14px 16px 5px; width: calc(100% - 32px); height: 56px; border-radius: 18px; box-shadow: 0 10px 24px rgba(107,63,170,.24); }
+    .sec { padding-top: 24px; }
+    .sec-head { margin-bottom: 12px; }
+    .sec-title { display: inline-flex; align-items: center; gap: 8px; }
+    .sec-title::before { content: ''; width: 4px; height: 18px; border-radius: 3px; background: var(--purple); }
+    .svc-grid { gap: 9px; }
+    .svc-card { min-height: 132px; padding-top: 16px; border: 1px solid rgba(134,85,197,.06); box-shadow: 0 5px 18px rgba(91,55,143,.08); }
+    .svc-card:hover { transform: translateY(-2px); box-shadow: 0 9px 22px rgba(91,55,143,.14); }
+    .svc-icon { width: 52px; height: 52px; border-radius: 17px; }
+    .hosp-card { border: 1px solid rgba(134,85,197,.06); box-shadow: 0 5px 18px rgba(91,55,143,.08); }
+    .bottom-nav { box-shadow: 0 -4px 18px rgba(83,47,130,.08); padding-top: 8px; }
+  </style>
+</head>
+<body>
+<div class="frame">
+  <div class="phone">
+
+    <!-- ① Scrollable body -->
+    <div class="scroll-area">
+
+      <!-- iOS status bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-right">
+          <svg viewBox="0 0 17 12" fill="currentColor">
+            <rect x="0" y="3" width="3" height="9" rx="1"/>
+            <rect x="4.5" y="1.5" width="3" height="10.5" rx="1"/>
+            <rect x="9" y="0" width="3" height="12" rx="1"/>
+            <rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".28"/>
+          </svg>
+          <svg viewBox="0 0 17 13" fill="none" stroke="currentColor" stroke-linecap="round">
+            <path d="M8.5 9.5a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8z" fill="currentColor" stroke="none"/>
+            <path d="M5.2 7a4.7 4.7 0 016.6 0" stroke-width="1.5"/>
+            <path d="M2 4a8.8 8.8 0 0113 0" stroke-width="1.5"/>
+          </svg>
+          <svg viewBox="0 0 24 12" fill="none">
+            <rect x=".6" y=".6" width="20" height="10.8" rx="2.8" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="21.2" y="3.6" width="2.2" height="4.8" rx="1.1" fill="currentColor"/>
+            <rect x="2" y="2" width="15" height="8" rx="1.8" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <header class="header">
+        <div class="brand">
+          <div class="location-pill" onclick="openCityPicker()">
+            <svg viewBox="0 0 14 14" fill="none">
+              <path d="M7 1a4.5 4.5 0 014.5 4.5C11.5 9 7 13 7 13S2.5 9 2.5 5.5A4.5 4.5 0 017 1z" stroke="#8655C5" stroke-width="1.4"/>
+              <circle cx="7" cy="5.5" r="1.5" fill="#8655C5"/>
+            </svg>
+            <span id="currentCity">北京</span>
+            <svg class="loc-chevron" viewBox="0 0 12 12" fill="none">
+              <path d="M3 4.5l3 3 3-3" stroke="#8655C5" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="brand-name">多康陪护</span>
+        </div>
+      </header>
+
+      <!-- Greeting -->
+      <div class="greeting">
+        <div class="greeting-left">
+          <div class="greeting-hi">你好，用户 👋</div>
+          <div class="greeting-sub">今天需要什么陪护服务？</div>
+        </div>
+        <div class="streak">
+          <svg viewBox="0 0 16 16" fill="none">
+            <path d="M8 1.5c0 0-4 4.5-4 7a4 4 0 008 0c0-2.5-4-7-4-7z" fill="#8655C5"/>
+            <circle cx="8" cy="11" r="1.4" fill="white"/>
+          </svg>
+          <span class="streak-txt">连续签到 3 天</span>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- ② Carousel -->
+        <div class="carousel-wrap">
+          <div class="carousel" id="car">
+            <div class="c-track" id="trk">
+
+              <!-- Slide 1: 红会医院合作 -->
+              <div class="slide slide-1">
+                <svg class="slide-blob" width="200" height="200" viewBox="0 0 200 200">
+                  <circle cx="130" cy="130" r="100" fill="white"/>
+                  <circle cx="180" cy="50" r="55" fill="white"/>
+                </svg>
+                <div class="slide-inner">
+                  <span class="slide-badge">战略合作认证</span>
+                  <div class="slide-title">北京红十字医院<br/>权威认证合作</div>
+                  <div class="slide-sub">正规资质 · 专业保障 · 放心托付</div>
+                </div>
+              </div>
+
+              <!-- Slide 2: 专业护理场景 -->
+              <div class="slide slide-2">
+                <svg class="slide-blob" width="200" height="200" viewBox="0 0 200 200">
+                  <circle cx="130" cy="130" r="100" fill="white"/>
+                  <circle cx="180" cy="50" r="55" fill="white"/>
+                </svg>
+                <div class="slide-inner">
+                  <span class="slide-badge">专业护理</span>
+                  <div class="slide-title">全程专业护理<br/>24 小时贴心陪伴</div>
+                  <div class="slide-sub">持证上岗 · 实时汇报 · 全程监督</div>
+                </div>
+              </div>
+
+              <!-- Slide 3: 新用户优惠 -->
+              <div class="slide slide-3">
+                <svg class="slide-blob" width="200" height="200" viewBox="0 0 200 200">
+                  <circle cx="130" cy="130" r="100" fill="white"/>
+                  <circle cx="180" cy="50" r="55" fill="white"/>
+                </svg>
+                <div class="slide-inner">
+                  <span class="slide-badge">新用户专享</span>
+                  <div class="slide-title">首单立减 ¥50<br/>限时优惠进行中</div>
+                  <div class="slide-sub">新用户专属 · 品质护理 · 立即体验</div>
+                </div>
+              </div>
+
+            </div><!-- .c-track -->
+          </div><!-- .carousel -->
+          <div class="c-dots">
+            <div class="dot on" id="d0"></div>
+            <div class="dot" id="d1"></div>
+            <div class="dot" id="d2"></div>
+          </div>
+        </div><!-- .carousel-wrap -->
+
+        <button class="banner-book" type="button" onclick="showBookingConfirm()">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="4" y="3" width="16" height="18" rx="3" stroke="#fff" stroke-width="1.8"/>
+            <path d="M8 3V1.5M16 3V1.5M4 9h16M12 13v4M10 15h4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <span>一键预约</span>
+        </button>
+        <p class="banner-book-note">提交预约需求后，平台工作人员将在工作时间内与您联系并安排服务。</p>
+
+        <!-- ③ Core services -->
+        <div class="sec">
+          <div class="sec-head">
+            <span class="sec-title">核心服务</span>
+          </div>
+          <div class="svc-grid">
+
+            <!-- 住院陪护 -->
+            <div class="svc-card" onclick="location.href='hospital-care.html'">
+              <div class="svc-icon">
+                <svg viewBox="0 0 30 30" fill="none">
+                  <rect x="4" y="11" width="22" height="15" rx="3.5"
+                        stroke="#8655C5" stroke-width="1.8"/>
+                  <path d="M4 18h22" stroke="#8655C5" stroke-width="1.7" stroke-linecap="round"/>
+                  <path d="M10.5 11V8a4.5 4.5 0 019 0v3"
+                        stroke="#8655C5" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M15 14v5M12.5 16.5h5"
+                        stroke="#8655C5" stroke-width="1.7" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="svc-name">住院陪护</div>
+              <div class="svc-desc">专人贴身陪护</div>
+            </div>
+
+            <!-- 居家陪护 -->
+            <div class="svc-card" onclick="location.href='hospital-care.html?service=home'">
+              <div class="svc-icon">
+                <svg viewBox="0 0 30 30" fill="none">
+                  <path d="M4 15L15 5.5 26 15" stroke="#8655C5" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                  <rect x="7.5" y="14" width="15" height="12" rx="2.5"
+                        stroke="#8655C5" stroke-width="1.8"/>
+                  <path d="M12 26v-6h6v6" stroke="#8655C5" stroke-width="1.7" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="svc-name">居家陪护</div>
+              <div class="svc-desc">上门专属服务</div>
+            </div>
+
+            <!-- 陪诊服务 -->
+            <div class="svc-card" onclick="location.href='visit-services.html'">
+              <div class="svc-icon">
+                <svg viewBox="0 0 30 30" fill="none">
+                  <rect x="7.5" y="3" width="15" height="22" rx="3.5"
+                        stroke="#8655C5" stroke-width="1.8"/>
+                  <path d="M12 10h6M12 14.5h6M12 19h4"
+                        stroke="#8655C5" stroke-width="1.7" stroke-linecap="round"/>
+                  <circle cx="21" cy="21" r="5" fill="#8655C5" opacity=".13"/>
+                  <path d="M19.5 21h3M21 19.5v3"
+                        stroke="#8655C5" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="svc-name">陪诊服务</div>
+              <div class="svc-desc">全程专业陪同</div>
+            </div>
+
+            <!-- 上门助浴 -->
+            <div class="svc-card" onclick="location.href='hospital-care.html?service=bath'">
+              <div class="svc-icon">
+                <svg viewBox="0 0 30 30" fill="none">
+                  <path d="M5 17.5h20" stroke="#8655C5" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M7 17.5v2.5a4 4 0 004 4h8a4 4 0 004-4v-2.5" stroke="#8655C5" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M9 14.5V9a4 4 0 014-4h1.5" stroke="#8655C5" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M14.5 5h3.2a2.3 2.3 0 012.3 2.3v1.2" stroke="#8655C5" stroke-width="1.8" stroke-linecap="round"/>
+                  <path d="M20 10.5c0 1.3-1.5 2.2-1.5 3.5a1.5 1.5 0 003 0c0-1.3-1.5-2.2-1.5-3.5z" fill="#8655C5" opacity=".18" stroke="#8655C5" stroke-width="1.2"/>
+                </svg>
+              </div>
+              <div class="svc-name">上门助浴</div>
+              <div class="svc-desc">专业安全洗浴</div>
+            </div>
+
+          </div>
+        </div><!-- services -->
+
+        <!-- ④ Featured caregivers -->
+        <div class="sec">
+          <div class="sec-head">
+            <span class="sec-title">护理员</span>
+            <button class="more-btn" type="button" onclick="location.href='nurses.html'">查看全部 <svg viewBox="0 0 14 14"><path d="M5 3l4 4-4 4"/></svg></button>
+          </div>
+          <div class="nurse-feature-list">
+            <article class="nurse-feature-card" onclick="location.href='nurse-detail.html?id=liguifang'">
+              <div class="nurse-feature-avatar" style="background:linear-gradient(140deg,#7B3FBE,#AA7AE0)">李</div>
+              <div class="nurse-feature-main"><div class="nurse-feature-name">李桂芳</div><div class="nurse-feature-meta">高级护理师 · 住院专护 · 5年经验</div><div class="nurse-feature-tags"><span class="nurse-feature-tag">持证上岗</span><span class="nurse-feature-tag green">术后康复</span></div></div>
+              <div class="nurse-feature-score">★ 4.9<br><small>156单</small></div>
+            </article>
+            <article class="nurse-feature-card" onclick="location.href='nurse-detail.html?id=wangmeiling'">
+              <div class="nurse-feature-avatar" style="background:linear-gradient(140deg,#C75510,#F4A030)">王</div>
+              <div class="nurse-feature-main"><div class="nurse-feature-name">王美玲</div><div class="nurse-feature-meta">高级护理师 · 重症陪护 · 8年经验</div><div class="nurse-feature-tags"><span class="nurse-feature-tag">持证上岗</span><span class="nurse-feature-tag green">重症专护</span></div></div>
+              <div class="nurse-feature-score">★ 4.9<br><small>203单</small></div>
+            </article>
+          </div>
+        </div>
+
+        <!-- City picker overlay -->
+        <div class="city-overlay" id="cityOverlay" onclick="closeCityPicker(event)">
+          <div class="city-sheet">
+            <div class="city-sheet-hd">
+              <span class="city-sheet-title">选择城市</span>
+              <button class="city-close" onclick="closeCityPicker()">
+                <svg viewBox="0 0 14 14" fill="none">
+                  <path d="M2 2l10 10M12 2L2 12" stroke="#6B6880" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="city-body">
+              <div class="city-section-lbl">当前位置</div>
+              <div class="city-tags">
+                <button class="city-tag sel" id="gpsCity" onclick="selectCity(this)">📍 定位中…</button>
+              </div>
+              <div class="city-section-lbl">热门城市</div>
+              <div class="city-tags">
+                <button class="city-tag" onclick="selectCity(this)">北京</button>
+                <button class="city-tag" onclick="selectCity(this)">上海</button>
+                <button class="city-tag" onclick="selectCity(this)">广州</button>
+                <button class="city-tag" onclick="selectCity(this)">深圳</button>
+                <button class="city-tag" onclick="selectCity(this)">成都</button>
+                <button class="city-tag" onclick="selectCity(this)">杭州</button>
+                <button class="city-tag" onclick="selectCity(this)">武汉</button>
+                <button class="city-tag" onclick="selectCity(this)">南京</button>
+                <button class="city-tag" onclick="selectCity(this)">西安</button>
+                <button class="city-tag" onclick="selectCity(this)">重庆</button>
+                <button class="city-tag" onclick="selectCity(this)">天津</button>
+                <button class="city-tag" onclick="selectCity(this)">苏州</button>
+              </div>
+              <div class="city-section-lbl">其他城市</div>
+              <div class="city-tags">
+                <button class="city-tag" onclick="selectCity(this)">沈阳</button>
+                <button class="city-tag" onclick="selectCity(this)">哈尔滨</button>
+                <button class="city-tag" onclick="selectCity(this)">长沙</button>
+                <button class="city-tag" onclick="selectCity(this)">郑州</button>
+                <button class="city-tag" onclick="selectCity(this)">天伥</button>
+                <button class="city-tag" onclick="selectCity(this)">常州</button>
+                <button class="city-tag" onclick="selectCity(this)">无锡</button>
+                <button class="city-tag" onclick="selectCity(this)">张家口</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Booking confirm overlay -->
+        <div class="book-overlay" id="bookOverlay" onclick="cancelBooking(event)">
+          <div class="book-sheet">
+            <div class="book-icon-wrap">
+              <svg viewBox="0 0 32 32" fill="none">
+                <rect x="4" y="3" width="24" height="26" rx="5" stroke="#8655C5" stroke-width="1.8"/>
+                <path d="M10 3V1M22 3V1" stroke="#8655C5" stroke-width="1.7" stroke-linecap="round"/>
+                <path d="M4 12h24" stroke="#8655C5" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M16 19v6M13 22h6" stroke="#8655C5" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="book-title" id="bookTitle">确认一键预约？</div>
+            <div class="book-sub" id="bookSub">预约提交后，平台工作人员将在<strong>工作时间内致电联系</strong>您，为您安排合适的护理员及服务方案。</div>
+            <div class="book-btns">
+              <button class="book-cancel" onclick="cancelBooking()">取消</button>
+              <button class="book-confirm" onclick="confirmBooking()">确认预约</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- .content -->
+    </div><!-- .scroll-area -->
+
+    <!-- ⑥ Bottom navigation -->
+    <nav class="bottom-nav">
+
+      <!-- 首页 -->
+      <a class="nav-item act" href="home.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
+          <path class="ni"
+                d="M4.5 13.2L13 5.8l8.5 7.4V22a1.4 1.4 0 01-1.4 1.4H16V18h-6v5.4H5.9A1.4 1.4 0 014.5 22z"
+                stroke="#AEACC0" stroke-width="1.8" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-lbl">首页</span>
+      </a>
+
+      <!-- 商城 -->
+      <a class="nav-item" href="mall.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
+          <path class="ni" d="M5 9h16l-1 13H6L5 9zM9 10V7a4 4 0 018 0v3" stroke="#AEACC0" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-lbl">商城</span>
+      </a>
+
+      <!-- 订单 -->
+      <a class="nav-item" href="orders.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
+          <rect class="ni" x="4.5" y="5.5" width="17" height="16" rx="3"
+                stroke="#AEACC0" stroke-width="1.8"/>
+          <path class="ni" d="M8.5 2.5v5M17.5 2.5v5M4.5 12h17"
+                stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/>
+          <path class="ni" d="M9 16.5h8M9 20h5"
+                stroke="#AEACC0" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-lbl">订单</span>
+      </a>
+
+      <!-- AI健康咨询 -->
+      <a class="nav-item" href="ai-health.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
+          <path class="ni" d="M5 6.5A3.5 3.5 0 018.5 3h9A3.5 3.5 0 0121 6.5v7a3.5 3.5 0 01-3.5 3.5H12l-4.5 4v-4.2A3.5 3.5 0 015 13.5z" stroke="#AEACC0" stroke-width="1.7" stroke-linejoin="round"/>
+          <path class="ni" d="M13 6.7v5.6M10.2 9.5h5.6" stroke="#AEACC0" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-lbl">AI健康咨询</span>
+      </a>
+
+      <!-- 我的 -->
+      <a class="nav-item" href="profile.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
+          <circle class="ni" cx="13" cy="10" r="4.2"
+                  stroke="#AEACC0" stroke-width="1.8"/>
+          <path class="ni" d="M5 22.5c1.6-3.8 4.6-6 8-6s6.4 2.2 8 6"
+                stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-lbl">我的</span>
+      </a>
+
+    </nav>
+
+  </div><!-- .phone -->
+</div><!-- .frame -->
+
+<script>
+  /* Carousel logic */
+  const trk  = document.getElementById('trk');
+  const dots  = [document.getElementById('d0'), document.getElementById('d1'), document.getElementById('d2')];
+  let cur = 0, total = 3;
+
+  function goTo(n) {
+    cur = ((n % total) + total) % total;
+    trk.style.transform = `translateX(-${cur * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('on', i === cur));
+  }
+
+  let timer = setInterval(() => goTo(cur + 1), 3600);
+
+  /* Touch swipe */
+  let sx = 0;
+  const carEl = document.getElementById('car');
+  carEl.addEventListener('touchstart', e => { sx = e.touches[0].clientX; clearInterval(timer); }, { passive: true });
+  carEl.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - sx;
+    if (Math.abs(dx) > 38) goTo(cur + (dx < 0 ? 1 : -1));
+    timer = setInterval(() => goTo(cur + 1), 3600);
+  });
+
+  /* Dot clicks */
+  dots.forEach((d, i) => d.addEventListener('click', () => {
+    clearInterval(timer);
+    goTo(i);
+    timer = setInterval(() => goTo(cur + 1), 3600);
+  }));
+
+  /* Nav tab switching */
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', e => {
+      if (item.getAttribute('href') === '#') e.preventDefault();
+      document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('act'));
+      item.classList.add('act');
+    });
+  });
+
+  /* ── City picker ── */
+  function openCityPicker() {
+    document.getElementById('cityOverlay').classList.add('show');
+    /* mock GPS */
+    setTimeout(() => {
+      const gps = document.getElementById('gpsCity');
+      if (gps) gps.textContent = '📍 北京';
+    }, 800);
+  }
+  function closeCityPicker(e) {
+    if (e && e.target !== document.getElementById('cityOverlay')) return;
+    document.getElementById('cityOverlay').classList.remove('show');
+  }
+  function selectCity(el) {
+    document.querySelectorAll('.city-tag').forEach(t => t.classList.remove('sel'));
+    el.classList.add('sel');
+    const name = el.textContent.replace('📍 ', '').trim();
+    document.getElementById('currentCity').textContent = name;
+    setTimeout(() => document.getElementById('cityOverlay').classList.remove('show'), 200);
+  }
+
+  /* ── 一键预约 ── */
+  function showBookingConfirm(service) {
+    const title = document.getElementById('bookTitle');
+    const sub = document.getElementById('bookSub');
+    if (service) {
+      title.textContent = '预约' + service + '？';
+      sub.innerHTML = '提交后，平台工作人员将在<strong>工作时间内致电联系</strong>您，为您安排合适的护理员及服务方案。';
+    } else {
+      title.textContent = '确认一键预约？';
+      sub.innerHTML = '预约提交后，平台工作人员将在<strong>工作时间内致电联系</strong>您，为您安排合适的护理员及服务方案。';
+    }
+    document.getElementById('bookOverlay').classList.add('show');
+  }
+  function cancelBooking(e) {
+    if (e && e.target !== document.getElementById('bookOverlay')) return;
+    document.getElementById('bookOverlay').classList.remove('show');
+  }
+  function confirmBooking() {
+    document.getElementById('bookOverlay').classList.remove('show');
+    /* success toast */
+    const t = document.createElement('div');
+    t.style.cssText = [
+      'position:fixed;bottom:100px;left:50%;transform:translateX(-50%)',
+      'background:#1A1828;color:#fff;font-size:14px;font-weight:700',
+      'padding:12px 22px;border-radius:40px',
+      'box-shadow:0 8px 24px rgba(0,0,0,.22)',
+      'display:flex;align-items:center;gap:9px',
+      'z-index:300;white-space:nowrap',
+      'animation:toastIn .28s cubic-bezier(.22,.88,.36,1)',
+    ].join(';');
+    t.innerHTML = '<svg viewBox="0 0 18 18" fill="none" style="width:18px;height:18px;flex-shrink:0"><circle cx="9" cy="9" r="8" fill="#22C55E"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>预约成功！稍后平台人员将致电联系您';
+    if (!document.getElementById('toastKeyframes')) {
+      const s = document.createElement('style');
+      s.id = 'toastKeyframes';
+      s.textContent = '@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
+      document.head.appendChild(s);
+    }
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+  }
+</script>
+<script src="service-catalog.js"></script>
+<script>
+  (function(){
+    var cat=window.AKBServiceCatalog&&window.AKBServiceCatalog.get();if(!cat)return;
+    var cards=[].slice.call(document.querySelectorAll('.svc-card')), cardIds=['hospital','home','visit','bath'];
+    var fallback={hospital:{name:'住院陪护',description:'住院期间的专业陪护与生活照料'},home:{name:'居家陪护',description:'提供居家场景的日常照护服务'},visit:{name:'陪诊服务',description:'覆盖挂号、就诊、检查及取报告等服务'},bath:{name:'上门助浴',description:'上门提供安全、舒适的助浴服务'}};
+    cards.forEach(function(card,i){var id=cardIds[i],c=cat.categories.filter(function(item){return item.id===id;})[0]||fallback[id];if(c.status==='off'){card.style.display='none';return;}card.style.display='';var name=card.querySelector('.svc-name'),desc=card.querySelector('.svc-desc');if(name)name.textContent=c.name||fallback[id].name;if(desc&&c.description)desc.textContent=c.description;var href=id==='visit'?'visit-services.html':(id==='home'?'hospital-care.html?service=home':(id==='bath'?'hospital-care.html?service=bath':'hospital-care.html'));card.onclick=function(){location.href=href;};});
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>护理员列表</title>
+  <style>
+    :root {
+      --purple:       #8655C5;
+      --purple-dark:  #6B3FAA;
+      --purple-light: #EDE6F7;
+      --purple-bg:    #F5F3FA;
+      --card:         #FFFFFF;
+      --text:         #1A1828;
+      --text2:        #6B6880;
+      --text3:        #AEACC0;
+      --border:       #EDE9F5;
+      --green:        #16A34A;
+      --green-bg:     #DCFCE7;
+      --sh: 0 2px 16px rgba(100,60,160,.08);
+      --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--purple-bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Desktop frame */
+    .frame { display: flex; justify-content: center; min-height: 100vh; background: #E4DDF0; }
+    .phone {
+      width: 100%; max-width: 430px;
+      display: flex; flex-direction: column; background: var(--purple-bg); min-height: 100vh;
+    }
+    @media (min-width: 520px) {
+      .frame { align-items: flex-start; padding: 20px 0 40px; }
+      .phone {
+        height: 900px; min-height: unset; border-radius: 42px; overflow: hidden;
+        box-shadow: 0 24px 72px rgba(80,40,140,.22), 0 2px 8px rgba(0,0,0,.06);
+      }
+    }
+
+    /* Scroll area */
+    .scroll-area {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch; position: relative;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* Pull-to-refresh indicator */
+    .ptr {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      height: 0; overflow: hidden; transition: height .2s;
+      background: var(--purple-bg); font-size: 12px; font-weight: 700; color: var(--text3);
+    }
+    .ptr.pulling { height: 48px; }
+    .ptr.refreshing { height: 48px; color: var(--purple); }
+    .ptr-spin {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid var(--purple-light); border-top-color: var(--purple);
+      display: none;
+    }
+    .ptr.refreshing .ptr-spin { display: block; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Status bar */
+    .status-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 13px 22px 8px; font-size: 13px; font-weight: 700;
+      background: var(--card);
+    }
+    .status-right { display: flex; align-items: center; gap: 5px; }
+    .status-right svg { width: 17px; height: 17px; }
+
+    /* Navbar */
+    .navbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px 12px; background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+    .back-btn {
+      width: 36px; height: 36px; border: none; cursor: pointer;
+      background: var(--purple-light); border-radius: 11px;
+      display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
+    }
+    .back-btn svg { width: 20px; height: 20px; }
+    .nav-title { font-size: 17px; font-weight: 800; color: var(--text); }
+    .nav-ph { width: 36px; }
+
+    /* Sticky header wrapper */
+    .sticky-hd { position: sticky; top: 0; z-index: 10; background: var(--card); }
+
+    /* Search bar */
+    .search-wrap { padding: 12px 14px 10px; }
+    .search-box {
+      display: flex; align-items: center; gap: 9px;
+      background: var(--purple-bg); border-radius: 13px;
+      padding: 0 14px; height: 44px;
+      border: 1.5px solid transparent; transition: border-color .2s, box-shadow .2s;
+    }
+    .search-box:focus-within {
+      border-color: var(--purple); background: #fff;
+      box-shadow: 0 0 0 3px rgba(134,85,197,.12);
+    }
+    .search-box svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--text3); transition: color .2s; }
+    .search-box:focus-within svg { color: var(--purple); }
+    .search-box input {
+      flex: 1; border: none; background: transparent; outline: none;
+      font-size: 15px; font-weight: 500; color: var(--text); font-family: inherit;
+    }
+    .search-box input::placeholder { color: var(--text3); }
+    .clear-btn {
+      width: 20px; height: 20px; border-radius: 50%; border: none; cursor: pointer;
+      background: var(--text3); display: none; place-items: center; flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .clear-btn.show { display: grid; }
+    .clear-btn svg { width: 10px; height: 10px; }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex; gap: 8px; padding: 0 14px 12px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .fchip {
+      flex-shrink: 0; display: flex; align-items: center; gap: 4px;
+      padding: 6px 13px; border-radius: 20px; cursor: pointer;
+      font-size: 12px; font-weight: 700; font-family: inherit;
+      border: 1.5px solid var(--border); background: transparent; color: var(--text3);
+      transition: all .15s; -webkit-tap-highlight-color: transparent;
+    }
+    .fchip svg { width: 13px; height: 13px; }
+    .fchip.on {
+      background: var(--purple); border-color: var(--purple); color: #fff;
+      box-shadow: 0 3px 10px rgba(134,85,197,.28);
+    }
+    .fchip.on svg { stroke: #fff; }
+    .sep { width: 1px; background: var(--border); height: 22px; align-self: center; flex-shrink: 0; }
+
+    /* Result info row */
+    .result-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px 6px;
+    }
+    .result-count { font-size: 12px; color: var(--text3); font-weight: 600; }
+    .result-count strong { color: var(--purple); }
+    .avail-toggle {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 700; color: var(--text2); cursor: pointer;
+    }
+    .toggle-track {
+      width: 34px; height: 20px; border-radius: 10px; background: var(--border);
+      position: relative; transition: background .2s; flex-shrink: 0;
+    }
+    .toggle-track.on { background: var(--purple); }
+    .toggle-thumb {
+      position: absolute; top: 2px; left: 2px;
+      width: 16px; height: 16px; border-radius: 50%; background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.15); transition: transform .2s;
+    }
+    .toggle-track.on .toggle-thumb { transform: translateX(14px); }
+
+    /* List */
+    .nurse-list { padding: 0 14px 24px; display: flex; flex-direction: column; gap: 12px; }
+
+    /* Nurse card */
+    .nurse-card {
+      background: var(--card); border-radius: var(--r-lg);
+      box-shadow: var(--sh); padding: 16px; overflow: hidden;
+    }
+    .nc-top { display: flex; gap: 13px; align-items: flex-start; }
+    .nc-av-wrap { position: relative; flex-shrink: 0; }
+    .nc-av {
+      width: 62px; height: 62px; border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: 22px; font-weight: 900; color: #fff;
+      box-shadow: 0 4px 14px rgba(100,60,160,.2);
+    }
+    .avail-dot {
+      position: absolute; bottom: 2px; right: 2px;
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid var(--card);
+    }
+    .avail-dot.on  { background: var(--green); }
+    .avail-dot.off { background: var(--text3); }
+
+    .nc-info { flex: 1; min-width: 0; }
+    .nc-name-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+    .nc-name { font-size: 16px; font-weight: 900; color: var(--text); }
+    .nc-gender {
+      font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 20px;
+    }
+    .nc-gender.f { background: #FCE7F3; color: #BE185D; }
+    .nc-gender.m { background: #DBEAFE; color: #1D4ED8; }
+
+    .nc-meta { font-size: 12px; color: var(--text3); font-weight: 600; margin-bottom: 8px; }
+    .nc-meta span { color: var(--text2); font-weight: 700; }
+
+    /* Rating bar */
+    .nc-rate-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .rate-stars { display: flex; gap: 2px; }
+    .rate-stars svg { width: 13px; height: 13px; fill: #F59E0B; }
+    .rate-num { font-size: 13px; font-weight: 800; color: var(--purple); }
+    .rate-orders { font-size: 11px; color: var(--text3); font-weight: 600; }
+
+    /* Certs */
+    .nc-certs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
+    .cert-tag {
+      font-size: 10px; font-weight: 700;
+      background: var(--purple-bg); color: var(--purple);
+      padding: 3px 8px; border-radius: 6px;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .cert-tag svg { width: 10px; height: 10px; }
+
+    /* Bottom row */
+    .nc-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 12px; border-top: 1px solid var(--border);
+    }
+    .nc-price { display: flex; align-items: baseline; gap: 2px; }
+    .price-num { font-size: 22px; font-weight: 900; color: var(--purple); }
+    .price-unit { font-size: 12px; color: var(--text3); font-weight: 600; }
+    .price-note { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+    .select-btn {
+      height: 40px; padding: 0 20px; border-radius: 12px; border: none; cursor: pointer;
+      background: linear-gradient(135deg,#9060D0,#6B3FAA); color: #fff;
+      font-size: 14px; font-weight: 800; font-family: inherit;
+      display: flex; align-items: center; gap: 5px;
+      box-shadow: 0 4px 14px rgba(107,63,170,.28);
+      -webkit-tap-highlight-color: transparent; transition: transform .1s, filter .1s;
+    }
+    .select-btn:active { transform: scale(.97); filter: brightness(.93); }
+    .select-btn svg { width: 14px; height: 14px; }
+    .select-btn.unavail {
+      background: var(--purple-bg); color: var(--text3);
+      box-shadow: none;
+    }
+
+    /* Empty state */
+    .empty {
+      display: none; flex-direction: column; align-items: center;
+      padding: 56px 30px; gap: 14px; text-align: center;
+    }
+    .empty.show { display: flex; }
+    .empty-icon {
+      width: 80px; height: 80px; border-radius: 24px;
+      background: var(--purple-light); display: grid; place-items: center;
+    }
+    .empty-icon svg { width: 38px; height: 38px; }
+    .empty-title { font-size: 16px; font-weight: 800; color: var(--text2); }
+    .empty-sub { font-size: 13px; color: var(--text3); line-height: 1.6; }
+    .empty-btn {
+      padding: 9px 24px; border-radius: 20px; border: none; cursor: pointer;
+      background: var(--purple-light); color: var(--purple);
+      font-size: 13px; font-weight: 700; font-family: inherit;
+    }
+
+  </style>
+</head>
+<body>
+<div class="frame">
+  <div class="phone">
+    <div class="scroll-area" id="scrollArea">
+
+      <!-- Pull-to-refresh -->
+      <div class="ptr" id="ptr">
+        <div class="ptr-spin"></div>
+        <span id="ptrText">下拉刷新</span>
+      </div>
+
+      <!-- iOS status bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-right">
+          <svg viewBox="0 0 17 12" fill="currentColor">
+            <rect x="0" y="3" width="3" height="9" rx="1"/>
+            <rect x="4.5" y="1.5" width="3" height="10.5" rx="1"/>
+            <rect x="9" y="0" width="3" height="12" rx="1"/>
+            <rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".28"/>
+          </svg>
+          <svg viewBox="0 0 17 13" fill="none" stroke="currentColor" stroke-linecap="round">
+            <path d="M8.5 9.5a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8z" fill="currentColor" stroke="none"/>
+            <path d="M5.2 7a4.7 4.7 0 016.6 0" stroke-width="1.5"/>
+            <path d="M2 4a8.8 8.8 0 0113 0" stroke-width="1.5"/>
+          </svg>
+          <svg viewBox="0 0 24 12" fill="none">
+            <rect x=".6" y=".6" width="20" height="10.8" rx="2.8" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="21.2" y="3.6" width="2.2" height="4.8" rx="1.1" fill="currentColor"/>
+            <rect x="2" y="2" width="15" height="8" rx="1.8" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Navbar -->
+      <div class="navbar">
+        <button class="back-btn" onclick="location.href='home.html'" aria-label="返回">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path d="M13 4.5L7.5 10 13 15.5" stroke="#8655C5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <span class="nav-title">全部护理员</span>
+        <div class="nav-ph"></div>
+      </div>
+
+      <!-- Sticky: search + filters -->
+      <div class="sticky-hd">
+        <div class="search-wrap">
+          <div class="search-box">
+            <svg viewBox="0 0 18 18" fill="none">
+              <circle cx="7.5" cy="7.5" r="5.5" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M11.5 11.5l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            <input id="searchInput" type="search" placeholder="搜索护理员姓名 / 证书"
+                   autocomplete="off" oninput="onSearch(this.value)" />
+            <button class="clear-btn" id="clearBtn" onclick="clearSearch()">
+              <svg viewBox="0 0 10 10" fill="none">
+                <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter chips -->
+        <div class="filter-bar">
+          <!-- Sort group -->
+          <button class="fchip on" id="f-dist"  onclick="setSort(this,'dist')">
+            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+              <circle cx="6.5" cy="4.5" r="2"/><path d="M6.5 7v5M4 11h5"/>
+            </svg>
+            距离优先
+          </button>
+          <button class="fchip" id="f-rate" onclick="setSort(this,'rate')">
+            <svg viewBox="0 0 13 13" fill="#F59E0B"><path d="M6.5 1l1.3 3 3.1.3-2.3 2.1.7 3.1-2.8-1.6-2.8 1.6.7-3.1L2.1 4.3l3.1-.3z"/></svg>
+            好评优先
+          </button>
+          <button class="fchip" id="f-price" onclick="setSort(this,'price')">
+            <svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+              <path d="M2 10l4-8 4 8M3.5 7h6"/>
+            </svg>
+            价格最低
+          </button>
+          <div class="sep"></div>
+          <!-- Gender group -->
+          <button class="fchip on" id="f-all"    onclick="setGender(this,'all')">全部</button>
+          <button class="fchip"    id="f-female" onclick="setGender(this,'女')">
+            <svg viewBox="0 0 13 13" fill="none" stroke="#BE185D" stroke-width="1.3" stroke-linecap="round">
+              <circle cx="6.5" cy="5" r="3"/><path d="M6.5 8v4M4.5 10h4"/>
+            </svg>
+            女护理员
+          </button>
+          <button class="fchip"    id="f-male"   onclick="setGender(this,'男')">
+            <svg viewBox="0 0 13 13" fill="none" stroke="#1D4ED8" stroke-width="1.3" stroke-linecap="round">
+              <circle cx="5" cy="8" r="3"/><path d="M7.5 2h4v4M11.5 2l-4 4"/>
+            </svg>
+            男护理员
+          </button>
+        </div>
+      </div>
+
+      <!-- Result row -->
+      <div class="result-row">
+        <div class="result-count" id="resultCount"><strong>8</strong> 位护理员</div>
+        <div class="avail-toggle" onclick="toggleAvail()">
+          仅看空闲
+          <div class="toggle-track" id="availTrack">
+            <div class="toggle-thumb"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nurse list -->
+      <div class="nurse-list" id="nurseList"></div>
+
+      <!-- Empty state -->
+      <div class="empty" id="emptyState">
+        <div class="empty-icon">
+          <svg viewBox="0 0 38 38" fill="none">
+            <circle cx="17" cy="17" r="12" stroke="#8655C5" stroke-width="2"/>
+            <path d="M26 26l8 8" stroke="#8655C5" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M13 17c0-2.2 1.8-4 4-4s4 1.8 4 4" stroke="#8655C5" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="empty-title">暂无匹配护理员</div>
+        <div class="empty-sub">请尝试调整筛选条件<br/>或切换性别 / 排序方式</div>
+        <button class="empty-btn" onclick="resetAll()">重置筛选</button>
+      </div>
+
+    </div><!-- .scroll-area -->
+
+
+  </div><!-- .phone -->
+</div><!-- .frame -->
+
+<script>
+  /* ── Data ── */
+  const NURSES = [
+    { name:'李桂芳', gender:'女', age:38, years:5,  spec:'住院专护',  certs:['护士执照','护理师证','急救认证'],       rate:98, orders:156, price:280, avail:true,  color:['#7B3FBE','#AA7AE0'] },
+    { name:'王美玲', gender:'女', age:45, years:8,  spec:'重症陪护',  certs:['护士执照','重症监护证','康复理疗证'],   rate:99, orders:203, price:320, avail:true,  color:['#C75510','#F4A030'] },
+    { name:'张秀英', gender:'女', age:34, years:3,  spec:'术后康复',  certs:['护士执照','康复护理证'],               rate:97, orders:89,  price:260, avail:false, color:['#1A9896','#38CFC7'] },
+    { name:'陈美华', gender:'女', age:52, years:15, spec:'老年陪护',  certs:['护士执照','养老护理员证','心理咨询证'], rate:99, orders:342, price:350, avail:true,  color:['#2350A8','#547FD8'] },
+    { name:'刘国强', gender:'男', age:31, years:4,  spec:'骨科护理',  certs:['护士执照','骨科专科证'],               rate:96, orders:67,  price:280, avail:true,  color:['#166B35','#2EAA5A'] },
+    { name:'赵燕',   gender:'女', age:40, years:6,  spec:'儿科陪护',  certs:['护士执照','儿科护理证','急救认证'],     rate:98, orders:128, price:300, avail:false, color:['#C92B2B','#E86060'] },
+    { name:'孙志远', gender:'男', age:36, years:7,  spec:'神经内科',  certs:['护士执照','神经科专科证'],             rate:97, orders:94,  price:300, avail:true,  color:['#1A5C8C','#3A9AC7'] },
+    { name:'吴丽萍', gender:'女', age:29, years:2,  spec:'产后护理',  certs:['护士执照','母婴护理证'],               rate:95, orders:45,  price:240, avail:true,  color:['#8B3A0C','#D4651E'] },
+  ];
+
+  let sortMode    = 'dist';
+  let genderMode  = 'all';
+  let availOnly   = false;
+  let keyword     = '';
+
+  /* ── Filter + Sort ── */
+  function filtered() {
+    let data = NURSES.filter(n => {
+      const kw = keyword.toLowerCase();
+      const matchKw = !kw || n.name.includes(kw) || n.certs.some(c => c.includes(kw)) || n.spec.includes(kw);
+      const matchG  = genderMode === 'all' || n.gender === genderMode;
+      const matchA  = !availOnly || n.avail;
+      return matchKw && matchG && matchA;
+    });
+    if (sortMode === 'rate')  data.sort((a,b) => b.rate  - a.rate);
+    if (sortMode === 'price') data.sort((a,b) => a.price - b.price);
+    return data;
+  }
+
+  function starsSVG(rate) {
+    const full = Math.round(rate / 20);
+    return Array.from({length:5}, (_,i) =>
+      `<svg viewBox="0 0 13 13"><path d="M6.5 1l1.3 3 3.1.3-2.3 2.1.7 3.1-2.8-1.6-2.8 1.6.7-3.1L2.1 4.3l3.1-.3z" fill="${i<full?'#F59E0B':'#E5E7EB'}"/></svg>`
+    ).join('');
+  }
+
+  function render() {
+    const list  = document.getElementById('nurseList');
+    const empty = document.getElementById('emptyState');
+    const count = document.getElementById('resultCount');
+    const data  = filtered();
+
+    list.innerHTML = '';
+
+    if (data.length === 0) {
+      list.style.display = 'none';
+      empty.classList.add('show');
+      return;
+    }
+    list.style.display = '';
+    empty.classList.remove('show');
+    count.innerHTML = `<strong>${data.length}</strong> 位护理员`;
+
+    data.forEach(n => {
+      const card = document.createElement('div');
+      card.className = 'nurse-card';
+      card.innerHTML = `
+        <div class="nc-top">
+          <div class="nc-av-wrap">
+            <div class="nc-av" style="background:linear-gradient(140deg,${n.color[0]},${n.color[1]})">${n.name[0]}</div>
+            <div class="avail-dot ${n.avail?'on':'off'}"></div>
+          </div>
+          <div class="nc-info">
+            <div class="nc-name-row">
+              <span class="nc-name">${n.name}</span>
+              <span class="nc-gender ${n.gender==='女'?'f':'m'}">${n.gender}</span>
+            </div>
+            <div class="nc-meta">${n.age}岁 · <span>${n.years}年经验</span> · ${n.spec}</div>
+            <div class="nc-rate-row">
+              <div class="rate-stars">${starsSVG(n.rate)}</div>
+              <span class="rate-num">${n.rate}%</span>
+              <span class="rate-orders">已服务 ${n.orders} 单</span>
+            </div>
+          </div>
+        </div>
+        <div class="nc-certs">
+          ${n.certs.map(c=>`<span class="cert-tag">
+            <svg viewBox="0 0 10 10" fill="none"><path d="M1.5 5.5l2.5 2.5 5-5" stroke="#8655C5" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            ${c}</span>`).join('')}
+        </div>
+        <div class="nc-bottom">
+          <div>
+            <div class="nc-price">
+              <span class="price-num">¥${n.price}</span>
+              <span class="price-unit">/天起</span>
+            </div>
+            <div class="price-note">${n.avail?'<span style="color:var(--green);font-weight:700">● 空闲中</span>':'<span style="color:var(--text3)">● 服务中</span>'}</div>
+          </div>
+          <button class="select-btn ${n.avail?'':'unavail'}"
+            onclick="${n.avail?`location.href='hospital-care.html'`:`alert('${n.name} 当前正在服务中，请选择其他护理员')`}">
+            ${n.avail?`选择 Ta <svg viewBox="0 0 14 14" fill="none"><path d="M5 3l4 4-4 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`:'暂不可选'}
+          </button>
+        </div>`;
+      list.appendChild(card);
+    });
+  }
+
+  /* ── Controls ── */
+  function onSearch(val) {
+    keyword = val.trim();
+    document.getElementById('clearBtn').classList.toggle('show', val.length > 0);
+    render();
+  }
+
+  function clearSearch() {
+    const inp = document.getElementById('searchInput');
+    inp.value = ''; keyword = '';
+    document.getElementById('clearBtn').classList.remove('show');
+    inp.focus(); render();
+  }
+
+  function setSort(el, mode) {
+    ['f-dist','f-rate','f-price'].forEach(id => document.getElementById(id).classList.remove('on'));
+    el.classList.add('on'); sortMode = mode; render();
+  }
+
+  function setGender(el, g) {
+    ['f-all','f-female','f-male'].forEach(id => document.getElementById(id).classList.remove('on'));
+    el.classList.add('on'); genderMode = g; render();
+  }
+
+  function toggleAvail() {
+    availOnly = !availOnly;
+    document.getElementById('availTrack').classList.toggle('on', availOnly);
+    render();
+  }
+
+  function resetAll() {
+    clearSearch();
+    setSort(document.getElementById('f-dist'), 'dist');
+    setGender(document.getElementById('f-all'), 'all');
+    availOnly = false;
+    document.getElementById('availTrack').classList.remove('on');
+    render();
+  }
+
+  /* ── Pull-to-refresh ── */
+  const sa = document.getElementById('scrollArea');
+  const ptr = document.getElementById('ptr');
+  const ptrText = document.getElementById('ptrText');
+  let startY = 0, pulling = false, refreshing = false;
+
+  sa.addEventListener('touchstart', e => { if (sa.scrollTop === 0) startY = e.touches[0].clientY; }, { passive:true });
+  sa.addEventListener('touchmove', e => {
+    if (refreshing) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy > 10 && sa.scrollTop === 0) {
+      pulling = true;
+      ptr.classList.add('pulling');
+      ptrText.textContent = dy > 60 ? '松开立即刷新' : '下拉刷新';
+    }
+  }, { passive:true });
+  sa.addEventListener('touchend', () => {
+    if (!pulling) return;
+    pulling = false;
+    refreshing = true;
+    ptr.classList.remove('pulling');
+    ptr.classList.add('refreshing');
+    ptrText.textContent = '正在刷新…';
+    setTimeout(() => {
+      render();
+      ptr.classList.remove('refreshing');
+      ptrText.textContent = '下拉刷新';
+      refreshing = false;
+    }, 1200);
+  });
+
+  /* initial render */
+  render();
+</script>
+</body>
+</html>

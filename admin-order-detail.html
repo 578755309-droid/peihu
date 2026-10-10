@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1280">
+  <title>订单详情 · 多康陪护运营后台</title>
+  <link rel="stylesheet" href="admin-shell.css">
+  <script defer src="admin-sidebar.js"></script>
+  <script defer src="admin-overview-data.js"></script>
+  <style>
+    :root{--blue:#224CD3;--ink:#172033;--muted:#71809a;--line:#dce9f8;--bg:#eff6ff;--panel:#fff}
+    *{box-sizing:border-box} body{margin:0;min-width:1100px;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}.layout{display:flex;min-height:100vh}.sidebar{width:220px;background:#002141}.main{margin-left:220px;flex:1;min-width:0}.topbar{height:60px;display:flex;align-items:center;padding:0 28px;background:#fff;border-bottom:1px solid var(--line)}.crumb{display:flex;gap:8px;font-size:13px;font-weight:700;color:#94a3b8}.crumb strong{color:var(--ink)}.top-date{margin-left:auto;color:#8fa0b5;font-size:12px;font-weight:700}.top-av{display:grid;place-items:center;width:34px;height:34px;margin-left:14px;border-radius:10px;color:#fff;background:var(--blue);font-size:14px;font-weight:900}.page{padding:24px 28px 44px;max-width:1740px}.head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}.back{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);height:36px;padding:0 12px;border-radius:9px;background:#fff;color:#53647b;font:700 12px inherit;cursor:pointer}.title{font-size:24px;font-weight:900;margin:13px 0 0}.sub{margin-top:6px;color:#91a0b6;font-size:13px}.actions{display:flex;gap:9px;padding-top:11px}.btn{height:36px;border:1px solid var(--line);border-radius:9px;padding:0 13px;background:#fff;color:#41536d;font:700 12px inherit;cursor:pointer}.btn.primary{border-color:var(--blue);background:var(--blue);color:#fff}.card{border:1px solid var(--line);border-radius:15px;background:var(--panel);box-shadow:0 3px 14px rgba(34,76,211,.07)}.order-hero{padding:20px 22px;margin-bottom:16px}.order-top{display:flex;align-items:center;gap:12px;border-bottom:1px solid #edf3fb;padding-bottom:16px}.order-no{font-size:15px;font-weight:900}.state{display:inline-flex;align-items:center;padding:6px 10px;border-radius:16px;font-size:12px;font-weight:800}.serving{color:#224CD3;background:#e7f1fd}.pending{color:#d97706;background:#fef3c7}.done{color:#16a34a;background:#dcfce7}.after{color:#dc2626;background:#fee2e2}.hero-grid{display:grid;grid-template-columns:1.2fr .85fr .85fr .85fr;gap:12px;padding-top:17px}.hero-main{display:flex;align-items:center;gap:13px}.service-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:14px;background:#e8efff;color:var(--blue);font-weight:900;font-size:20px}.eyebrow{font-size:12px;font-weight:800;color:var(--blue)}.project{margin-top:3px;font-size:19px;font-weight:900}.service-note{margin-top:5px;color:var(--muted);font-size:12px}.metric{border-left:1px solid #e7eef8;padding-left:18px}.metric-label{font-size:11px;color:#94a3b8;font-weight:700}.metric-value{margin-top:7px;color:var(--ink);font-size:16px;font-weight:900}.metric-value.blue{color:var(--blue)}.cols{display:grid;grid-template-columns:1.18fr .82fr;gap:16px}.stack{display:flex;flex-direction:column;gap:16px}.section{padding:20px 22px}.section-title{font-size:16px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:8px}.section-title:before{content:"";width:4px;height:16px;border-radius:4px;background:var(--blue)}.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 22px}.info{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-top:1px solid #eef4fb;font-size:13px}.info:nth-child(-n+2){border-top:0}.info label{flex:0 0 auto;color:#8b99ad;font-weight:700}.info span{text-align:right;color:#25354c;font-weight:700;line-height:1.45}.address{display:flex;gap:12px;padding:15px;border-radius:11px;background:#f6faff}.address-type{height:28px;min-width:34px;display:grid;place-items:center;border-radius:8px;background:#e7f1fd;color:var(--blue);font-size:11px;font-weight:900}.address-name{font-size:13px;font-weight:850;line-height:1.5}.address-sub{margin-top:4px;color:#92a0b4;font-size:12px}.people{display:grid;grid-template-columns:1fr 1fr;gap:10px}.person{display:flex;gap:10px;padding:14px;border:1px solid #e4eef9;border-radius:11px}.avatar{width:38px;height:38px;display:grid;place-items:center;flex:0 0 38px;border-radius:11px;background:#e7f1fd;color:var(--blue);font-weight:900}.person .role{font-size:11px;color:#8b99ad;font-weight:700}.person .name{margin-top:3px;font-size:14px;font-weight:900}.person .detail{margin-top:3px;color:#7a8aa0;font-size:11px}.payment-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:13px;color:#68788f}.payment-row.total{margin-top:6px;padding-top:15px;border-top:1px solid #e6eef8;color:var(--ink);font-size:14px;font-weight:900}.payment-row.total strong{color:var(--blue);font-size:22px}.timeline{position:relative;margin:2px 0 2px 7px;padding-left:19px;border-left:2px solid #dbe8f8}.timeline-item{position:relative;padding:0 0 19px}.timeline-item:last-child{padding-bottom:0}.timeline-item:before{content:"";position:absolute;left:-25px;top:3px;width:10px;height:10px;border:3px solid #fff;border-radius:50%;background:#7aa0e8;box-shadow:0 0 0 2px #c3d7f4}.timeline-item.done:before{background:#22c55e}.timeline-time{font-size:11px;color:#94a3b8;font-weight:700}.timeline-title{margin-top:3px;font-size:13px;font-weight:900}.timeline-desc{margin-top:4px;color:#74849b;font-size:12px;line-height:1.55}.reports-card{grid-column:1/-1}.report-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:15px}.report-head .hint{font-size:12px;color:#8b99ad}.report-list{display:grid;gap:10px}.report{display:grid;grid-template-columns:110px 1fr auto;align-items:center;gap:14px;padding:14px 15px;border:1px solid #e2edf9;border-radius:11px;background:#fff}.report-date{font-size:13px;font-weight:900}.report-date span{display:block;margin-top:4px;color:#90a0b6;font-size:11px;font-weight:700}.report-body{min-width:0}.report-title{font-size:13px;font-weight:850}.report-desc{margin-top:4px;overflow:hidden;color:#6f7f95;font-size:12px;line-height:1.45;text-overflow:ellipsis;white-space:nowrap}.report-tags{display:flex;gap:6px;margin-top:7px}.report-tag{padding:3px 6px;border-radius:5px;background:#f0f6ff;color:#4773bd;font-size:10px;font-weight:800}.report-action{border:0;background:none;color:var(--blue);font:800 12px inherit;white-space:nowrap;cursor:pointer}.empty{padding:34px 0;text-align:center;color:#9aa8ba;font-size:13px}.empty strong{display:block;margin-bottom:6px;color:#60728a;font-size:14px}.report-summary{display:flex;align-items:center;gap:10px;padding:12px 14px;margin-bottom:12px;border-radius:10px;background:#f5f9ff;color:#5d7090;font-size:12px}.report-summary b{color:var(--blue);font-size:16px}@media(max-width:1200px){.hero-grid{grid-template-columns:1.25fr 1fr 1fr}.metric:last-child{display:none}.cols{grid-template-columns:1fr}.reports-card{grid-column:auto}}
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar"></aside>
+    <main class="main">
+      <header class="topbar"><div class="crumb"><span>业务管理</span><span>›</span><span>订单管理</span><span>›</span><strong>订单详情</strong></div><span class="top-date">2026年4月12日 星期日</span><div class="top-av">管</div></header>
+      <section class="page">
+        <div class="head"><div><button class="back" onclick="location.href='admin-orders.html'">← 返回订单列表</button><h1 class="title">订单详情</h1><div class="sub">订单服务过程、服务对象与移动端日报记录</div></div><div class="actions"><button class="btn" onclick="alert('已生成订单服务凭证')">导出服务凭证</button><button class="btn primary" onclick="alert('已通知运营人员介入处理')">人工介入</button></div></div>
+        <section class="card order-hero" id="orderHero"></section>
+        <div class="cols">
+          <div class="stack">
+            <section class="card section"><div class="section-title">服务信息</div><div class="info-grid" id="serviceInfo"></div></section>
+            <section class="card section"><div class="section-title">服务地址</div><div id="addressInfo"></div></section>
+            <section class="card section"><div class="section-title">就诊人及服务人员</div><div class="people" id="peopleInfo"></div></section>
+          </div>
+          <div class="stack">
+            <section class="card section"><div class="section-title">支付信息</div><div id="paymentInfo"></div></section>
+            <section class="card section"><div class="section-title">订单动态</div><div class="timeline" id="timeline"></div></section>
+          </div>
+          <section class="card section reports-card"><div class="report-head"><div class="section-title" style="margin-bottom:0">护理日报</div><div class="hint">来源：移动端陪护员日报</div></div><div id="reportContent"></div></section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    (function(){
+      var profiles={
+        'AKB-20260412-001':{patient:'张爷爷',patientMeta:'男 · 68岁 · 骨折术后恢复期',patientPhone:'138****2468',address:'北京市朝阳区建国路 66 号 北京协和医院东院区',addressType:'医院',contact:'张女士 · 138****2468',unit:'¥360/天',pricing:'按天收费',days:'3 天',payment:'微信支付',paymentState:'已支付',reports:[{date:'04/12',time:'20:18',title:'入院陪护 · 第 1 天',desc:'协助办理入院、整理床旁用品，晚间协助翻身及用药提醒。',tags:['生活照护','用药提醒']},{date:'04/13',time:'20:32',title:'住院陪护 · 第 2 天',desc:'协助患者完成检查往返，记录医嘱并同步家属，生命体征平稳。',tags:['检查陪同','医嘱记录']},{date:'04/14',time:'20:26',title:'住院陪护 · 第 3 天',desc:'完成当日生活照护及康复活动协助，向家属同步恢复情况。',tags:['康复协助','家属沟通']} ]},
+        'AKB-20260412-002':{patient:'李先生',patientMeta:'男 · 72岁 · 日常起居照护',patientPhone:'139****8572',address:'北京市朝阳区望京街道 88 号 2 单元 1602',addressType:'家',contact:'李女士 · 139****8572',unit:'¥520/天',pricing:'按天收费',days:'2 天',payment:'微信支付',paymentState:'已支付',reports:[]},
+        'AKB-20260411-018':{patient:'赵阿姨',patientMeta:'女 · 61岁 · 门诊复诊',patientPhone:'186****3016',address:'北京市东城区帅府园 1 号 北京协和医院西院区',addressType:'医院',contact:'赵先生 · 186****3016',unit:'¥298/次',pricing:'按次收费',days:'1 次',payment:'微信支付',paymentState:'已支付',reports:[{date:'04/11',time:'15:46',title:'贵宾陪诊服务记录',desc:'完成挂号、候诊、检查陪同及取药，已将诊疗方案同步给家属。',tags:['陪诊完成','诊疗记录']} ]},
+        'AKB-20260410-007':{patient:'陈先生',patientMeta:'男 · 65岁 · 协助助浴',patientPhone:'133****6420',address:'北京市朝阳区安慧北里 12 号 3 单元 502',addressType:'家',contact:'陈女士 · 133****6420',unit:'¥168/次',pricing:'按次收费',days:'1 次',payment:'原路退款',paymentState:'退款处理中',reports:[]},
+        'AKB-20260409-031':{patient:'刘女士',patientMeta:'女 · 57岁 · 检查报告代取',patientPhone:'177****9183',address:'北京市西城区复兴门内大街 55 号 北京儿童医院',addressType:'医院',contact:'刘先生 · 177****9183',unit:'¥89/次',pricing:'按次收费',days:'1 次',payment:'待支付',paymentState:'未支付',reports:[]},
+        'AKB-20260408-023':{patient:'孙大爷',patientMeta:'男 · 76岁 · 居家照护',patientPhone:'158****5509',address:'北京市海淀区中关村南大街 18 号 1 单元 903',addressType:'家',contact:'孙女士 · 158****5509',unit:'¥520/天',pricing:'按天收费',days:'1 天',payment:'订单已取消',paymentState:'未支付',reports:[]}
+      };
+      var statusClass={'服务中':'serving','待服务':'pending','已完成':'done','退款/售后':'after','待支付':'pending','已取消':'after'};
+      function esc(value){return String(value||'—').replace(/[&<>"']/g,function(char){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char];});}
+      function render(){
+        var no=new URLSearchParams(location.search).get('no')||'AKB-20260412-001';
+        var data=(window.AKBAdminOverviewData&&window.AKBAdminOverviewData.orders||[]).find(function(item){return item.no===no;})||{no:no,type:'住院陪护',item:'12小时/天 · 3天',user:'王女士',userPhone:'138****2468',nurse:'张阿姨',nursePhone:'138****2468',time:'04/12 08时 - 04/14 20时',orderedAt:'04/11 16:24:36',amount:'¥1,080',state:'服务中'};
+        var profile=profiles[no]||profiles['AKB-20260412-001']; var stateClass=statusClass[data.state]||'pending';
+        document.getElementById('orderHero').innerHTML='<div class="order-top"><div class="order-no">订单号 '+esc(data.no)+'</div><span class="state '+stateClass+'">'+esc(data.state)+'</span></div><div class="hero-grid"><div class="hero-main"><div class="service-icon">服</div><div><div class="eyebrow">'+esc(data.type)+'</div><div class="project">'+esc(data.item)+'</div><div class="service-note">移动端下单 · '+esc(data.orderedAt)+'</div></div></div><div class="metric"><div class="metric-label">服务时间</div><div class="metric-value">'+esc(data.time)+'</div></div><div class="metric"><div class="metric-label">计价方式</div><div class="metric-value">'+esc(profile.pricing)+'</div></div><div class="metric"><div class="metric-label">应付金额</div><div class="metric-value blue">'+esc(data.amount)+'</div></div></div>';
+        document.getElementById('serviceInfo').innerHTML=info('服务类型',data.type)+info('服务项目',data.item)+info('服务时间',data.time)+info('下单时间',data.orderedAt)+info('计价方式',profile.pricing)+info('单价',profile.unit)+info('服务数量',profile.days)+info('订单状态',data.state);
+        document.getElementById('addressInfo').innerHTML='<div class="address"><div class="address-type">'+esc(profile.addressType)+'</div><div><div class="address-name">'+esc(profile.address)+'</div><div class="address-sub">服务联系人：'+esc(profile.contact)+'</div></div></div>';
+        document.getElementById('peopleInfo').innerHTML=person('就诊人 / 服务对象',profile.patient,profile.patientMeta+' · '+profile.patientPhone,'人')+person('陪护员',data.nurse,'联系电话：'+data.nursePhone+' · 已分配','护');
+        document.getElementById('paymentInfo').innerHTML='<div class="payment-row"><span>服务金额</span><span>'+esc(data.amount)+'</span></div><div class="payment-row"><span>积分抵扣</span><span>¥0</span></div><div class="payment-row"><span>支付方式</span><span>'+esc(profile.payment)+'</span></div><div class="payment-row total"><span>应付金额</span><strong>'+esc(data.amount)+'</strong></div>';
+        document.getElementById('timeline').innerHTML=timeline(data.orderedAt,'用户提交订单','已从移动端完成下单')+timeline('04/12 07:45','平台分配陪护员','已分配 '+data.nurse,data.state!=='待支付')+timeline(data.time.split(' - ')[0],'服务开始','服务地址：'+profile.address,data.state==='服务中'||data.state==='已完成')+(data.state==='已完成'?timeline('服务完成','服务完成','已完成服务并提交日报',true):'');
+        var reports=profile.reports||[];
+        document.getElementById('reportContent').innerHTML=reports.length?'<div class="report-summary"><b>'+reports.length+'</b><span>条日报已同步，记录来自陪护员移动端提交。</span></div><div class="report-list">'+reports.map(function(report){return '<article class="report"><div class="report-date">'+report.date+'<span>'+report.time+' 提交</span></div><div class="report-body"><div class="report-title">'+esc(report.title)+'</div><div class="report-desc">'+esc(report.desc)+'</div><div class="report-tags">'+report.tags.map(function(tag){return '<span class="report-tag">'+esc(tag)+'</span>';}).join('')+'</div></div><button class="report-action" onclick="location.href=\'daily-report.html?order='+encodeURIComponent(data.no)+'\'">查看日报</button></article>';}).join('')+'</div>':'<div class="empty"><strong>暂无已提交日报</strong>服务开始后，陪护员将从移动端提交当日服务记录。</div>';
+      }
+      function info(label,value){return '<div class="info"><label>'+esc(label)+'</label><span>'+esc(value)+'</span></div>';}
+      function person(role,name,detail,avatar){return '<div class="person"><div class="avatar">'+avatar+'</div><div><div class="role">'+esc(role)+'</div><div class="name">'+esc(name)+'</div><div class="detail">'+esc(detail)+'</div></div></div>';}
+      function timeline(time,title,desc,done){return '<div class="timeline-item '+(done?'done':'')+'"><div class="timeline-time">'+esc(time)+'</div><div class="timeline-title">'+esc(title)+'</div><div class="timeline-desc">'+esc(desc)+'</div></div>';}
+      if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
+    })();
+  </script>
+  <script>
+    (function () {
+      function renderMallDetail() {
+      var no = new URLSearchParams(location.search).get('no') || '';
+      if (no.indexOf('AKB-M') !== 0) return;
+      var baseData = (window.AKBAdminOverviewData && window.AKBAdminOverviewData.orders || []).find(function (item) { return item.no === no; });
+      var overrides = {};
+      try { overrides = JSON.parse(localStorage.getItem('akb_admin_mall_order_overrides_v1') || '{}')[no] || {}; } catch (error) { overrides = {}; }
+      var data = baseData ? Object.assign({}, baseData, overrides) : null;
+      if (!data) return;
+      function esc(value) { return String(value == null ? '—' : value).replace(/[&<>"']/g, function (char) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]; }); }
+      function info(label, value) { return '<div class="info"><label>'+esc(label)+'</label><span>'+esc(value)+'</span></div>'; }
+      function person(role, name, detail, avatar) { return '<div class="person"><div class="avatar">'+esc(avatar)+'</div><div><div class="role">'+esc(role)+'</div><div class="name">'+esc(name)+'</div><div class="detail">'+esc(detail)+'</div></div></div>'; }
+      function timeline(time, title, desc, done) { return '<div class="timeline-item '+(done?'done':'')+'"><div class="timeline-time">'+esc(time)+'</div><div class="timeline-title">'+esc(title)+'</div><div class="timeline-desc">'+esc(desc)+'</div></div>'; }
+      var logistics = data.logisticsCompany && data.logisticsCompany !== '—' ? data.logisticsCompany+' · '+data.logisticsNo : '待发货';
+      var statusClass = { '待支付':'pending', '待发货':'shipping', '待收货':'shipping', '已完成':'done', '退款/售后':'after' };
+      var stateStyle = document.createElement('style'); stateStyle.textContent = '.state.shipping{color:#224CD3;background:#e7f1fd}'; document.head.appendChild(stateStyle);
+      document.querySelector('.title').textContent = '商城订单详情';
+      document.querySelector('.sub').textContent = '商品、收货信息、物流状态与订单动态';
+      document.querySelector('.actions .btn').textContent = '导出订单凭证';
+      document.querySelectorAll('.section-title')[0].textContent = '商品信息';
+      document.querySelectorAll('.section-title')[1].textContent = '收货信息';
+      document.querySelectorAll('.section-title')[2].textContent = '买家信息';
+      document.querySelectorAll('.section-title')[3].textContent = '订单金额';
+      document.querySelector('.reports-card').style.display = 'none';
+      document.getElementById('orderHero').innerHTML = '<div class="order-top"><div class="order-no">订单号 '+esc(data.no)+'</div><span class="state '+(statusClass[data.state]||'pending')+'">'+esc(data.state)+'</span></div><div class="hero-grid"><div class="hero-main"><div class="service-icon">商</div><div><div class="eyebrow">商城订单</div><div class="project">'+esc(data.product || data.item)+'</div><div class="service-note">用户下单 · '+esc(data.orderedAt)+'</div></div></div><div class="metric"><div class="metric-label">商品数量</div><div class="metric-value">'+esc(data.quantity || 1)+' 件</div></div><div class="metric"><div class="metric-label">物流状态</div><div class="metric-value">'+esc(logistics)+'</div></div><div class="metric"><div class="metric-label">应付金额</div><div class="metric-value blue">'+esc(data.amount)+'</div></div></div>';
+      document.querySelector('.actions .btn.primary').textContent = '人工修改状态';
+      document.querySelector('.actions .btn.primary').onclick = function () {
+        var next = window.prompt('请输入商城订单状态：待支付、待配送、配送中、待收货确认、已完成、退款/售后', data.state);
+        if (!next) return;
+        data.state = next;
+        data.receiptStatus = next === '已完成' ? '后台人工确认' : (next === '待收货确认' ? '待用户确认' : data.receiptStatus);
+        data.confirmedBy = next === '已完成' ? '管理员' : '—';
+        var detailOverrides = {};
+        try { detailOverrides = JSON.parse(localStorage.getItem('akb_admin_mall_order_overrides_v1') || '{}') || {}; } catch (error) { detailOverrides = {}; }
+        detailOverrides[no] = { state:data.state, receiptStatus:data.receiptStatus, confirmedBy:data.confirmedBy, deliveryType:data.deliveryType, receiveCode:data.receiveCode, deliveryFee:data.deliveryFee, deliveredAt:data.deliveredAt };
+        localStorage.setItem('akb_admin_mall_order_overrides_v1', JSON.stringify(detailOverrides));
+        document.querySelector('#orderHero .state').textContent = next;
+        document.getElementById('serviceInfo').innerHTML = info('商品名称', data.product || data.item) + info('商品数量', (data.quantity || 1)+' 件') + info('配送方式', data.deliveryType || '—') + info('配送费用', data.deliveryFee || '已含在商品售价内') + info('下单时间', data.orderedAt) + info('订单状态', data.state) + info('物流公司', data.logisticsCompany || '—') + info('物流单号', data.logisticsNo || '—') + info('收货码', data.receiveCode || '—') + info('签收状态', data.receiptStatus || '待用户确认') + info('确认方式', data.confirmedBy || '—') + info('退款状态', data.refundState || '—') + info('退款金额', data.refundAmount || '—');
+      };
+      document.getElementById('serviceInfo').innerHTML = info('商品名称', data.product || data.item) + info('商品数量', (data.quantity || 1)+' 件') + info('配送方式', data.deliveryType || '—') + info('配送费用', data.deliveryFee || '已含在商品售价内') + info('下单时间', data.orderedAt) + info('订单状态', data.state) + info('物流公司', data.logisticsCompany || '—') + info('物流单号', data.logisticsNo || '—') + info('收货码', data.receiveCode || '—') + info('签收状态', data.receiptStatus || '待用户确认') + info('确认方式', data.confirmedBy || '—') + info('退款状态', data.refundState || '—') + info('退款金额', data.refundAmount || '—');
+      document.getElementById('addressInfo').innerHTML = '<div class="address"><div class="address-type">收货</div><div><div class="address-name">'+esc(data.address)+'</div><div class="address-sub">收货人：'+esc(data.receiver || data.user)+'　'+esc(data.receiverPhone || data.userPhone)+'</div></div></div>';
+      document.getElementById('peopleInfo').innerHTML = person('下单用户', data.user, data.userPhone, '买') + person('供货方', '安科邦商城', '商城商品订单', '商');
+      document.getElementById('paymentInfo').innerHTML = '<div class="payment-row"><span>商品金额</span><span>'+esc(data.amount)+'</span></div><div class="payment-row"><span>运费</span><span>¥0</span></div><div class="payment-row"><span>支付状态</span><span>'+esc(data.state === '待支付' ? '待支付' : '模拟已支付')+'</span></div><div class="payment-row total"><span>应付金额</span><strong>'+esc(data.amount)+'</strong></div>';
+      document.getElementById('timeline').innerHTML = timeline(data.orderedAt, '用户提交订单', '已从商城完成下单 · '+(data.deliveryType || '配送方式待确认'), true) + timeline(data.state === '待支付' ? '待处理' : '—', data.state === '待支付' ? '等待付款' : '订单已确认', data.state === '待支付' ? '当前订单尚未完成付款' : '配送费用已包含在商品售价内', data.state !== '待支付') + (data.state === '配送中' || data.state === '待收货确认' || data.state === '已完成' ? timeline(data.deliveredAt || '配送完成', '配送完成', data.logisticsNo && data.logisticsNo !== '—' ? data.logisticsCompany+' · '+data.logisticsNo : data.deliveryType+'已送达', true) : '') + (data.state === '待收货确认' ? timeline('待确认', '等待收货码确认', '收货码：'+(data.receiveCode || '—')+' · 可由用户确认或后台人工确认', false) : '') + (data.state === '已完成' ? timeline('已签收', '订单已完成', '确认方式：'+(data.confirmedBy || '用户确认'), true) : '');
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderMallDetail); else renderMallDetail();
+    })();
+  </script>
+</body>
+</html>

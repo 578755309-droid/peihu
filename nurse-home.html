@@ -1,0 +1,751 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>护理员工作台</title>
+  <style>
+    :root {
+      --purple:       #8655C5;
+      --purple-dark:  #6B3FAA;
+      --purple-light: #EDE6F7;
+      --purple-bg:    #F5F3FA;
+      --card:         #FFFFFF;
+      --text:         #1A1828;
+      --text2:        #6B6880;
+      --text3:        #AEACC0;
+      --border:       #EDE9F5;
+      --green:        #16A34A;
+      --green-bg:     #DCFCE7;
+      --red:          #DC2626;
+      --red-bg:       #FEE2E2;
+      --amber:        #D97706;
+      --amber-bg:     #FEF3C7;
+      --sh: 0 2px 16px rgba(100,60,160,.08);
+      --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--purple-bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Desktop frame */
+    .frame { display: flex; justify-content: center; min-height: 100vh; background: #E4DDF0; }
+    .phone {
+      width: 100%; max-width: 430px;
+      display: flex; flex-direction: column; background: var(--purple-bg); min-height: 100vh;
+    }
+    @media (min-width: 520px) {
+      .frame { align-items: flex-start; padding: 20px 0 40px; }
+      .phone {
+        height: 900px; min-height: unset; border-radius: 42px; overflow: hidden;
+        box-shadow: 0 24px 72px rgba(80,40,140,.22), 0 2px 8px rgba(0,0,0,.06);
+      }
+    }
+
+    .scroll-area { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; padding-bottom: 12px; }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* ── Status bar ── */
+    .status-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 13px 22px 8px; font-size: 13px; font-weight: 700;
+      background: var(--purple-dark); color: rgba(255,255,255,.85);
+    }
+    .status-right { display: flex; align-items: center; gap: 5px; }
+    .status-right svg { width: 17px; height: 17px; }
+
+    /* ── Hero header ── */
+    .hero {
+      background: linear-gradient(160deg, #7B3FAA 0%, #4E2480 100%);
+      padding: 18px 20px 28px; position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content: ''; position: absolute;
+      width: 220px; height: 220px; border-radius: 50%;
+      background: rgba(255,255,255,.05); top: -60px; right: -60px; pointer-events: none;
+    }
+    .hero-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .hero-brand { font-size: 15px; font-weight: 800; color: rgba(255,255,255,.7); letter-spacing: .5px; }
+    .notif-btn {
+      width: 36px; height: 36px; border-radius: 11px; border: none; cursor: pointer;
+      background: rgba(255,255,255,.15); display: grid; place-items: center;
+      -webkit-tap-highlight-color: transparent; position: relative;
+    }
+    .notif-btn svg { width: 20px; height: 20px; }
+    .notif-dot {
+      position: absolute; top: 6px; right: 7px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #FCA5A5; border: 1.5px solid var(--purple-dark);
+    }
+
+    /* Nurse identity */
+    .nurse-id { display: flex; align-items: center; gap: 14px; }
+    .nurse-av-lg {
+      width: 68px; height: 68px; border-radius: 50%; flex-shrink: 0;
+      display: grid; place-items: center;
+      font-size: 26px; font-weight: 900; color: #fff;
+      background: linear-gradient(140deg,#AA7AE0,#7B3FBE);
+      border: 3px solid rgba(255,255,255,.35);
+      box-shadow: 0 6px 20px rgba(0,0,0,.2);
+    }
+    .nurse-meta { flex: 1; }
+    .nurse-name-lg { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+    .nurse-no { font-size: 12px; color: rgba(255,255,255,.6); font-weight: 600; margin-bottom: 8px; }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 20px; cursor: pointer;
+      font-size: 12px; font-weight: 800; transition: all .2s;
+      -webkit-tap-highlight-color: transparent; border: none; font-family: inherit;
+    }
+    .status-pill.idle { background: var(--green-bg); color: var(--green); }
+    .status-pill.busy { background: rgba(255,255,255,.15); color: rgba(255,255,255,.85); }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .status-pill.idle .status-dot { background: var(--green); }
+    .status-pill.busy .status-dot { background: #FCA5A5; }
+
+    /* Stats strip */
+    .stats-strip {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      background: rgba(255,255,255,.1); border-radius: var(--r-md);
+      margin-top: 18px; overflow: hidden;
+    }
+    .stat-item { padding: 12px 8px; text-align: center; }
+    .stat-item + .stat-item { border-left: 1px solid rgba(255,255,255,.12); }
+    .stat-val { font-size: 20px; font-weight: 900; color: #fff; }
+    .stat-lbl { font-size: 11px; color: rgba(255,255,255,.55); font-weight: 600; margin-top: 2px; }
+
+    /* ── Content ── */
+    .content { padding: 16px 14px; display: flex; flex-direction: column; gap: 14px; }
+
+    /* Section title */
+    .sec-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .sec-title { font-size: 15px; font-weight: 800; color: var(--text); }
+    .sec-more { font-size: 12px; color: var(--purple); font-weight: 700; cursor: pointer; }
+
+    /* ── Pending order card ── */
+    .pending-card {
+      background: var(--card); border-radius: var(--r-lg);
+      box-shadow: var(--sh); overflow: hidden;
+      border: 1.5px solid #FCD34D;
+    }
+    .pending-banner {
+      background: linear-gradient(135deg,#FEF3C7,#FDE68A);
+      padding: 11px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .pending-badge {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 800; color: var(--amber);
+    }
+    .pulse-dot {
+      width: 10px; height: 10px; border-radius: 50%; background: var(--amber);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { transform: scale(1); opacity: 1; }
+      50%      { transform: scale(1.35); opacity: .6; }
+    }
+    .cd-badge {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(217,119,6,.12); padding: 4px 11px; border-radius: 20px;
+    }
+    .cd-badge svg { width: 13px; height: 13px; }
+    .cd-time { font-size: 14px; font-weight: 900; color: var(--amber); font-family: 'SF Mono','Courier New',monospace; letter-spacing: 1px; }
+
+    .order-body { padding: 14px 16px; }
+
+    /* Patient row */
+    .patient-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .patient-av {
+      width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(140deg,#3B82F6,#60A5FA);
+      display: grid; place-items: center;
+      font-size: 17px; font-weight: 900; color: #fff;
+    }
+    .patient-name { font-size: 16px; font-weight: 900; color: var(--text); }
+    .patient-meta { font-size: 12px; color: var(--text3); font-weight: 600; margin-top: 3px; }
+    .patient-tag {
+      margin-left: auto; font-size: 11px; font-weight: 700;
+      background: var(--purple-light); color: var(--purple);
+      padding: 3px 10px; border-radius: 20px; flex-shrink: 0;
+    }
+
+    /* Info chips */
+    .info-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .info-chip {
+      background: var(--purple-bg); border-radius: var(--r-sm);
+      padding: 10px 12px;
+    }
+    .chip-lbl { font-size: 10px; color: var(--text3); font-weight: 600; margin-bottom: 3px; }
+    .chip-val { font-size: 13px; color: var(--text); font-weight: 800; }
+    .chip-val.accent { color: var(--purple); }
+
+    /* Action buttons */
+    .action-row { display: flex; gap: 10px; }
+    .btn-transfer {
+      flex: 1; height: 50px; border-radius: 14px; cursor: pointer; font-family: inherit;
+      border: 2px solid var(--amber); background: transparent; color: var(--amber);
+      font-size: 15px; font-weight: 800;
+      -webkit-tap-highlight-color: transparent; transition: background .12s;
+    }
+    .btn-transfer:active { background: var(--amber-bg); }
+    .btn-accept {
+      flex: 2; height: 50px; border-radius: 14px; cursor: pointer; font-family: inherit;
+      border: none; background: linear-gradient(135deg,#1DB954,#16A34A);
+      color: #fff; font-size: 15px; font-weight: 800; letter-spacing: .3px;
+      box-shadow: 0 6px 18px rgba(22,163,74,.28);
+      -webkit-tap-highlight-color: transparent; transition: transform .1s, filter .1s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-accept:active { transform: scale(.98); filter: brightness(.93); }
+    .btn-accept svg { width: 18px; height: 18px; }
+
+    /* ── Today schedule ── */
+    .schedule-card {
+      background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh);
+    }
+    .sch-hd {
+      padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sch-hd-left { display: flex; align-items: center; gap: 8px; }
+    .sec-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); }
+
+    /* Timeline item */
+    .timeline { padding: 14px 16px; display: flex; flex-direction: column; gap: 0; }
+    .tl-item { display: flex; gap: 13px; padding-bottom: 18px; position: relative; }
+    .tl-item:last-child { padding-bottom: 0; }
+    .tl-left { display: flex; flex-direction: column; align-items: center; width: 20px; flex-shrink: 0; }
+    .tl-dot {
+      width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid var(--purple);
+      background: var(--card); flex-shrink: 0; z-index: 1;
+    }
+    .tl-dot.filled { background: var(--purple); }
+    .tl-dot.done   { background: var(--green); border-color: var(--green); }
+    .tl-line { flex: 1; width: 2px; background: var(--border); margin-top: 2px; }
+    .tl-item:last-child .tl-line { display: none; }
+    .tl-content { flex: 1; padding-top: 0; }
+    .tl-time { font-size: 11px; color: var(--text3); font-weight: 700; margin-bottom: 4px; }
+    .tl-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+    .tl-sub { font-size: 12px; color: var(--text2); font-weight: 600; }
+    .tl-tag {
+      display: inline-block; margin-top: 4px; font-size: 10px; font-weight: 700;
+      padding: 2px 8px; border-radius: 20px;
+    }
+    .tl-tag.done   { background: var(--green-bg); color: var(--green); }
+    .tl-tag.active { background: var(--purple-light); color: var(--purple); }
+
+    /* ── Work queue ── */
+    .work-queue { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+    .queue-card { display:block; min-width:0; padding:13px 10px 12px; border-radius:var(--r-md); background:var(--card); box-shadow:var(--sh); color:inherit; text-decoration:none; }
+    .queue-label { color:var(--text2); font-size:11px; font-weight:700; line-height:1.35; }
+    .queue-value { margin-top:5px; color:var(--text); font-size:22px; font-weight:900; line-height:1; }
+    .queue-value.amber { color:var(--amber); }
+    .queue-value.green { color:var(--green); }
+    .queue-value.purple { color:var(--purple); }
+    .queue-note { margin-top:6px; color:var(--text3); font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .home-schedule-section, .home-quick-section { display: none; }
+
+    /* ── Quick actions ── */
+    .quick-grid {
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;
+    }
+    .qa-item {
+      background: var(--card); border-radius: var(--r-md); box-shadow: var(--sh);
+      padding: 14px 8px 12px; display: flex; flex-direction: column;
+      align-items: center; gap: 7px; cursor: pointer;
+      -webkit-tap-highlight-color: transparent; transition: transform .1s;
+    }
+    .qa-item:active { transform: scale(.96); }
+    .qa-icon {
+      width: 44px; height: 44px; border-radius: 13px;
+      display: grid; place-items: center;
+    }
+    .qa-icon svg { width: 22px; height: 22px; }
+    .qa-label { font-size: 11px; font-weight: 700; color: var(--text2); text-align: center; }
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      flex-shrink: 0; display: flex; background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      cursor: pointer; padding: 4px 0; text-decoration: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-item svg { width: 24px; height: 24px; }
+    .nav-lbl { font-size: 11px; font-weight: 700; color: var(--text3); }
+    .nav-item.active .nav-lbl { color: var(--purple); }
+
+    /* Toast */
+    .result-toast {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(.85);
+      background: rgba(20,14,40,.88); color: #fff;
+      padding: 20px 36px; border-radius: 20px;
+      font-size: 16px; font-weight: 800; text-align: center;
+      opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+      z-index: 99; backdrop-filter: blur(6px);
+    }
+    .result-toast.show { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    .result-toast .toast-icon { font-size: 36px; display: block; margin-bottom: 8px; }
+
+    /* ── Transfer modal ── */
+    .tf-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(20,12,40,.5);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .tf-overlay.show { opacity: 1; pointer-events: auto; }
+    .tf-modal {
+      width: 90%; max-width: 370px;
+      background: var(--card); border-radius: 22px;
+      box-shadow: 0 20px 60px rgba(60,30,120,.25);
+      transform: scale(.9); transition: transform .25s cubic-bezier(.4,.2,.2,1);
+      overflow: hidden;
+    }
+    .tf-overlay.show .tf-modal { transform: scale(1); }
+    .tf-hd {
+      padding: 20px 20px 0; display: flex; align-items: center; gap: 10px;
+    }
+    .tf-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: var(--amber-bg); display: grid; place-items: center; flex-shrink: 0;
+    }
+    .tf-icon svg { width: 20px; height: 20px; }
+    .tf-title { font-size: 17px; font-weight: 900; color: var(--text); }
+    .tf-desc {
+      padding: 12px 20px 0; font-size: 13px; color: var(--text2); line-height: 1.7;
+    }
+    .tf-textarea {
+      display: block; width: calc(100% - 40px); margin: 12px 20px 0;
+      height: 90px; border-radius: 12px; resize: none;
+      border: 1.5px solid var(--border); padding: 10px 14px;
+      font-size: 14px; color: var(--text); font-family: inherit;
+      background: var(--purple-bg); outline: none;
+      transition: border-color .15s;
+    }
+    .tf-textarea:focus { border-color: var(--purple); background: #fff; }
+    .tf-textarea::placeholder { color: var(--text3); }
+    .tf-foot {
+      padding: 16px 20px 20px; display: flex; gap: 10px;
+    }
+    .tf-cancel {
+      flex: 1; height: 44px; border-radius: 12px; border: 1.5px solid var(--border);
+      background: transparent; color: var(--text2);
+      font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer;
+      -webkit-tap-highlight-color: transparent; transition: background .12s;
+    }
+    .tf-cancel:active { background: var(--purple-bg); }
+    .tf-submit {
+      flex: 1; height: 44px; border-radius: 12px; border: none;
+      background: linear-gradient(135deg,#D97706,#F59E0B);
+      color: #fff; font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(217,119,6,.25);
+      -webkit-tap-highlight-color: transparent; transition: transform .1s, filter .1s;
+    }
+    .tf-submit:active { transform: scale(.97); filter: brightness(.92); }
+  </style>
+</head>
+<body>
+<div class="frame">
+  <div class="phone">
+    <div class="scroll-area">
+
+      <!-- Status bar -->
+      <div class="status-bar">
+        <span>9:41</span>
+        <div class="status-right">
+          <svg viewBox="0 0 17 12" fill="currentColor">
+            <rect x="0" y="3" width="3" height="9" rx="1"/>
+            <rect x="4.5" y="1.5" width="3" height="10.5" rx="1"/>
+            <rect x="9" y="0" width="3" height="12" rx="1"/>
+            <rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".28"/>
+          </svg>
+          <svg viewBox="0 0 17 13" fill="none" stroke="currentColor" stroke-linecap="round">
+            <path d="M8.5 9.5a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8z" fill="currentColor" stroke="none"/>
+            <path d="M5.2 7a4.7 4.7 0 016.6 0" stroke-width="1.5"/>
+            <path d="M2 4a8.8 8.8 0 0113 0" stroke-width="1.5"/>
+          </svg>
+          <svg viewBox="0 0 24 12" fill="none">
+            <rect x=".6" y=".6" width="20" height="10.8" rx="2.8" stroke="currentColor" stroke-width="1.2"/>
+            <rect x="21.2" y="3.6" width="2.2" height="4.8" rx="1.1" fill="currentColor"/>
+            <rect x="2" y="2" width="15" height="8" rx="1.8" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Hero header -->
+      <div class="hero">
+        <div class="hero-top">
+          <span class="hero-brand">多康 · 护理员端</span>
+          <button class="notif-btn" onclick="alert('暂无新通知')">
+            <svg viewBox="0 0 20 20" fill="none">
+              <path d="M10 2a6 6 0 016 6c0 3.5.8 5 1.5 6H2.5C3.2 13 4 11.5 4 8a6 6 0 016-6z" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
+              <path d="M8 16a2 2 0 004 0" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="notif-dot"></div>
+          </button>
+        </div>
+
+        <!-- Nurse info -->
+        <div class="nurse-id">
+          <div class="nurse-av-lg">李</div>
+          <div class="nurse-meta">
+            <div class="nurse-name-lg">李桂芳</div>
+            <div class="nurse-no">工号 AKB-N-00234 · 住院专护</div>
+            <button class="status-pill idle" id="statusPill" onclick="toggleStatus()">
+              <span class="status-dot"></span>
+              <span id="statusText">空闲中</span>
+              <svg viewBox="0 0 12 12" fill="none" width="10" height="10">
+                <path d="M3 5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Content -->
+      <div class="content">
+
+        <!-- ① Pending order -->
+        <div>
+          <div class="sec-hd">
+            <span class="sec-title">新订单提醒</span>
+            <span class="sec-more" onclick="location.href='nurse-orders.html?status=pending-confirm'">查看全部</span>
+          </div>
+
+          <div class="pending-card" id="pendingCard">
+            <!-- Banner -->
+            <div class="pending-banner">
+              <div class="pending-badge">
+                <div class="pulse-dot"></div>
+                新订单请求
+              </div>
+              <div class="cd-badge">
+                <svg viewBox="0 0 13 13" fill="none">
+                  <circle cx="6.5" cy="6.5" r="5.5" stroke="#D97706" stroke-width="1.3"/>
+                  <path d="M6.5 4v2.5l2 1.2" stroke="#D97706" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+                <span class="cd-time" id="orderCd">04:59</span>
+              </div>
+            </div>
+
+            <div class="order-body">
+              <!-- Patient -->
+              <div class="patient-row">
+                <div class="patient-av">张</div>
+                <div>
+                  <div class="patient-name">张三</div>
+                  <div class="patient-meta">男 · 67岁 · 高血压病史</div>
+                </div>
+                <div class="patient-tag">住院陪护</div>
+              </div>
+
+              <!-- Info chips -->
+              <div class="info-chips">
+                <div class="info-chip">
+                  <div class="chip-lbl">就诊医院</div>
+                  <div class="chip-val">北京红十字医院</div>
+                </div>
+                <div class="info-chip">
+                  <div class="chip-lbl">病房床位</div>
+                  <div class="chip-val">内科 5楼 3床</div>
+                </div>
+                <div class="info-chip">
+                  <div class="chip-lbl">服务时长</div>
+                  <div class="chip-val">12小时/天</div>
+                </div>
+                <div class="info-chip">
+                  <div class="chip-lbl">预计收入</div>
+                  <div class="chip-val accent">¥224/天</div>
+                </div>
+              </div>
+
+              <!-- Buttons -->
+              <div class="action-row">
+                <button class="btn-transfer" onclick="openTransfer()">转&nbsp;单</button>
+                <button class="btn-accept" onclick="acceptOrder()">
+                  <svg viewBox="0 0 18 18" fill="none">
+                    <path d="M3.5 9.5l4 4 7-8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  立即接单
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- No order placeholder (hidden initially) -->
+          <div id="noOrder" style="display:none; background:var(--card); border-radius:var(--r-lg); box-shadow:var(--sh); padding:32px 20px; text-align:center;">
+            <div style="font-size:36px; opacity:.25; margin-bottom:10px;">📋</div>
+            <div style="font-size:14px; font-weight:800; color:var(--text2); margin-bottom:4px;">暂无待接订单</div>
+            <div style="font-size:12px; color:var(--text3);">保持空闲状态，新订单将推送给您</div>
+          </div>
+        </div>
+
+        <!-- ② Work queue -->
+        <div>
+          <div class="sec-hd">
+            <span class="sec-title">今日待办</span>
+            <span class="sec-more" onclick="location.href='nurse-orders.html'">我的订单</span>
+          </div>
+          <div class="work-queue">
+            <a class="queue-card" href="nurse-orders.html?status=pending-start">
+              <div class="queue-label">待上岗</div>
+              <div class="queue-value amber">1</div>
+              <div class="queue-note">已接单待开始</div>
+            </a>
+            <a class="queue-card" href="nurse-orders.html?status=in-progress">
+              <div class="queue-label">进行中订单</div>
+              <div class="queue-value green">1</div>
+              <div class="queue-note">正在陪护</div>
+            </a>
+            <a class="queue-card" href="nurse-orders.html?status=pending-complete">
+              <div class="queue-label">待提交记录</div>
+              <div class="queue-value purple">1</div>
+              <div class="queue-note">服务结束待填写</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- ③ Today schedule -->
+        <div class="home-schedule-section">
+          <div class="sec-hd">
+            <span class="sec-title">今日行程</span>
+            <span class="sec-more">2026-04-17</span>
+          </div>
+          <div class="schedule-card">
+            <div class="sch-hd">
+              <div class="sch-hd-left">
+                <div class="sec-dot"></div>
+                <span style="font-size:14px;font-weight:800;color:var(--text)">已完成 2 单，进行中 1 单</span>
+              </div>
+            </div>
+            <div class="timeline">
+              <div class="tl-item">
+                <div class="tl-left">
+                  <div class="tl-dot done"></div>
+                  <div class="tl-line"></div>
+                </div>
+                <div class="tl-content">
+                  <div class="tl-time">06:00 – 08:00</div>
+                  <div class="tl-title">王奶奶 · 早间护理</div>
+                  <div class="tl-sub">协和医院 · 外科 8楼 12床</div>
+                  <span class="tl-tag done">已完成</span>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-left">
+                  <div class="tl-dot done"></div>
+                  <div class="tl-line"></div>
+                </div>
+                <div class="tl-content">
+                  <div class="tl-time">08:30 – 10:30</div>
+                  <div class="tl-title">李先生 · 术后换药</div>
+                  <div class="tl-sub">解放军总医院 · 骨科 3楼 7床</div>
+                  <span class="tl-tag done">已完成</span>
+                </div>
+              </div>
+              <div class="tl-item">
+                <div class="tl-left">
+                  <div class="tl-dot filled"></div>
+                  <div class="tl-line"></div>
+                </div>
+                <div class="tl-content">
+                  <div class="tl-time">11:00 – 23:00</div>
+                  <div class="tl-title">张三 · 住院陪护</div>
+                  <div class="tl-sub">红十字医院 · 内科 5楼 3床</div>
+                  <span class="tl-tag active">接单后开始</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ④ Quick actions -->
+        <div class="home-quick-section">
+          <div class="sec-hd">
+            <span class="sec-title">快捷功能</span>
+          </div>
+          <div class="quick-grid">
+            <div class="qa-item" onclick="location.href='nurse-logs.html'">
+              <div class="qa-icon" style="background:#EDE6F7">
+                <svg viewBox="0 0 22 22" fill="none">
+                  <rect x="3" y="2" width="16" height="18" rx="3" stroke="#8655C5" stroke-width="1.5"/>
+                  <path d="M7 8h8M7 12h8M7 16h5" stroke="#8655C5" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="qa-label">护理日志</span>
+            </div>
+            <div class="qa-item" onclick="location.href='nurse-orders.html'">
+              <div class="qa-icon" style="background:#DCFCE7">
+                <svg viewBox="0 0 22 22" fill="none">
+                  <circle cx="11" cy="11" r="8" stroke="#16A34A" stroke-width="1.5"/>
+                  <path d="M11 7v1.5M11 13.5V15M8.5 9.5c0-1 1.1-1.5 2.5-1.5s2.5.8 2.5 2c0 1.3-2.5 2-2.5 3s1.1 2 2.5 2" stroke="#16A34A" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="qa-label">我的订单</span>
+            </div>
+            <div class="qa-item" onclick="location.href='nurse-profile.html#qualifications'">
+              <div class="qa-icon" style="background:#FEF3C7">
+                <svg viewBox="0 0 22 22" fill="none">
+                  <rect x="3" y="5" width="16" height="12" rx="2.5" stroke="#D97706" stroke-width="1.5"/>
+                  <path d="M8 11h6M8 14h4" stroke="#D97706" stroke-width="1.4" stroke-linecap="round"/>
+                  <circle cx="16" cy="6" r="3.5" fill="#FEF3C7" stroke="#D97706" stroke-width="1.3"/>
+                  <path d="M14.5 6l1 1 1.5-1.5" stroke="#D97706" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="qa-label">资质管理</span>
+            </div>
+            <div class="qa-item" onclick="location.href='nurse-profile.html#support'">
+              <div class="qa-icon" style="background:#FEE2E2">
+                <svg viewBox="0 0 22 22" fill="none">
+                  <path d="M4 6a2 2 0 012-2h10a2 2 0 012 2v7a2 2 0 01-2 2H9l-4 3V6z" stroke="#DC2626" stroke-width="1.5" stroke-linejoin="round"/>
+                  <path d="M8 9h6M8 12h4" stroke="#DC2626" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="qa-label">联系客服</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- .content -->
+    </div><!-- .scroll-area -->
+
+    <!-- Toast -->
+    <div class="result-toast" id="toast">
+      <span class="toast-icon" id="toastIcon"></span>
+      <span id="toastMsg"></span>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <div class="nav-item active">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M3 12L12 4l9 8" stroke="#8655C5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5 10v9a1 1 0 001 1h4v-5h4v5h4a1 1 0 001-1v-9" stroke="#8655C5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="nav-lbl" style="color:var(--purple)">首页</span>
+      </div>
+      <div class="nav-item" onclick="location.href='nurse-orders.html'">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="4" width="18" height="17" rx="3" stroke="#AEACC0" stroke-width="1.8"/>
+          <path d="M3 9h18" stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M8 14h8M8 17h5" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-lbl">订单</span>
+      </div>
+      <div class="nav-item" onclick="location.href='nurse-profile.html'">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="8" r="4" stroke="#AEACC0" stroke-width="1.8"/>
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span class="nav-lbl">我的</span>
+      </div>
+    </div>
+
+  </div><!-- .phone -->
+</div><!-- .frame -->
+
+<!-- Transfer modal -->
+<div class="tf-overlay" id="tfOverlay" onclick="if(event.target===this)closeTransfer()">
+  <div class="tf-modal">
+    <div class="tf-hd">
+      <div class="tf-icon">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M3 10h11M10 6l4 4-4 4" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17 3v14" stroke="#D97706" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="tf-title">因个人原因无法接单？</span>
+    </div>
+    <div class="tf-desc">填写原因即可发起转单申请，待管理员审核后将匹配新护工为患者继续服务。</div>
+    <textarea class="tf-textarea" id="tfReason" placeholder="请填写转单原因，如：临时身体不适、家中有紧急事务…" maxlength="200"></textarea>
+    <div class="tf-foot">
+      <button class="tf-cancel" onclick="closeTransfer()">再想想</button>
+      <button class="tf-submit" onclick="submitTransfer()">提交申请</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── Countdown ── */
+  let secs = 299;
+  const cdEl = document.getElementById('orderCd');
+  (function tick() {
+    if (secs < 0) { cdEl.textContent = '已超时'; cdEl.style.color = '#DC2626'; return; }
+    const m = Math.floor(secs/60).toString().padStart(2,'0');
+    const s = (secs%60).toString().padStart(2,'0');
+    cdEl.textContent = m + ':' + s;
+    secs--;
+    setTimeout(tick, 1000);
+  })();
+
+  /* ── Status toggle ── */
+  let isIdle = true;
+  function toggleStatus() {
+    isIdle = !isIdle;
+    const pill = document.getElementById('statusPill');
+    const txt  = document.getElementById('statusText');
+    pill.className = 'status-pill ' + (isIdle ? 'idle' : 'busy');
+    txt.textContent = isIdle ? '空闲中' : '服务中';
+  }
+
+  /* ── Toast helper ── */
+  function showToast(icon, msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastIcon').textContent = icon;
+    document.getElementById('toastMsg').textContent  = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  /* ── Accept / Reject ── */
+  function acceptOrder() {
+    document.getElementById('pendingCard').style.display = 'none';
+    document.getElementById('noOrder').style.display = 'block';
+    secs = -1;
+    showToast('✅', '接单成功！请准时到达医院');
+    /* update timeline tag */
+    document.querySelector('.tl-tag.active').textContent = '服务中';
+    document.querySelector('.tl-tag.active').classList.replace('active','done');
+    document.querySelector('.tl-dot.filled').classList.replace('filled','done');
+    toggleStatus(); /* switch to 服务中 */
+    isIdle = false;
+    const pill = document.getElementById('statusPill');
+    const txt  = document.getElementById('statusText');
+    pill.className = 'status-pill busy';
+    txt.textContent = '服务中';
+  }
+
+  /* ── Transfer ── */
+  function openTransfer() {
+    document.getElementById('tfOverlay').classList.add('show');
+    document.getElementById('tfReason').value = '';
+    document.getElementById('tfReason').focus();
+  }
+  function closeTransfer() {
+    document.getElementById('tfOverlay').classList.remove('show');
+  }
+  function submitTransfer() {
+    const reason = document.getElementById('tfReason').value.trim();
+    if (!reason) { alert('请填写转单原因'); return; }
+    closeTransfer();
+    document.getElementById('pendingCard').style.display = 'none';
+    document.getElementById('noOrder').style.display = 'block';
+    secs = -1;
+    showToast('📨', '转单申请已提交，请等待审核');
+  }
+</script>
+</body>
+</html>
