@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>商城概览 · 佑小邦运营后台</title>
+  <link rel="stylesheet" href="admin-shell.css" />
+  <link rel="stylesheet" href="admin-catalog.css" />
+  <link rel="stylesheet" href="admin-mall.css" />
+  <script src="admin-mall-data.js"></script>
+  <script defer src="admin-sidebar.js"></script>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>商城管理</span><span>›</span><span class="current">商城概览</span></div>
+      <div class="top-actions"><span class="top-date" id="topDate"></span><div class="top-av">管</div></div>
+    </header>
+
+    <section class="page">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">健康商城概览</h1>
+          <p class="page-sub">追踪健康商城的订单交易、商品在售与配送履约情况</p>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="exportReport()">
+            <svg viewBox="0 0 14 14" width="13" height="13" fill="none"><path d="M7 1v8M4 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1.5A1.5 1.5 0 002.5 13h9a1.5 1.5 0 001.5-1.5V10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            导出销售报表
+          </button>
+          <button class="btn btn-primary" onclick="location.href='admin-mall-products.html?new=1'">+ 新增商品</button>
+        </div>
+      </div>
+
+      <!-- 指标卡 -->
+      <div class="mall-metrics" id="metricCards"></div>
+
+      <div class="mall-split">
+        <!-- 近7天订单 -->
+        <div class="mall-panel">
+          <div class="mall-panel-hd">
+            <div class="mall-panel-title"><span class="sec-dot"></span>近 7 天商城订单</div>
+            <span style="font-size:11px;color:#9AA7BA;font-weight:700">单位：单</span>
+          </div>
+          <div class="mall-panel-bd"><div class="mall-bars" id="weekBars"></div></div>
+        </div>
+
+        <!-- 待办 -->
+        <div class="mall-panel">
+          <div class="mall-panel-hd">
+            <div class="mall-panel-title"><span class="sec-dot" style="background:#D97706"></span>发货待办</div>
+            <a class="mall-link" href="admin-mall-orders.html?state=待发货">全部处理 ›</a>
+          </div>
+          <div class="mall-panel-bd" id="shipTodo" style="padding-top:4px;padding-bottom:4px"></div>
+        </div>
+      </div>
+
+      <div class="mall-split" style="grid-template-columns:1fr 340px">
+        <!-- 最新订单 -->
+        <div class="mall-panel">
+          <div class="mall-panel-hd">
+            <div class="mall-panel-title"><span class="sec-dot"></span>最新商城订单</div>
+            <a class="mall-link" href="admin-mall-orders.html">全部订单 ›</a>
+          </div>
+          <div class="mall-table-wrap">
+            <table class="table mall-table" style="min-width:760px">
+              <thead><tr><th>订单号</th><th>商品</th><th>用户</th><th>金额</th><th>状态</th><th>操作</th></tr></thead>
+              <tbody id="latestRows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="display:grid;gap:16px;align-content:start">
+          <!-- 热销榜 -->
+          <div class="mall-panel">
+            <div class="mall-panel-hd"><div class="mall-panel-title"><span class="sec-dot" style="background:#D97706"></span>热销商品 TOP5</div></div>
+            <div class="mall-panel-bd" style="padding-top:6px;padding-bottom:6px"><div class="rank-list" id="rankList"></div></div>
+          </div>
+          <!-- 分类占比 -->
+          <div class="mall-panel">
+            <div class="mall-panel-hd"><div class="mall-panel-title"><span class="sec-dot" style="background:#7F55B8"></span>分类销量占比</div></div>
+            <div class="mall-panel-bd"><div class="mall-share" id="shareBox"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var M = window.AKBMallAdmin;
+
+  document.getElementById('topDate').textContent =
+    (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+
+  var TAG_CLASS = { '待付款': 'mtag-pay', '待发货': 'mtag-ship', '待收货': 'mtag-recv', '已完成': 'mtag-done', '退款/售后': 'mtag-refund', '已取消': 'mtag-cancel' };
+
+  function thumb(p, size) {
+    var fallback = (p.name || '商').slice(0, 1);
+    var img = p.image ? '<img src="' + M.esc(p.image) + '" alt="" onerror="this.remove()">' : '';
+    return '<div class="pdt-thumb tone-' + (p.tone || 'purple') + '" style="width:' + (size || 48) + 'px;height:' + (size || 48) + 'px">' + img + fallback + '</div>';
+  }
+
+  /* ── 指标卡 ── */
+  function renderMetrics() {
+    var s = M.summarize();
+    var cards = [
+      { ico: '<path d="M5 9h16l-1 13H6L5 9zM9 10V7a4 4 0 018 0v3" stroke="#224CD3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>', bg: '#E7F1FD',
+        val: s.todayCount, lbl: '今日商城订单', foot: '待付款 ' + s.pendingPayCount + ' 单', fcls: s.pendingPayCount ? 'warn' : 'muted', href: 'admin-mall-orders.html' },
+      { ico: '<path d="M10 2v2.5M14 2v2.5M5.5 9.5h13l-1.2 9.5a1.5 1.5 0 01-1.5 1.3H8.2a1.5 1.5 0 01-1.5-1.3L5.5 9.5zM8 9.5a4 4 0 018 0" stroke="#16A34A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>', bg: '#DCFCE7',
+        val: M.money(s.todayAmount), lbl: '今日交易额', foot: '累计成交 ' + M.money(s.revenue), fcls: 'muted', href: 'admin-mall-orders.html?state=已完成' },
+      { ico: '<path d="M3 7h13v9H3zM16 10h3.5l1.5 3v3h-5" stroke="#D97706" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="18" r="1.6" stroke="#D97706" stroke-width="1.6"/><circle cx="15" cy="18" r="1.6" stroke="#D97706" stroke-width="1.6"/>', bg: '#FEF3C7',
+        val: s.pendingShipCount, lbl: '待发货订单', foot: s.pendingShipCount ? '需要尽快安排发货' : '暂无待发货订单', fcls: s.pendingShipCount ? 'danger' : 'muted', href: 'admin-mall-orders.html?state=待发货' },
+      { ico: '<path d="M3 7l6-3.5L15 7l-6 3.5L3 7zM9 10.5V16M15 7v5M21 10.5v5l-6 3v-5" stroke="#7F55B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>', bg: '#F0E9FA',
+        val: s.onSaleCount + '<small style="font-size:13px;color:#8F9BB0"> / ' + s.productCount + '</small>', lbl: '在售商品', foot: '库存预警 ' + s.lowStock.length + ' 款', fcls: s.lowStock.length ? 'warn' : 'muted', href: 'admin-mall-products.html' }
+    ];
+    document.getElementById('metricCards').innerHTML = cards.map(function (c) {
+      return '<a class="mall-metric" href="' + c.href + '"><div class="mm-ico" style="background:' + c.bg + '"><svg viewBox="0 0 22 22" fill="none">' + c.ico + '</svg></div>' +
+        '<div><div class="mm-val">' + c.val + '</div><div class="mm-lbl">' + c.lbl + '</div><div class="mm-foot ' + c.fcls + '">' + c.foot + '</div></div></a>';
+    }).join('');
+  }
+
+  /* ── 近7天柱状图（演示数据） ── */
+  var WEEK = [
+    { d: '10/07', n: 4 }, { d: '10/08', n: 6 }, { d: '10/09', n: 5 }, { d: '10/10', n: 8 },
+    { d: '10/11', n: 7 }, { d: '10/12', n: 9 }, { d: '10/13', n: 3 }
+  ];
+  function renderBars() {
+    var max = Math.max.apply(null, WEEK.map(function (w) { return w.n; }));
+    var today = M.today().slice(5);
+    document.getElementById('weekBars').innerHTML = WEEK.map(function (w) {
+      var h = Math.round(w.n / max * 150);
+      var isToday = w.d === today;
+      return '<div class="mall-bar-col"><span class="mall-bar-val">' + w.n + '</span><div class="mall-bar ' + (isToday ? 'today' : '') + '" style="height:' + h + 'px" title="' + w.d + '：' + w.n + ' 单"></div><span class="mall-bar-lbl">' + w.d + '</span></div>';
+    }).join('');
+  }
+
+  /* ── 发货待办 ── */
+  function renderTodo() {
+    var list = M.getOrders().filter(function (o) { return o.state === '待发货'; }).slice(0, 4);
+    var box = document.getElementById('shipTodo');
+    if (!list.length) { box.innerHTML = '<div class="empty-state" style="padding:30px">今日发货任务已全部处理完 🎉</div>'; return; }
+    box.innerHTML = list.map(function (o) {
+      var p = o.items[0];
+      var more = o.items.length > 1 ? ' 等 ' + o.items.length + ' 件商品' : '';
+      return '<div class="todo-order">' + thumb({ name: p.name, image: p.image, tone: p.tone }, 40) +
+        '<div class="todo-info"><div class="todo-name">' + M.esc(p.name) + M.esc(more) + '</div>' +
+        '<div class="todo-sub">' + M.esc(o.userName) + ' · ' + M.esc(o.deliveryLabel) + ' · ' + M.esc((o.createdAt || '').slice(5, 16)) + '</div></div>' +
+        '<div class="todo-amount">' + M.money(o.amount) + '</div>' +
+        '<button class="btn-mini" onclick="openShipModal(\'' + o.no + '\')">发货</button></div>';
+    }).join('');
+  }
+
+  /* ── 最新订单 ── */
+  function renderLatest() {
+    var list = M.getOrders().slice(0, 6);
+    document.getElementById('latestRows').innerHTML = list.map(function (o) {
+      var p = o.items[0];
+      var more = o.items.length > 1 ? '<span class="pdt-sub">等 ' + o.items.length + ' 件商品 · 共 ' + o.quantity + ' 件</span>' : '<span class="pdt-sub">共 ' + o.quantity + ' 件</span>';
+      return '<tr><td><div class="order-no" style="font-family:SF Mono,Courier New,monospace;font-size:12px;color:#8F9BB0;font-weight:700">' + o.no + '</div>' +
+        (o.source === 'mini' ? '<div class="pdt-sub">小程序实时单</div>' : '') + '</td>' +
+        '<td><div class="pdt-cell" style="min-width:0">' + thumb({ name: p.name, image: p.image, tone: p.tone }, 38) +
+        '<div style="min-width:0"><div class="pdt-name">' + M.esc(p.name) + '</div>' + more + '</div></div></td>' +
+        '<td style="font-weight:700;color:#172033">' + M.esc(o.userName) + '</td>' +
+        '<td class="price-cell">' + M.money(o.amount) + '</td>' +
+        '<td><span class="mtag ' + TAG_CLASS[o.state] + '">' + o.state + '</span></td>' +
+        '<td><div class="op"><a class="mall-link" href="admin-mall-order-detail.html?no=' + encodeURIComponent(o.no) + '">查看</a></div></td></tr>';
+    }).join('');
+  }
+
+  /* ── 热销 TOP5 ── */
+  function renderRank() {
+    var top = M.getProducts(true).slice().sort(function (a, b) { return b.sales - a.sales; }).slice(0, 5);
+    document.getElementById('rankList').innerHTML = top.map(function (p) {
+      return '<div class="rank-item">' + thumb(p, 36) +
+        '<div class="rank-info"><div class="rank-name">' + M.esc(p.name) + '</div><div class="rank-sub">' + M.money(p.price) + ' · 库存 ' + p.stock + '</div></div>' +
+        '<div class="rank-sales">' + p.sales + ' 件</div></div>';
+    }).join('');
+  }
+
+  /* ── 分类销量占比 ── */
+  function renderShare() {
+    var cats = M.getCategories();
+    var products = M.getProducts(true);
+    var colors = { measure: '#224CD3', care: '#16A34A', protection: '#D97706', maternal: '#C34F55' };
+    var rows = cats.map(function (c) {
+      return { id: c.id, name: c.name, sales: products.filter(function (p) { return p.category === c.id; }).reduce(function (s, p) { return s + p.sales; }, 0) };
+    }).sort(function (a, b) { return b.sales - a.sales; });
+    var total = rows.reduce(function (s, r) { return s + r.sales; }, 0) || 1;
+    document.getElementById('shareBox').innerHTML = rows.map(function (r) {
+      var pct = Math.round(r.sales / total * 100);
+      return '<div class="mall-share-row"><span class="mall-share-lbl">' + M.esc(r.name) + '</span>' +
+        '<div class="mall-share-track"><div class="mall-share-fill" style="width:' + pct + '%;background:' + (colors[r.id] || '#224CD3') + '"></div></div>' +
+        '<span class="mall-share-pct">' + pct + '%</span></div>';
+    }).join('');
+  }
+
+  window.exportReport = function () {
+    var orders = M.getOrders();
+    M.exportCsv('商城销售报表.csv',
+      ['订单号', '下单时间', '用户', '收货地址', '配送方式', '商品明细', '数量', '金额', '状态'],
+      orders.map(function (o) {
+        return [o.no, o.createdAt || o.date, o.userName, o.address, o.deliveryLabel,
+          o.items.map(function (i) { return i.name + ' x' + i.quantity; }).join('；'),
+          o.quantity, o.amount, o.state];
+      }));
+  };
+
+  function renderAll() { renderMetrics(); renderTodo(); renderLatest(); }
+  window.AKBRefreshMallPage = renderAll;
+
+  renderMetrics(); renderBars(); renderTodo(); renderLatest(); renderRank(); renderShare();
+})();
+</script>
+<script src="admin-mall-ship.js"></script>
+</body>
+</html>

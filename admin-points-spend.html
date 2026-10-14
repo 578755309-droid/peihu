@@ -1,0 +1,89 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>使用明细 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script></head>
+<body><div class="layout">
+  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>积分管理</span><span>›</span><span class="current">使用明细</span></div>
+      <div class="top-actions"><span class="top-date" id="topDate"></span><div class="top-av">管</div></div>
+    </header>
+
+    <section class="page">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">使用明细</h1>
+          <p class="page-sub">查看积分抵扣使用的全部记录，按商城订单与服务订单分类</p>
+        </div>
+        <div class="actions" style="display:flex;gap:10px">
+          <button class="btn" onclick="exportSpend()">导出 CSV</button>
+        </div>
+      </div>
+
+      <!-- 筛选 -->
+      <div class="filter">
+        <label>关键词</label>
+        <input class="search" id="fSearch" placeholder="搜索用户 / 订单号" />
+        <select class="select" id="fType">
+          <option value="all">全部订单</option>
+          <option value="商城订单">商城订单</option>
+          <option value="服务订单">服务订单</option>
+        </select>
+        <span class="result">共 <strong id="count">0</strong> 条记录</span>
+      </div>
+
+      <!-- 表格 -->
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>时间</th><th>用户</th><th>订单类型</th><th>关联订单号</th><th>使用积分</th><th>抵扣金额</th><th>说明</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty" id="empty" style="display:none"><div class="e-icon">·</div><div class="e-title">暂无数据</div></div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var P = window.AKBPointsAdmin;
+
+  document.getElementById('topDate').textContent =
+    (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+
+  function filtered() {
+    var kw = document.getElementById('fSearch').value.trim().toLowerCase();
+    var type = document.getElementById('fType').value;
+    return P.getSpendRecords().filter(function (r) {
+      if (type !== 'all' && r.orderType !== type) return false;
+      return !kw || (r.userName + (r.orderNo || '') + r.detail).toLowerCase().indexOf(kw) > -1;
+    });
+  }
+
+  function render() {
+    var list = filtered();
+    document.getElementById('count').textContent = list.length;
+    document.getElementById('empty').style.display = list.length ? 'none' : 'block';
+    document.getElementById('rows').innerHTML = list.map(function (r) {
+      return '<tr>' +
+        '<td class="time-cell">' + P.esc(r.date) + '<span class="sub">' + P.esc(r.time) + '</span></td>' +
+        '<td><div class="name-cell"><div class="main">' + P.esc(r.userName) + '</div><div class="sub">' + P.esc(r.userId) + '</div></div></td>' +
+        '<td><span class="tag ' + (r.orderType === '商城订单' ? 'mall' : 'service') + '">' + P.esc(r.orderType) + '</span></td>' +
+        '<td class="mono">' + P.esc(r.orderNo) + '</td>' +
+        '<td><span class="pt-val minus">-' + r.points + '</span></td>' +
+        '<td style="font-weight:900;color:#172033">¥' + r.amount + '</td>' +
+        '<td style="max-width:280px;line-height:1.6">' + P.esc(r.detail) + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  window.exportSpend = function () {
+    P.exportCsv('积分使用明细.csv', ['日期', '时间', '用户ID', '用户', '订单类型', '关联订单号', '使用积分', '抵扣金额', '说明'],
+      filtered().map(function (r) { return [r.date, r.time, r.userId, r.userName, r.orderType, r.orderNo, r.points, r.amount, r.detail]; }));
+  };
+
+  document.getElementById('fSearch').oninput = render;
+  document.getElementById('fType').onchange = render;
+  render();
+})();
+</script>
+</body></html>

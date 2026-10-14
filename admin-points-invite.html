@@ -1,0 +1,88 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>邀请明细 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script></head>
+<body><div class="layout">
+  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>积分管理</span><span>›</span><span class="current">邀请明细</span></div>
+      <div class="top-actions"><span class="top-date" id="topDate"></span><div class="top-av">管</div></div>
+    </header>
+
+    <section class="page">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">邀请明细</h1>
+          <p class="page-sub">查看邀请好友的全部记录，被邀请人完成注册后自动发放奖励积分</p>
+        </div>
+        <div class="actions" style="display:flex;gap:10px">
+          <button class="btn" onclick="exportInvite()">导出 CSV</button>
+        </div>
+      </div>
+
+      <!-- 筛选 -->
+      <div class="filter">
+        <label>关键词</label>
+        <input class="search" id="fSearch" placeholder="搜索邀请人 / 被邀请人 / 手机号" />
+        <select class="select" id="fType">
+          <option value="all">全部状态</option>
+          <option value="已注册">已注册</option>
+          <option value="待注册">待注册</option>
+        </select>
+        <span class="result">共 <strong id="count">0</strong> 条记录</span>
+      </div>
+
+      <!-- 表格 -->
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>时间</th><th>邀请人</th><th>被邀请人</th><th>被邀请人手机号</th><th>状态</th><th>奖励积分</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty" id="empty" style="display:none"><div class="e-icon">·</div><div class="e-title">暂无数据</div></div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var P = window.AKBPointsAdmin;
+
+  document.getElementById('topDate').textContent =
+    (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+
+  function filtered() {
+    var kw = document.getElementById('fSearch').value.trim().toLowerCase();
+    var type = document.getElementById('fType').value;
+    return P.getInviteRecords().filter(function (r) {
+      if (type !== 'all' && r.status !== type) return false;
+      return !kw || (r.inviter + r.invitee + r.inviteePhone).toLowerCase().indexOf(kw) > -1;
+    });
+  }
+
+  function render() {
+    var list = filtered();
+    document.getElementById('count').textContent = list.length;
+    document.getElementById('empty').style.display = list.length ? 'none' : 'block';
+    document.getElementById('rows').innerHTML = list.map(function (r) {
+      return '<tr>' +
+        '<td class="time-cell">' + P.esc(r.date) + '<span class="sub">' + P.esc(r.time) + '</span></td>' +
+        '<td><div class="name-cell"><div class="main">' + P.esc(r.inviter) + '</div><div class="sub">' + P.esc(r.inviterId) + '</div></div></td>' +
+        '<td style="font-weight:800;color:#172033">' + P.esc(r.invitee) + '</td>' +
+        '<td class="mono">' + P.esc(r.inviteePhone) + '</td>' +
+        '<td><span class="tag ' + (r.status === '已注册' ? 'done' : 'waiting') + '">' + P.esc(r.status) + '</span></td>' +
+        '<td>' + (r.reward > 0 ? '<span class="pt-val plus" style="font-size:13px">+' + r.reward + '</span>' : '<span class="pt-val zero" style="font-size:12px">待发放</span>') + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  window.exportInvite = function () {
+    P.exportCsv('邀请明细.csv', ['日期', '时间', '邀请人ID', '邀请人', '被邀请人', '被邀请人手机号', '状态', '奖励积分'],
+      filtered().map(function (r) { return [r.date, r.time, r.inviterId, r.inviter, r.invitee, r.inviteePhone, r.status, r.reward]; }));
+  };
+
+  document.getElementById('fSearch').oninput = render;
+  document.getElementById('fType').onchange = render;
+  render();
+})();
+</script>
+</body></html>

@@ -1,0 +1,345 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>预约管理 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><style>
+body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;min-width:1100px;overflow-x:hidden}
+.layout{display:flex;min-height:100vh;min-width:0}
+.main{margin-left:220px;flex:1;min-width:0;max-width:calc(100vw - 220px);overflow:hidden}
+.topbar{height:60px;background:#fff;border-bottom:1px solid #D7E8FA;display:flex;align-items:center;padding:0 28px;gap:16px;box-shadow:0 1px 8px rgba(37,99,235,.08)}
+.crumb{display:flex;gap:7px;color:#9AA7BA;font-size:13px;font-weight:700}
+.crumb .current{color:#172033}
+.top-actions{margin-left:auto;display:flex;gap:12px;align-items:center}
+.top-date{font-size:12px;color:#9AA7BA;font-weight:700}
+.page{min-width:0;padding:24px 28px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.page-title{font-size:22px;font-weight:900}
+.page-sub{font-size:13px;color:#9AA7BA;margin-top:4px}
+
+/* stat cards — consistent with admin-order-stats.css */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.stat{background:#fff;border:1px solid #D7E8FA;border-radius:14px;padding:16px 18px;box-shadow:0 2px 16px rgba(37,99,235,.06)}
+.stat-label{font-size:11px;color:#9AA7BA;font-weight:800;margin-bottom:6px;letter-spacing:.3px}
+.stat-value{font-size:28px;font-weight:900;color:#172033;font-family:-apple-system,"SF Mono",Consolas,monospace}
+.stat-sub{font-size:11px;color:#9AA7BA;margin-top:4px;font-weight:700}
+.stat.total .stat-value{color:#224CD3}
+.stat.pending .stat-value{color:#DC2626}
+.stat.processing .stat-value{color:#D97706}
+.stat.done .stat-value{color:#16A34A}
+
+/* tabs for status filter — same as orders */
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tab{height:34px;padding:0 14px;border:1px solid #D7E8FA;border-radius:9px;background:#fff;color:#657087;font:700 12px inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.tab .num{background:rgba(34,76,211,.08);color:#224CD3;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:800}
+.tab.active{background:#224CD3;border-color:#224CD3;color:#fff}
+.tab.active .num{background:rgba(255,255,255,.25);color:#fff}
+
+/* filter bar — same as orders */
+.filter{background:#fff;border:1px solid #D7E8FA;border-radius:14px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:16px;box-shadow:0 2px 16px rgba(37,99,235,.06)}
+.filter label{font-size:12px;color:#9AA7BA;font-weight:800}
+.select,.search{height:36px;border:1px solid #D7E8FA;border-radius:8px;padding:0 11px;color:#657087;background:#fff;font:600 12px inherit}
+.search{width:220px}
+.filter .result{margin-left:auto;color:#9AA7BA;font-size:12px;font-weight:700}
+.filter .result strong{color:#224CD3;font-size:16px}
+
+/* table — same as orders */
+.table-wrap{width:100%;max-width:100%;background:#fff;border:1px solid #D7E8FA;border-radius:14px;box-shadow:0 2px 16px rgba(37,99,235,.06);overflow-x:auto;overflow-y:hidden}
+.table{width:100%;border-collapse:collapse}
+.table th{height:44px;background:#F8FBFF;color:#9AA7BA;font-size:11px;text-align:left;padding:0 18px;font-weight:800;letter-spacing:.3px}
+.table td{height:72px;padding:0 18px;border-top:1px solid #EEF5FC;font-size:12px;color:#657087;font-weight:600;vertical-align:middle}
+.table tr:first-child td{border-top:none}
+
+.name-cell .main{font-weight:800;color:#172033;font-size:13px}
+.name-cell .sub{font-size:11px;color:#9AA7BA;margin-top:3px}
+.phone-cell{font-weight:700;color:#172033;font-family:-apple-system,"SF Mono",Consolas,monospace;font-size:13px}
+.source-tag{display:inline-flex;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:800}
+.source-tag.banner{background:#E7F1FD;color:#224CD3}
+.source-tag.catalog{background:#FEF3C7;color:#D97706}
+.source-tag.other{background:#EEF5FC;color:#657087}
+.time-cell{color:#172033;font-weight:700;font-size:13px}
+.time-cell .sub{display:block;color:#9AA7BA;font-size:11px;font-weight:600;margin-top:3px}
+.tag{display:inline-flex;padding:5px 10px;border-radius:16px;font-size:11px;font-weight:800;align-items:center;gap:4px;cursor:pointer;user-select:none}
+.tag .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tag.pending{background:#FEE2E2;color:#DC2626}
+.tag.pending .dot{background:#DC2626}
+.tag.processing{background:#FEF3C7;color:#D97706}
+.tag.processing .dot{background:#F59E0B}
+.tag.done{background:#DCFCE7;color:#16A34A}
+.tag.done .dot{background:#16A34A}
+.note-cell{max-width:260px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.5}
+.note-cell.empty{color:#9AA7BA;font-style:italic}
+.op{display:flex;gap:10px}
+.op button{border:0;background:none;color:#224CD3;font:700 12px inherit;cursor:pointer;padding:0}
+.op .danger{color:#DC2626}
+
+/* empty */
+.empty{padding:60px 20px;text-align:center;color:#9AA7BA}
+.empty .e-icon{font-size:48px;margin-bottom:10px;opacity:.5}
+.empty .e-title{font-size:14px;font-weight:800;color:#657087;margin-bottom:4px}
+.empty .e-sub{font-size:12px}
+
+/* pagination */
+.pg{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-top:1px solid #EEF5FC}
+.pg-info{font-size:12px;color:#9AA7BA;font-weight:700}
+.pg-ctrl{display:flex;gap:4px}
+.pg-ctrl button{min-width:32px;height:32px;border:1px solid #D7E8FA;background:#fff;border-radius:8px;font-size:12px;font-weight:700;color:#657087;cursor:pointer;padding:0 8px}
+.pg-ctrl button:hover:not(:disabled){background:#E7F1FD}
+.pg-ctrl button.active{background:#224CD3;color:#fff;border-color:#224CD3}
+.pg-ctrl button:disabled{opacity:.4;cursor:not-allowed}
+
+/* modal — clean design */
+.modal-mask{position:fixed;inset:0;background:rgba(20,33,65,.45);display:none;align-items:center;justify-content:center;z-index:200}
+.modal-mask.show{display:flex}
+.modal{background:#fff;border-radius:18px;width:460px;box-shadow:0 24px 60px rgba(20,33,65,.2);animation:modalIn .2s ease;overflow:hidden}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0}
+.modal-title{font-size:17px;font-weight:900;color:#172033}
+.modal-close{border:none;background:none;font-size:22px;color:#9AA7BA;cursor:pointer;width:32px;height:32px;border-radius:8px;line-height:1}
+.modal-close:hover{background:#F0F4FA}
+.modal-body{padding:18px 24px}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:16px 24px;border-top:1px solid #EEF5FC;background:#FAFCFF}
+.btn{height:38px;padding:0 18px;border-radius:10px;border:1px solid #D7E8FA;background:#fff;font-size:13px;font-weight:700;color:#657087;cursor:pointer;font-family:inherit}
+.btn:hover{background:#F0F4FA}
+.btn-primary{background:#224CD3;color:#fff;border-color:#224CD3}
+.btn-primary:hover{background:#1A3DB0}
+
+/* inline info row */
+.info-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;padding:14px;background:#F8FBFF;border-radius:10px;border:1px solid #EEF5FC}
+.info-row .info-item .k{font-size:11px;color:#9AA7BA;font-weight:700;margin-bottom:3px}
+.info-row .info-item .v{font-size:13px;color:#172033;font-weight:800}
+
+.form-row{margin-bottom:14px}
+.form-row label{display:block;font-size:12px;color:#657087;font-weight:800;margin-bottom:6px}
+.form-row select,.form-row textarea{width:100%;border:1px solid #D7E8FA;border-radius:8px;padding:10px 12px;font-size:13px;color:#172033;outline:none;background:#fff;font-family:inherit;box-sizing:border-box}
+.form-row select:focus,.form-row textarea:focus{border-color:#224CD3;box-shadow:0 0 0 3px rgba(34,76,211,.1)}
+.form-row textarea{resize:vertical;min-height:90px;line-height:1.6}
+</style><script defer src="admin-sidebar.js"></script></head>
+<body><div class="layout">
+  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>业务管理</span><span>›</span><span class="current">预约管理</span></div>
+      <div class="top-actions">
+        <span class="top-date" id="topDate"></span>
+        <div class="top-av">管</div>
+      </div>
+    </header>
+    <section class="page">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">预约管理</h1>
+          <p class="page-sub">跟进用户通过一键预约提交的咨询需求，及时处理</p>
+        </div>
+        <div class="op">
+          <button class="btn" onclick="seedDemoData()">生成演示数据</button>
+          <button class="btn btn-primary" onclick="exportCSV()">导出 CSV</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat total"><div class="stat-label">预约总数</div><div class="stat-value" id="statTotal">0</div><div class="stat-sub">累计收到的全部预约</div></div>
+        <div class="stat pending"><div class="stat-label">未跟进</div><div class="stat-value" id="statPending">0</div><div class="stat-sub">需尽快联系</div></div>
+        <div class="stat processing"><div class="stat-label">处理中</div><div class="stat-value" id="statProcessing">0</div><div class="stat-sub">正在跟进处理</div></div>
+        <div class="stat done"><div class="stat-label">已完成</div><div class="stat-value" id="statDone">0</div><div class="stat-sub">服务已交付</div></div>
+      </div>
+
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-status="all" onclick="filterStatus(this)">全部 <span class="num" id="chipAll">0</span></button>
+        <button class="tab" data-status="pending" onclick="filterStatus(this)">未跟进 <span class="num" id="chipPending">0</span></button>
+        <button class="tab" data-status="processing" onclick="filterStatus(this)">处理中 <span class="num" id="chipProcessing">0</span></button>
+        <button class="tab" data-status="done" onclick="filterStatus(this)">已完成 <span class="num" id="chipDone">0</span></button>
+      </div>
+
+      <div class="filter">
+        <label>来源</label>
+        <select class="select" id="sourceFilter" onchange="render()">
+          <option value="all">全部</option>
+          <option value="banner">一键预约</option>
+          <option value="catalog">服务卡片</option>
+          <option value="other">其他</option>
+        </select>
+        <input class="search" id="searchInput" placeholder="搜索姓名或手机号" oninput="onSearch(this.value)">
+        <span class="result">共 <strong id="count">0</strong> 条</span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr>
+            <th style="width:18%">预约人</th>
+            <th style="width:14%">手机号码</th>
+            <th style="width:10%">来源</th>
+            <th style="width:18%">预约时间</th>
+            <th style="width:11%">跟进情况</th>
+            <th>备注</th>
+            <th style="width:14%">操作</th>
+          </tr></thead>
+          <tbody id="bookingTable"></tbody>
+        </table>
+        <div class="empty" id="emptyState" style="display:none">
+          <div class="e-icon">📋</div>
+          <div class="e-title">暂无预约记录</div>
+          <div class="e-sub">点击「生成演示数据」查看示例，或在小程序端提交真实预约</div>
+        </div>
+        <div class="pg">
+          <div class="pg-info" id="pgInfo">共 0 条</div>
+          <div class="pg-ctrl" id="pgCtrl"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modal-mask" id="editModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">跟进预约</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-row">
+        <div class="info-item"><div class="k">预约人</div><div class="v" id="editName">—</div></div>
+        <div class="info-item"><div class="k">手机号</div><div class="v" id="editPhone">—</div></div>
+        <div class="info-item"><div class="k">提交时间</div><div class="v" id="editTime">—</div></div>
+      </div>
+      <div class="form-row">
+        <label>跟进情况 <span style="color:#DC2626">*</span></label>
+        <select id="editStatus">
+          <option value="pending">未跟进</option>
+          <option value="processing">处理中</option>
+          <option value="done">已完成</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>备注 / 跟进记录</label>
+        <textarea id="editNote" placeholder="记录联系情况、处理进展、特殊需求..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveBooking()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var STORAGE_KEY='akb_bookings';
+var PAGE_SIZE=10;
+var currentFilter={status:'all',source:'all',search:''};
+var editingId='';
+var currentPage=1;
+
+function load(){try{var v=JSON.parse(localStorage.getItem(STORAGE_KEY));if(Array.isArray(v))return v;}catch(e){}return [];}
+function save(list){localStorage.setItem(STORAGE_KEY,JSON.stringify(list));}
+
+function fmtTime(ts){var d=new Date(ts),p=function(n){return String(n).padStart(2,'0');};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}
+function srcLabel(s){return s==='banner'?'一键预约':s==='catalog'?'服务卡片':'其他';}
+function stLabel(s){return s==='pending'?'未跟进':s==='processing'?'处理中':'已完成';}
+
+function seedDemoData(){
+  var existing=load();if(existing.length>0&&!confirm('已有数据，确定覆盖生成演示数据？'))return;
+  var names=['王女士','李先生','张阿姨','刘大爷','陈小姐','赵叔叔','孙奶奶','周女士','吴先生','郑阿姨','黄先生','杨女士'];
+  var phones=['138****2468','139****8572','186****3016','133****6420','177****9183','158****5509','136****7234','159****8890','182****4456','155****3322'];
+  var sources=['banner','catalog','banner','banner','catalog','banner','other','banner','catalog','banner','banner','banner'];
+  var statuses=['pending','pending','processing','processing','processing','done','done','pending','processing','done','pending','processing'];
+  var notes=['','','已联系，明天上午上门评估','家属要求安排有ICU经验的护理员','患者术后恢复期，需要24小时陪护','已完成服务，家属反馈满意','','多次未接通，需继续跟进','已报价，家属正在考虑中','已转单给护理员李桂芳','紧急需求，今天下午就要到岗','确认住院陪护，3天'];
+  var now=Date.now(),demo=[];
+  for(var i=0;i<12;i++){var daysAgo=Math.floor(Math.random()*14);demo.push({id:'BK'+String(now-i).slice(-8),name:names[i],phone:phones[i%phones.length],source:sources[i],status:statuses[i],note:notes[i],createdAt:now-daysAgo*86400000-Math.floor(Math.random()*3600000),updatedAt:now-Math.floor(Math.random()*86400000)});}
+  save(demo);render();
+}
+
+function getFiltered(){
+  var list=load(),f=currentFilter;
+  return list.filter(function(b){
+    if(f.status!=='all'&&b.status!==f.status)return false;
+    if(f.source!=='all'&&b.source!==f.source)return false;
+    if(f.search){var q=f.search.toLowerCase();if((b.name||'').toLowerCase().indexOf(q)===-1&&(b.phone||'').toLowerCase().indexOf(q)===-1)return false;}
+    return true;
+  }).sort(function(a,b){return b.createdAt-a.createdAt;});
+}
+
+function updateStats(){
+  var list=load();
+  var p=list.filter(function(b){return b.status==='pending';}).length;
+  var pr=list.filter(function(b){return b.status==='processing';}).length;
+  var d=list.filter(function(b){return b.status==='done';}).length;
+  document.getElementById('statTotal').textContent=list.length;
+  document.getElementById('statPending').textContent=p;
+  document.getElementById('statProcessing').textContent=pr;
+  document.getElementById('statDone').textContent=d;
+  document.getElementById('chipAll').textContent=list.length;
+  document.getElementById('chipPending').textContent=p;
+  document.getElementById('chipProcessing').textContent=pr;
+  document.getElementById('chipDone').textContent=d;
+}
+
+function render(){
+  updateStats();
+  var all=getFiltered();
+  document.getElementById('count').textContent=all.length;
+  var tbody=document.getElementById('bookingTable'),empty=document.getElementById('emptyState');
+  if(all.length===0){tbody.innerHTML='';empty.style.display='';document.getElementById('pgInfo').textContent='共 0 条';document.getElementById('pgCtrl').innerHTML='';return;}
+  empty.style.display='none';
+  var totalPages=Math.max(1,Math.ceil(all.length/PAGE_SIZE));
+  if(currentPage>totalPages)currentPage=totalPages;
+  var start=(currentPage-1)*PAGE_SIZE,pageData=all.slice(start,start+PAGE_SIZE);
+  tbody.innerHTML=pageData.map(function(b){
+    var srcCls=b.source==='banner'?'banner':b.source==='catalog'?'catalog':'other';
+    var hiddenPhone=b.phone&&b.phone.length>=7?b.phone.slice(0,3)+'****'+b.phone.slice(-4):b.phone;
+    var date=new Date(b.createdAt),p=function(n){return String(n).padStart(2,'0');};
+    var dateStr=p(date.getMonth()+1)+'/'+p(date.getDate());
+    return '<tr>'+
+      '<td class="name-cell"><div class="main">'+(b.name||'未填写')+'</div><div class="sub">'+b.id+'</div></td>'+
+      '<td class="phone-cell">'+hiddenPhone+'</td>'+
+      '<td><span class="source-tag '+srcCls+'">'+srcLabel(b.source)+'</span></td>'+
+      '<td class="time-cell">'+dateStr+'<span class="sub">'+p(date.getHours())+':'+p(date.getMinutes())+' 提交</span></td>'+
+      '<td><span class="tag '+b.status+'" onclick="openEdit(\''+b.id+'\')"><span class="dot"></span>'+stLabel(b.status)+'</span></td>'+
+      '<td class="note-cell '+(b.note?'':'empty')+'">'+(b.note||'暂无备注')+'</td>'+
+      '<td class="op">'+
+        '<button onclick="openEdit(\''+b.id+'\')">跟进</button>'+
+        '<button class="danger" onclick="deleteBooking(\''+b.id+'\')">删除</button>'+
+      '</td></tr>';
+  }).join('');
+  document.getElementById('pgInfo').textContent='共 '+all.length+' 条 · 第 '+currentPage+'/'+totalPages+' 页';
+  var ctrl='<button '+(currentPage===1?'disabled':'')+' onclick="gotoPage('+(currentPage-1)+')">‹</button>';
+  for(var p2=1;p2<=totalPages;p2++){if(p2===1||p2===totalPages||Math.abs(p2-currentPage)<=1)ctrl+='<button class="'+(p2===currentPage?'active':'')+'" onclick="gotoPage('+p2+')">'+p2+'</button>';else if(p2===currentPage-2||p2===currentPage+2)ctrl+='<button disabled>…</button>';}
+  ctrl+='<button '+(currentPage===totalPages?'disabled':'')+' onclick="gotoPage('+(currentPage+1)+')">›</button>';
+  document.getElementById('pgCtrl').innerHTML=ctrl;
+}
+function gotoPage(n){currentPage=n;render();}
+function filterStatus(el){
+  document.querySelectorAll('#tabs .tab').forEach(function(c){c.classList.remove('active');});
+  el.classList.add('active');
+  currentFilter.status=el.dataset.status;currentPage=1;render();
+}
+function onSearch(v){currentFilter.search=v.trim();currentPage=1;render();}
+
+function openEdit(id){
+  var b=load().find(function(x){return x.id===id;});if(!b)return;
+  editingId=id;
+  document.getElementById('editName').textContent=b.name||'—';
+  document.getElementById('editPhone').textContent=b.phone||'—';
+  document.getElementById('editTime').textContent=fmtTime(b.createdAt);
+  document.getElementById('editStatus').value=b.status;
+  document.getElementById('editNote').value=b.note||'';
+  document.getElementById('editModal').classList.add('show');
+}
+function closeModal(){document.getElementById('editModal').classList.remove('show');editingId='';}
+function saveBooking(){
+  if(!editingId)return;
+  var list=load(),b=list.find(function(x){return x.id===editingId;});if(!b)return;
+  b.status=document.getElementById('editStatus').value;
+  b.note=document.getElementById('editNote').value.trim();
+  b.updatedAt=Date.now();
+  save(list);closeModal();render();
+}
+function deleteBooking(id){
+  if(!confirm('确定删除此预约？'))return;
+  save(load().filter(function(x){return x.id!==id;}));render();
+}
+function exportCSV(){
+  var list=load();if(!list.length){alert('暂无数据');return;}
+  var rows=[['预约ID','姓名','手机号','来源','跟进状态','备注','创建时间','更新时间']];
+  list.forEach(function(b){rows.push([b.id,b.name||'',b.phone||'',srcLabel(b.source),stLabel(b.status),(b.note||'').replace(/[\r\n,]/g,' '),fmtTime(b.createdAt),fmtTime(b.updatedAt||b.createdAt)]);});
+  var csv='\uFEFF'+rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='预约管理_'+fmtTime(Date.now()).replace(/[:\s-]/g,'').slice(0,14)+'.csv';a.click();
+}
+
+(function(){var d=new Date(),w=['日','一','二','三','四','五','六'];document.getElementById('topDate').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+w[d.getDay()];})();
+render();
+</script></body></html>

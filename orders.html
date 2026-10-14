@@ -977,9 +977,9 @@
     if (modalOrder) {
       modalOrder.dataset.status = 'pending-service';
       const badge = modalOrder.querySelector('.status-badge');
-      badge.className = 'status-badge badge-pending';
-      badge.textContent = '待服务';
-      modalOrder.querySelector('.action-bar').innerHTML = '<button class="act-btn act-purple act-full" onclick="openActionModal(\'call\',this)">联系护理员</button>';
+      if (badge) { badge.className = 'status-badge badge-pending'; badge.textContent = '待服务'; }
+      const actionBar = modalOrder.querySelector('.action-bar');
+      if (actionBar) actionBar.innerHTML = '<button class="act-btn act-purple act-full" onclick="openActionModal(\'call\',this)">联系护理员</button>';
     }
     if (typeof window.refreshOrderFilter === 'function') window.refreshOrderFilter();
     showActionResult('支付成功', '订单已支付成功，等待护理员为你提供服务。');
@@ -1011,8 +1011,7 @@
     const remark = document.getElementById('refundRemark').value.trim();
     if (modalOrder) {
       const badge = modalOrder.querySelector('.status-badge');
-      badge.className = 'status-badge badge-refund';
-      badge.textContent = '退款处理中';
+      if (badge) { badge.className = 'status-badge badge-refund'; badge.textContent = '退款处理中'; }
       modalOrder.dataset.status = 'refund';
       modalOrder.querySelectorAll('.refund-btn').forEach(btn => { btn.disabled = true; btn.textContent = '退款处理中'; });
       if (!modalOrder.querySelector('.after-sale-note')) {
@@ -1026,6 +1025,7 @@
   }
   initializeOrderTab();
 </script>
+<script src="admin-contract-data.js"></script>
 <script src="orders-list-redesign.js"></script>
 </body>
 </html>

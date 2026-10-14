@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1280">
+  <title>合同管理 · 佑小邦运营后台</title>
+  <link rel="stylesheet" href="admin-shell.css">
+  <script defer src="admin-sidebar.js"></script>
+  <script defer src="admin-contract-data.js"></script>
+  <style>
+    :root{--blue:#224CD3;--ink:#172033;--muted:#71809a;--line:#dce9f8;--bg:#eff6ff;--panel:#fff;--green:#16a34a;--amber:#d97706}
+    *{box-sizing:border-box}body{margin:0;min-width:1100px;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}.layout{display:flex;min-height:100vh}.sidebar{width:220px;background:#002141}.main{margin-left:220px;flex:1;min-width:0}.topbar{height:60px;display:flex;align-items:center;padding:0 28px;background:#fff;border-bottom:1px solid var(--line)}.crumb{display:flex;gap:8px;font-size:13px;font-weight:700;color:#94a3b8}.crumb strong{color:var(--ink)}.top-date{margin-left:auto;color:#8fa0b5;font-size:12px;font-weight:700}.top-av{display:grid;place-items:center;width:34px;height:34px;margin-left:14px;border-radius:10px;color:#fff;background:var(--blue);font-size:14px;font-weight:900}.page{padding:24px 28px 44px;max-width:1740px}
+    .head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}.title{font-size:24px;font-weight:900}.sub{margin-top:6px;color:#91a0b6;font-size:13px}.actions{display:flex;gap:9px;padding-top:4px}.btn{height:36px;border:1px solid var(--line);border-radius:9px;padding:0 13px;background:#fff;color:#41536d;font:700 12px inherit;cursor:pointer}.btn.primary{border-color:var(--blue);background:var(--blue);color:#fff}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}.stat{border:1px solid var(--line);border-radius:15px;background:var(--panel);padding:16px 18px;box-shadow:0 3px 14px rgba(34,76,211,.07)}.stat-label{font-size:12px;color:#8b99ad;font-weight:700}.stat-value{margin-top:8px;font-size:26px;font-weight:900}.stat-value.blue{color:var(--blue)}.stat-value.green{color:var(--green)}.stat-value.amber{color:var(--amber)}.stat-sub{margin-top:5px;font-size:11px;color:#a3b0c2;font-weight:600}
+    .cols{display:grid;grid-template-columns:.92fr 1.08fr;gap:16px;align-items:start}@media(max-width:1300px){.cols{grid-template-columns:1fr}}
+    .card{border:1px solid var(--line);border-radius:15px;background:var(--panel);box-shadow:0 3px 14px rgba(34,76,211,.07)}.section{padding:20px 22px}.section-title{font-size:16px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:8px}.section-title:before{content:"";width:4px;height:16px;border-radius:4px;background:var(--blue)}.section-title .hint{margin-left:auto;font-size:11px;color:#94a3b8;font-weight:700}
+    .field{margin-bottom:13px}.field label{display:block;font-size:12px;color:#5f6f88;font-weight:800;margin-bottom:6px}.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font:inherit;font-size:13px;color:var(--ink);background:#fbfdff;outline:none;resize:vertical}.field input:focus,.field textarea:focus{border-color:var(--blue)}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.clause-tip{font-size:11px;color:#94a3b8;margin-top:5px;line-height:1.5}
+    .table-wrap{overflow-x:auto}.table{width:100%;border-collapse:collapse;min-width:760px}.table th{text-align:left;font-size:11px;color:#8b99ad;font-weight:800;padding:10px 12px;border-bottom:1px solid #e7eef8;white-space:nowrap}.table td{font-size:12px;color:#41536d;font-weight:600;padding:12px;border-bottom:1px solid #eef4fb;white-space:nowrap;vertical-align:middle}.table tr:last-child td{border-bottom:0}.cell-main{color:var(--ink);font-weight:800}.cell-sub{display:block;margin-top:3px;color:#94a3b8;font-size:10px;font-weight:600}
+    .tag{display:inline-flex;align-items:center;padding:5px 10px;border-radius:14px;font-size:11px;font-weight:800}.tag.signed{color:var(--green);background:#dcfce7}.tag.pending{color:var(--amber);background:#fef3c7}
+    .link-btn{border:0;background:none;color:var(--blue);font:800 12px inherit;cursor:pointer;padding:0}.link-btn:hover{text-decoration:underline}.empty{padding:38px 0;text-align:center;color:#9aa8ba;font-size:13px}
+    .modal-mask{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(15,30,60,.45)}.modal-mask.show{display:flex}.modal{width:640px;max-width:92vw;max-height:88vh;overflow:auto;background:#fff;border-radius:16px;padding:24px 26px;box-shadow:0 24px 70px rgba(10,25,70,.3)}.modal::-webkit-scrollbar{width:6px}.modal::-webkit-scrollbar-thumb{background:#d5e2f3;border-radius:3px}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.modal-title{font-size:17px;font-weight:900}.modal-close{width:32px;height:32px;border:0;border-radius:9px;background:#eef4fb;color:#5b6b83;font-size:18px;cursor:pointer}
+    .paper{border:1px solid #e3ecf7;border-radius:12px;padding:22px 22px;background:linear-gradient(180deg,#fdfeff,#f8fbff)}.paper-title{text-align:center;font-size:18px;font-weight:900;letter-spacing:1px}.paper-no{text-align:center;margin-top:7px;font-size:11px;color:#8b99ad;font-weight:700}.paper-parties{margin-top:14px;padding:11px 13px;border-radius:10px;background:#f1f6fd;font-size:12px;line-height:1.9;color:#41536d}.paper-parties strong{color:var(--ink)}.paper-meta{margin-top:12px;display:grid;gap:7px}.paper-meta-row{display:grid;grid-template-columns:76px 1fr;gap:10px;font-size:12px}.paper-meta-row b{color:#8b99ad;font-weight:600}.paper-meta-row span{color:var(--ink);font-weight:700}.paper-clauses{margin-top:14px;border-top:1px dashed #dfe8f4;padding-top:13px}.paper-clause{display:flex;gap:8px;margin-bottom:10px}.paper-clause i{flex-shrink:0;font-style:normal;width:19px;height:19px;border-radius:6px;background:#e7f1fd;color:var(--blue);font-size:11px;font-weight:900;display:grid;place-items:center}.paper-clause p{font-size:12px;color:#5b6b83;line-height:1.75;margin:0}.paper-footer{margin-top:4px;border-top:1px dashed #dfe8f4;padding-top:12px;font-size:11px;color:#94a3b8;line-height:1.7}.paper-seal{margin-top:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:14px}.seal-box{padding:12px 14px;border:1.5px dashed #e5b9b9;border-radius:10px;text-align:center;min-width:170px}.seal-txt{font-size:10px;color:#c04444;font-weight:800;line-height:1.5}.seal-sign{margin-top:7px}.seal-sign img{max-width:130px;max-height:50px}.seal-empty{margin-top:7px;font-size:10px;color:#a3b0c2}.sign-meta{font-size:11px;color:#8b99ad;line-height:1.8}.sign-meta b{color:var(--ink)}
+    .toast{position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:80;background:rgba(23,32,51,.92);color:#fff;font-size:13px;font-weight:700;padding:11px 20px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar"></aside>
+    <main class="main">
+      <header class="topbar"><div class="crumb"><span>业务管理</span><span>›</span><strong>合同管理</strong></div><span class="top-date">2026年4月12日 星期日</span><div class="top-av">管</div></header>
+      <section class="page">
+        <div class="head"><div><h1 class="title">合同管理</h1><div class="sub">维护陪护服务电子合同模板，查看各订单的合同发起与签署记录</div></div><div class="actions"><button class="btn" onclick="exportCsv()">导出签约记录</button><button class="btn primary" onclick="document.getElementById('tplTitle').focus()">编辑合同模板</button></div></div>
+        <div class="stats" id="stats"></div>
+        <div class="cols">
+          <section class="card section">
+            <div class="section-title">合同模板<div class="hint" id="tplUpdated"></div></div>
+            <div class="field"><label>合同名称</label><input id="tplTitle"></div>
+            <div class="field"><label>甲方（服务提供方）</label><input id="tplPartyA"></div>
+            <div class="field-row">
+              <div class="field"><label>甲方称谓</label><input id="tplPartyALabel"></div>
+              <div class="field"><label>乙方称谓</label><input id="tplPartyBLabel"></div>
+            </div>
+            <div class="field"><label>合同条款（每行一条，签署页按序号展示）</label><textarea id="tplClauses" rows="10"></textarea><div class="clause-tip">修改模板后，新发起的合同将使用最新条款；已发起的合同保留发起时的展示样式。</div></div>
+            <div class="field"><label>落款说明</label><textarea id="tplFooter" rows="2"></textarea></div>
+            <div class="field"><label>盖章文字</label><input id="tplSeal"></div>
+            <button class="btn primary" style="width:100%;height:40px" onclick="saveTpl()">保存合同模板</button>
+          </section>
+          <section class="card section">
+            <div class="section-title">签约记录<div class="hint">护理员上门开始服务时发起，用户在移动端完成签署</div></div>
+            <div class="table-wrap"><table class="table"><thead><tr><th>订单号</th><th>用户 / 服务类型</th><th>发起人</th><th>状态</th><th>签署信息</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="modal-mask" id="modalMask" onclick="if(event.target===this)closeModal()"><div class="modal" id="modalBox"></div></div>
+  <div class="toast" id="toast"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded',function(){
+    var C=window.AKBContract,esc=C.esc;
+    function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},1600);}
+
+    function renderStats(){
+      var s=C.summarize(),tpl=C.getTemplate();
+      document.getElementById('stats').innerHTML=
+        '<div class="stat"><div class="stat-label">累计发起合同</div><div class="stat-value blue">'+s.total+'</div><div class="stat-sub">含种子样例与护理员实时发起</div></div>'+
+        '<div class="stat"><div class="stat-label">待用户签署</div><div class="stat-value amber">'+s.pending+'</div><div class="stat-sub">用户移动端「签署电子合同」入口</div></div>'+
+        '<div class="stat"><div class="stat-label">已完成签署</div><div class="stat-value green">'+s.signed+'</div><div class="stat-sub">电子签名存档，具法律效力</div></div>'+
+        '<div class="stat"><div class="stat-label">模板最近更新</div><div class="stat-value" style="font-size:15px;padding-top:6px">'+esc(tpl.updatedAt)+'</div><div class="stat-sub">'+esc(tpl.title)+'</div></div>';
+    }
+
+    function renderTpl(){
+      var t=C.getTemplate();
+      document.getElementById('tplTitle').value=t.title;
+      document.getElementById('tplPartyA').value=t.partyA;
+      document.getElementById('tplPartyALabel').value=t.partyALabel;
+      document.getElementById('tplPartyBLabel').value=t.partyBLabel;
+      document.getElementById('tplClauses').value=t.clauses.join('\n');
+      document.getElementById('tplFooter').value=t.footerNote;
+      document.getElementById('tplSeal').value=t.sealText;
+      document.getElementById('tplUpdated').textContent='更新于 '+t.updatedAt;
+    }
+
+    function renderRows(){
+      var all=C.getRecords();
+      var list=Object.keys(all).map(function(k){return all[k];}).sort(function(a,b){return (b.issuedAt||'').localeCompare(a.issuedAt||'');});
+      var rowsEl=document.getElementById('rows');
+      if(!list.length){rowsEl.innerHTML='<tr><td colspan="6"><div class="empty">暂无签约记录，护理员在移动端「待上岗」订单中发起电子合同</div></td></tr>';return;}
+      rowsEl.innerHTML=list.map(function(r){
+        var signed=r.status==='已签署';
+        return '<tr><td><span class="cell-main">'+esc(r.orderNo)+'</span><span class="cell-sub">合同编号 '+esc(r.contractNo)+'</span></td>'
+          +'<td><span class="cell-main">'+esc(r.userName)+'</span><span class="cell-sub">'+esc(r.serviceType)+'</span></td>'
+          +'<td>'+esc(r.issuedBy)+'<span class="cell-sub">'+esc(r.issuedAt)+'</span></td>'
+          +'<td><span class="tag '+(signed?'signed':'pending')+'">'+esc(r.status)+'</span></td>'
+          +'<td>'+(signed?esc(r.signerName)+'<span class="cell-sub">'+esc(r.signedAt)+'</span>':'<span style="color:#a3b0c2">—</span>')+'</td>'
+          +'<td><button class="link-btn" onclick="viewContract(\''+esc(r.orderNo)+'\')">查看合同</button></td></tr>';
+      }).join('');
+    }
+
+    window.viewContract=function(orderNo){
+      var r=C.recordFor(orderNo),t=C.getTemplate();
+      var signed=r.status==='已签署';
+      var clauses=t.clauses.map(function(c,i){return '<div class="paper-clause"><i>'+(i+1)+'</i><p>'+esc(c)+'</p></div>';}).join('');
+      function meta(k,v){return v?'<div class="paper-meta-row"><b>'+k+'</b><span>'+esc(v)+'</span></div>':'';}
+      document.getElementById('modalBox').innerHTML=
+        '<div class="modal-head"><div class="modal-title">合同预览 · '+esc(r.contractNo)+'</div><button class="modal-close" onclick="closeModal()">×</button></div>'
+        +'<div class="paper"><div class="paper-title">'+esc(t.title)+'</div><div class="paper-no">合同编号：'+esc(r.contractNo)+'　·　订单号：'+esc(r.orderNo)+'</div>'
+        +'<div class="paper-parties"><strong>'+esc(t.partyALabel)+'：</strong>'+esc(t.partyA)+'<br><strong>'+esc(t.partyBLabel)+'：</strong>'+esc(r.userName)+'</div>'
+        +'<div class="paper-meta">'+meta('服务项目',r.serviceType)+meta('服务期限',r.serviceTime)+meta('服务地址',r.address)+meta('服务费用',r.amount)+meta('合同发起',(r.issuedAt||'')+' · '+(r.issuedBy||''))+'</div>'
+        +'<div class="paper-clauses">'+clauses+'</div>'
+        +'<div class="paper-footer">'+esc(t.footerNote)+'</div>'
+        +'<div class="paper-seal"><div class="sign-meta">乙方签署：<b>'+(signed?esc(r.signerName):'待签署')+'</b><br>签署时间：<b>'+(signed?esc(r.signedAt):'—')+'</b></div>'
+        +'<div class="seal-box"><div class="seal-txt">'+esc(t.sealText)+'</div>'+(signed&&r.signImage?'<div class="seal-sign"><img src="'+r.signImage+'" alt="签名"></div>':'<div class="seal-empty">乙方签署后此处显示签名</div>')+'</div></div></div>';
+      document.getElementById('modalMask').classList.add('show');
+    };
+    window.closeModal=function(){document.getElementById('modalMask').classList.remove('show');};
+
+    window.saveTpl=function(){
+      var t=C.getTemplate();
+      t.title=document.getElementById('tplTitle').value.trim()||t.title;
+      t.partyA=document.getElementById('tplPartyA').value.trim()||t.partyA;
+      t.partyALabel=document.getElementById('tplPartyALabel').value.trim()||t.partyALabel;
+      t.partyBLabel=document.getElementById('tplPartyBLabel').value.trim()||t.partyBLabel;
+      var lines=document.getElementById('tplClauses').value.split('\n').map(function(s){return s.trim();}).filter(Boolean);
+      if(lines.length)t.clauses=lines;
+      t.footerNote=document.getElementById('tplFooter').value.trim();
+      t.sealText=document.getElementById('tplSeal').value.trim();
+      C.saveTemplate(t);
+      renderTpl();renderStats();
+      toast('合同模板已保存，新发起的合同将使用最新内容');
+    };
+
+    window.exportCsv=function(){
+      var all=C.getRecords();
+      var list=Object.keys(all).map(function(k){return all[k];});
+      var head=['订单号','合同编号','用户','服务类型','服务期限','服务费用','发起人','发起时间','状态','签署人','签署时间'];
+      var lines=[head.join(',')].concat(list.map(function(r){
+        return [r.orderNo,r.contractNo,r.userName,r.serviceType,r.serviceTime,r.amount,r.issuedBy,r.issuedAt,r.status,r.signerName||'',r.signedAt||''].map(function(v){return '"'+String(v==null?'':v).replace(/"/g,'""')+'"';}).join(',');
+      }));
+      var blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+      var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='合同签约记录.csv';a.click();URL.revokeObjectURL(a.href);
+      toast('已导出 '+list.length+' 条签约记录');
+    };
+
+    renderStats();renderTpl();renderRows();
+    });
+  </script>
+</body>
+</html>

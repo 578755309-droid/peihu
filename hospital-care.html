@@ -665,8 +665,13 @@
             <span id="locationTitle">选择服务地址</span>
           </div>
           <button class="selector-trigger" type="button" onclick="openAddressDrawer()">
-            <span class="selector-marker">地</span>
+            <span class="selector-marker" id="fromMarker">地</span>
             <span class="selector-copy"><span class="selector-value" id="selectedAddressValue">请选择服务地址</span><span class="selector-meta" id="selectedAddressMeta">医院或家</span></span>
+            <span class="selector-arrow">›</span>
+          </button>
+          <button class="selector-trigger" type="button" id="toAddressTrigger" style="display:none;margin-top:10px" onclick="openAddressDrawer('to')">
+            <span class="selector-marker" id="toMarker">送</span>
+            <span class="selector-copy"><span class="selector-value" id="selectedToAddressValue">请选择送达地址</span><span class="selector-meta" id="selectedToAddressMeta">如：患者家</span></span>
             <span class="selector-arrow">›</span>
           </button>
         </div>
@@ -914,7 +919,7 @@
   <div class="selection-drawer" id="addressDrawer" onclick="closeDrawerOnBackdrop(event, 'addressDrawer')">
     <section class="selection-sheet" aria-label="选择服务地址">
       <div class="sheet-grip"></div>
-      <div class="sheet-head"><div class="sheet-title">选择服务地址</div><button class="sheet-close" type="button" onclick="closeDrawer('addressDrawer')" aria-label="关闭">×</button></div>
+      <div class="sheet-head"><div class="sheet-title" id="drawerAddressTitle">选择服务地址</div><button class="sheet-close" type="button" onclick="closeDrawer('addressDrawer')" aria-label="关闭">×</button></div>
       <div class="drawer-list" id="drawerAddressList"></div>
       <button class="address-add" type="button" onclick="goAddAddress()">＋ 新增服务地址</button>
     </section>
@@ -968,6 +973,10 @@
           <span class="pay-key" id="payLocationKey">服务地址</span>
           <span class="pay-val" id="payHosp">—</span>
         </div>
+        <div class="pay-row" id="payLocationRow2" style="display:none">
+          <span class="pay-key" id="payLocationKey2">送达地址</span>
+          <span class="pay-val" id="payHosp2">—</span>
+        </div>
         <div class="pay-row" id="payPatientRow" style="display:none">
           <span class="pay-key" id="payPatientKey">就诊人</span>
           <span class="pay-val" id="payPatient">—</span>
@@ -976,7 +985,7 @@
           <span class="pay-key" id="payConditionKey">健康情况</span>
           <span class="pay-val" id="payCondition">—</span>
         </div>
-        <div class="pay-row">
+        <div class="pay-row" id="payCareNeedsRow">
           <span class="pay-key">护理需求</span>
           <span class="pay-val" id="payCareNeeds">—</span>
         </div>
@@ -1042,7 +1051,10 @@
   }
 
   function nextStep() {
-    if (!selectedAddressId) { alert('请先选择或新增服务地址'); return; }
+    if (dualAddr) {
+      if (!selectedFromAddressId) { alert('请先选择或新增' + dualAddr.from.label); return; }
+      if (!selectedToAddressId) { alert('请先选择或新增' + dualAddr.to.label); return; }
+    } else if (!selectedAddressId) { alert('请先选择或新增服务地址'); return; }
     if (!selectedPatientId) { alert('请先选择或新增' + patientDisplayName()); return; }
     if (!validatePatientInfo()) return;
     if (!document.getElementById('serviceDate').value) { alert('请选择服务日期'); document.getElementById('serviceDate').focus(); return; }
@@ -1115,15 +1127,15 @@
   const VISIT_SERVICE_CONFIG = {
     vip:            { name:'贵宾陪诊', price:298 },
     premium:        { name:'优享陪诊', price:698 },
-    medicine:       { name:'代买药', price:99 },
+    medicine:       { name:'代买药', price:99, dualAddress:{ from:{ label:'买药地址', type:'hospital', marker:'买' }, to:{ label:'送达地址', type:'home', marker:'送' } } },
     'exam-booking': { name:'代约检查', price:169 },
     result:         { name:'代看检查结果', price:169 },
     admission:      { name:'代办住院手续', price:300 },
     discharge:      { name:'代办出院手续', price:300 },
-    'ring-pickup':  { name:'三环内接/送患者', price:150 },
-    airport:        { name:'机场接/送患者', price:380 },
-    report:         { name:'代取报告', price:89 },
-    station:        { name:'西安北站接送患者', price:200 }
+    'ring-pickup':  { name:'三环内接/送患者', price:150, dualAddress:{ from:{ label:'上车地址', type:'any', marker:'接' }, to:{ label:'送达地址', type:'any', marker:'送' } } },
+    airport:        { name:'机场接/送患者', price:380, dualAddress:{ from:{ label:'接机地址', type:'any', marker:'接' }, to:{ label:'送达地址', type:'any', marker:'送' } } },
+    report:         { name:'代取报告', price:89, dualAddress:{ from:{ label:'取报告地址', type:'hospital', marker:'取' }, to:{ label:'邮寄地址', type:'home', marker:'寄' } } },
+    station:        { name:'西安北站接送患者', price:200, dualAddress:{ from:{ label:'接站地址', type:'any', marker:'接' }, to:{ label:'送达地址', type:'any', marker:'送' } } }
   };
   const selectedVisitService = VISIT_SERVICE_CONFIG[visitServiceId] || null;
   const SERVICE_CONFIG = {
@@ -1132,16 +1144,34 @@
     visit:    { name:selectedVisitService ? selectedVisitService.name : '陪诊服务', location:'hospital', durationMode:'session', price:selectedVisitService ? selectedVisitService.price : randomRate(160,220) },
     bath:     { name:'上门助浴', location:'address', durationMode:'session', price:randomRate(220,300) }
   };
+  let catalogPricingRules = {};
   (function(){
     const catalog = window.AKBServiceCatalog && window.AKBServiceCatalog.get();
     if (!catalog) return;
     const cats = {}; catalog.categories.forEach(c => cats[c.id] = c);
-    ['hospital','home','bath'].forEach(k => { if (cats[k] && cats[k].status === 'on') SERVICE_CONFIG[k].name = cats[k].name; });
+    ['hospital','home','bath'].forEach(k => {
+      if (cats[k] && cats[k].status === 'on') {
+        SERVICE_CONFIG[k].name = cats[k].name;
+        const svcWithRules = catalog.services.filter(s => s.category === k && s.pricingRules).sort((a,b)=>(a.sort||0)-(b.sort||0))[0];
+        if (svcWithRules) catalogPricingRules[k] = svcWithRules.pricingRules;
+        else if (cats[k].pricingRules) catalogPricingRules[k] = cats[k].pricingRules;
+      }
+    });
     const visitItems = {}; catalog.services.filter(s => s.category === 'visit').forEach(s => visitItems[s.id] = s);
     Object.keys(VISIT_SERVICE_CONFIG).forEach(k => { if (visitItems[k] && visitItems[k].status === 'on') VISIT_SERVICE_CONFIG[k].name = visitItems[k].name; });
   })();
   const serviceKey = new URLSearchParams(location.search).get('service') || 'hospital';
   const service = SERVICE_CONFIG[serviceKey] || SERVICE_CONFIG.hospital;
+  /* 陪诊服务（visit）下所有类型不需要护理需求选择（自理等级/管路/传染性疾病） */
+  if (serviceKey === 'visit') {
+    ['independencePicker', 'tubePicker', 'infectionPicker'].forEach(function (pid) {
+      const picker = document.getElementById(pid);
+      const group = picker && picker.closest('.need-group');
+      if (group) group.style.display = 'none';
+    });
+    const careNeedsRow = document.getElementById('payCareNeedsRow');
+    if (careNeedsRow) careNeedsRow.style.display = 'none';
+  }
   let selectedDailyType = 'full';
   let selectedCount = 1;
   let isCustomCount = false;
@@ -1175,6 +1205,24 @@
   let selectedPatientId = '';
   let isCreatingPatient = false;
   let selectedAddressId = '';
+  /* 双地址服务（代买药 / 接送 / 代取报告等）：from = 买药/上车/取件地址，to = 送达地址 */
+  const dualAddr = (serviceKey === 'visit' && selectedVisitService && selectedVisitService.dualAddress) ? selectedVisitService.dualAddress : null;
+  let selectedFromAddressId = '';
+  let selectedToAddressId = '';
+  let addressDrawerSlot = '';
+  function currentAddressType() {
+    if (!dualAddr) return service.location === 'hospital' ? 'hospital' : 'home';
+    return dualAddr[addressDrawerSlot === 'to' ? 'to' : 'from'].type;
+  }
+  function currentSelectedId() {
+    if (!dualAddr) return selectedAddressId;
+    return addressDrawerSlot === 'to' ? selectedToAddressId : selectedFromAddressId;
+  }
+  function setCurrentSelectedId(id) {
+    if (!dualAddr) { selectedAddressId = id; return; }
+    if (addressDrawerSlot === 'to') selectedToAddressId = id; else selectedFromAddressId = id;
+  }
+  function findAddress(id) { return getSavedAddresses().find(function(item) { return String(item.id) === String(id); }); }
   function getSavedPatients() { try { const v = JSON.parse(localStorage.getItem(PATIENT_KEY)); return Array.isArray(v) ? v : fallbackPatients.slice(); } catch(e) { return fallbackPatients.slice(); } }
   function setSavedPatients(list) { localStorage.setItem(PATIENT_KEY, JSON.stringify(list)); }
   function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, function(char) { return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[char]; }); }
@@ -1236,8 +1284,25 @@
     closeDrawer('patientDrawer');
   }
 
+  function fillAddressTrigger(slot, cfg, id) {
+    const value = document.getElementById(slot === 'from' ? 'selectedAddressValue' : 'selectedToAddressValue');
+    const meta = document.getElementById(slot === 'from' ? 'selectedAddressMeta' : 'selectedToAddressMeta');
+    const address = findAddress(id);
+    if (!address) {
+      value.textContent = '请选择' + cfg.label;
+      meta.textContent = cfg.type === 'hospital' ? '如：某医院' : cfg.type === 'home' ? '如：患者家' : '医院或家';
+      return;
+    }
+    value.textContent = address.detail;
+    meta.textContent = (address.addressType === 'hospital' ? '医院' : '家') + ' · ' + (address.contact || '') + (address.phone ? ' · ' + address.phone : '');
+  }
   function updateAddressSummary() {
-    const address = getSavedAddresses().find(function(item) { return String(item.id) === String(selectedAddressId); });
+    if (dualAddr) {
+      fillAddressTrigger('from', dualAddr.from, selectedFromAddressId);
+      fillAddressTrigger('to', dualAddr.to, selectedToAddressId);
+      return;
+    }
+    const address = findAddress(selectedAddressId);
     const value = document.getElementById('selectedAddressValue');
     const meta = document.getElementById('selectedAddressMeta');
     if (!address) { value.textContent = '请选择服务地址'; meta.textContent = '医院或家'; return; }
@@ -1247,15 +1312,19 @@
   function renderOrderAddresses() {
     const box = document.getElementById('drawerAddressList');
     if (!box) return;
-    const addressType = service.location === 'hospital' ? 'hospital' : 'home';
-    const list = getSavedAddresses().filter(function(address) { return address.addressType === addressType; });
-    const typeLabel = addressType === 'hospital' ? '医院' : '家';
-    if (!selectedAddressId && list.length) selectedAddressId = list[0].id;
-    box.innerHTML = list.length ? list.map(function(a) { return '<div class="address-card ' + (String(a.id) === String(selectedAddressId) ? 'sel' : '') + '" onclick="selectAddress(\'' + escapeHtml(a.id) + '\')"><div class="address-radio"></div><div><div class="address-main-row"><div class="address-main">' + escapeHtml(a.detail) + '</div><span class="address-type-tag ' + addressType + '">' + typeLabel + '</span></div><div class="address-sub">' + escapeHtml(a.contact || '') + (a.phone ? ' · ' + escapeHtml(a.phone) : '') + '</div></div></div>'; }).join('') : '<div style="text-align:center;color:var(--text3);font-size:12px;padding:10px 0">暂无' + typeLabel + '类型服务地址，请新增</div>';
+    const addressType = currentAddressType();
+    const all = getSavedAddresses();
+    const list = addressType === 'any' ? all : all.filter(function(address) { return address.addressType === addressType; });
+    const typeLabel = addressType === 'hospital' ? '医院' : addressType === 'home' ? '家' : '全部';
+    let selId = currentSelectedId();
+    if (!selId && list.length) { selId = list[0].id; setCurrentSelectedId(selId); }
+    box.innerHTML = list.length ? list.map(function(a) { return '<div class="address-card ' + (String(a.id) === String(selId) ? 'sel' : '') + '" onclick="selectAddress(\'' + escapeHtml(a.id) + '\')"><div class="address-radio"></div><div><div class="address-main-row"><div class="address-main">' + escapeHtml(a.detail) + '</div><span class="address-type-tag ' + a.addressType + '">' + (a.addressType === 'hospital' ? '医院' : '家') + '</span></div><div class="address-sub">' + escapeHtml(a.contact || '') + (a.phone ? ' · ' + escapeHtml(a.phone) : '') + '</div></div></div>'; }).join('') : '<div style="text-align:center;color:var(--text3);font-size:12px;padding:10px 0">暂无' + typeLabel + '类型服务地址，请新增</div>';
+    const titleEl = document.getElementById('drawerAddressTitle');
+    if (titleEl) titleEl.textContent = dualAddr ? '选择' + dualAddr[addressDrawerSlot === 'to' ? 'to' : 'from'].label : '选择服务地址';
     updateAddressSummary();
   }
-  function selectAddress(id) { selectedAddressId = id; renderOrderAddresses(); closeDrawer('addressDrawer'); }
-  function goAddAddress() { const type = service.location === 'hospital' ? 'hospital' : 'home'; const visitParam = visitServiceId ? '&visitService=' + encodeURIComponent(visitServiceId) : ''; location.href = 'address-edit.html?return=care&service=' + encodeURIComponent(serviceKey) + visitParam + '&type=' + type; }
+  function selectAddress(id) { setCurrentSelectedId(id); renderOrderAddresses(); closeDrawer('addressDrawer'); }
+  function goAddAddress() { const type = currentAddressType() === 'any' ? 'home' : currentAddressType(); const visitParam = visitServiceId ? '&visitService=' + encodeURIComponent(visitServiceId) : ''; location.href = 'address-edit.html?return=care&service=' + encodeURIComponent(serviceKey) + visitParam + '&type=' + type; }
   function fitOverlayToPhone(id) {
     const phone = document.querySelector('.phone');
     const overlay = document.getElementById(id);
@@ -1266,7 +1335,7 @@
     overlay.style.width = Math.round(rect.width) + 'px';
     overlay.style.height = Math.round(rect.height) + 'px';
   }
-  function openAddressDrawer() { renderOrderAddresses(); fitOverlayToPhone('addressDrawer'); document.getElementById('addressDrawer').classList.add('show'); }
+  function openAddressDrawer(slot) { addressDrawerSlot = slot || (dualAddr ? 'from' : ''); renderOrderAddresses(); fitOverlayToPhone('addressDrawer'); document.getElementById('addressDrawer').classList.add('show'); }
   function openPatientDrawer() { renderPatients(); fitOverlayToPhone('patientDrawer'); document.getElementById('patientDrawer').classList.add('show'); }
   function closeDrawer(id) { document.getElementById(id).classList.remove('show'); }
   function closeDrawerOnBackdrop(event, id) { if (event.target === event.currentTarget) closeDrawer(id); }
@@ -1277,16 +1346,31 @@
   }
 
   function careNeedsReady() { return Boolean(careNeeds.independence && careNeeds.tube && careNeeds.infection); }
-  function dailyUnitPrice() {
-    const base = careNeeds.independence === 'independent' ? 300 : careNeeds.independence === 'partial' ? 400 : 500;
-    return base + (careNeeds.infection === 'has' ? 200 : 0);
+  function getServicePrice() {
+    const rules = catalogPricingRules[serviceKey];
+    const tubeExtra = careNeeds.tube === 'has' ? (rules && rules.tubeExtra ? rules.tubeExtra : 0) : 0;
+    const infectionExtra = careNeeds.infection === 'has' ? (rules && rules.infectionExtra ? rules.infectionExtra : 0) : 0;
+    if (rules && rules.mode === 'daily') {
+      const base = (rules.independence && rules.independence[careNeeds.independence]) || 0;
+      return base + tubeExtra + infectionExtra;
+    } else if (rules && rules.mode === 'session') {
+      const base = rules.basePrice || 0;
+      const indepExtra = (rules.independence && rules.independence[careNeeds.independence]) || 0;
+      return base + indepExtra + tubeExtra + infectionExtra;
+    }
+    // fallback: hardcoded defaults
+    if (service.durationMode === 'daily') {
+      const base = careNeeds.independence === 'independent' ? 300 : careNeeds.independence === 'partial' ? 400 : 500;
+      return base + tubeExtra + infectionExtra;
+    }
+    return service.price || 0;
   }
 
   function updateTimePrice() {
     availablePoints = AKBPoints.get().balance;
     const isDaily = service.durationMode === 'daily';
     const ready = careNeedsReady();
-    const unitPrice = isDaily ? dailyUnitPrice() : service.price;
+    const unitPrice = ready ? getServicePrice() : 0;
     basePrice = unitPrice * selectedCount;
     const maxDiscount = Math.min(basePrice, availablePoints);
     const usePoints = document.getElementById('usePoints').checked;
@@ -1373,6 +1457,29 @@
     document.getElementById('locationTitle').textContent = '选择服务地址';
     document.getElementById('stepLocationLbl').textContent = '服务地址';
     document.getElementById('payLocationKey').textContent = '服务地址';
+    if (dualAddr) {
+      document.getElementById('locationTitle').textContent = '选择' + dualAddr.from.label + '与' + dualAddr.to.label;
+      document.getElementById('fromMarker').textContent = dualAddr.from.marker || '地';
+      document.getElementById('toMarker').textContent = dualAddr.to.marker || '送';
+      document.getElementById('toAddressTrigger').style.display = '';
+      document.getElementById('payLocationKey').textContent = dualAddr.from.label;
+      document.getElementById('payLocationKey2').textContent = dualAddr.to.label;
+      /* 双地址默认选中：from / to 各取对应类型首条，to 尽量避开 from 已选 */
+      const allAddr = getSavedAddresses();
+      ['from', 'to'].forEach(function(slot) {
+        const cfg = dualAddr[slot];
+        const list = cfg.type === 'any' ? allAddr : allAddr.filter(function(a) { return a.addressType === cfg.type; });
+        if (!list.length) return;
+        let candidate = list[0];
+        if (slot === 'to' && list.length > 1) {
+          const other = list.find(function(a) { return String(a.id) !== String(selectedFromAddressId); });
+          if (other) candidate = other;
+        }
+        if (slot === 'from') { if (!selectedFromAddressId) selectedFromAddressId = candidate.id; }
+        else if (!selectedToAddressId) selectedToAddressId = candidate.id;
+      });
+      updateAddressSummary();
+    }
     renderOrderAddresses();
     renderPatients();
     const d = new Date();
@@ -1401,8 +1508,17 @@
   /* ── Submit ── */
   function submitOrder() {
     /* populate summary */
-    const address = getSavedAddresses().find(function(item) { return String(item.id) === String(selectedAddressId); });
-    if (address) document.getElementById('payHosp').textContent = address.detail;
+    if (dualAddr) {
+      const fromAddr = findAddress(selectedFromAddressId);
+      const toAddr = findAddress(selectedToAddressId);
+      if (fromAddr) document.getElementById('payHosp').textContent = fromAddr.detail;
+      if (toAddr) document.getElementById('payHosp2').textContent = toAddr.detail;
+      document.getElementById('payLocationRow2').style.display = (fromAddr || toAddr) ? '' : 'none';
+    } else {
+      const address = findAddress(selectedAddressId);
+      if (address) document.getElementById('payHosp').textContent = address.detail;
+      document.getElementById('payLocationRow2').style.display = 'none';
+    }
     const patient = parseChineseIdCard(document.getElementById('patientIdNo').value);
     document.getElementById('payPatient').textContent = document.getElementById('patientName').value.trim() + ' · ' + patient.gender + ' · ' + patient.age + '岁';
     document.getElementById('payCondition').textContent = document.getElementById('patientCondition').value.trim();

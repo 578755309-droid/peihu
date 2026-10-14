@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>商品分类 · 佑小邦运营后台</title>
+  <link rel="stylesheet" href="admin-shell.css" />
+  <link rel="stylesheet" href="admin-catalog.css" />
+  <link rel="stylesheet" href="admin-mall.css" />
+  <script src="admin-mall-data.js"></script>
+  <script defer src="admin-sidebar.js"></script>
+  <style>
+    .catalog-layout{display:grid;grid-template-columns:300px 1fr;gap:18px}
+    .category-list{padding:10px;max-height:560px;overflow-y:auto}
+    .category-item{padding:14px;border-radius:10px;cursor:pointer;border:1px solid transparent;margin-bottom:6px;transition:all .12s}
+    .category-item:hover{background:#F5F8FF}
+    .category-item.active{background:#EEF4FF;border-color:#BFD4FF;box-shadow:inset 3px 0 #224CD3}
+    .cat-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .cat-name{font-size:14px;font-weight:800;color:#172033}
+    .cat-status{font-size:11px;font-weight:800;color:#16A34A}
+    .cat-status.off{color:#DC2626}
+    .cat-meta{font-size:11px;color:#8F9BB0;margin-top:6px;line-height:1.5}
+    .cat-ops{display:flex;gap:4px;margin-top:9px}
+    .cat-ops button{border:0;background:none;color:#224CD3;font:700 12px inherit;cursor:pointer;padding:3px 6px}
+    .cat-ops .danger{color:#DC2626}
+    .cat-product-table{min-width:720px}
+    .cat-product-table .pdt-cell{min-width:220px}
+    .cat-empty-tip{padding:14px 19px;font-size:12px;color:#8F9BB0;background:#F8FBFF;border-bottom:1px solid #EEF5FC;line-height:1.6}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>商城管理</span><span>›</span><span class="current">商品分类</span></div>
+      <div class="top-actions"><span class="top-date" id="topDate"></span><div class="top-av">管</div></div>
+    </header>
+
+    <section class="page">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">商品分类</h1>
+          <p class="page-sub">管理商城分类的名称、排序与启用状态；停用分类后小程序端隐藏对应入口，商品仍保留在「全部」中</p>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="openCategoryModal()">+ 新增分类</button>
+        </div>
+      </div>
+
+      <div class="catalog-layout">
+        <!-- 左：分类列表 -->
+        <section class="panel">
+          <div class="panel-head" style="padding:18px 20px;border-bottom:1px solid #EEF5FC;display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:15px;font-weight:900;color:#172033">分类列表</div>
+              <div style="font-size:11px;color:#9AA7BA;margin-top:4px">小程序商城顶部分类入口</div>
+            </div>
+          </div>
+          <div class="category-list" id="categoryList"></div>
+        </section>
+
+        <!-- 右：分类下商品 -->
+        <section class="panel">
+          <div class="panel-head" style="padding:18px 20px;border-bottom:1px solid #EEF5FC;display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:15px;font-weight:900;color:#172033" id="panelTitle">分类商品</div>
+              <div style="font-size:11px;color:#9AA7BA;margin-top:4px" id="panelNote"></div>
+            </div>
+            <a class="btn" href="admin-mall-products.html" style="text-decoration:none">去商品管理</a>
+          </div>
+          <div class="cat-empty-tip" id="offTip" style="display:none">该分类已停用，小程序商城顶部入口已隐藏；重新上架分类即可恢复展示。</div>
+          <div class="table-wrap" style="border:0;box-shadow:none;border-radius:0;overflow-x:auto">
+            <table class="table cat-product-table">
+              <thead><tr><th>商品</th><th>售价</th><th>库存</th><th>累计销量</th><th>商品状态</th></tr></thead>
+              <tbody id="productRows"></tbody>
+            </table>
+            <div class="empty-state" id="emptyState" style="display:none">该分类下暂无商品</div>
+          </div>
+        </section>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<!-- 分类弹窗 -->
+<div class="modal-mask" id="categoryModal" onclick="if(event.target===this)closeCategoryModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">新增分类</div>
+      <button class="modal-close" onclick="closeCategoryModal()">×</button>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label>分类名称 *</label><input id="cName" placeholder="例如：健康监测" /></div>
+      <div class="field"><label>分类描述</label><textarea id="cDesc" placeholder="在后台与分类入口展示的说明"></textarea></div>
+      <div class="form-2col">
+        <div class="field"><label>排序</label><input id="cSort" type="number" min="1" step="1" value="99" /></div>
+        <div class="field"><label>状态</label><select id="cStatus"><option value="on">启用</option><option value="off">停用</option></select></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeCategoryModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveCategory()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var M = window.AKBMallAdmin;
+  var categories = M.getCategories();
+  var selectedId = categories[0] ? categories[0].id : '';
+  var editingId = '';
+
+  document.getElementById('topDate').textContent =
+    (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+
+  function persist() { M.saveCategories(categories); }
+  function productsOf(catId) {
+    return M.getProducts(true).filter(function (p) { return p.category === catId; });
+  }
+  function thumb(p) {
+    var fallback = (p.name || '商').slice(0, 1);
+    var img = p.image ? '<img src="' + M.esc(p.image) + '" alt="" onerror="this.remove()">' : '';
+    return '<div class="pdt-thumb tone-' + (p.tone || 'purple') + '">' + img + fallback + '</div>';
+  }
+
+  function renderCategories() {
+    categories.sort(function (a, b) { return a.sort - b.sort; });
+    document.getElementById('categoryList').innerHTML = categories.map(function (c) {
+      var n = productsOf(c.id).length;
+      var onSale = productsOf(c.id).filter(function (p) { return p.status === 'on'; }).length;
+      return '<div class="category-item ' + (c.id === selectedId ? 'active' : '') + '" onclick="selectCategory(\'' + M.esc(c.id) + '\')">' +
+        '<div class="cat-row"><span class="cat-name">' + M.esc(c.name) + '</span>' +
+        '<span class="cat-status ' + (c.status === 'on' ? '' : 'off') + '">' + (c.status === 'on' ? '已启用' : '已停用') + '</span></div>' +
+        '<div class="cat-meta">' + n + ' 款商品（在售 ' + onSale + '）· 排序 ' + c.sort + (c.description ? '<br>' + M.esc(c.description) : '') + '</div>' +
+        '<div class="cat-ops"><button onclick="event.stopPropagation();openCategoryModal(\'' + M.esc(c.id) + '\')">编辑</button>' +
+        '<button onclick="event.stopPropagation();toggleCategory(\'' + M.esc(c.id) + '\')">' + (c.status === 'on' ? '停用' : '启用') + '</button></div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderProducts() {
+    var cat = categories.filter(function (c) { return c.id === selectedId; })[0];
+    var list = productsOf(selectedId).sort(function (a, b) { return a.sort - b.sort; });
+    document.getElementById('panelTitle').textContent = cat ? cat.name + ' · 商品' : '分类商品';
+    document.getElementById('panelNote').textContent = cat ? (cat.description || '维护该分类下的商品') : '请选择左侧分类';
+    document.getElementById('offTip').style.display = cat && cat.status === 'off' ? 'block' : 'none';
+    document.getElementById('emptyState').style.display = list.length ? 'none' : 'block';
+    document.getElementById('productRows').innerHTML = list.map(function (p) {
+      var stock = p.stock < 30 ? '<span class="stock-warn">' + p.stock + ' · 预警</span>' : '<span class="stock-ok">' + p.stock + '</span>';
+      return '<tr><td><div class="pdt-cell">' + thumb(p) + '<div><div class="pdt-name">' + M.esc(p.name) + '</div><div class="pdt-sub">' + M.esc(p.sub || '') + '</div></div></div></td>' +
+        '<td class="price-cell">' + M.money(p.price) + '</td>' +
+        '<td>' + stock + '</td>' +
+        '<td style="font-weight:700;color:#172033">' + (p.sales || 0) + ' 件</td>' +
+        '<td><span class="status-btn ' + p.status + '">' + (p.status === 'on' ? '已上架' : '已下架') + '</span></td></tr>';
+    }).join('');
+  }
+
+  window.selectCategory = function (id) { selectedId = id; renderCategories(); renderProducts(); };
+
+  window.toggleCategory = function (id) {
+    var c = categories.filter(function (x) { return x.id === id; })[0];
+    if (!c) return;
+    c.status = c.status === 'on' ? 'off' : 'on';
+    persist(); renderCategories(); renderProducts();
+  };
+
+  window.openCategoryModal = function (id) {
+    editingId = id || '';
+    var c = id ? categories.filter(function (x) { return x.id === id; })[0] : null;
+    document.getElementById('modalTitle').textContent = c ? '编辑分类' : '新增分类';
+    document.getElementById('cName').value = c ? c.name : '';
+    document.getElementById('cDesc').value = c ? (c.description || '') : '';
+    document.getElementById('cSort').value = c ? c.sort : categories.length + 1;
+    document.getElementById('cStatus').value = c ? c.status : 'on';
+    document.getElementById('categoryModal').classList.add('show');
+  };
+  window.closeCategoryModal = function () { document.getElementById('categoryModal').classList.remove('show'); };
+
+  window.saveCategory = function () {
+    var name = document.getElementById('cName').value.trim();
+    if (!name) { alert('请填写分类名称'); return; }
+    var data = {
+      name: name,
+      description: document.getElementById('cDesc').value.trim(),
+      sort: Math.max(1, parseInt(document.getElementById('cSort').value || '99', 10) || 99),
+      status: document.getElementById('cStatus').value
+    };
+    if (editingId) {
+      var c = categories.filter(function (x) { return x.id === editingId; })[0];
+      if (c) Object.assign(c, data);
+    } else {
+      data.id = 'cat-' + Date.now();
+      categories.push(data);
+      selectedId = data.id;
+    }
+    persist(); closeCategoryModal(); renderCategories(); renderProducts();
+  };
+
+  renderCategories();
+  renderProducts();
+})();
+</script>
+</body>
+</html>

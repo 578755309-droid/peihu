@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>商城订单详情 · 佑小邦运营后台</title>
+  <link rel="stylesheet" href="admin-shell.css" />
+  <link rel="stylesheet" href="admin-catalog.css" />
+  <link rel="stylesheet" href="admin-mall.css" />
+  <script src="admin-mall-data.js"></script>
+  <script defer src="admin-sidebar.js"></script>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>商城管理</span><span>›</span><a href="admin-mall-orders.html" style="color:#9AA7BA;text-decoration:none">商城订单</a><span>›</span><span class="current">订单详情</span></div>
+      <div class="top-actions"><span class="top-date" id="topDate"></span><div class="top-av">管</div></div>
+    </header>
+
+    <section class="page" id="pageBody"></section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var M = window.AKBMallAdmin;
+  var no = new URLSearchParams(location.search).get('no') || '';
+
+  document.getElementById('topDate').textContent =
+    (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+
+  var TAG_CLASS = { '待付款': 'mtag-pay', '待发货': 'mtag-ship', '待收货': 'mtag-recv', '已完成': 'mtag-done', '退款/售后': 'mtag-refund', '已取消': 'mtag-cancel' };
+
+  function thumb(p, size) {
+    var fallback = (p.name || '商').slice(0, 1);
+    var img = p.image ? '<img src="' + M.esc(p.image) + '" alt="" onerror="this.remove()">' : '';
+    return '<div class="pdt-thumb tone-' + (p.tone || 'purple') + '" style="width:' + (size || 54) + 'px;height:' + (size || 54) + 'px;font-size:17px">' + img + fallback + '</div>';
+  }
+
+  /* 状态推进映射：step1 提交 → step2 付款备货 → step3 配送 → step4 签收 */
+  function timeline(o) {
+    var steps;
+    if (o.state === '已取消') {
+      steps = [
+        { t: '订单已提交', s: M.esc(o.date) + ' · 已生成商城订单', cls: 'done' },
+        { t: '订单已取消', s: M.esc(o.note || '订单已关闭，不再继续履约'), cls: 'current' }
+      ];
+    } else if (o.state === '退款/售后') {
+      steps = [
+        { t: '订单已提交', s: M.esc(o.date) + ' · 已生成商城订单', cls: 'done' },
+        { t: '付款与备货', s: '用户已付款，商家完成备货', cls: 'done' },
+        { t: '售后申请处理中', s: M.esc(o.note || '用户发起退款/售后申请，等待客服处理'), cls: 'current' }
+      ];
+    } else {
+      var level = { '待付款': 1, '待发货': 2, '待收货': 3, '已完成': 4 }[o.state] || 1;
+      var defs = [
+        { t: '订单已提交', s: M.esc(o.date) + ' · 已生成商城订单' },
+        { t: '付款确认 · 商家备货', s: level >= 2 ? '付款已确认，商品进入备货流程' : '等待用户完成支付' },
+        { t: '商品配送中', s: level >= 3 ? '已按「' + M.esc(o.deliveryLabel) + '」发出，等待用户收货码签收' : '备货完成后安排配送（' + M.esc(o.deliveryLabel) + '）' },
+        { t: '已签收 · 订单完成', s: level >= 4 ? '用户已通过收货码确认签收' : '等待收货码确认签收' }
+      ];
+      steps = defs.map(function (d, i) {
+        return { t: d.t, s: d.s, cls: i < level ? 'done' : (i === level ? 'current' : '') };
+      });
+    }
+    return '<div class="dtimeline">' + steps.map(function (s) {
+      return '<div class="dstep ' + s.cls + '"><div class="ddot"></div><div class="dstep-copy"><strong>' + s.t + '</strong><span>' + s.s + '</span></div></div>';
+    }).join('') + '</div>';
+  }
+
+  function actions(o) {
+    var btns = '';
+    if (o.state === '待付款') {
+      btns = '<button class="btn-action ghost" onclick="act(\'cancel\')">关闭订单</button>' +
+             '<div class="action-note">商城订单均为线上支付，付款后系统自动转入「待发货」，无需人工确认收款；用户支付超时前可关闭订单。</div>';
+    } else if (o.state === '待发货') {
+      btns = '<button class="btn-action primary" onclick="openShipModal(\'' + o.no + '\')">录入发货信息 · 进入配送</button>' +
+             '<div class="action-note">立即送达 / 跑腿订单填写配送单号与配送人信息；快递订单填写快递公司与快递单号。</div>';
+    } else if (o.state === '待收货') {
+      btns = '<button class="btn-action green" onclick="act(\'sign\')">确认用户已签收</button>' +
+             '<div class="action-note">用户输入收货码后在小程序端自动完成；如遇异常可由后台代为确认。</div>';
+    } else if (o.state === '退款/售后') {
+      btns = '<button class="btn-action danger" onclick="act(\'refund\')">同意退款 · 关闭订单</button>' +
+             '<button class="btn-action ghost" onclick="act(\'rejectRefund\')">驳回申请 · 继续履约</button>' +
+             '<div class="action-note">退款前请与用户和配送方核对商品退回情况。</div>';
+    } else {
+      btns = '<button class="btn-action" disabled>' + (o.state === '已完成' ? '订单已完成' : '订单已关闭') + '</button>';
+    }
+    return '<div class="action-box">' + btns + '</div>';
+  }
+
+  function render() {
+    var o = M.getOrder(no);
+    var box = document.getElementById('pageBody');
+    if (!o) {
+      box.innerHTML = '<div class="table-wrap" style="padding:80px;text-align:center;color:#8F9BB0;font-size:14px">' +
+        '未找到订单号「' + M.esc(no) + '」对应的商城订单<br><br>' +
+        '<a class="btn btn-primary" href="admin-mall-orders.html" style="text-decoration:none;display:inline-flex">返回订单列表</a></div>';
+      return;
+    }
+    document.title = o.no + ' · 商城订单详情';
+
+    var goodsTotal = o.items.reduce(function (s, i) { return s + Number(i.price) * i.quantity; }, 0);
+
+    box.innerHTML =
+      '<div class="page-head" style="margin-bottom:18px"><div>' +
+        '<h1 class="page-title" style="font-size:20px">订单详情</h1>' +
+        '<p class="page-sub"><a href="admin-mall-orders.html" style="color:#224CD3;text-decoration:none">‹ 返回商城订单</a></p>' +
+      '</div></div>' +
+
+      '<div class="detail-hero"><div>' +
+        '<div class="detail-hero-kicker">健康商城订单</div>' +
+        '<div class="detail-hero-title">' + M.esc(o.items[0].name) + (o.items.length > 1 ? ' 等 ' + o.items.length + ' 款商品' : '') + '</div>' +
+        '<div class="detail-hero-no">' + o.no + '</div>' +
+      '</div><span class="mtag ' + TAG_CLASS[o.state] + '" style="background:rgba(255,255,255,.18);color:#fff">' +
+        '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#fff"></span>' + o.state + '</span></div>' +
+
+      '<div class="detail-grid"><div>' +
+        /* 商品明细 */
+        '<div class="dcard"><div class="dcard-hd">商品明细</div><div class="dcard-bd">' +
+          o.items.map(function (i) {
+            var subTotal = Number(i.price) * i.quantity;
+            return '<div class="oi-item">' + thumb(i) +
+              '<div class="oi-info"><div class="oi-name">' + M.esc(i.name) + '</div>' +
+              '<div class="oi-sub">' + M.esc(i.desc || '') + '</div></div>' +
+              '<div class="oi-mid"><span>' + M.money(i.price) + '</span><span class="oi-qty">x' + i.quantity + '</span>' +
+              '<span class="oi-price">' + M.money(subTotal) + '</span></div></div>';
+          }).join('') +
+          '<div class="oi-total"><span>商品合计（' + o.quantity + ' 件，含配送费）</span><strong>' + M.money(goodsTotal) + '</strong></div>' +
+        '</div></div>' +
+
+        /* 收货信息 */
+        '<div class="dcard"><div class="dcard-hd">收货与配送</div><div class="dcard-bd">' +
+          row('收货人', M.esc(o.userName) + ' <span class="drow-val muted">' + M.esc(o.userPhone || '') + '</span>') +
+          row('收货地址', M.esc(o.address)) +
+          row('配送方式', '<span class="delivery-tag">' + M.esc(o.deliveryLabel) + '</span>') +
+          shipRows(o) +
+          row('下单时间', M.esc(o.createdAt || o.date)) +
+          row('订单来源', o.source === 'mini' ? '小程序实时下单' : '后台演示订单') +
+          distRow(o) +
+          (o.note ? row('订单备注', M.esc(o.note)) : '') +
+        '</div></div>' +
+
+        /* 进度 */
+        '<div class="dcard"><div class="dcard-hd">订单进度</div><div class="dcard-bd">' + timeline(o) + '</div></div>' +
+      '</div>' +
+
+      '<div>' +
+        /* 费用 */
+        '<div class="dcard"><div class="dcard-hd">费用信息</div><div class="dcard-bd">' +
+          row('商品金额', M.money(goodsTotal)) +
+          row('配送费', '已含在商品售价内', true) +
+          row('实付金额', '<strong style="color:#DC2626;font-size:16px">' + M.money(o.amount) + '</strong>') +
+          commRow(o) +
+        '</div></div>' +
+
+        /* 收货码 */
+        codeCard(o) +
+
+        /* 操作 */
+        '<div class="dcard"><div class="dcard-hd">订单操作</div><div class="dcard-bd">' + actions(o) + '</div></div>' +
+      '</div></div>';
+  }
+
+  /* 分销归属行：无归属不显示 */
+  function distRow(o) {
+    var c = M.distCommission(o);
+    if (!c) return '';
+    return row('分销归属', '<span class="dist-tag">' + M.esc(c.name) + '（' + M.esc(c.id) + '）</span>');
+  }
+  /* 分销佣金行：按分销员比例计算，取消/退款单不结算 */
+  function commRow(o) {
+    var c = M.distCommission(o);
+    if (!c) return '';
+    return row('分销佣金', '<strong style="color:#D97706">' + M.money(c.amount) + '</strong>' +
+      ' <span class="drow-val muted">（' + M.esc(c.name) + ' · 分成 ' + (Math.round(c.rate * 1000) / 10) + '%' + (c.settled ? '）' : '，取消/退款单不结算）') + '</span>');
+  }
+
+  function row(lbl, val, muted) {
+    return '<div class="drow"><span class="drow-lbl">' + lbl + '</span><span class="drow-val' + (muted ? ' muted' : '') + '">' + val + '</span></div>';
+  }
+
+  /* 已录入的发货信息 */
+  function shipRows(o) {
+    var s = o.shipInfo;
+    if (!s) return '';
+    var noLabel = o.deliveryMethod === 'express' ? '快递单号' : (o.deliveryMethod === 'runner' ? '跑腿订单号' : '配送单号');
+    var rows = '';
+    if (s.company) rows += row('快递公司', M.esc(s.company));
+    if (s.trackingNo) rows += row(noLabel, M.esc(s.trackingNo));
+    if (s.courier) rows += row('配送人', M.esc(s.courier) + ' <span class="drow-val muted">' + M.esc(s.courierPhone || '') + '</span>');
+    if (s.shippedAt) rows += row('发货时间', M.esc(s.shippedAt));
+    return rows;
+  }
+
+  function codeCard(o) {
+    if (o.state === '已完成') {
+      return '<div class="dcard"><div class="dcard-hd">签收收货码</div><div class="dcard-bd">' +
+        '<div class="code-box signed"><div class="code">' + M.esc(o.receiptCode || '— — — —') + '</div>' +
+        '<div class="code-hint">收货码已验证，订单于 ' + M.esc(o.date) + ' 完成签收</div></div></div></div>';
+    }
+    if (o.state === '待付款') {
+      return '<div class="dcard"><div class="dcard-hd">签收收货码</div><div class="dcard-bd">' +
+        '<div class="code-box"><div class="code" style="color:#94A3B8">— — — —</div>' +
+        '<div class="code-hint">订单为线上支付，完成付款并由商家发货后生成收货码</div></div></div></div>';
+    }
+    if (o.state === '待收货' || o.state === '待发货') {
+      var hint = o.state === '待收货' ? '商品已发出，配送员送达后由用户输入此码完成签收' :
+                 '订单已付款，发货后用户凭此收货码签收';
+      return '<div class="dcard"><div class="dcard-hd">签收收货码</div><div class="dcard-bd">' +
+        '<div class="code-box"><div class="code">' +
+        M.esc(o.receiptCode || '— — — —') + '</div>' +
+        '<div class="code-hint">' + hint + '</div></div></div></div>';
+    }
+    return '';
+  }
+
+  window.act = function (type) {
+    var o = M.getOrder(no);
+    if (!o) return;
+    if (type === 'cancel') {
+      if (!confirm('确认关闭该订单？')) return;
+      M.updateOrder(no, { state: '已取消', note: '管理员关闭：未完成支付' });
+    } else if (type === 'sign') {
+      if (!confirm('确认用户已实际收到商品并代为完成签收？')) return;
+      M.updateOrder(no, { state: '已完成' });
+    } else if (type === 'refund') {
+      if (!confirm('确认同意退款并关闭订单？')) return;
+      M.updateOrder(no, { state: '已取消', note: '售后退款已完成' });
+    } else if (type === 'rejectRefund') {
+      if (!confirm('驳回售后申请，订单继续按原流程履约？')) return;
+      M.updateOrder(no, { state: '待发货', note: '售后申请已驳回，订单继续履约' });
+    }
+    render();
+  };
+
+  window.AKBRefreshMallPage = render;
+
+  render();
+})();
+</script>
+<script src="admin-mall-ship.js"></script>
+</body>
+</html>

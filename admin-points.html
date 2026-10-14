@@ -1,0 +1,137 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>积分概览 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script></head>
+<body><div class="layout">
+  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>积分管理</span><span>›</span><span class="current">积分概览</span></div>
+      <div class="top-actions"><span class="top-date" id="topDate"></span><div class="top-av">管</div></div>
+    </header>
+
+    <section class="page">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">积分概览</h1>
+          <p class="page-sub">查看积分整体发放与使用情况，配置积分获取与抵扣全局规则</p>
+        </div>
+        <div class="actions" style="display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="saveRules()">保存规则</button>
+        </div>
+      </div>
+
+      <!-- 统计 -->
+      <div class="stats" id="stats"></div>
+
+      <!-- 积分规则配置 -->
+      <div class="rules-card">
+        <div class="rules-head">
+          <div class="rules-title">积分规则</div>
+          <div class="rules-note">规则实时同步小程序端展示与下单抵扣</div>
+        </div>
+        <div class="rules-body">
+          <div class="rules-grid">
+            <div class="rule-item">
+              <div class="k">邀请好友奖励</div>
+              <div class="rule-row">每邀请 1 位好友注册 <input id="rInvite" type="number" min="0"> <span class="unit">积分</span></div>
+            </div>
+            <div class="rule-item">
+              <div class="k">消费返积分</div>
+              <div class="rule-row">每消费 <input id="rConsume" type="number" min="0"> <span class="unit">元返 1 积分</span></div>
+            </div>
+            <div class="rule-item">
+              <div class="k">商城订单积分抵扣</div>
+              <div class="rule-row"><select id="rMallEnabled"><option value="on">开启</option><option value="off">关闭</option></select> 抵扣上限 <input id="rMallCap" type="number" min="1" max="100"> <span class="unit">%</span></div>
+            </div>
+            <div class="rule-item">
+              <div class="k">服务订单积分抵扣</div>
+              <div class="rule-row"><select id="rServiceEnabled"><option value="on">开启</option><option value="off">关闭</option></select> 抵扣上限 <input id="rServiceCap" type="number" min="1" max="100"> <span class="unit">%</span></div>
+            </div>
+          </div>
+          <div class="rules-foot">
+            <div class="rules-tip">口径：<b>1 积分 = 1 元</b>；抵扣上限指订单金额中最多可用积分抵扣的比例。商品与服务支持单独设置：在<b>商品管理</b>、<b>分类服务管理</b>中可对单个商品 / 服务设置，也可勾选后<b>批量设置</b>；未单独设置时跟随此处全局规则。</div>
+            <button class="btn btn-primary" onclick="saveRules()">保存规则</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 明细入口 -->
+      <div class="pt-links">
+        <a class="pt-link" href="admin-points-users.html">
+          <div class="pt-link-ico" style="background:#F0E9FA;color:#7F55B8"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="3"/><circle cx="13" cy="7" r="2.3"/><path d="M1.5 16c.4-3 2.1-4.7 5-4.7s4.6 1.7 5 4.7M11.2 11.5c2.7-.2 4.6 1.1 5.2 4"/></svg></div>
+          <div><div class="pt-link-name">用户积分</div><div class="pt-link-sub" id="lkUsers">—</div></div>
+        </a>
+        <a class="pt-link" href="admin-points-earn.html">
+          <div class="pt-link-ico" style="background:#DCFCE7;color:#16A34A"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="7"/><path d="M9 5.5v7M5.5 9h7"/></svg></div>
+          <div><div class="pt-link-name">获取明细</div><div class="pt-link-sub" id="lkEarn">—</div></div>
+        </a>
+        <a class="pt-link" href="admin-points-spend.html">
+          <div class="pt-link-ico" style="background:#FEF3C7;color:#D97706"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="7"/><path d="M5.5 9h7"/></svg></div>
+          <div><div class="pt-link-name">使用明细</div><div class="pt-link-sub" id="lkSpend">—</div></div>
+        </a>
+        <a class="pt-link" href="admin-points-invite.html">
+          <div class="pt-link-ico" style="background:#E7F1FD;color:#224CD3"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11a3.5 3.5 0 004.95 0l2.3-2.3a3.5 3.5 0 00-4.95-4.95l-1.15 1.15"/><path d="M11 7a3.5 3.5 0 00-4.95 0l-2.3 2.3a3.5 3.5 0 004.95 4.95l1.15-1.15"/></svg></div>
+          <div><div class="pt-link-name">邀请明细</div><div class="pt-link-sub" id="lkInvite">—</div></div>
+        </a>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var P = window.AKBPointsAdmin;
+
+  document.getElementById('topDate').textContent =
+    (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+
+  function renderStats() {
+    var s = P.summarize();
+    var cards = [
+      { v: s.userCount, l: '积分用户', f: '注册即自动开通积分账户', c: 'total' },
+      { v: '+' + s.totalEarned, l: '累计发放积分', f: '邀请奖励 + 消费返积分', c: 'earn' },
+      { v: '-' + s.totalSpent, l: '累计使用积分', f: '订单抵扣 1 积分 = 1 元', c: 'spend' },
+      { v: s.totalBalance, l: '当前可用积分总额', f: s.pendingInvite ? ('待注册邀请 ' + s.pendingInvite + ' 条，奖励暂未发放') : '邀请奖励均已发放', c: 'balance' }
+    ];
+    document.getElementById('stats').innerHTML = cards.map(function (c) {
+      return '<div class="stat ' + c.c + '"><div class="stat-label">' + c.l + '</div><div class="stat-value">' + c.v + '</div><div class="stat-sub">' + c.f + '</div></div>';
+    }).join('');
+    document.getElementById('lkUsers').textContent = s.userCount + ' 位积分用户';
+    document.getElementById('lkEarn').textContent = P.getEarnRecords().length + ' 条获取记录';
+    document.getElementById('lkSpend').textContent = P.getSpendRecords().length + ' 条使用记录';
+    document.getElementById('lkInvite').textContent = s.inviteCount + ' 条邀请记录';
+  }
+
+  function fillRules() {
+    var c = P.getConfig();
+    document.getElementById('rInvite').value = c.inviteReward;
+    document.getElementById('rConsume').value = c.consumePerYuan;
+    document.getElementById('rMallEnabled').value = c.mallEnabled ? 'on' : 'off';
+    document.getElementById('rMallCap').value = c.mallCapPercent;
+    document.getElementById('rServiceEnabled').value = c.serviceEnabled ? 'on' : 'off';
+    document.getElementById('rServiceCap').value = c.serviceCapPercent;
+  }
+  window.saveRules = function () {
+    var invite = Number(document.getElementById('rInvite').value);
+    var consume = Number(document.getElementById('rConsume').value);
+    var mallCap = Number(document.getElementById('rMallCap').value);
+    var serviceCap = Number(document.getElementById('rServiceCap').value);
+    if (!(invite >= 0) || !(consume >= 0)) { alert('请填写正确的积分获取规则'); return; }
+    if (!(mallCap >= 1 && mallCap <= 100)) { alert('商城订单抵扣上限需为 1 - 100 之间的数字'); return; }
+    if (!(serviceCap >= 1 && serviceCap <= 100)) { alert('服务订单抵扣上限需为 1 - 100 之间的数字'); return; }
+    P.saveConfig({
+      inviteReward: Math.floor(invite),
+      consumePerYuan: Math.floor(consume),
+      mallEnabled: document.getElementById('rMallEnabled').value === 'on',
+      mallCapPercent: mallCap,
+      serviceEnabled: document.getElementById('rServiceEnabled').value === 'on',
+      serviceCapPercent: serviceCap
+    });
+    fillRules();
+    alert('积分规则已保存，小程序端下单抵扣与展示同步生效');
+  };
+
+  fillRules();
+  renderStats();
+})();
+</script>
+</body></html>

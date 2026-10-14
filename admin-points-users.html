@@ -1,0 +1,119 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>用户积分 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script></head>
+<body><div class="layout">
+  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>积分管理</span><span>›</span><span class="current">用户积分</span></div>
+      <div class="top-actions"><span class="top-date" id="topDate"></span><div class="top-av">管</div></div>
+    </header>
+
+    <section class="page">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">用户积分</h1>
+          <p class="page-sub">查看每位用户的可用积分、累计获取与使用情况，可进入个人积分明细</p>
+        </div>
+        <div class="actions" style="display:flex;gap:10px">
+          <button class="btn" onclick="exportUsers()">导出 CSV</button>
+        </div>
+      </div>
+
+      <!-- 筛选 -->
+      <div class="filter">
+        <label>关键词</label>
+        <input class="search" id="fSearch" placeholder="搜索用户姓名 / 手机号" />
+        <span class="result">共 <strong id="count">0</strong> 位用户</span>
+      </div>
+
+      <!-- 表格 -->
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>用户</th><th>手机号</th><th>可用积分</th><th>累计获取</th><th>累计使用</th><th>邀请好友</th><th>注册时间</th><th>操作</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty" id="empty" style="display:none"><div class="e-icon">·</div><div class="e-title">暂无数据</div></div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<!-- 用户积分明细弹窗 -->
+<div class="modal-mask" id="userModal" onclick="if(event.target===this)closeUserModal()">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="userModalTitle">用户积分明细</div><button class="modal-close" onclick="closeUserModal()">×</button></div>
+    <div class="modal-body" id="userModalBody"></div>
+    <div class="modal-foot"><button class="btn" onclick="closeUserModal()">关闭</button></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var P = window.AKBPointsAdmin;
+
+  document.getElementById('topDate').textContent =
+    (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+
+  function filtered() {
+    var kw = document.getElementById('fSearch').value.trim().toLowerCase();
+    return P.getUsers().filter(function (u) {
+      return !kw || (u.name + u.phone + u.id).toLowerCase().indexOf(kw) > -1;
+    });
+  }
+
+  function render() {
+    var list = filtered();
+    document.getElementById('count').textContent = list.length;
+    document.getElementById('empty').style.display = list.length ? 'none' : 'block';
+    document.getElementById('rows').innerHTML = list.map(function (u) {
+      return '<tr>' +
+        '<td><div class="name-cell"><div class="main">' + P.esc(u.name) + '</div><div class="sub">' + P.esc(u.id) + '</div></div></td>' +
+        '<td class="mono">' + P.esc(u.phone) + '</td>' +
+        '<td><span class="pt-val" style="color:#7F55B8">' + u.balance + '</span></td>' +
+        '<td><span class="pt-val plus" style="font-size:13px">+' + u.totalEarned + '</span></td>' +
+        '<td><span class="pt-val minus" style="font-size:13px">-' + u.totalSpent + '</span></td>' +
+        '<td>' + u.inviteCount + ' 人</td>' +
+        '<td class="time-cell">' + P.esc(u.joinedAt) + '</td>' +
+        '<td><div class="op"><button onclick="openUserDetail(\'' + P.esc(u.id) + '\')">查看明细</button></div></td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  window.openUserDetail = function (userId) {
+    var d = P.userDetail(userId);
+    if (!d.user) return;
+    var u = d.user;
+    document.getElementById('userModalTitle').textContent = u.name + ' · 积分明细';
+    var earnRows = d.earn.length ? d.earn.map(function (r) {
+      return '<div class="ud-row"><span class="t">' + P.esc(r.date) + '</span><span class="tag ' + (r.type === '邀请好友' ? 'invite' : 'consume') + '">' + P.esc(r.type) + '</span><span class="d">' + P.esc(r.detail) + '</span><span class="p plus">+' + r.points + '</span></div>';
+    }).join('') : '<div class="ud-empty">暂无获取记录</div>';
+    var spendRows = d.spend.length ? d.spend.map(function (r) {
+      return '<div class="ud-row"><span class="t">' + P.esc(r.date) + '</span><span class="tag ' + (r.orderType === '商城订单' ? 'mall' : 'service') + '">' + P.esc(r.orderType) + '</span><span class="d">' + P.esc(r.orderNo) + ' · ' + P.esc(r.detail) + '</span><span class="p minus">-' + r.points + '</span></div>';
+    }).join('') : '<div class="ud-empty">暂无使用记录</div>';
+    var inviteRows = d.invite.length ? d.invite.map(function (r) {
+      return '<div class="ud-row"><span class="t">' + P.esc(r.date) + '</span><span class="d">邀请 ' + P.esc(r.invitee) + '（' + P.esc(r.inviteePhone) + '）</span><span class="tag ' + (r.status === '已注册' ? 'done' : 'waiting') + '">' + P.esc(r.status) + '</span><span class="p ' + (r.reward > 0 ? 'plus' : '') + '">' + (r.reward > 0 ? '+' + r.reward : '待发放') + '</span></div>';
+    }).join('') : '<div class="ud-empty">暂无邀请记录</div>';
+    document.getElementById('userModalBody').innerHTML =
+      '<div class="ud-summary">' +
+        '<div><div class="k">可用积分</div><div class="v purple">' + u.balance + '</div></div>' +
+        '<div><div class="k">累计获取</div><div class="v green">+' + u.totalEarned + '</div></div>' +
+        '<div><div class="k">累计使用</div><div class="v orange">-' + u.totalSpent + '</div></div>' +
+        '<div><div class="k">邀请好友</div><div class="v blue">' + u.inviteCount + ' 人</div></div>' +
+      '</div>' +
+      '<div class="ud-section"><div class="ud-section-title">获取明细</div>' + earnRows + '</div>' +
+      '<div class="ud-section"><div class="ud-section-title">使用明细</div>' + spendRows + '</div>' +
+      '<div class="ud-section"><div class="ud-section-title">邀请明细</div>' + inviteRows + '</div>';
+    document.getElementById('userModal').classList.add('show');
+  };
+  window.closeUserModal = function () { document.getElementById('userModal').classList.remove('show'); };
+
+  window.exportUsers = function () {
+    P.exportCsv('用户积分.csv', ['用户ID', '姓名', '手机号', '可用积分', '累计获取', '累计使用', '邀请好友数', '注册时间'],
+      filtered().map(function (u) { return [u.id, u.name, u.phone, u.balance, u.totalEarned, u.totalSpent, u.inviteCount, u.joinedAt]; }));
+  };
+
+  document.getElementById('fSearch').oninput = render;
+  render();
+})();
+</script>
+</body></html>

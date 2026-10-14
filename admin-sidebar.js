@@ -5,10 +5,24 @@
     if(shared)document.head.appendChild(shared);
     var side=document.querySelector('.sidebar'); if(!side)return;
     var file=(location.pathname.split('/').pop()||'admin.html').toLowerCase();
-    currentActive=file==='admin.html'?'dashboard':file.indexOf('service-categories')>-1?'catalog':file.indexOf('order')>-1?'orders':file.indexOf('caregiver')>-1?'caregivers':file.indexOf('user')>-1?'users':'';
-    side.innerHTML='<div class="sb-logo"><div class="sb-logo-title">多康陪护</div><div class="sb-logo-sub">运营管理后台 v2.1</div></div>'+
+    currentActive=file==='admin.html'?'dashboard':file.indexOf('admin-mall-order')>-1?'mall-orders':file.indexOf('admin-mall-products')>-1?'mall-products':file.indexOf('admin-mall-categories')>-1?'mall-categories':file.indexOf('admin-mall-distribution')>-1?'mall-dist':file==='admin-mall.html'?'mall-dashboard':file.indexOf('bookings')>-1?'bookings':file.indexOf('service-categories')>-1?'catalog':file==='admin-points.html'?'points':file.indexOf('points-users')>-1?'points-users':file.indexOf('points-earn')>-1?'points-earn':file.indexOf('points-spend')>-1?'points-spend':file.indexOf('points-invite')>-1?'points-invite':file.indexOf('contract')>-1?'contracts':file.indexOf('consult')>-1?'consult':file.indexOf('order')>-1?'orders':file.indexOf('caregiver')>-1?'caregivers':file.indexOf('user')>-1?'users':'';
+    side.innerHTML='<div class="sb-logo"><div class="sb-logo-title">佑小邦</div><div class="sb-logo-sub">运营管理后台 v2.1</div></div>'+
       '<nav class="sb-nav"><div class="sb-section-lbl">概览</div>'+item('dashboard','数据总览','admin.html','<rect x="2" y="2" width="6" height="6" rx="1.5"/><rect x="10" y="2" width="6" height="6" rx="1.5"/><rect x="2" y="10" width="6" height="6" rx="1.5"/><rect x="10" y="10" width="6" height="6" rx="1.5"/>')+
-      '<div class="sb-section-lbl">业务管理</div>'+item('orders','订单管理','admin-orders.html','<rect x="3" y="2" width="12" height="14" rx="2"/><path d="M6 6h6M6 9h6M6 12h4"/>','12')+item('caregivers','陪护员管理','admin-caregivers.html','<circle cx="9" cy="6" r="3"/><path d="M2.5 16c.4-3.2 2.6-5 6.5-5s6.1 1.8 6.5 5"/>')+item('users','用户管理','admin-users.html','<circle cx="6.5" cy="6" r="3"/><circle cx="13" cy="7" r="2.3"/><path d="M1.5 16c.4-3 2.1-4.7 5-4.7s4.6 1.7 5 4.7M11.2 11.5c2.7-.2 4.6 1.1 5.2 4"/>')+item('catalog','分类服务管理','admin-service-categories.html','<path d="M3 4h12M3 9h12M3 14h12"/><circle cx="7" cy="4" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="9" r="1.5" fill="currentColor" stroke="none"/><circle cx="6" cy="14" r="1.5" fill="currentColor" stroke="none"/>')+
+      '<div class="sb-section-lbl">业务管理</div>'+item('orders','订单管理','admin-orders.html','<rect x="3" y="2" width="12" height="14" rx="2"/><path d="M6 6h6M6 9h6M6 12h4"/>','12')+item('caregivers','陪护员管理','admin-caregivers.html','<circle cx="9" cy="6" r="3"/><path d="M2.5 16c.4-3.2 2.6-5 6.5-5s6.1 1.8 6.5 5"/>')+item('users','用户管理','admin-users.html','<circle cx="6.5" cy="6" r="3"/><circle cx="13" cy="7" r="2.3"/><path d="M1.5 16c.4-3 2.1-4.7 5-4.7s4.6 1.7 5 4.7M11.2 11.5c2.7-.2 4.6 1.1 5.2 4"/>')+item('catalog','分类服务管理','admin-service-categories.html','<path d="M3 4h12M3 9h12M3 14h12"/><circle cx="7" cy="4" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="9" r="1.5" fill="currentColor" stroke="none"/><circle cx="6" cy="14" r="1.5" fill="currentColor" stroke="none"/>')+item('bookings','预约管理','admin-bookings.html','<rect x="2.5" y="3.5" width="13" height="12" rx="2"/><path d="M2.5 7h13M6.5 1.5v4M11.5 1.5v4M6.5 10h5"/>',bookingBadge())+item('contracts','合同管理','admin-contracts.html','<path d="M4 2.5h7.5L14.5 6v9.5h-10.5z"/><path d="M11 2.5V6h3.5M6.5 9h5M6.5 11.5h5M6.5 14.5l1.2 1 2.3-2.2"/>')+
+      '<div class="sb-section-lbl">商城管理</div>'+
+      item('mall-dashboard','商城概览','admin-mall.html','<path d="M2.8 6.2l1.6-2.6h9.2l1.6 2.6M2.8 6.2h14.4M4.2 6.2l1 9.3h9.6l1-9.3M9 9.2v3.4"/>')+
+      item('mall-products','商品管理','admin-mall-products.html','<path d="M9 2.6L3.2 5.4v7.2l5.8 2.8 5.8-2.8V5.4L9 2.6zM3.2 5.4L9 8.2l5.8-2.8M9 8.2v7.2"/>')+
+      item('mall-categories','商品分类','admin-mall-categories.html','<rect x="2.6" y="2.6" width="5.4" height="5.4" rx="1.2"/><rect x="10" y="2.6" width="5.4" height="5.4" rx="1.2"/><rect x="2.6" y="10" width="5.4" height="5.4" rx="1.2"/><rect x="10" y="10" width="5.4" height="5.4" rx="1.2"/>')+
+      item('mall-orders','商城订单','admin-mall-orders.html','<path d="M5.2 7.2h13.6l-1.1 9H6.3l-1.1-9zM8.7 7.2V5.8a3.3 3.3 0 016.6 0v1.4"/>',mallBadge())+
+      item('mall-dist','分销管理','admin-mall-distribution.html','<circle cx="4.5" cy="9" r="2"/><circle cx="13.5" cy="4.5" r="2"/><circle cx="13.5" cy="13.5" r="2"/><path d="M6.3 7.9l5.4-2.5M6.3 10.1l5.4 2.5"/>')+
+      '<div class="sb-section-lbl">积分管理</div>'+
+      item('points','积分概览','admin-points.html','<circle cx="9" cy="9" r="7.2"/><path d="M6.6 5.6L9 8.8l2.4-3.2M9 8.8v4.6M6.9 9.8h4.2M6.9 11.8h4.2"/>')+
+      item('points-users','用户积分','admin-points-users.html','<circle cx="6.5" cy="6" r="3"/><circle cx="13" cy="7" r="2.3"/><path d="M1.5 16c.4-3 2.1-4.7 5-4.7s4.6 1.7 5 4.7M11.2 11.5c2.7-.2 4.6 1.1 5.2 4"/>')+
+      item('points-earn','获取明细','admin-points-earn.html','<circle cx="9" cy="9" r="7"/><path d="M9 5.5v7M5.5 9h7"/>')+
+      item('points-spend','使用明细','admin-points-spend.html','<circle cx="9" cy="9" r="7"/><path d="M5.5 9h7"/>')+
+      item('points-invite','邀请明细','admin-points-invite.html','<path d="M7 11a3.5 3.5 0 004.95 0l2.3-2.3a3.5 3.5 0 00-4.95-4.95l-1.15 1.15"/><path d="M11 7a3.5 3.5 0 00-4.95 0l-2.3 2.3a3.5 3.5 0 004.95 4.95l1.15-1.15"/>')+
+      '<div class="sb-section-lbl">资讯管理</div>'+
+      item('consult','资讯管理','admin-consult.html','<path d="M3 3.5h12v9H8l-3.4 2.6c-.3.2-.6 0-.6-.4z"/><path d="M6 7h6M6 9.6h4"/>')+
       '<div class="sb-section-lbl">系统</div>'+item('settings','系统设置','profile.html','<circle cx="9" cy="9" r="2.5"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.6 3.6L5 5M13 13l1.4 1.4M3.6 14.4L5 13M13 5l1.4-1.4"/>')+'</nav>'+
       '<div class="sb-user"><div class="sb-av">管</div><div><div class="sb-uname">超级管理员</div><div class="sb-urole">admin@akb.com</div></div><button class="sb-logout" onclick="if(confirm(\'确认退出？\'))location.href=\'index.html\'">↗</button></div>';
     if(file.indexOf('user-detail')>-1||file.indexOf('caregiver-detail')>-1){
@@ -121,5 +135,25 @@
       '</tbody></table></div>';
   }
   function item(key,label,href,path,badge){return '<a class="nav-link '+(key===currentActive?'active':'')+'" href="'+href+'"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'+path+'</svg>'+label+(badge?'<span class="nav-badge">'+badge+'</span>':'')+'</a>';}
+  function mallBadge(){
+    try{
+      var list=JSON.parse(localStorage.getItem('akb_admin_mall_orders')||'null');
+      if(Array.isArray(list)){
+        var n=list.filter(function(o){return o.state==='待发货';}).length;
+        return n?String(n):'';
+      }
+    }catch(e){}
+    return '';
+  }
+  function bookingBadge(){
+    try{
+      var list=JSON.parse(localStorage.getItem('akb_bookings')||'null');
+      if(Array.isArray(list)){
+        var n=list.filter(function(o){return o.status==='pending';}).length;
+        return n?String(n):'';
+      }
+    }catch(e){}
+    return '';
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

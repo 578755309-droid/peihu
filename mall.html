@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>健康商城 · 多康陪护</title>
+  <title>健康商城 · 佑小邦</title>
   <style>
     :root{--purple:#8655C5;--purple-dark:#6B3FAA;--purple-light:#EDE6F7;--purple-bg:#F5F3FA;--card:#fff;--text:#1A1828;--text2:#6B6880;--text3:#AEACC0;--border:#EDE9F5;--red:#EF4444;--green:#16965A;--sh:0 2px 16px rgba(100,60,160,.08)}
     *{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;background:var(--purple-bg);color:var(--text);-webkit-font-smoothing:antialiased}button,input{font:inherit}.frame{display:flex;justify-content:center;min-height:100vh;background:#E4DDF0}.phone{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;background:var(--purple-bg);position:relative}@media(min-width:520px){.frame{align-items:flex-start;padding:20px 0 40px}.phone{height:900px;min-height:unset;border-radius:42px;overflow:hidden;box-shadow:0 24px 72px rgba(80,40,140,.22)}}
@@ -60,10 +60,59 @@
   let pendingPurchase=null;
   function cartTotal(){return cart.reduce(function(sum,item){const p=PRODUCTS.find(function(product){return product.id===item.id});return sum+(p?p.price*item.qty:0)},0)}
   function submitPurchase(){if(!cart.length)return;const total=cartTotal();document.getElementById('checkoutBody').innerHTML='<div class="checkout-total"><span>商品合计</span><strong>¥'+total+'</strong></div><div style="font-size:12px;color:var(--text2)">共 '+cart.reduce(function(sum,item){return sum+item.qty},0)+' 件商品，配送至默认收货地址</div>';pendingPurchase={items:cart.map(function(item){return {id:item.id,qty:item.qty}}),total:total};closeOverlay('cartOverlay');document.getElementById('checkoutOverlay').classList.add('show')}
-  function confirmPurchase(){if(!pendingPurchase)return;const number='AKB-M'+new Date().getFullYear()+String(Math.floor(Math.random()*999999)).padStart(6,'0');const code=String(Math.floor(1000+Math.random()*9000));const method=document.querySelector('input[name="deliveryMethod"]:checked');const labels={instant:'立即送达',runner:'跑腿送达',express:'快递送达'};const products=pendingPurchase.items.map(function(item){const p=PRODUCTS.find(function(product){return product.id===item.id});return p?{product:p.name,desc:p.sub,price:String(p.price),quantity:item.qty,image:p.image,tone:p.tone}:null}).filter(Boolean);const first=products[0]||{};const order={id:number,status:'shipping',state:'待发货',product:first.product||'健康商品',desc:first.desc||'',price:first.price||String(pendingPurchase.total),quantity:pendingPurchase.items.reduce(function(sum,item){return sum+item.qty},0),amount:String(pendingPurchase.total),date:new Date().toISOString().slice(0,10),address:'默认收货地址',image:first.image||'',tone:first.tone||'purple',deliveryMethod:method?method.value:'instant',deliveryLabel:labels[method?method.value:'instant'],receiptCode:code,deliveryStatus:'processing',items:products};let saved=[];try{saved=JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');if(!Array.isArray(saved))saved=[]}catch(e){saved=[]}saved.unshift(order);localStorage.setItem('ankebang_mall_orders',JSON.stringify(saved));cart=[];saveCart();pendingPurchase=null;closeOverlay('checkoutOverlay');document.getElementById('successNo').textContent='订单号：'+number;document.getElementById('successDelivery').textContent='配送方式：'+order.deliveryLabel+' · 收货码：'+code;document.getElementById('successOverlay').classList.add('show')}
+  function confirmPurchase(){if(!pendingPurchase)return;const distInfo=(function(){try{const did=localStorage.getItem('ankebang_mall_dist');if(!did)return null;const ds=JSON.parse(localStorage.getItem('akb_admin_mall_distributors')||'[]');const d=ds.find(function(x){return x.id===did&&x.status==='on'});return d?{id:d.id,name:d.name,rate:Number(d.rate)||0.1}:null}catch(e){return null}})();const number='AKB-M'+new Date().getFullYear()+String(Math.floor(Math.random()*999999)).padStart(6,'0');const code=String(Math.floor(1000+Math.random()*9000));const method=document.querySelector('input[name="deliveryMethod"]:checked');const labels={instant:'立即送达',runner:'跑腿送达',express:'快递送达'};const products=pendingPurchase.items.map(function(item){const p=PRODUCTS.find(function(product){return product.id===item.id});return p?{product:p.name,desc:p.sub,price:String(p.price),quantity:item.qty,image:p.image,tone:p.tone}:null}).filter(Boolean);const first=products[0]||{};const order={id:number,status:'shipping',state:'待发货',product:first.product||'健康商品',desc:first.desc||'',price:first.price||String(pendingPurchase.total),quantity:pendingPurchase.items.reduce(function(sum,item){return sum+item.qty},0),amount:String(pendingPurchase.total),date:new Date().toISOString().slice(0,10),address:'默认收货地址',image:first.image||'',tone:first.tone||'purple',deliveryMethod:method?method.value:'instant',deliveryLabel:labels[method?method.value:'instant'],receiptCode:code,deliveryStatus:'processing',items:products,distId:distInfo?distInfo.id:'',distName:distInfo?distInfo.name:'',distRate:distInfo?distInfo.rate:0};let saved=[];try{saved=JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');if(!Array.isArray(saved))saved=[]}catch(e){saved=[]}saved.unshift(order);localStorage.setItem('ankebang_mall_orders',JSON.stringify(saved));cart=[];saveCart();pendingPurchase=null;closeOverlay('checkoutOverlay');document.getElementById('successNo').textContent='订单号：'+number;document.getElementById('successDelivery').textContent='配送方式：'+order.deliveryLabel+' · 收货码：'+code;document.getElementById('successOverlay').classList.add('show')}
   function closeOverlay(id){document.getElementById(id).classList.remove('show')}
   function closeBackdrop(event,id){if(event.target===document.getElementById(id))closeOverlay(id)}
   renderProducts();updateCartCount();
+
+  /* 与运营后台「商城管理」模块联动：后台保存的商品/分类配置覆盖默认数据，下架商品隐藏 */
+  (function(){
+    try{
+      var managed=JSON.parse(localStorage.getItem('akb_admin_mall_products')||'null');
+      if(Array.isArray(managed)&&managed.length){
+        PRODUCTS.splice(0,PRODUCTS.length);
+        managed.forEach(function(p){ if(p.status!=='off')PRODUCTS.push(p); });
+        renderProducts();
+      }
+    }catch(e){}
+    try{
+      var cats=JSON.parse(localStorage.getItem('akb_admin_mall_categories')||'null');
+      if(Array.isArray(cats)&&cats.length){
+        var activeHidden=false;
+        document.querySelectorAll('.category[data-category]').forEach(function(btn){
+          var id=btn.getAttribute('data-category');
+          if(id==='all')return;
+          var cat=cats.filter(function(c){return c.id===id;})[0];
+          if(!cat||cat.status==='off'){ btn.style.display='none'; if(btn.classList.contains('active'))activeHidden=true; }
+          else { btn.style.display=''; btn.textContent=cat.name; }
+        });
+        if(activeHidden){
+          var allBtn=document.querySelector('.category[data-category="all"]');
+          if(allBtn)setCategory(allBtn,'all');
+        }
+      }
+    }catch(e){}
+  })();
+
+  /* 分销承接：微信「扫一扫」分销员二维码（mall.html?dist=D1001）进入商城，
+     记住归属并展示提示条，之后下单自动归属该分销员 */
+  (function(){
+    try{
+      var q=new URLSearchParams(location.search).get('dist');
+      if(q)localStorage.setItem('ankebang_mall_dist',q);
+      var did=localStorage.getItem('ankebang_mall_dist');
+      if(!did)return;
+      var ds=JSON.parse(localStorage.getItem('akb_admin_mall_distributors')||'[]');
+      var d=ds.filter(function(x){return x.id===did&&x.status==='on'})[0];
+      if(!d)return;
+      var bar=document.createElement('div');
+      bar.style.cssText='margin:10px 16px 0;padding:10px 13px;border-radius:13px;background:linear-gradient(120deg,#FFF7E8,#FFE9C7);color:#8A5A16;font-size:12px;font-weight:800;display:flex;align-items:center;gap:7px;line-height:1.5';
+      bar.innerHTML='<svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="flex-shrink:0"><circle cx="4.5" cy="9" r="2" stroke="#B97A1A" stroke-width="1.5"/><circle cx="13.5" cy="4.5" r="2" stroke="#B97A1A" stroke-width="1.5"/><circle cx="13.5" cy="13.5" r="2" stroke="#B97A1A" stroke-width="1.5"/><path d="M6.3 7.9l5.4-2.5M6.3 10.1l5.4 2.5" stroke="#B97A1A" stroke-width="1.5"/></svg><span>由「'+esc(d.name)+'」推荐进入 · 下单完成后 TA 可获得推广分成</span>';
+      var grid=document.getElementById('productGrid');
+      var anchor=document.querySelector('.category-row')||grid;
+      if(anchor&&anchor.parentNode)anchor.parentNode.insertBefore(bar,anchor);
+    }catch(e){}
+  })();
 </script>
 </body>
 </html>

@@ -394,7 +394,7 @@
       <!-- Hero header -->
       <div class="hero">
         <div class="hero-top">
-          <span class="hero-brand">多康 · 护理员端</span>
+          <span class="hero-brand">佑小邦 · 护理员端</span>
           <button class="notif-btn" onclick="alert('暂无新通知')">
             <svg viewBox="0 0 20 20" fill="none">
               <path d="M10 2a6 6 0 016 6c0 3.5.8 5 1.5 6H2.5C3.2 13 4 11.5 4 8a6 6 0 016-6z" stroke="rgba(255,255,255,.9)" stroke-width="1.5"/>
@@ -490,7 +490,6 @@
 
               <!-- Buttons -->
               <div class="action-row">
-                <button class="btn-transfer" onclick="openTransfer()">转&nbsp;单</button>
                 <button class="btn-accept" onclick="acceptOrder()">
                   <svg viewBox="0 0 18 18" fill="none">
                     <path d="M3.5 9.5l4 4 7-8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -673,27 +672,6 @@
   </div><!-- .phone -->
 </div><!-- .frame -->
 
-<!-- Transfer modal -->
-<div class="tf-overlay" id="tfOverlay" onclick="if(event.target===this)closeTransfer()">
-  <div class="tf-modal">
-    <div class="tf-hd">
-      <div class="tf-icon">
-        <svg viewBox="0 0 20 20" fill="none">
-          <path d="M3 10h11M10 6l4 4-4 4" stroke="#D97706" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M17 3v14" stroke="#D97706" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <span class="tf-title">因个人原因无法接单？</span>
-    </div>
-    <div class="tf-desc">填写原因即可发起转单申请，待管理员审核后将匹配新护工为患者继续服务。</div>
-    <textarea class="tf-textarea" id="tfReason" placeholder="请填写转单原因，如：临时身体不适、家中有紧急事务…" maxlength="200"></textarea>
-    <div class="tf-foot">
-      <button class="tf-cancel" onclick="closeTransfer()">再想想</button>
-      <button class="tf-submit" onclick="submitTransfer()">提交申请</button>
-    </div>
-  </div>
-</div>
-
 <script>
   /* ── Countdown ── */
   let secs = 299;
@@ -742,25 +720,6 @@
     const txt  = document.getElementById('statusText');
     pill.className = 'status-pill busy';
     txt.textContent = '服务中';
-  }
-
-  /* ── Transfer ── */
-  function openTransfer() {
-    document.getElementById('tfOverlay').classList.add('show');
-    document.getElementById('tfReason').value = '';
-    document.getElementById('tfReason').focus();
-  }
-  function closeTransfer() {
-    document.getElementById('tfOverlay').classList.remove('show');
-  }
-  function submitTransfer() {
-    const reason = document.getElementById('tfReason').value.trim();
-    if (!reason) { alert('请填写转单原因'); return; }
-    closeTransfer();
-    document.getElementById('pendingCard').style.display = 'none';
-    document.getElementById('noOrder').style.display = 'block';
-    secs = -1;
-    showToast('📨', '转单申请已提交，请等待审核');
   }
 </script>
 </body>

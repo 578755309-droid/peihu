@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>商城订单 · 佑小邦运营后台</title>
+  <link rel="stylesheet" href="admin-shell.css" />
+  <link rel="stylesheet" href="admin-catalog.css" />
+  <link rel="stylesheet" href="admin-mall.css" />
+  <script src="admin-mall-data.js"></script>
+  <script defer src="admin-sidebar.js"></script>
+  <style>
+    /* 复刻旧版「订单管理 › 商城订单」行样式 */
+    .mall-order-row td{background:#FCFEFF}
+    .mall-order-row .order-no{font-weight:800;color:#172033}
+    .mall-order-row .sub{font-size:11px;color:#9AA7BA;margin-top:3px}
+    .mall-order-row .product-name{font-weight:800;color:#172033}
+    .mall-order-row .person-name{font-weight:800;color:#172033;white-space:nowrap}
+    .mall-order-row .service{font-weight:800;color:#172033}
+    .mall-order-row .location{white-space:normal;line-height:1.45;word-break:break-all}
+    .mall-order-row .address-type{display:inline-flex;margin-right:5px;padding:3px 6px;border-radius:6px;background:#E7F1FD;color:#224CD3;font-size:10px;font-weight:800;vertical-align:top}
+    .mall-order-row .address-detail{font-size:11px;color:#657087}
+    .mall-order-row .delivery-type{font-weight:800;color:#224CD3;white-space:nowrap}
+    .mall-order-row .logistics{line-height:1.5;white-space:normal;font-weight:700;color:#41536D}
+    .mall-order-row .tag{display:inline-flex;padding:5px 9px;border-radius:18px;font-size:11px;font-weight:800;white-space:nowrap}
+    .mall-order-row .tag.pay{background:#FEF3C7;color:#D97706}
+    .mall-order-row .tag.accepted,.mall-order-row .tag.serving{background:#E7F1FD;color:#224CD3}
+    .mall-order-row .tag.pending{background:#FEF3C7;color:#D97706}
+    .mall-order-row .tag.done{background:#DCFCE7;color:#16A34A}
+    .mall-order-row .tag.refund,.mall-order-row .tag.cancel{background:#FEE2E2;color:#DC2626}
+    .mall-table .op{display:flex;gap:10px;white-space:nowrap}
+    .mall-table .op button{border:0;background:none;color:#224CD3;font:700 12px inherit;cursor:pointer;padding:0}
+    .mall-table .op button:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>商城管理</span><span>›</span><span class="current">商城订单</span></div>
+      <div class="top-actions"><span class="top-date" id="topDate"></span><div class="top-av">管</div></div>
+    </header>
+
+    <section class="page">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">商城订单</h1>
+          <p class="page-sub">处理健康商城的支付、备货、发货与签收，支持立即送达 / 跑腿 / 快递三种配送方式</p>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="exportOrders()">导出订单 CSV</button>
+        </div>
+      </div>
+
+      <!-- 统计卡 -->
+      <div class="mall-metrics" id="metricCards" style="grid-template-columns:repeat(4,1fr)"></div>
+
+      <!-- 状态 Tabs（带计数） -->
+      <div class="mall-tabs" id="stateTabs"></div>
+
+      <!-- 筛选 -->
+      <div class="mall-filter">
+        <label>商品</label>
+        <select class="select" id="fProduct"><option value="all">全部商品</option></select>
+        <label>配送方式</label>
+        <select class="select" id="fDelivery">
+          <option value="all">全部方式</option>
+          <option value="instant">立即送达</option>
+          <option value="runner">跑腿送达</option>
+          <option value="express">快递送达</option>
+        </select>
+        <label>日期</label>
+        <select class="select" id="fDate">
+          <option value="all">全部日期</option>
+          <option value="7">近 7 天</option>
+          <option value="30">近 30 天</option>
+        </select>
+        <input class="search" id="fSearch" placeholder="搜索订单号 / 商品 / 收货人 / 地址" />
+        <span id="distChip"></span>
+        <span class="result">共 <strong id="count">0</strong> 笔订单</span>
+      </div>
+
+      <!-- 表格：列结构与旧版订单管理商城订单一致 -->
+      <div class="table-wrap mall-table-wrap">
+        <table class="table mall-table" style="min-width:1480px">
+          <thead><tr><th>订单信息</th><th>商品</th><th>收货人</th><th>收货地址</th><th>配送方式</th><th>物流信息</th><th>下单时间</th><th>金额</th><th>状态</th><th>操作</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState" style="display:none">暂无符合条件的订单</div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<script>
+(function () {
+  var M = window.AKBMallAdmin;
+
+  /* ── 状态命名适配：数据层（小程序同步）↔ 旧版商城订单展示 ── */
+  var STATE_TO_LEGACY = { '待付款': '待支付', '待发货': '待发货', '待收货': '待收货确认', '已完成': '已完成', '退款/售后': '退款/售后', '已取消': '已取消' };
+  var STATE_FROM_LEGACY = { '待支付': '待付款', '待发货': '待发货', '待配送': '待发货', '配送中': '待收货', '待收货确认': '待收货', '已完成': '已完成', '退款/售后': '退款/售后', '已取消': '已取消' };
+  var DELIVERY_FROM_LABEL = { '立即送达': 'instant', '跑腿送达': 'runner', '快递送达': 'express' };
+
+  var TABS = ['all', '待支付', '待发货', '配送中', '待收货确认', '已完成', '退款/售后'];
+  var TAB_LABELS = { all: '全部订单', '待支付': '待付款', '待发货': '待发货', '配送中': '配送中', '待收货确认': '待收货确认', '已完成': '已完成', '退款/售后': '退款/售后' };
+  var TAG_CLASS = { '待支付': 'pay', '待发货': 'accepted', '配送中': 'serving', '待收货确认': 'pending', '已完成': 'done', '退款/售后': 'refund', '已取消': 'cancel' };
+
+  var current = new URLSearchParams(location.search).get('state') || 'all';
+  if (current !== 'all') current = STATE_TO_LEGACY[current] || current;
+  if (TABS.indexOf(current) === -1) current = 'all';
+  /* 分销员深链：?dist=D1001 只看该分销员的订单 */
+  var distFilter = new URLSearchParams(location.search).get('dist') || '';
+
+  function esc(v) { return M.esc(v); }
+
+  /* 把数据层订单映射为旧版商城订单字段形状（供表格渲染与人工介入弹窗使用） */
+  function toLegacy(o) {
+    var s = o.shipInfo || {};
+    var first = (o.items && o.items[0]) || {};
+    return {
+      no: o.no,
+      type: '商城订单',
+      product: first.name || '健康商品',
+      item: (first.name || '健康商品') + ' · ' + o.quantity + '件',
+      quantity: o.quantity,
+      user: o.userName,
+      userPhone: o.userPhone || '—',
+      receiver: o.userName,
+      receiverPhone: o.userPhone || '—',
+      address: o.address,
+      deliveryType: o.deliveryLabel,
+      deliveryFee: '已含在商品售价内',
+      logisticsCompany: o.logisticsCompany || s.company || '—',
+      logisticsNo: o.logisticsNo || s.trackingNo || '—',
+      shipInfo: o.shipInfo || null,
+      receiveCode: o.receiptCode || '',
+      receiptStatus: o.state === '已完成' ? '已确认' : '',
+      deliveredAt: (o.state === '待收货' || o.state === '已完成') ? '已送达' : '—',
+      amount: M.money(o.amount),
+      orderedAt: (o.createdAt || o.date || '').replace(/:\d\d$/, ''),
+      state: STATE_TO_LEGACY[o.state] || o.state,
+      _raw: o
+    };
+  }
+
+  /* 人工介入弹窗（admin-order-intervention.js）通过全局 ORDERS 查找订单 */
+  function rebuild() { window.ORDERS = M.getOrders().map(toLegacy); }
+
+  function renderDistChip() {
+    var box = document.getElementById('distChip');
+    if (!distFilter) { box.innerHTML = ''; return; }
+    var d = M.distributorById(distFilter);
+    box.innerHTML = '<span class="dist-tag">分销员：' + M.esc(d ? d.name : distFilter) +
+      '</span> <a class="mall-link" href="admin-mall-orders.html" style="font-size:12px">× 清除</a>';
+  }
+
+  document.getElementById('topDate').textContent =
+    (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+
+  /* ── 统计卡（基于数据层原始状态） ── */
+  function renderMetrics() {
+    var all = M.getOrders();
+    var pay = all.filter(function (o) { return o.state === '待付款'; });
+    var ship = all.filter(function (o) { return o.state === '待发货'; });
+    var refund = all.filter(function (o) { return o.state === '退款/售后'; });
+    var payAmount = pay.reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0);
+    var cards = [
+      { v: all.length, l: '订单总量', f: '商城全部订单', c: 'muted' },
+      { v: pay.length, l: '待付款订单', f: pay.length ? '待收款 ' + M.money(payAmount) : '暂无待付款', c: pay.length ? 'warn' : 'muted' },
+      { v: ship.length, l: '待发货订单', f: ship.length ? '请及时发货' : '无待发货', c: ship.length ? 'up' : 'muted' },
+      { v: refund.length, l: '退款/售后待处理', f: refund.length ? '需要人工介入' : '暂无售后', c: refund.length ? 'danger' : 'muted' }
+    ];
+    document.getElementById('metricCards').innerHTML = cards.map(function (c) {
+      return '<div class="mall-metric"><div><div class="mm-val">' + c.v + '</div><div class="mm-lbl">' + c.l + '</div><div class="mm-foot ' + c.c + '">' + c.f + '</div></div></div>';
+    }).join('');
+  }
+
+  /* ── 商品下拉（取订单中实际出现的商品） ── */
+  function fillProductFilter() {
+    var names = [];
+    M.getOrders().forEach(function (o) { o.items.forEach(function (i) { if (names.indexOf(i.name) === -1) names.push(i.name); }); });
+    var sel = document.getElementById('fProduct');
+    sel.innerHTML = '<option value="all">全部商品</option>' + names.map(function (n) { return '<option>' + M.esc(n) + '</option>'; }).join('');
+  }
+
+  function renderTabs() {
+    var all = window.ORDERS || [];
+    document.getElementById('stateTabs').innerHTML = TABS.map(function (t) {
+      var n = t === 'all' ? all.length : all.filter(function (o) { return o.state === t; }).length;
+      return '<button class="mall-tab ' + (current === t ? 'active' : '') + '" onclick="setTab(\'' + t + '\')">' +
+        TAB_LABELS[t] + (t !== 'all' ? '<span class="tab-n">' + n + '</span>' : '') + '</button>';
+    }).join('');
+  }
+
+  window.setTab = function (t) {
+    current = t;
+    renderTabs(); render();
+    var url = new URL(location.href);
+    if (t === 'all') url.searchParams.delete('state'); else url.searchParams.set('state', t);
+    history.replaceState(null, '', url);
+  };
+
+  function withinDays(dateStr, days) {
+    if (!dateStr) return true;
+    var d = new Date(String(dateStr).replace(/-/g, '/'));
+    if (isNaN(d.getTime())) return true;
+    return (Date.now() - d.getTime()) / 86400000 <= days;
+  }
+
+  /* ── 物流信息 / 收货码（旧版展示逻辑） ── */
+  function logisticsOf(order) {
+    if (order.deliveryType === '快递送达') {
+      if (order.logisticsCompany && order.logisticsCompany !== '—') return esc(order.logisticsCompany) + '<br>' + esc(order.logisticsNo);
+      if (order.state === '待支付' || order.state === '待发货') return '待发货';
+      if (order.state === '已完成') return '配送完成';
+      return '配送中';
+    }
+    if (order.deliveredAt && order.deliveredAt !== '—') return order.state === '已完成' ? '配送完成' : '配送完成 · 待确认';
+    return '未配送';
+  }
+  function receiptOf(order) {
+    if (order.receiptStatus === '已确认') return '已确认收货';
+    if (order.state === '待支付' || order.state === '已取消') return '付款后生成收货码';
+    return order.receiveCode ? '收货码：' + esc(order.receiveCode) : '待生成收货码';
+  }
+
+  /* ── 行渲染：与旧版订单管理商城订单一致；操作仅保留 查看 + 人工介入 ── */
+  function mallRow(order) {
+    var ops = '<button onclick="location.href=\'admin-mall-order-detail.html?no=' + encodeURIComponent(order.no) + '\'">查看</button>' +
+      (order.state === '已完成' ? '' : '<button onclick="openOrderIntervention(\'' + order.no + '\')">人工介入</button>');
+    return '<tr class="mall-order-row">' +
+      '<td><div class="order-no">' + esc(order.no) + '</div><div class="sub">下单于 ' + esc(order.orderedAt) + '</div></td>' +
+      '<td><div class="product-name">' + esc(order.product) + '</div><div class="sub">数量：' + esc(order.quantity) + ' 件</div></td>' +
+      '<td><div class="person-name">' + esc(order.receiver) + '</div><div class="sub">' + esc(order.receiverPhone) + '</div></td>' +
+      '<td class="location"><span class="address-type">收货地址</span><span class="address-detail">' + esc(order.address) + '</span></td>' +
+      '<td><div class="delivery-type">' + esc(order.deliveryType) + '</div><div class="sub">配送费：' + esc(order.deliveryFee) + '</div></td>' +
+      '<td class="logistics">' + logisticsOf(order) + '<div class="sub">' + receiptOf(order) + '</div></td>' +
+      '<td>' + esc(order.orderedAt) + '</td>' +
+      '<td class="service">' + esc(order.amount) + '</td>' +
+      '<td><span class="tag ' + (TAG_CLASS[order.state] || '') + '">' + esc(order.state) + '</span></td>' +
+      '<td><div class="op">' + ops + '</div></td>' +
+    '</tr>';
+  }
+
+  function render() {
+    var product = document.getElementById('fProduct').value;
+    var delivery = document.getElementById('fDelivery').value;
+    var dateRange = document.getElementById('fDate').value;
+    var kw = document.getElementById('fSearch').value.trim().toLowerCase();
+    var list = (window.ORDERS || []).filter(function (o) {
+      if (current !== 'all' && o.state !== current) return false;
+      if (distFilter && o._raw.distId !== distFilter) return false;
+      if (product !== 'all' && !o._raw.items.some(function (i) { return i.name === product; })) return false;
+      if (delivery !== 'all' && o._raw.deliveryMethod !== delivery) return false;
+      if (dateRange !== 'all' && !withinDays(o._raw.date, Number(dateRange))) return false;
+      if (kw) {
+        var hay = o.no + o.user + o.userPhone + o.address + o._raw.items.map(function (i) { return i.name; }).join('');
+        if (hay.toLowerCase().indexOf(kw) === -1) return false;
+      }
+      return true;
+    });
+    document.getElementById('count').textContent = list.length;
+    document.getElementById('emptyState').style.display = list.length ? 'none' : 'block';
+    document.getElementById('rows').innerHTML = list.map(mallRow).join('');
+  }
+  window.render = render;
+
+  window.exportOrders = function () {
+    var list = M.getOrders().filter(function (o) { return current === 'all' || (STATE_TO_LEGACY[o.state] || o.state) === current; });
+    M.exportCsv('商城订单列表.csv',
+      ['订单号', '下单时间', '用户', '联系方式', '收货地址', '配送方式', '商品明细', '件数', '金额', '收货码', '状态', '来源', '分销员', '分销佣金', '备注'],
+      list.map(function (o) {
+        var c = M.distCommission(o);
+        return [o.no, o.createdAt || o.date, o.userName, o.userPhone, o.address, o.deliveryLabel,
+          o.items.map(function (i) { return i.name + ' x' + i.quantity; }).join('；'),
+          o.quantity, o.amount, o.receiptCode, o.state, o.source === 'mini' ? '小程序实时单' : '后台',
+          c ? c.name : '', c ? c.amount.toFixed(2) : '', o.note];
+      }));
+  };
+
+  /* 人工介入弹窗保存后的回写桥：把旧字段/旧状态翻译回数据层并同步小程序 */
+  window.AKBRefreshAdminMallOverrides = function () {
+    var overrides = {};
+    try { overrides = JSON.parse(localStorage.getItem('akb_admin_mall_order_overrides_v1') || '{}') || {}; } catch (e) { overrides = {}; }
+    var remaining = {};
+    Object.keys(overrides).forEach(function (no) {
+      var ov = overrides[no];
+      var cur = M.getOrder(no);
+      if (!cur) { remaining[no] = ov; return; } /* 非本模块订单（旧概览演示数据），原样保留 */
+      var patch = {};
+      if (ov.state) patch.state = STATE_FROM_LEGACY[ov.state] || ov.state;
+      if (ov.deliveryType && DELIVERY_FROM_LABEL[ov.deliveryType]) {
+        patch.deliveryMethod = DELIVERY_FROM_LABEL[ov.deliveryType];
+        patch.deliveryLabel = ov.deliveryType;
+      }
+      if (ov.receiver) patch.userName = ov.receiver;
+      if (ov.receiverPhone) patch.userPhone = ov.receiverPhone;
+      if (ov.address) patch.address = ov.address;
+      if (ov.logisticsCompany || ov.logisticsNo || ov.shipInfo) {
+        var si = ov.shipInfo || {};
+        var company = (si.company || (ov.logisticsCompany && ov.logisticsCompany !== '—' ? ov.logisticsCompany : '')) || '';
+        var tracking = (si.trackingNo || (ov.logisticsNo && ov.logisticsNo !== '—' ? ov.logisticsNo : '')) || '';
+        var s = cur.shipInfo || {};
+        patch.logisticsCompany = company;
+        patch.logisticsNo = tracking;
+        patch.shipInfo = { company: company, trackingNo: tracking, courier: si.courier || s.courier || '', courierPhone: si.courierPhone || s.courierPhone || '' };
+      }
+      if (ov.receiveCode) patch.receiptCode = ov.receiveCode;
+      /* 发货进入待收货时若无收货码则自动生成 */
+      if (patch.state === '待收货' && !patch.receiptCode && !cur.receiptCode) patch.receiptCode = M.genReceiptCode();
+      if (ov.refundState) patch.refundState = ov.refundState;
+      if (ov.refundAmount) patch.refundAmount = ov.refundAmount;
+      M.updateOrder(no, patch);
+    });
+    localStorage.setItem('akb_admin_mall_order_overrides_v1', JSON.stringify(remaining));
+    window.AKBRefreshMallPage();
+  };
+
+  window.AKBRefreshMallPage = function () { rebuild(); renderMetrics(); renderTabs(); render(); };
+
+  document.getElementById('fProduct').onchange = render;
+  document.getElementById('fDelivery').onchange = render;
+  document.getElementById('fDate').onchange = render;
+  document.getElementById('fSearch').oninput = render;
+
+  rebuild();
+  renderMetrics();
+  fillProductFilter();
+  renderTabs();
+  renderDistChip();
+  render();
+})();
+</script>
+<script src="admin-order-intervention.js"></script>
+</body>
+</html>

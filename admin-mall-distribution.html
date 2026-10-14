@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>分销管理 · 佑小邦运营后台</title>
+  <link rel="stylesheet" href="admin-shell.css" />
+  <link rel="stylesheet" href="admin-catalog.css" />
+  <link rel="stylesheet" href="admin-mall.css" />
+  <style>
+    .qr-code-text{text-align:center;font-size:18px;font-weight:900;color:#172033;letter-spacing:1px;margin-top:14px;min-height:24px}
+  </style>
+  <script src="admin-mall-data.js"></script>
+  <script defer src="admin-sidebar.js"></script>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>商城管理</span><span>›</span><span class="current">分销管理</span></div>
+      <div class="top-actions"><span class="top-date" id="topDate"></span><div class="top-av">管</div></div>
+    </header>
+
+    <section class="page">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">分销管理</h1>
+          <p class="page-sub">后台手动录入分销员，一人一码 · 客户微信扫码进入商城下单即归属该分销员，按订单实付金额自动结算佣金</p>
+        </div>
+        <div class="actions">
+          <button class="btn" onclick="saveAllQr(this)">批量保存二维码</button>
+          <button class="btn" onclick="exportCsv()">
+            <svg viewBox="0 0 14 14" width="13" height="13" fill="none"><path d="M7 1v8M4 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1.5A1.5 1.5 0 002.5 13h9a1.5 1.5 0 001.5-1.5V10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            导出分销报表
+          </button>
+          <button class="btn btn-primary" onclick="openAdd()">+ 新增分销员</button>
+        </div>
+      </div>
+
+      <div class="mall-metrics" id="metricCards"></div>
+
+      <div class="mall-filter">
+        <select id="statusFilter">
+          <option value="all">全部状态</option>
+          <option value="on">推广中</option>
+          <option value="off">已停用</option>
+        </select>
+        <input id="kwInput" placeholder="搜索姓名 / 手机号 / 编号…" />
+        <span id="resultCount" style="margin-left:auto;font-size:12px;color:#9AA7BA;font-weight:700"></span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table" style="min-width:1380px">
+          <thead>
+            <tr>
+              <th>分销员</th>
+              <th>手机号</th>
+              <th>分成比例</th>
+              <th>专属二维码</th>
+              <th>推广链接</th>
+              <th>分销订单</th>
+              <th>分销销售额</th>
+              <th>累计佣金</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="distTbody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState" style="display:none">暂无分销员，点击右上角「新增分销员」录入</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 新增 / 编辑分销员 -->
+<div class="modal-mask" id="distModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">新增分销员</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label>姓名 *</label><input id="fName" placeholder="例如：刘姐" /></div>
+      <div class="field"><label>手机号 *</label><input id="fPhone" placeholder="用于联系与佣金结算" /></div>
+      <div class="field"><label>分成比例（%）*</label><input id="fRate" type="number" min="0" max="100" step="0.5" value="10" /></div>
+      <div class="field"><label>状态</label><select id="fStatus"><option value="on">推广中</option><option value="off">已停用</option></select></div>
+      <div class="field"><label>医院代号</label><input id="fHospCode" placeholder="例如：JDYFY" /></div>
+      <div class="field"><label>医生代号</label><input id="fDocCode" placeholder="例如：DJ" /></div>
+      <div class="field"><label>备注</label><textarea id="fNote" placeholder="例如：社区团长，覆盖雁塔区多个小区"></textarea></div>
+    </div>
+    <p style="font-size:11.5px;color:#9AA7BA;line-height:1.7;margin:12px 0 0">保存后系统自动生成专属二维码与推广链接，发给分销员即可；客户用微信「扫一扫」进入商城，下单即归属该分销员。</p>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveDist()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 二维码弹窗 -->
+<div class="modal-mask" id="qrModal" onclick="if(event.target===this)closeQr()">
+  <div class="modal" style="width:400px">
+    <div class="modal-head">
+      <div class="modal-title">专属推广二维码</div>
+      <button class="modal-close" onclick="closeQr()">×</button>
+    </div>
+    <div class="qr-view">
+      <img id="qrImg" alt="分销二维码" />
+      <div class="qr-code-text" id="qrCodeText"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeQr()">关闭</button>
+      <button class="btn" onclick="copyQrLink(this)">复制推广链接</button>
+      <button class="btn btn-primary" onclick="saveQrImage()">保存图片</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var M = window.AKBMallAdmin;
+  var stats = {};        /* id -> {orderCount, sales, commission} */
+  var editingId = null;  /* null 表示新增 */
+  var qrDistId = null;
+
+  /* 推广链接：当前站点根路径 + mall.html?dist=ID（微信扫一扫直接打开） */
+  function shareLink(id) {
+    return location.origin + location.pathname.replace(/[^\/]*$/, '') + 'mall.html?dist=' + id;
+  }
+  function qrImg(id, size) {
+    return 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&margin=8&data=' + encodeURIComponent(shareLink(id));
+  }
+
+  /* ── 统计卡 ── */
+  function renderMetrics() {
+    var all = M.getDistributors();
+    var on = all.filter(function (d) { return d.status === 'on'; });
+    var totOrders = 0, totSales = 0, totComm = 0;
+    Object.keys(stats).forEach(function (k) {
+      totOrders += stats[k].orderCount;
+      totSales += stats[k].sales;
+      totComm += stats[k].commission;
+    });
+    var cards = [
+      { v: all.length, l: '分销员总数', f: '推广中 ' + on.length + ' 人', c: 'muted' },
+      { v: totOrders, l: '分销订单', f: '全部归属订单', c: 'up' },
+      { v: M.money(totSales), l: '分销销售额', f: '取消 / 退款单不计入', c: 'up' },
+      { v: M.money(totComm), l: '累计应结佣金', f: '按各自分成比例计算', c: 'warn' }
+    ];
+    document.getElementById('metricCards').innerHTML = cards.map(function (c) {
+      return '<div class="mall-metric"><div class="mm-ico" style="background:#F3E8FF"><svg viewBox="0 0 22 22" fill="none"><circle cx="7" cy="8" r="3" stroke="#7F55B8" stroke-width="1.5"/><path d="M2.5 18c.6-3 2.5-4.5 4.5-4.5s3.9 1.5 4.5 4.5" stroke="#7F55B8" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="7" r="2.4" stroke="#7F55B8" stroke-width="1.5"/><path d="M15 12.6c2.3.2 3.9 1.7 4.4 4.2" stroke="#7F55B8" stroke-width="1.5" stroke-linecap="round"/></svg></div>' +
+        '<div><div class="mm-val">' + c.v + '</div><div class="mm-lbl">' + c.l + '</div><div class="mm-foot ' + c.c + '">' + c.f + '</div></div></div>';
+    }).join('');
+  }
+
+  /* ── 列表 ── */
+  function filtered() {
+    var status = document.getElementById('statusFilter').value;
+    var kw = document.getElementById('kwInput').value.trim().toLowerCase();
+    return M.getDistributors().filter(function (d) {
+      if (status !== 'all' && d.status !== status) return false;
+      if (kw && (d.name + ' ' + d.phone + ' ' + d.id).toLowerCase().indexOf(kw) < 0) return false;
+      return true;
+    });
+  }
+
+  function render() {
+    stats = {};
+    M.distStats().forEach(function (s) { stats[s.dist.id] = s; });
+    renderMetrics();
+    var list = filtered();
+    document.getElementById('resultCount').textContent = '共 ' + list.length + ' 人';
+    document.getElementById('emptyState').style.display = list.length ? 'none' : 'block';
+    document.getElementById('distTbody').innerHTML = list.map(function (d) {
+      var s = stats[d.id] || { orderCount: 0, sales: 0, commission: 0 };
+      var link = shareLink(d.id);
+      return '<tr>' +
+        '<td><div class="pdt-name">' + M.esc(d.name) + '</div><div class="pdt-sub">' + M.esc(d.id) + ' · ' + M.esc(d.createdAt) + ' 加入</div>' + (d.note ? '<div class="dist-note">' + M.esc(d.note) + '</div>' : '') + '</td>' +
+        '<td style="font-size:12.5px;font-weight:700;color:#4B5568">' + M.esc(d.phone) + '</td>' +
+        '<td><span class="dist-rate">' + (Math.round(d.rate * 1000) / 10) + '%</span></td>' +
+        '<td><div class="qr-thumb" title="点击查看大图" onclick="openQr(\'' + d.id + '\')"><img src="' + qrImg(d.id, 64) + '" alt="" onerror="this.parentNode.innerHTML=\'<div class=&quot;qr-thumb-fallback&quot;>二维码</div>\'" /></div></td>' +
+        '<td><div class="dist-link-cell"><span class="dist-link-text" title="' + M.esc(link) + '">' + M.esc(link) + '</span><button class="copy-btn" onclick="copyLink(\'' + d.id + '\',this)">复制</button></div></td>' +
+        '<td style="font-weight:900">' + s.orderCount + ' 单</td>' +
+        '<td style="font-weight:900">' + M.money(s.sales) + '</td>' +
+        '<td style="font-weight:900;color:#D97706">' + M.money(s.commission) + '</td>' +
+        '<td><button class="status-btn ' + (d.status === 'on' ? 'on' : 'off') + '" onclick="toggleDist(\'' + d.id + '\')">' + (d.status === 'on' ? '推广中' : '已停用') + '</button></td>' +
+        '<td><div class="op">' +
+          '<button onclick="editDist(\'' + d.id + '\')">编辑</button>' +
+          '<button onclick="location.href=\'admin-mall-orders.html?dist=' + d.id + '\'">查看订单</button>' +
+        '</div></td></tr>';
+    }).join('');
+  }
+
+  /* ── 复制链接 ── */
+  window.copyLink = function (id, btn) {
+    var link = shareLink(id);
+    function done() {
+      var old = btn.textContent;
+      btn.textContent = '已复制';
+      setTimeout(function () { btn.textContent = old; }, 1500);
+    }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = link;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { alert('复制失败，请手动复制：\n' + link); }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(done, fallback);
+    } else { fallback(); }
+  };
+
+  /* ── 二维码弹窗 ── */
+  function codeLabel(d) {
+    var h = (d.hospCode || '').trim(), c = (d.docCode || '').trim();
+    if (h && c) return h + '-' + c;
+    return h || c || d.id;
+  }
+  function qrFileName(d) {
+    return codeLabel(d).replace(/[\\/:*?"<>|\s]+/g, '_') + '.png';
+  }
+  /* 合成二维码图片：白底 + 二维码 + 下方代号文字 */
+  function makeQrImage(d, cb) {
+    var size = 440, pad = 40, textH = 76;
+    var canvas = document.createElement('canvas');
+    canvas.width = size + pad * 2;
+    canvas.height = size + pad * 2 + textH;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function () {
+      ctx.drawImage(img, pad, pad, size, size);
+      ctx.fillStyle = '#172033';
+      ctx.font = '900 34px Arial, "Microsoft YaHei", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(codeLabel(d), canvas.width / 2, pad + size + 52);
+      cb(canvas);
+    };
+    img.onerror = function () { alert('二维码图片加载失败，请检查网络后重试'); };
+    img.src = qrImg(d.id, size);
+  }
+  function downloadCanvas(canvas, filename) {
+    var a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+  window.openQr = function (id) {
+    var d = M.distributorById(id);
+    if (!d) return;
+    qrDistId = id;
+    document.getElementById('qrCodeText').textContent = codeLabel(d);
+    document.getElementById('qrImg').src = qrImg(id, 220);
+    document.getElementById('qrModal').classList.add('show');
+  };
+  window.closeQr = function () { document.getElementById('qrModal').classList.remove('show'); };
+  window.copyQrLink = function (btn) { if (qrDistId) copyLink(qrDistId, btn); };
+  /* 保存当前二维码图片到电脑 */
+  window.saveQrImage = function () {
+    var d = qrDistId && M.distributorById(qrDistId);
+    if (!d) return;
+    makeQrImage(d, function (canvas) { downloadCanvas(canvas, qrFileName(d)); });
+  };
+  /* 批量保存：文件名 = 医院代号 + 医生代号 */
+  window.saveAllQr = function (btn) {
+    var list = M.getDistributors();
+    if (!list.length) { alert('暂无分销员'); return; }
+    btn.disabled = true;
+    var old = btn.textContent, i = 0;
+    (function next() {
+      if (i >= list.length) { btn.disabled = false; btn.textContent = old; return; }
+      btn.textContent = '生成中 ' + (i + 1) + '/' + list.length + '…';
+      makeQrImage(list[i], function (canvas) {
+        downloadCanvas(canvas, qrFileName(list[i]));
+        i++;
+        setTimeout(next, 500);
+      });
+    })();
+  };
+
+  /* ── 新增 / 编辑 / 启停 ── */
+  window.openAdd = function () {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = '新增分销员';
+    document.getElementById('fName').value = '';
+    document.getElementById('fPhone').value = '';
+    document.getElementById('fRate').value = 10;
+    document.getElementById('fStatus').value = 'on';
+    document.getElementById('fHospCode').value = '';
+    document.getElementById('fDocCode').value = '';
+    document.getElementById('fNote').value = '';
+    document.getElementById('distModal').classList.add('show');
+  };
+
+  window.editDist = function (id) {
+    var d = M.distributorById(id);
+    if (!d) return;
+    editingId = id;
+    document.getElementById('modalTitle').textContent = '编辑分销员（' + d.id + '）';
+    document.getElementById('fName').value = d.name;
+    document.getElementById('fPhone').value = d.phone;
+    document.getElementById('fRate').value = Math.round(d.rate * 1000) / 10;
+    document.getElementById('fStatus').value = d.status;
+    document.getElementById('fHospCode').value = d.hospCode || '';
+    document.getElementById('fDocCode').value = d.docCode || '';
+    document.getElementById('fNote').value = d.note;
+    document.getElementById('distModal').classList.add('show');
+  };
+
+  window.closeModal = function () { document.getElementById('distModal').classList.remove('show'); };
+
+  window.saveDist = function () {
+    var name = document.getElementById('fName').value.trim();
+    var phone = document.getElementById('fPhone').value.trim();
+    var ratePct = parseFloat(document.getElementById('fRate').value);
+    var status = document.getElementById('fStatus').value;
+    var hospCode = document.getElementById('fHospCode').value.trim();
+    var docCode = document.getElementById('fDocCode').value.trim();
+    var note = document.getElementById('fNote').value.trim();
+    if (!name) { alert('请填写分销员姓名'); return; }
+    if (!phone) { alert('请填写手机号'); return; }
+    if (isNaN(ratePct) || ratePct < 0 || ratePct > 100) { alert('分成比例需为 0~100 之间的数字'); return; }
+    var list = M.getDistributors();
+    if (editingId) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === editingId) {
+          list[i].name = name; list[i].phone = phone;
+          list[i].rate = ratePct / 100;
+          list[i].status = status; list[i].note = note;
+          list[i].hospCode = hospCode; list[i].docCode = docCode;
+        }
+      }
+    } else {
+      list.push({
+        id: M.genDistId(), name: name, phone: phone,
+        rate: ratePct / 100, status: status, createdAt: M.today(), note: note,
+        hospCode: hospCode, docCode: docCode
+      });
+    }
+    M.saveDistributors(list);
+    closeModal();
+    render();
+  };
+
+  window.toggleDist = function (id) {
+    var list = M.getDistributors();
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === id) list[i].status = list[i].status === 'on' ? 'off' : 'on';
+    }
+    M.saveDistributors(list);
+    render();
+  };
+
+  /* ── 导出报表 ── */
+  window.exportCsv = function () {
+    var rows = [['分销员编号', '姓名', '手机号', '分成比例', '状态', '分销订单数', '分销销售额', '累计佣金', '推广链接', '备注']];
+    M.distStats().forEach(function (s) {
+      var d = s.dist;
+      rows.push([d.id, d.name, d.phone, (Math.round(d.rate * 1000) / 10) + '%', d.status === 'on' ? '推广中' : '已停用',
+        s.orderCount, s.sales.toFixed(2), s.commission.toFixed(2), shareLink(d.id), d.note]);
+    });
+    var csv = '﻿' + rows.map(function (r) {
+      return r.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(',');
+    }).join('\r\n');
+    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '分销报表_' + M.today() + '.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  document.getElementById('statusFilter').addEventListener('change', render);
+  document.getElementById('kwInput').addEventListener('input', render);
+  document.getElementById('topDate').textContent = M.today();
+
+  render();
+})();
+</script>
+</body>
+</html>
