@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1280">
+  <title>评论管理 · 佑小邦运营后台</title>
+  <link rel="stylesheet" href="admin-shell.css">
+  <script defer src="admin-sidebar.js"></script>
+  <style>
+    :root{--blue:#224CD3;--ink:#172033;--muted:#71809a;--line:#dce9f8;--bg:#eff6ff;--panel:#fff;--green:#16a34a;--amber:#d97706;--red:#dc2626;--purple:#8655C5}
+    *{box-sizing:border-box}body{margin:0;min-width:1100px;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}.layout{display:flex;min-height:100vh}.sidebar{width:220px;background:#002141}.main{margin-left:220px;flex:1;min-width:0}.topbar{height:60px;display:flex;align-items:center;padding:0 28px;background:#fff;border-bottom:1px solid var(--line)}.crumb{display:flex;gap:8px;font-size:13px;font-weight:700;color:#94a3b8}.crumb strong{color:var(--ink)}.top-date{margin-left:auto;color:#8fa0b5;font-size:12px;font-weight:700}.top-av{display:grid;place-items:center;width:34px;height:34px;margin-left:14px;border-radius:10px;color:#fff;background:var(--blue);font-size:14px;font-weight:900}.page{padding:24px 28px 44px;max-width:1740px}
+    .head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}.title{font-size:24px;font-weight:900}.sub{margin-top:6px;color:#91a0b6;font-size:13px}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}.stat{border:1px solid var(--line);border-radius:15px;background:var(--panel);padding:16px 18px;box-shadow:0 3px 14px rgba(34,76,211,.07)}.stat-label{font-size:12px;color:#8b99ad;font-weight:700}.stat-value{margin-top:8px;font-size:26px;font-weight:900}.stat-value.blue{color:var(--blue)}.stat-value.green{color:var(--green)}.stat-value.red{color:var(--red)}.stat-value.amber{color:var(--amber)}.stat-sub{margin-top:5px;font-size:11px;color:#a3b0c2;font-weight:600}
+    .card{border:1px solid var(--line);border-radius:15px;background:var(--panel);box-shadow:0 3px 14px rgba(34,76,211,.07)}.section{padding:20px 22px}
+    .filter-bar{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}.filter-tabs{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#f6faff}.filter-tab{padding:8px 18px;border:0;background:none;color:#5b6b83;font:700 12px inherit;cursor:pointer;border-right:1px solid var(--line)}.filter-tab:last-child{border-right:0}.filter-tab.on{background:var(--blue);color:#fff}.search{height:36px;border:1px solid var(--line);border-radius:9px;padding:0 12px;font:600 12px inherit;color:var(--ink);background:#fff;outline:none;min-width:240px}.search:focus{border-color:var(--blue)}.result{margin-left:auto;color:#8b99ad;font-size:12px;font-weight:700}.result strong{color:var(--ink);font-size:14px}
+    .table-wrap{overflow-x:auto}.table{width:100%;border-collapse:collapse;min-width:960px}.table th{text-align:left;font-size:11px;color:#8b99ad;font-weight:800;padding:10px 12px;border-bottom:1px solid #e7eef8;white-space:nowrap}.table td{font-size:12px;color:#41536d;font-weight:600;padding:13px 12px;border-bottom:1px solid #eef4fb;vertical-align:middle}.table tr:last-child td{border-bottom:0}
+    .cell-main{color:var(--ink);font-weight:800}.cell-sub{display:block;margin-top:3px;color:#94a3b8;font-size:10px;font-weight:600}
+    .stars{color:#F3B63F;font-size:13px;letter-spacing:1px;white-space:nowrap}.stars .empty{color:#D8D2E4}
+    .tag{display:inline-flex;align-items:center;padding:5px 10px;border-radius:14px;font-size:11px;font-weight:800}.tag.good{color:var(--green);background:#dcfce7}.tag.bad{color:var(--red);background:#fee2e2}.tag.mid{color:var(--amber);background:#fef3c7}
+    .review-text{max-width:320px;line-height:1.55;color:#41536d}.review-text .empty{color:#a3b0c2}
+    .link-btn{border:0;background:none;color:var(--blue);font:800 12px inherit;cursor:pointer;padding:0}.link-btn:hover{text-decoration:underline}.link-btn.danger{color:var(--red)}.ops{display:flex;gap:12px;align-items:center}
+    .switch{position:relative;display:inline-block;width:36px;height:20px;flex:none}
+    .switch input{opacity:0;width:0;height:0}
+    .switch .slider{position:absolute;inset:0;background:#cbd5e1;border-radius:999px;transition:.2s;cursor:pointer}
+    .switch .slider::before{content:'';position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
+    .switch input:checked+.slider{background:var(--green)}
+    .switch input:checked+.slider::before{transform:translateX(16px)}
+    .vis-toggle{display:flex;flex-direction:column;align-items:center;gap:3px;flex:none}
+    .vis-label{font-size:10px;color:#94a3b8;font-weight:700;white-space:nowrap}
+    tr.row-hidden td{opacity:.55}
+    .tag.hidden-tag{color:#64748b;background:#e2e8f0}
+    .empty{padding:48px 0;text-align:center;color:#9aa8ba;font-size:13px}
+    .toast{position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:80;background:rgba(23,32,51,.92);color:#fff;font-size:13px;font-weight:700;padding:11px 20px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar"></aside>
+    <main class="main">
+      <header class="topbar"><div class="crumb"><span>其他</span><span>›</span><strong>评论管理</strong></div><span class="top-date" id="topDate"></span><div class="top-av">管</div></header>
+      <section class="page">
+        <div class="head"><div><h1 class="title">评论管理</h1><div class="sub">管理用户服务评价，支持按好评 / 差评筛选，可手动删除违规差评</div></div></div>
+        <div class="stats" id="stats"></div>
+        <section class="card section">
+          <div class="filter-bar">
+            <div class="filter-tabs" id="filterTabs">
+              <button class="filter-tab on" data-filter="all">全部</button>
+              <button class="filter-tab" data-filter="good">好评（4-5星）</button>
+              <button class="filter-tab" data-filter="bad">差评（1-2星）</button>
+            </div>
+            <input class="search" id="search" placeholder="搜索订单号 / 服务 / 护理员 / 评价内容" />
+            <select class="search" id="visFilter" style="min-width:120px;min-height:36px;height:36px;padding:0 10px">
+              <option value="all">全部显示状态</option>
+              <option value="show">显示中</option>
+              <option value="hidden">已隐藏</option>
+            </select>
+            <span class="result">共 <strong id="count">0</strong> 条评价</span>
+          </div>
+          <div class="table-wrap"><table class="table"><thead><tr><th>订单信息</th><th>服务 / 护理员</th><th>用户</th><th>星级</th><th>评价内容</th><th>评价时间</th><th>是否对外显示</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div>
+        </section>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('topDate').textContent =
+    (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+
+  var STORAGE_KEY = 'akb_service_ratings_v2';
+
+  /* 种子订单信息（与用户端 orders-list-redesign.js 对应） */
+  var ORDER_INFO = {
+    'AKB-2026-022301': { service: '住院陪护', project: '基础陪护服务', nurse: '张秀英', user: '李先生', userPhone: '177****9183' },
+    'AKB-2026-040318': { service: '上门助浴', project: '上门助浴服务', nurse: '陈护理师', user: '刘先生', userPhone: '186****2287' },
+    'AKB-2026-039105': { service: '陪诊服务', project: '贵宾陪诊服务', nurse: '李桂芳', user: '赵阿姨', userPhone: '138****2468' },
+    'AKB-2026-038421': { service: '住院陪护', project: '住院专护服务', nurse: '李桂芳', user: '张爷爷', userPhone: '139****8572' },
+    'AKB-2026-031085': { service: '住院陪护', project: '重症陪护服务', nurse: '王美玲', user: '王奶奶', userPhone: '158****5509' },
+    'AKB-2026-041206': { service: '居家陪护', project: '12小时居家陪护', nurse: '赵阿姨', user: '王女士', userPhone: '133****7742' }
+  };
+
+  /* 种子评价数据（演示用，实际数据来自用户端 localStorage） */
+  var SEED_REVIEWS = {
+    'AKB-2026-022301': { userScore: 5, total: 4.9, stars: '★★★★★', text: '张秀英护理师非常专业，术后康复期照顾得很周到，家属很放心。', createdAt: '2026-04-05 10:23' },
+    'AKB-2026-040318': { userScore: 2, total: 3.2, stars: '★★☆☆☆', text: '助浴服务体验一般，设备不够干净，希望改进。', createdAt: '2026-04-08 15:40' },
+    'AKB-2026-039105': { userScore: 4, total: 4.5, stars: '★★★★☆', text: '陪诊师很负责，全程陪同检查，沟通顺畅。', createdAt: '2026-04-12 11:15' },
+    'AKB-2026-038421': { userScore: 5, total: 4.8, stars: '★★★★★', text: '李桂芳护理师经验丰富，对老人很有耐心，强烈推荐。', createdAt: '2026-04-11 09:30' },
+    'AKB-2026-031085': { userScore: 1, total: 2.5, stars: '★☆☆☆☆', text: '重症陪护不到位，夜间巡视不及时，态度也不好。', createdAt: '2026-04-10 20:15' },
+    'AKB-2026-041206': { userScore: 5, total: 4.9, stars: '★★★★★', text: '赵阿姨居家照护很细心，老人状态明显好转。', createdAt: '2026-04-16 14:20' }
+  };
+
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function toast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(function () { t.classList.remove('show'); }, 1600); }
+
+  function readReviews() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      if (saved && typeof saved === 'object') return saved;
+    } catch (e) {}
+    return {};
+  }
+  function writeReviews(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  /* 获取展示用评价列表：合并种子数据 + 用户端真实评价 */
+  function getReviews() {
+    var saved = readReviews();
+    var merged = {};
+    Object.keys(SEED_REVIEWS).forEach(function (no) { merged[no] = SEED_REVIEWS[no]; });
+    Object.keys(saved).forEach(function (no) { merged[no] = saved[no]; });
+    /* 过滤掉已删除的（deleted 标记） */
+    var list = [];
+    Object.keys(merged).forEach(function (no) {
+      var r = merged[no];
+      if (!r || r.deleted) return;
+      var info = ORDER_INFO[no] || { service: '—', project: '—', nurse: '—', user: '—', userPhone: '—' };
+      list.push({
+        no: no,
+        userScore: r.userScore || 0,
+        total: r.total || 0,
+        stars: r.stars || '',
+        text: r.text || '',
+        createdAt: r.createdAt || '—',
+        service: info.service,
+        project: info.project,
+        nurse: info.nurse,
+        user: info.user,
+        userPhone: info.userPhone,
+        hidden: !!r.hidden
+      });
+    });
+    return list.sort(function (a, b) { return (b.createdAt || '').localeCompare(a.createdAt || ''); });
+  }
+
+  function starHtml(stars) {
+    if (!stars) return '<span class="stars empty">☆☆☆☆☆</span>';
+    return '<span class="stars">' + esc(stars).replace(/☆/g, '<span class="empty">☆</span>') + '</span>';
+  }
+  function tagClass(score) {
+    if (score >= 4) return 'good';
+    if (score <= 2) return 'bad';
+    return 'mid';
+  }
+  function tagLabel(score) {
+    if (score >= 4) return '好评';
+    if (score <= 2) return '差评';
+    return '中评';
+  }
+
+  var currentFilter = 'all';
+
+  function renderStats() {
+    var list = getReviews();
+    var good = list.filter(function (r) { return r.userScore >= 4; }).length;
+    var bad = list.filter(function (r) { return r.userScore <= 2; }).length;
+    var avg = list.length ? (list.reduce(function (s, r) { return s + Number(r.total || 0); }, 0) / list.length).toFixed(1) : '0.0';
+    document.getElementById('stats').innerHTML =
+      '<div class="stat"><div class="stat-label">评价总数</div><div class="stat-value blue">' + list.length + '</div><div class="stat-sub">所有已提交的服务评价</div></div>' +
+      '<div class="stat"><div class="stat-label">好评数</div><div class="stat-value green">' + good + '</div><div class="stat-sub">4-5 星评价</div></div>' +
+      '<div class="stat"><div class="stat-label">差评数</div><div class="stat-value red">' + bad + '</div><div class="stat-sub">1-2 星评价，可手动删除</div></div>' +
+      '<div class="stat"><div class="stat-label">平均评分</div><div class="stat-value amber">' + avg + '</div><div class="stat-sub">综合陪护星级平均分</div></div>';
+  }
+
+  function render() {
+    var list = getReviews();
+    if (currentFilter === 'good') list = list.filter(function (r) { return r.userScore >= 4; });
+    else if (currentFilter === 'bad') list = list.filter(function (r) { return r.userScore <= 2; });
+
+    var kw = document.getElementById('search').value.trim().toLowerCase();
+    if (kw) {
+      list = list.filter(function (r) {
+        return (r.no + r.service + r.project + r.nurse + r.user + r.text).toLowerCase().indexOf(kw) !== -1;
+      });
+    }
+
+    var vis = document.getElementById('visFilter').value;
+    if (vis === 'show') list = list.filter(function (r) { return !r.hidden; });
+    else if (vis === 'hidden') list = list.filter(function (r) { return r.hidden; });
+
+    document.getElementById('count').textContent = list.length;
+    var rows = document.getElementById('rows');
+    if (!list.length) {
+      rows.innerHTML = '<tr><td colspan="8"><div class="empty">暂无符合条件的评价</div></td></tr>';
+      return;
+    }
+    rows.innerHTML = list.map(function (r) {
+      var isBad = r.userScore <= 2;
+      var textHtml = r.text ? esc(r.text) : '<span class="empty">（未填写文字评价）</span>';
+      var ops = '<div class="ops">' +
+        '<button class="link-btn" onclick="viewOrder(\'' + r.no + '\')">查看订单</button>' +
+        (isBad ? '<button class="link-btn danger" onclick="deleteReview(\'' + r.no + '\')">删除差评</button>' : '') +
+        '</div>';
+      var visCell = '<label class="switch" title="' + (r.hidden ? '点击恢复显示' : '点击隐藏该评价') + '"><input type="checkbox"' + (r.hidden ? '' : ' checked') + ' onchange="toggleReview(\'' + r.no + '\',this.checked)"><span class="slider"></span></label><div class="vis-label" style="margin-top:5px">' + (r.hidden ? '已隐藏' : '显示中') + '</div>';
+      return '<tr class="' + (r.hidden ? 'row-hidden' : '') + '">' +
+        '<td><span class="cell-main">' + esc(r.no) + '</span><span class="cell-sub">' + esc(r.service) + '</span></td>' +
+        '<td><span class="cell-main">' + esc(r.project) + '</span><span class="cell-sub">护理员：' + esc(r.nurse) + '</span></td>' +
+        '<td><span class="cell-main">' + esc(r.user) + '</span><span class="cell-sub">' + esc(r.userPhone) + '</span></td>' +
+        '<td>' + starHtml(r.stars) + '<div class="cell-sub" style="margin-top:5px"><span class="tag ' + tagClass(r.userScore) + '">' + tagLabel(r.userScore) + '</span>' + (r.hidden ? ' <span class="tag hidden-tag">已隐藏</span>' : '') + ' ' + esc(r.total) + ' 分</div></td>' +
+        '<td><div class="review-text">' + textHtml + '</div></td>' +
+        '<td>' + esc(r.createdAt) + '</td>' +
+        '<td style="text-align:center">' + visCell + '</td>' +
+        '<td>' + ops + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  window.viewOrder = function (no) {
+    location.href = 'order-detail.html?no=' + encodeURIComponent(no);
+  };
+
+  window.deleteReview = function (no) {
+    if (!window.confirm('确认删除该差评？删除后该评价将不再展示，且不可恢复。')) return;
+    var reviews = readReviews();
+    /* 如果是种子数据，给它加 deleted 标记；如果是用户端数据，直接删除 */
+    if (reviews[no]) {
+      delete reviews[no];
+    } else {
+      reviews[no] = { deleted: true, deletedAt: new Date().toISOString().slice(0, 16).replace('T', ' ') };
+    }
+    writeReviews(reviews);
+    renderStats();
+    render();
+    toast('差评已删除');
+  };
+
+  /* 显示 / 隐藏开关：种子数据写入完整副本并打 hidden 标记 */
+  window.toggleReview = function (no, visible) {
+    var reviews = readReviews();
+    if (reviews[no]) {
+      reviews[no].hidden = !visible;
+    } else {
+      var seed = SEED_REVIEWS[no] || {};
+      reviews[no] = { userScore: seed.userScore || 0, total: seed.total || 0, stars: seed.stars || '', text: seed.text || '', createdAt: seed.createdAt || '', hidden: !visible };
+    }
+    writeReviews(reviews);
+    renderStats();
+    render();
+    toast(visible ? '评价已恢复显示' : '评价已隐藏');
+  };
+
+  /* 筛选 tab 切换 */
+  document.getElementById('filterTabs').addEventListener('click', function (e) {
+    var btn = e.target.closest('.filter-tab');
+    if (!btn) return;
+    currentFilter = btn.dataset.filter;
+    document.querySelectorAll('.filter-tab').forEach(function (b) { b.classList.toggle('on', b === btn); });
+    render();
+  });
+  document.getElementById('search').addEventListener('input', render);
+  document.getElementById('visFilter').addEventListener('change', render);
+
+  renderStats();
+  render();
+});
+</script>
+</body>
+</html>

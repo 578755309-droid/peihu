@@ -18,11 +18,12 @@
     .table-wrap{overflow-x:auto}.table{width:100%;border-collapse:collapse;min-width:760px}.table th{text-align:left;font-size:11px;color:#8b99ad;font-weight:800;padding:10px 12px;border-bottom:1px solid #e7eef8;white-space:nowrap}.table td{font-size:12px;color:#41536d;font-weight:600;padding:12px;border-bottom:1px solid #eef4fb;white-space:nowrap;vertical-align:middle}.table tr:last-child td{border-bottom:0}.cell-main{color:var(--ink);font-weight:800}.cell-sub{display:block;margin-top:3px;color:#94a3b8;font-size:10px;font-weight:600}
     .tag{display:inline-flex;align-items:center;padding:5px 10px;border-radius:14px;font-size:11px;font-weight:800}.tag.signed{color:var(--green);background:#dcfce7}.tag.pending{color:var(--amber);background:#fef3c7}
     .link-btn{border:0;background:none;color:var(--blue);font:800 12px inherit;cursor:pointer;padding:0}.link-btn:hover{text-decoration:underline}.empty{padding:38px 0;text-align:center;color:#9aa8ba;font-size:13px}
+    .cf-bar{display:flex;align-items:center;gap:10px;margin-bottom:12px}.cf-bar .search{height:34px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font:600 12px inherit;color:var(--ink);background:#fff;outline:none}.cf-bar .search:focus{border-color:var(--blue)}.cf-bar .result{margin-left:auto;color:#8b99ad;font-size:12px;font-weight:700}.cf-bar .result strong{color:var(--ink);font-size:14px}
     .modal-mask{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(15,30,60,.45)}.modal-mask.show{display:flex}.modal{width:640px;max-width:92vw;max-height:88vh;overflow:auto;background:#fff;border-radius:16px;padding:24px 26px;box-shadow:0 24px 70px rgba(10,25,70,.3)}.modal::-webkit-scrollbar{width:6px}.modal::-webkit-scrollbar-thumb{background:#d5e2f3;border-radius:3px}.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.modal-title{font-size:17px;font-weight:900}.modal-close{width:32px;height:32px;border:0;border-radius:9px;background:#eef4fb;color:#5b6b83;font-size:18px;cursor:pointer}
     .paper{border:1px solid #e3ecf7;border-radius:12px;padding:22px 22px;background:linear-gradient(180deg,#fdfeff,#f8fbff)}.paper-title{text-align:center;font-size:18px;font-weight:900;letter-spacing:1px}.paper-no{text-align:center;margin-top:7px;font-size:11px;color:#8b99ad;font-weight:700}.paper-parties{margin-top:14px;padding:11px 13px;border-radius:10px;background:#f1f6fd;font-size:12px;line-height:1.9;color:#41536d}.paper-parties strong{color:var(--ink)}.paper-meta{margin-top:12px;display:grid;gap:7px}.paper-meta-row{display:grid;grid-template-columns:76px 1fr;gap:10px;font-size:12px}.paper-meta-row b{color:#8b99ad;font-weight:600}.paper-meta-row span{color:var(--ink);font-weight:700}.paper-clauses{margin-top:14px;border-top:1px dashed #dfe8f4;padding-top:13px}.paper-clause{display:flex;gap:8px;margin-bottom:10px}.paper-clause i{flex-shrink:0;font-style:normal;width:19px;height:19px;border-radius:6px;background:#e7f1fd;color:var(--blue);font-size:11px;font-weight:900;display:grid;place-items:center}.paper-clause p{font-size:12px;color:#5b6b83;line-height:1.75;margin:0}.paper-footer{margin-top:4px;border-top:1px dashed #dfe8f4;padding-top:12px;font-size:11px;color:#94a3b8;line-height:1.7}.paper-seal{margin-top:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:14px}.seal-box{padding:12px 14px;border:1.5px dashed #e5b9b9;border-radius:10px;text-align:center;min-width:170px}.seal-txt{font-size:10px;color:#c04444;font-weight:800;line-height:1.5}.seal-sign{margin-top:7px}.seal-sign img{max-width:130px;max-height:50px}.seal-empty{margin-top:7px;font-size:10px;color:#a3b0c2}.sign-meta{font-size:11px;color:#8b99ad;line-height:1.8}.sign-meta b{color:var(--ink)}
     .toast{position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:80;background:rgba(23,32,51,.92);color:#fff;font-size:13px;font-weight:700;padding:11px 20px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}
   </style>
-</head>
+<link rel="stylesheet" href="modal-scroll.css"></head>
 <body>
   <div class="layout">
     <aside class="sidebar"></aside>
@@ -47,6 +48,15 @@
           </section>
           <section class="card section">
             <div class="section-title">签约记录<div class="hint">护理员上门开始服务时发起，用户在移动端完成签署</div></div>
+            <div class="cf-bar">
+              <select class="search" id="cfStatus" style="min-width:120px">
+                <option value="all">全部状态</option>
+                <option value="待签署">待签署</option>
+                <option value="已签署">已签署</option>
+              </select>
+              <input class="search" id="cfSearch" placeholder="搜索订单号 / 合同编号 / 用户 / 服务类型" style="min-width:240px" />
+              <span class="result">共 <strong id="cfCount">0</strong> 条记录</span>
+            </div>
             <div class="table-wrap"><table class="table"><thead><tr><th>订单号</th><th>用户 / 服务类型</th><th>发起人</th><th>状态</th><th>签署信息</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div>
           </section>
         </div>
@@ -84,8 +94,16 @@
     function renderRows(){
       var all=C.getRecords();
       var list=Object.keys(all).map(function(k){return all[k];}).sort(function(a,b){return (b.issuedAt||'').localeCompare(a.issuedAt||'');});
+      var st=document.getElementById('cfStatus').value;
+      var kw=document.getElementById('cfSearch').value.trim().toLowerCase();
+      list=list.filter(function(r){
+        if(st!=='all'&&r.status!==st)return false;
+        if(kw&&(r.orderNo+r.contractNo+r.userName+r.serviceType+r.issuedBy).toLowerCase().indexOf(kw)===-1)return false;
+        return true;
+      });
+      document.getElementById('cfCount').textContent=list.length;
       var rowsEl=document.getElementById('rows');
-      if(!list.length){rowsEl.innerHTML='<tr><td colspan="6"><div class="empty">暂无签约记录，护理员在移动端「待上岗」订单中发起电子合同</div></td></tr>';return;}
+      if(!list.length){rowsEl.innerHTML='<tr><td colspan="6"><div class="empty">暂无符合条件的签约记录</div></td></tr>';return;}
       rowsEl.innerHTML=list.map(function(r){
         var signed=r.status==='已签署';
         return '<tr><td><span class="cell-main">'+esc(r.orderNo)+'</span><span class="cell-sub">合同编号 '+esc(r.contractNo)+'</span></td>'
@@ -143,6 +161,8 @@
     };
 
     renderStats();renderTpl();renderRows();
+    document.getElementById('cfStatus').addEventListener('change',renderRows);
+    document.getElementById('cfSearch').addEventListener('input',renderRows);
     });
   </script>
 </body>

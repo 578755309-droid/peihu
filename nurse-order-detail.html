@@ -60,18 +60,18 @@
     var hero = document.querySelector('.hero-card');
     var grid = hero && hero.querySelector('.hero-grid');
     if (!grid || hero.querySelector('.hero-care-needs')) return;
-    var needs = { independence: '半自理', tube: '无', infection: '无' };
     var params = new URLSearchParams(location.search);
+    var needs = { independence: '半自理', tube: '无', infection: '无', skinBreak: '无' };
     var byOrder = {
-      'AKB-N-2026-041701': { independence: '半自理', tube: '有', infection: '无' },
-      'AKB-N-2026-041642': { independence: '完全失能', tube: '有', infection: '无' },
-      'AKB-N-2026-041508': { independence: '半自理', tube: '无', infection: '无' },
-      'AKB-N-2026-041229': { independence: '完全自理', tube: '无', infection: '无' },
-      'AKB-N-2026-040918': { independence: '半自理', tube: '无', infection: '无' },
-      'AKB-N-2026-040807': { independence: '完全自理', tube: '无', infection: '无' }
+      'AKB-N-2026-041701': { independence: '半自理', tube: '有', infection: '无', skinBreak: '无' },
+      'AKB-N-2026-041642': { independence: '完全失能', tube: '有', infection: '无', skinBreak: '有（骶尾部）' },
+      'AKB-N-2026-041508': { independence: '半自理', tube: '无', infection: '无', skinBreak: '无' },
+      'AKB-N-2026-041229': { independence: '完全自理', tube: '无', infection: '无', skinBreak: '无' },
+      'AKB-N-2026-040918': { independence: '半自理', tube: '无', infection: '无', skinBreak: '无' },
+      'AKB-N-2026-040807': { independence: '完全自理', tube: '无', infection: '无', skinBreak: '无' }
     };
     needs = byOrder[params.get('id')] || needs;
-    var items = [['自理能力', needs.independence, false], ['管路', needs.tube, needs.tube === '有'], ['传染性疾病', needs.infection, needs.infection === '有']];
+    var items = [['自理能力', needs.independence, false], ['管路', needs.tube, needs.tube === '有'], ['传染性疾病', needs.infection, needs.infection === '有'], ['皮肤破损', needs.skinBreak, needs.skinBreak === '有' || needs.skinBreak.indexOf('有') === 0]];
     var section = document.createElement('div');
     section.className = 'hero-care-needs';
     section.setAttribute('aria-label', '客户护理要点');

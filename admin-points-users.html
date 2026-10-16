@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>用户积分 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script></head>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>用户积分 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css"></head>
 <body><div class="layout">
   <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
   <main class="main">
@@ -84,12 +84,14 @@
     if (!d.user) return;
     var u = d.user;
     document.getElementById('userModalTitle').textContent = u.name + ' · 积分明细';
-    var earnRows = d.earn.length ? d.earn.map(function (r) {
-      return '<div class="ud-row"><span class="t">' + P.esc(r.date) + '</span><span class="tag ' + (r.type === '邀请好友' ? 'invite' : 'consume') + '">' + P.esc(r.type) + '</span><span class="d">' + P.esc(r.detail) + '</span><span class="p plus">+' + r.points + '</span></div>';
-    }).join('') : '<div class="ud-empty">暂无获取记录</div>';
-    var spendRows = d.spend.length ? d.spend.map(function (r) {
-      return '<div class="ud-row"><span class="t">' + P.esc(r.date) + '</span><span class="tag ' + (r.orderType === '商城订单' ? 'mall' : 'service') + '">' + P.esc(r.orderType) + '</span><span class="d">' + P.esc(r.orderNo) + ' · ' + P.esc(r.detail) + '</span><span class="p minus">-' + r.points + '</span></div>';
-    }).join('') : '<div class="ud-empty">暂无使用记录</div>';
+    var all = [];
+    d.earn.forEach(function (r) {
+      all.push({ kind: 'earn', date: r.date, time: r.time || '', tag: '<span class="tag ' + (r.type === '邀请好友' ? 'invite' : 'consume') + '">' + P.esc(r.type) + '</span>', desc: r.detail, points: r.points });
+    });
+    d.spend.forEach(function (r) {
+      all.push({ kind: 'spend', date: r.date, time: r.time || '', tag: '<span class="tag ' + (r.orderType === '商城订单' ? 'mall' : 'service') + '">' + P.esc(r.orderType) + '</span>', desc: r.orderNo + ' · ' + r.detail, points: r.points });
+    });
+    all.sort(function (a, b) { return String(b.date + b.time).localeCompare(String(a.date + a.time)); });
     var inviteRows = d.invite.length ? d.invite.map(function (r) {
       return '<div class="ud-row"><span class="t">' + P.esc(r.date) + '</span><span class="d">邀请 ' + P.esc(r.invitee) + '（' + P.esc(r.inviteePhone) + '）</span><span class="tag ' + (r.status === '已注册' ? 'done' : 'waiting') + '">' + P.esc(r.status) + '</span><span class="p ' + (r.reward > 0 ? 'plus' : '') + '">' + (r.reward > 0 ? '+' + r.reward : '待发放') + '</span></div>';
     }).join('') : '<div class="ud-empty">暂无邀请记录</div>';
@@ -100,9 +102,35 @@
         '<div><div class="k">累计使用</div><div class="v orange">-' + u.totalSpent + '</div></div>' +
         '<div><div class="k">邀请好友</div><div class="v blue">' + u.inviteCount + ' 人</div></div>' +
       '</div>' +
-      '<div class="ud-section"><div class="ud-section-title">获取明细</div>' + earnRows + '</div>' +
-      '<div class="ud-section"><div class="ud-section-title">使用明细</div>' + spendRows + '</div>' +
+      '<div class="ud-section"><div class="ud-section-title">积分明细（获取 + 使用，按时间倒序）</div>' +
+        '<div class="ud-filter">' +
+          '<label>类型</label><select class="select" id="udFType"><option value="all">全部</option><option value="earn">获取</option><option value="spend">使用</option></select>' +
+          '<label>开始日期</label><input type="date" id="udFStart">' +
+          '<label>结束日期</label><input type="date" id="udFEnd">' +
+          '<span class="result">共 <strong id="udFCount">0</strong> 条</span>' +
+        '</div>' +
+        '<div id="udList"></div>' +
+      '</div>' +
       '<div class="ud-section"><div class="ud-section-title">邀请明细</div>' + inviteRows + '</div>';
+    function renderUdList() {
+      var t = document.getElementById('udFType').value;
+      var s = document.getElementById('udFStart').value;
+      var e = document.getElementById('udFEnd').value;
+      var list = all.filter(function (r) {
+        if (t !== 'all' && r.kind !== t) return false;
+        if (s && r.date < s) return false;
+        if (e && r.date > e) return false;
+        return true;
+      });
+      document.getElementById('udFCount').textContent = list.length;
+      document.getElementById('udList').innerHTML = list.length ? list.map(function (r) {
+        return '<div class="ud-row"><span class="t">' + P.esc(r.date) + '</span>' + r.tag + '<span class="d">' + P.esc(r.desc) + '</span><span class="p ' + (r.kind === 'earn' ? 'plus">+' : 'minus">-') + r.points + '</span></div>';
+      }).join('') : '<div class="ud-empty">暂无符合条件的记录</div>';
+    }
+    document.getElementById('udFType').onchange = renderUdList;
+    document.getElementById('udFStart').onchange = renderUdList;
+    document.getElementById('udFEnd').onchange = renderUdList;
+    renderUdList();
     document.getElementById('userModal').classList.add('show');
   };
   window.closeUserModal = function () { document.getElementById('userModal').classList.remove('show'); };

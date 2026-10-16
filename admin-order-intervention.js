@@ -7,6 +7,8 @@
 
   var plans = {
     '待支付': ['关闭订单'],
+    '支付中': ['关闭订单'],
+    '已支付': ['取消订单'],
     '待服务': ['指派/更换陪护员', '调整服务时间', '修改服务地址', '修改就诊人', '取消订单'],
     '服务中': ['更换陪护员', '补录日报', '取消订单'],
     '退款/售后': ['审核通过', '审核驳回'],
@@ -18,11 +20,13 @@
   function mallPlans(state) {
     return {
       '待支付': ['关闭订单', '取消订单'],
+      '支付中': ['关闭订单', '取消订单'],
+      '已支付': ['取消订单'],
       '待发货': ['发货', '标记配送中', '修改收货信息', '取消订单'],
       '配送中': ['标记待收货确认', '修改物流信息', '标记配送异常'],
       '待收货确认': ['人工确认收货', '修改收货码', '发起售后'],
       '已完成': ['发起售后'],
-      '退款/售后': ['审核通过', '驳回申请', '设置退款金额', '完成退款'],
+      '退款/售后': ['审核通过', '审核驳回'],
       '已取消': ['复制订单重新创建']
     }[state] || [];
   }
@@ -39,8 +43,17 @@
 
   function esc(value) { return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-  /* 用户提交的退款申请信息（服务订单） */
+  /* 用户提交的退款申请信息（服务订单 / 商城订单） */
   function refundAppOf(order) {
+    if (order && order.type === '商城订单') {
+      return {
+        reason: order.refundReason || '用户未填写退款原因',
+        amount: String(order.refundAmount || order.amount || '').replace(/[^0-9.]/g, ''),
+        description: order.refundRemark || '用户未填写补充描述。',
+        photos: order.refundPhotos || [],
+        appliedAt: order.refundAppliedAt || order.orderedAt || '—'
+      };
+    }
     if (order && order.refundApp) return order.refundApp;
     return {
       reason: '服务内容不符合预期',
@@ -54,7 +67,7 @@
 
   function renderRefundInfo() {
     var box = document.getElementById('interventionRefund');
-    if (!activeOrder || activeOrder.type === '商城订单' || activeOrder.state !== '退款/售后') {
+    if (!activeOrder || activeOrder.state !== '退款/售后') {
       box.style.display = 'none';
       box.innerHTML = '';
       return;
@@ -115,8 +128,8 @@
         full = field('物流公司', '<input id="mallLogisticsCompany" value="' + (activeOrder.logisticsCompany || '') + '">') + field('物流单号', '<input id="mallLogisticsNo" value="' + (activeOrder.logisticsNo || '') + '">');
       } else if (activeAction === '修改收货码') {
         full = field('收货码', '<input id="mallReceiveCode" maxlength="8" value="' + (activeOrder.receiveCode || '') + '">');
-      } else if (activeAction === '设置退款金额') {
-        full = field('退款金额（元）', '<input id="manualRefund" type="number" min="0" value="' + String(activeOrder.amount || '').replace(/[^0-9.]/g, '') + '">') + field('退款方式', '<select><option>原路退回</option><option>人工转账</option></select>');
+      } else if (activeAction === '审核通过') {
+        full = field('退款金额（元）', '<input id="manualRefund" type="number" min="0" step="0.01" value="' + refundAmountValue() + '">') + field('退款方式', '<select id="manualRefundMethod"><option>原路退回</option><option>人工转账</option><option>退至平台余额</option></select>');
       }
       form.innerHTML = full;
       if (document.getElementById('mallDeliveryType')) document.getElementById('mallDeliveryType').value = activeOrder.deliveryType || '立即送达';
@@ -203,17 +216,36 @@
       if (activeAction === '标记配送异常') { activeOrder.state = '退款/售后'; activeOrder.receiptStatus = '配送异常待处理'; message = '已标记配送异常'; }
       if (activeAction === '人工确认收货') { activeOrder.state = '已完成'; activeOrder.receiptStatus = '后台人工确认'; activeOrder.confirmedBy = '管理员'; activeOrder.deliveredAt = '刚刚'; message = '已人工确认收货'; }
       if (activeAction === '发起售后') { activeOrder.state = '退款/售后'; activeOrder.receiptStatus = '售后处理中'; message = '已发起售后处理'; }
-      if (activeAction === '审核通过') { activeOrder.refundState = '售后审核通过'; message = '售后申请已审核通过'; }
-      if (activeAction === '驳回申请') { activeOrder.state = '已完成'; activeOrder.refundState = '售后申请已驳回'; message = '售后申请已驳回'; }
-      if (activeAction === '设置退款金额') { activeOrder.refundAmount = document.getElementById('manualRefund').value; activeOrder.refundState = '退款金额已设置'; message = '退款金额已设置'; }
-      if (activeAction === '完成退款') { activeOrder.refundState = '退款完成'; message = '商城订单退款已完成'; }
+      if (activeAction === '审核通过') {
+        var refundInput = document.getElementById('manualRefund');
+        var methodInput = document.getElementById('manualRefundMethod');
+        var refundValue = refundInput ? refundInput.value.trim() : '';
+        if (!refundValue || isNaN(Number(refundValue)) || Number(refundValue) <= 0) { showToast('请填写有效的退款金额'); return; }
+        activeOrder.refundAmount = refundValue;
+        activeOrder.refundMethod = methodInput ? methodInput.value : '原路退回';
+        activeOrder.refundState = '审核通过 · 退款完成';
+        activeOrder.refundReviewNote = document.getElementById('interventionRemark').value.trim() || '审核通过';
+        activeOrder.refundReviewedAt = '刚刚';
+        activeOrder.refundAt = '刚刚';
+        activeOrder.state = '已退款';
+        message = '退款申请已审核通过：¥' + refundValue + ' · ' + activeOrder.refundMethod;
+      }
+      if (activeAction === '审核驳回') {
+        var rejectNote = document.getElementById('interventionRemark').value.trim();
+        if (!rejectNote) { showToast('请填写驳回处理说明'); return; }
+        activeOrder.refundState = '审核驳回';
+        activeOrder.refundReviewNote = rejectNote;
+        activeOrder.refundReviewedAt = '刚刚';
+        activeOrder.state = '待收货确认';
+        message = '退款申请已驳回，订单继续履约';
+      }
       if (activeAction === '修改配送方式') { activeOrder.deliveryType = document.getElementById('mallDeliveryType').value; activeOrder.deliveryFee = '已含在商品售价内'; message = '配送方式已修改'; }
-      if (activeAction === '修改收货信息') { activeOrder.receiver = document.getElementById('mallReceiver').value.trim(); activeOrder.receiverPhone = document.getElementById('mallReceiverPhone').value.trim(); activeOrder.address = document.getElementById('mallAddress').value.trim(); message = '收货信息已修改'; }
+      if (activeAction === '修改收货信息') { activeOrder.receiver = document.getElementById('mallReceiver').value.trim(); activeOrder.receiverPhone = document.getElementById('mallReceiverPhone').value.trim(); activeOrder.address = document.getElementById('mallAddress').value.trim(); activeOrder.addressModified = true; activeOrder.addressModifiedAt = new Date().toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(/\//g, '-'); activeOrder.addressModifiedBy = '管理员'; message = '收货信息已修改'; }
       if (activeAction === '修改物流信息') { activeOrder.logisticsCompany = document.getElementById('mallLogisticsCompany').value.trim() || '—'; activeOrder.logisticsNo = document.getElementById('mallLogisticsNo').value.trim() || '—'; message = '物流信息已修改'; }
       if (activeAction === '修改收货码') { activeOrder.receiveCode = document.getElementById('mallReceiveCode').value.trim(); message = '收货码已修改'; }
       var mallOverrides = {};
       try { mallOverrides = JSON.parse(localStorage.getItem('akb_admin_mall_order_overrides_v1') || '{}') || {}; } catch (error) { mallOverrides = {}; }
-      mallOverrides[activeOrder.no] = { state: activeOrder.state, deliveryType: activeOrder.deliveryType, deliveryFee: activeOrder.deliveryFee, receiver: activeOrder.receiver, receiverPhone: activeOrder.receiverPhone, address: activeOrder.address, logisticsCompany: activeOrder.logisticsCompany, logisticsNo: activeOrder.logisticsNo, receiveCode: activeOrder.receiveCode, receiptStatus: activeOrder.receiptStatus, confirmedBy: activeOrder.confirmedBy, deliveredAt: activeOrder.deliveredAt, refundState: activeOrder.refundState, refundAmount: activeOrder.refundAmount, shipInfo: activeOrder.shipInfo };
+      mallOverrides[activeOrder.no] = { state: activeOrder.state, deliveryType: activeOrder.deliveryType, deliveryFee: activeOrder.deliveryFee, receiver: activeOrder.receiver, receiverPhone: activeOrder.receiverPhone, address: activeOrder.address, addressModified: activeOrder.addressModified, addressModifiedAt: activeOrder.addressModifiedAt, addressModifiedBy: activeOrder.addressModifiedBy, logisticsCompany: activeOrder.logisticsCompany, logisticsNo: activeOrder.logisticsNo, receiveCode: activeOrder.receiveCode, receiptStatus: activeOrder.receiptStatus, confirmedBy: activeOrder.confirmedBy, deliveredAt: activeOrder.deliveredAt, refundState: activeOrder.refundState, refundAmount: activeOrder.refundAmount, refundMethod: activeOrder.refundMethod, refundReviewNote: activeOrder.refundReviewNote, refundReviewedAt: activeOrder.refundReviewedAt, refundAt: activeOrder.refundAt, shipInfo: activeOrder.shipInfo };
       localStorage.setItem('akb_admin_mall_order_overrides_v1', JSON.stringify(mallOverrides));
       closeOrderIntervention();
       if (typeof window.AKBRefreshAdminMallOverrides === 'function') window.AKBRefreshAdminMallOverrides();

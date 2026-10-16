@@ -529,9 +529,289 @@
         border-color: var(--blue);
         color: #fff;
       }
+      /* 积分明细（图1 结构） */
+      .ptsum {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .ptsum-item {
+        border: 1px solid var(--line, #e3eef9);
+        border-radius: 10px;
+        padding: 12px 14px;
+        background: #fbfdff;
+      }
+      .ptsum-item .k {
+        font-size: 11px;
+        font-weight: 700;
+        color: #8b99ad;
+      }
+      .ptsum-item .v {
+        margin-top: 6px;
+        font-size: 18px;
+        font-weight: 900;
+      }
+      .ptsum-item .v.purple { color: #7f55b8; }
+      .ptsum-item .v.green { color: #16a34a; }
+      .ptsum-item .v.orange { color: #d97706; }
+      .ptsum-item .v.blue { color: #224cd3; }
+      .ud-section-title {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 13px;
+        font-weight: 900;
+        color: #172033;
+        margin-bottom: 10px;
+      }
+      .ud-section-title::before {
+        content: '';
+        width: 3px;
+        height: 13px;
+        border-radius: 3px;
+        background: var(--blue);
+      }
+      .ud-filter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .ud-filter label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #8b99ad;
+      }
+      .ud-filter select,
+      .ud-filter input[type='date'] {
+        height: 32px;
+        border: 1px solid var(--line, #e3eef9);
+        border-radius: 8px;
+        padding: 0 8px;
+        font: 600 12px inherit;
+        color: #41536d;
+        background: #fff;
+        outline: none;
+      }
+      .ud-filter .result {
+        margin-left: auto;
+        font-size: 12px;
+        font-weight: 700;
+        color: #8b99ad;
+      }
+      .ud-filter .result strong {
+        color: var(--blue);
+        font-size: 14px;
+      }
+      .ud-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .ud-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 14px;
+        border: 1px solid var(--line, #e3eef9);
+        border-radius: 10px;
+        background: #fff;
+      }
+      .ud-row .t {
+        font-size: 12px;
+        font-weight: 700;
+        color: #8b99ad;
+        white-space: nowrap;
+      }
+      .ud-row .d {
+        flex: 1;
+        min-width: 0;
+        font-size: 12px;
+        font-weight: 600;
+        color: #41536d;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .ud-row .p {
+        font-size: 13px;
+        font-weight: 900;
+        color: #8b99ad;
+        white-space: nowrap;
+      }
+      .ud-row .p.plus { color: #16a34a; }
+      .ud-row .p.minus { color: #dc2626; }
+      .ud-row .tag {
+        display: inline-flex;
+        padding: 4px 9px;
+        border-radius: 14px;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .ud-row .tag.service,
+      .ud-row .tag.mall {
+        background: #e7f1fd;
+        color: #224cd3;
+      }
+      .ud-row .tag.consume {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+      .ud-row .tag.invite {
+        background: #f0e9fa;
+        color: #7f55b8;
+      }
+      .ud-row .tag.recharge {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+      .ud-row .tag.deduct {
+        background: #fef3c7;
+        color: #d97706;
+      }
+      .ud-row .tag.done {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+      .ud-row .tag.waiting {
+        background: #fef3c7;
+        color: #d97706;
+      }
+      .ud-empty {
+        padding: 18px;
+        text-align: center;
+        font-size: 12px;
+        color: #9aa7ba;
+      }
+      /* 订单记录：商城订单 / 用户订单 子标签 */
+      .subtabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .subtab {
+        height: 32px;
+        padding: 0 14px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: #fff;
+        color: #657087;
+        font: 800 12px inherit;
+        cursor: pointer;
+      }
+      .subtab.active {
+        border-color: var(--blue);
+        background: var(--blue);
+        color: #fff;
+      }
+      .subtab .n {
+        margin-left: 5px;
+        opacity: 0.75;
+      }
+      .order-scroll {
+        overflow-x: auto;
+      }
+      .order-table {
+        min-width: 1150px;
+      }
+      .order-table td {
+        vertical-align: top;
+      }
+      .order-table .order-no {
+        font-weight: 800;
+        color: var(--text);
+      }
+      .order-table .sub {
+        font-size: 11px;
+        color: #9aa7ba;
+        margin-top: 3px;
+      }
+      .order-table .product-name,
+      .order-table .person-name,
+      .order-table .service {
+        font-weight: 800;
+        color: var(--text);
+        white-space: nowrap;
+      }
+      .order-table .location {
+        white-space: normal;
+        line-height: 1.45;
+        word-break: break-all;
+        min-width: 180px;
+      }
+      .order-table .address-type {
+        display: inline-flex;
+        margin-right: 5px;
+        padding: 3px 6px;
+        border-radius: 6px;
+        background: #e7f1fd;
+        color: #224cd3;
+        font-size: 10px;
+        font-weight: 800;
+        vertical-align: top;
+      }
+      .order-table .address-detail {
+        font-size: 11px;
+        color: #657087;
+      }
+      .order-table .delivery-type {
+        font-weight: 800;
+        color: #224cd3;
+        white-space: nowrap;
+      }
+      .order-table .logistics {
+        line-height: 1.5;
+        white-space: normal;
+        font-weight: 700;
+        color: #41536d;
+      }
+      .order-table .tag {
+        display: inline-flex;
+        padding: 5px 9px;
+        border-radius: 18px;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .order-table .tag.pay,
+      .order-table .tag.pending {
+        background: #fef3c7;
+        color: #d97706;
+      }
+      .order-table .tag.serving {
+        background: #e7f1fd;
+        color: #224cd3;
+      }
+      .order-table .tag.done {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+      .order-table .tag.refund,
+      .order-table .tag.cancel {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+      .order-table .op {
+        display: flex;
+        gap: 10px;
+        white-space: nowrap;
+      }
+      .order-table .op button {
+        border: 0;
+        background: none;
+        color: #224cd3;
+        font: 700 12px inherit;
+        cursor: pointer;
+        padding: 0;
+      }
+      .order-table .op button:hover {
+        text-decoration: underline;
+      }
     </style>
     <script defer src="admin-sidebar.js"></script>
-  </head>
+  <link rel="stylesheet" href="modal-scroll.css"></head>
   <body>
     <div class="layout">
       <aside class="sidebar">
@@ -591,7 +871,7 @@
                   <span>邀请人</span><span>—</span>
                 </div>
                 <div class="identity-row">
-                  <span>当前积分</span><span>180 分</span>
+                  <span>当前积分</span><span id="pointsValue">180 分</span>
                 </div>
                 <div class="identity-row">
                   <span>累计订单</span><span>3 笔</span>
@@ -677,55 +957,118 @@
               </div>
               <div class="panel" id="orders">
                 <div class="section-title">订单记录</div>
-                <table class="table">
-                  <tr>
-                    <th>订单号</th>
-                    <th>服务项目</th>
-                    <th>服务时间</th>
-                    <th>金额</th>
-                    <th>状态</th>
-                  </tr>
-                  <tr>
-                    <td>AKB-20260412-001</td>
-                    <td>住院陪护 · 12小时/天</td>
-                    <td>2026-04-12</td>
-                    <td>¥360</td>
-                    <td><span class="tag">服务中</span></td>
-                  </tr>
-                  <tr>
-                    <td>AKB-20260408-023</td>
-                    <td>陪诊服务 · 贵宾陪诊</td>
-                    <td>2026-04-08</td>
-                    <td>¥298</td>
-                    <td><span class="tag">已完成</span></td>
-                  </tr>
-                </table>
+                <div class="subtabs">
+                  <button
+                    class="subtab active"
+                    data-otab="mall"
+                    onclick="switchOrderTab('mall')"
+                  >
+                    商城订单<span class="n" id="mallCount">0</span>
+                  </button>
+                  <button
+                    class="subtab"
+                    data-otab="user"
+                    onclick="switchOrderTab('user')"
+                  >
+                    用户订单<span class="n" id="userCount">0</span>
+                  </button>
+                </div>
+                <div id="mallOrdersBox">
+                  <div class="order-scroll">
+                    <table class="table order-table">
+                      <thead>
+                        <tr>
+                          <th>订单信息</th>
+                          <th>商品</th>
+                          <th>收货人</th>
+                          <th>收货地址</th>
+                          <th>配送方式</th>
+                          <th>物流信息</th>
+                          <th>下单时间</th>
+                          <th>金额</th>
+                          <th>状态</th>
+                          <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody id="mallRows"></tbody>
+                    </table>
+                  </div>
+                  <div class="ud-empty" id="mallEmpty" style="display: none">
+                    该用户暂无商城订单
+                  </div>
+                </div>
+                <div id="userOrdersBox" style="display: none">
+                  <div class="order-scroll">
+                    <table class="table order-table">
+                      <thead>
+                        <tr>
+                          <th>订单信息</th>
+                          <th>服务项目</th>
+                          <th>就诊人/服务对象</th>
+                          <th>服务地址</th>
+                          <th>陪护员</th>
+                          <th>服务时间</th>
+                          <th>下单时间</th>
+                          <th>金额</th>
+                          <th>状态</th>
+                          <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody id="userRows"></tbody>
+                    </table>
+                  </div>
+                  <div class="ud-empty" id="userEmpty" style="display: none">
+                    该用户暂无服务订单
+                  </div>
+                </div>
               </div>
               <div class="panel" id="points">
-                <div class="section-title">积分明细</div>
-                <table class="table">
-                  <tr>
-                    <th>时间</th>
-                    <th>来源/用途</th>
-                    <th>说明</th>
-                    <th>变动</th>
-                    <th>余额</th>
-                  </tr>
-                  <tr>
-                    <td>2026-04-08</td>
-                    <td>推荐获取</td>
-                    <td>邀请李先生注册</td>
-                    <td class="positive">+30</td>
-                    <td>180</td>
-                  </tr>
-                  <tr>
-                    <td>2026-04-07</td>
-                    <td>使用扣除</td>
-                    <td>订单 AKB-20260407-011</td>
-                    <td class="negative">-50</td>
-                    <td>150</td>
-                  </tr>
-                </table>
+                <div class="panel-toolbar">
+                  <div>
+                    <div class="section-title">积分明细</div>
+                    <div class="content-sub">该用户的积分账户与变动流水</div>
+                  </div>
+                  <div>
+                    <button
+                      class="mini-btn"
+                      type="button"
+                      onclick="openPointsModal('recharge')"
+                    >
+                      充值</button
+                    ><button
+                      class="mini-btn"
+                      type="button"
+                      onclick="openPointsModal('deduct')"
+                    >
+                      抵扣
+                    </button>
+                  </div>
+                </div>
+                <div class="ptsum">
+                  <div class="ptsum-item"><div class="k">可用积分</div><div class="v purple" id="sumBalance">180</div></div>
+                  <div class="ptsum-item"><div class="k">累计获取</div><div class="v green" id="sumEarn">+186</div></div>
+                  <div class="ptsum-item"><div class="k">累计使用</div><div class="v orange" id="sumSpend">-60</div></div>
+                  <div class="ptsum-item"><div class="k">邀请好友</div><div class="v blue" id="sumInvite">3 人</div></div>
+                </div>
+                <div class="ud-section-title">积分明细（获取 + 使用，按时间倒序）</div>
+                <div class="ud-filter">
+                  <label>类型</label>
+                  <select id="udFType" onchange="filterUdList()"><option value="all">全部</option><option value="earn">获取</option><option value="spend">使用</option></select>
+                  <label>开始日期</label><input type="date" id="udFStart" onchange="filterUdList()">
+                  <label>结束日期</label><input type="date" id="udFEnd" onchange="filterUdList()">
+                  <span class="result">共 <strong id="udFCount">0</strong> 条</span>
+                </div>
+                <div class="ud-list" id="udList">
+                  <div class="ud-row" data-kind="earn" data-date="2026-04-08"><span class="t">2026-04-08</span><span class="tag invite">邀请好友</span><span class="d">好友 李先生 完成注册</span><span class="p plus">+30</span></div>
+                  <div class="ud-row" data-kind="spend" data-date="2026-04-07"><span class="t">2026-04-07</span><span class="tag service">服务订单</span><span class="d">订单 AKB-20260407-011 · 抵扣 ¥50</span><span class="p minus">-50</span></div>
+                  <div class="ud-row" data-kind="earn" data-date="2026-04-06"><span class="t">2026-04-06</span><span class="tag consume">消费返积分</span><span class="d">服务订单 AKB-20260406-009 · 实付 ¥1,560</span><span class="p plus">+156</span></div>
+                  <div class="ud-row" data-kind="spend" data-date="2026-04-05"><span class="t">2026-04-05</span><span class="tag mall">商城订单</span><span class="d">订单 AKB-M2026-100930 · 医用无菌口罩 x2 · 抵扣 ¥10</span><span class="p minus">-10</span></div>
+                </div>
+                <div class="ud-section-title" style="margin-top:16px">邀请明细</div>
+                <div class="ud-list">
+                  <div class="ud-row"><span class="t">2026-04-10</span><span class="d">邀请 王先生（135****8843）</span><span class="tag waiting">待注册</span><span class="p">待发放</span></div>
+                  <div class="ud-row"><span class="t">2026-04-08</span><span class="d">邀请 李先生（137****3325）</span><span class="tag done">已注册</span><span class="p plus">+30</span></div>
+                </div>
               </div>
               <div class="panel" id="patients">
                 <div class="panel-toolbar">
@@ -819,6 +1162,54 @@
         </div>
       </section>
     </div>
+    <div
+      class="patient-modal-mask"
+      id="pointsModal"
+      onclick="closePointsModalOnMask(event)"
+    >
+      <section class="patient-modal">
+        <div class="patient-modal-head">
+          <div class="patient-modal-title" id="pointsModalTitle">积分充值</div>
+          <button
+            class="patient-modal-close"
+            type="button"
+            onclick="closePointsModal()"
+          >
+            ×
+          </button>
+        </div>
+        <div class="patient-form-grid">
+          <div class="patient-field">
+            <label for="pointsAmount" id="pointsAmountLabel">充值积分</label
+            ><input
+              id="pointsAmount"
+              type="number"
+              min="1"
+              placeholder="请输入积分数量"
+            />
+          </div>
+          <div class="patient-field">
+            <label>当前积分</label><input id="pointsCurrent" readonly />
+          </div>
+          <div class="patient-field full">
+            <label for="pointsRemark">变动说明</label
+            ><textarea
+              id="pointsRemark"
+              maxlength="160"
+              placeholder="请输入积分变动说明"
+            ></textarea>
+          </div>
+        </div>
+        <div class="patient-modal-foot">
+          <button type="button" onclick="closePointsModal()">取消</button
+          ><button class="save" type="button" onclick="savePoints()">
+            确认
+          </button>
+        </div>
+      </section>
+    </div>
+    <script src="admin-overview-data.js"></script>
+    <script src="admin-mall-data.js"></script>
     <script>
       const patients = [
         {
@@ -932,6 +1323,98 @@
       function closePatientModalOnMask(event) {
         if (event.target === event.currentTarget) closePatientModal();
       }
+      var currentPoints = 180;
+      var pointsMode = "recharge";
+      function openPointsModal(mode) {
+        pointsMode = mode === "deduct" ? "deduct" : "recharge";
+        document.getElementById("pointsModalTitle").textContent =
+          pointsMode === "recharge" ? "积分充值" : "积分抵扣";
+        document.getElementById("pointsAmountLabel").textContent =
+          pointsMode === "recharge" ? "充值积分" : "抵扣积分";
+        document.getElementById("pointsCurrent").value =
+          currentPoints + " 分";
+        document.getElementById("pointsAmount").value = "";
+        document.getElementById("pointsRemark").value = "";
+        document.getElementById("pointsModal").classList.add("show");
+        document.getElementById("pointsAmount").focus();
+      }
+      function closePointsModal() {
+        document.getElementById("pointsModal").classList.remove("show");
+      }
+      function closePointsModalOnMask(event) {
+        if (event.target === event.currentTarget) closePointsModal();
+      }
+      function savePoints() {
+        const amount = parseInt(
+          document.getElementById("pointsAmount").value,
+          10,
+        );
+        if (!amount || amount <= 0) {
+          alert("请输入有效的积分数量");
+          return;
+        }
+        if (pointsMode === "deduct" && amount > currentPoints) {
+          alert("抵扣积分不能超过当前积分");
+          return;
+        }
+        const remark = document.getElementById("pointsRemark").value.trim();
+        if (!remark) {
+          alert("请填写变动说明");
+          return;
+        }
+        const delta = pointsMode === "recharge" ? amount : -amount;
+        currentPoints += delta;
+        const now = new Date();
+        const date =
+          now.getFullYear() +
+          "-" +
+          String(now.getMonth() + 1).padStart(2, "0") +
+          "-" +
+          String(now.getDate()).padStart(2, "0");
+        const row = document.createElement("div");
+        row.className = "ud-row";
+        row.dataset.kind = delta > 0 ? "earn" : "spend";
+        row.dataset.date = date;
+        row.innerHTML =
+          '<span class="t">' +
+          date +
+          '</span><span class="tag ' +
+          (pointsMode === "recharge" ? "recharge" : "deduct") +
+          '">' +
+          (pointsMode === "recharge" ? "后台充值" : "后台抵扣") +
+          '</span><span class="d">' +
+          escapeHtml(remark) +
+          '</span><span class="p ' +
+          (delta > 0 ? "plus" : "minus") +
+          '">' +
+          (delta > 0 ? "+" : "") +
+          delta +
+          "</span>";
+        document.getElementById("udList").prepend(row);
+        document.getElementById("sumBalance").textContent = currentPoints;
+        filterUdList();
+        document.getElementById("pointsValue").textContent =
+          currentPoints + " 分";
+        closePointsModal();
+      }
+      function filterUdList() {
+        const type = document.getElementById("udFType").value;
+        const start = document.getElementById("udFStart").value;
+        const end = document.getElementById("udFEnd").value;
+        let shown = 0;
+        document
+          .querySelectorAll("#udList .ud-row")
+          .forEach(function (row) {
+            const okType = type === "all" || row.dataset.kind === type;
+            const d = row.dataset.date || "";
+            const okRange = (!start || d >= start) && (!end || d <= end);
+            const show = okType && okRange;
+            row.style.display = show ? "" : "none";
+            if (show) shown++;
+          });
+        document.getElementById("udFCount").textContent = shown;
+      }
+      filterUdList();
       function savePatient() {
         const name = document.getElementById("patientName").value.trim();
         const identity = parseIdNo(
@@ -993,6 +1476,250 @@
           }),
       );
       renderPatients();
+      /* ── 订单记录：商城订单 / 用户订单（列结构与对应列表页保持一致） ── */
+      var M = window.AKBMallAdmin;
+      var USER_NAME = "王女士";
+      var USER_PHONE = "138****2468";
+      var MSTATE_TO_LEGACY = {
+        待付款: "待支付",
+        待发货: "待发货",
+        待收货: "待收货确认",
+        已完成: "已完成",
+        "退款/售后": "退款/售后",
+        已退款: "已退款",
+        已取消: "已取消",
+      };
+      var MALL_TAG = {
+        待支付: "pay",
+        支付中: "pay",
+        已支付: "serving",
+        待发货: "serving",
+        配送中: "serving",
+        待收货确认: "pending",
+        已完成: "done",
+        "退款/售后": "refund",
+        已退款: "cancel",
+        已取消: "cancel",
+      };
+      var SVC_TAG = {
+        待支付: "pending",
+        待服务: "pending",
+        服务中: "serving",
+        已完成: "done",
+        "退款/售后": "refund",
+        已取消: "cancel",
+      };
+      /* 服务订单的就诊人/地址档案（与订单管理页 serviceProfiles 一致） */
+      var svcProfiles = {
+        "AKB-20260412-001": {
+          patient: "张爷爷 · 男 · 68岁",
+          patientPhone: "138****2468",
+          address: "北京市朝阳区建国路 66 号 北京协和医院东院区",
+          addressType: "医院",
+        },
+        "AKB-20260416-003": {
+          patient: "王女士 · 女 · 34岁",
+          patientPhone: "138****2468",
+          address: "北京市朝阳区建国路 66 号 北京协和医院东院区",
+          addressType: "医院",
+        },
+        "AKB-20260416-004": {
+          patient: "王女士 · 女 · 34岁",
+          patientPhone: "138****2468",
+          address: "北京市朝阳区光华路 12 号 2 单元 601",
+          addressType: "家",
+        },
+      };
+      function trimTime(v) {
+        return String(v || "").replace(/:\d\d$/, "");
+      }
+      window.switchOrderTab = function (t) {
+        document
+          .querySelectorAll(".subtab")
+          .forEach(function (b) {
+            b.classList.toggle("active", b.dataset.otab === t);
+          });
+        document.getElementById("mallOrdersBox").style.display =
+          t === "mall" ? "" : "none";
+        document.getElementById("userOrdersBox").style.display =
+          t === "user" ? "" : "none";
+      };
+      function renderMallOrders() {
+        var list = M.getOrders().filter(function (o) {
+          return o.userName === USER_NAME || o.userPhone === USER_PHONE;
+        });
+        document.getElementById("mallCount").textContent = list.length;
+        document.getElementById("mallEmpty").style.display = list.length
+          ? "none"
+          : "block";
+        document.getElementById("mallRows").innerHTML = list
+          .map(function (o) {
+            var state = MSTATE_TO_LEGACY[o.state] || o.state;
+            var s = o.shipInfo || {};
+            var first = (o.items && o.items[0]) || {};
+            var productName =
+              escapeHtml(first.name || "健康商品") +
+              (o.items && o.items.length > 1
+                ? " 等" + o.items.length + "种"
+                : "");
+            var logi;
+            if ((o.deliveryLabel || "") === "快递送达") {
+              if (s.company || o.logisticsCompany)
+                logi =
+                  escapeHtml(s.company || o.logisticsCompany) +
+                  "<br>" +
+                  escapeHtml(s.trackingNo || o.logisticsNo || "");
+              else if (state === "待支付" || state === "待发货") logi = "待发货";
+              else if (state === "已完成") logi = "配送完成";
+              else logi = "配送中";
+            } else if (state === "待支付" || state === "待发货") {
+              logi = "未配送";
+            } else {
+              logi = state === "已完成" ? "配送完成" : "配送完成 · 待确认";
+            }
+            var receipt =
+              state === "已完成"
+                ? "已确认收货"
+                : state === "待支付" || state === "已取消"
+                  ? "付款后生成收货码"
+                  : o.receiptCode
+                    ? "收货码：" + escapeHtml(o.receiptCode)
+                    : "待生成收货码";
+            return (
+              '<tr><td><div class="order-no">' +
+              escapeHtml(o.no) +
+              "</div></td>" +
+              '<td><div class="product-name">' +
+              productName +
+              '</div><div class="sub">数量：' +
+              escapeHtml(o.quantity) +
+              " 件</div></td>" +
+              '<td><div class="person-name">' +
+              escapeHtml(o.userName) +
+              '</div><div class="sub">' +
+              escapeHtml(o.userPhone || "—") +
+              "</div></td>" +
+              '<td class="location"><span class="address-type">收货地址</span><span class="address-detail">' +
+              escapeHtml(o.address || "—") +
+              "</span></td>" +
+              '<td><div class="delivery-type">' +
+              escapeHtml(o.deliveryLabel || "—") +
+              '</div><div class="sub">配送费：已含在商品售价内</div></td>' +
+              '<td class="logistics">' +
+              logi +
+              '<div class="sub">' +
+              receipt +
+              "</div></td>" +
+              "<td>" +
+              escapeHtml(trimTime(o.createdAt || o.date)) +
+              '</td><td class="service">' +
+              M.money(o.amount) +
+              '</td><td><span class="tag ' +
+              (MALL_TAG[state] || "") +
+              '">' +
+              escapeHtml(state) +
+              '</span></td><td><div class="op"><button onclick="location.href=\'admin-mall-order-detail.html?no=' +
+              encodeURIComponent(o.no) +
+              '\'">查看</button></div></td></tr>'
+            );
+          })
+          .join("");
+      }
+      function renderUserOrders() {
+        var list = (window.AKBAdminOverviewData.orders || [])
+          .filter(function (o) {
+            return o.user === USER_NAME && o.type !== "商城订单";
+          })
+          .map(function (o) {
+            return Object.assign(
+              { patient: "—", patientPhone: "—", address: "—", addressType: "—" },
+              svcProfiles[o.no] || {},
+              o,
+            );
+          });
+        /* 合并该用户从小程序端提交的服务订单 */
+        var nos = {};
+        list.forEach(function (o) {
+          nos[o.no] = true;
+        });
+        try {
+          var saved = JSON.parse(
+            localStorage.getItem("ankebang_service_orders") || "[]",
+          );
+          if (Array.isArray(saved)) {
+            saved.forEach(function (o) {
+              if (nos[o.id]) return;
+              if (o.phone !== USER_PHONE && o.contact !== USER_NAME) return;
+              nos[o.id] = true;
+              list.push({
+                no: o.id,
+                orderedAt: new Date(o.createdAt || Date.now())
+                  .toLocaleString("zh-CN", {
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                  .replace(/\//g, "-"),
+                type: o.type,
+                item: o.quantity ? o.project + " · " + o.quantity : o.project,
+                patient: o.person || "—",
+                patientPhone: o.phone || "—",
+                address: o.address || "—",
+                addressType: o.addressKind || "家",
+                nurse: o.nurse || "待分配",
+                nursePhone: o.nursePhone || "—",
+                time: o.time || "—",
+                amount: "¥" + o.amount,
+                state: o.state,
+              });
+            });
+          }
+        } catch (e) {}
+        document.getElementById("userCount").textContent = list.length;
+        document.getElementById("userEmpty").style.display = list.length
+          ? "none"
+          : "block";
+        document.getElementById("userRows").innerHTML = list
+          .map(function (o) {
+            return (
+              '<tr><td><div class="order-no">' +
+              escapeHtml(o.no) +
+              '</div></td><td><div class="service">' +
+              escapeHtml(o.type) +
+              '</div><div class="sub">' +
+              escapeHtml(o.item) +
+              '</div></td><td><div class="person-name">' +
+              escapeHtml(o.patient || "—") +
+              '</div><div class="sub">' +
+              escapeHtml(o.patientPhone || "—") +
+              '</div></td><td class="location"><span class="address-type">' +
+              escapeHtml(o.addressType || "—") +
+              '</span><span class="address-detail">' +
+              escapeHtml(o.address || "—") +
+              '</span></td><td><div class="person-name">' +
+              escapeHtml(o.nurse || "待分配") +
+              '</div><div class="sub">' +
+              escapeHtml(o.nursePhone || "—") +
+              "</div></td><td>" +
+              escapeHtml(o.time || "—") +
+              "</td><td>" +
+              escapeHtml(o.orderedAt || "—") +
+              '</td><td class="service">' +
+              escapeHtml(o.amount) +
+              '</td><td><span class="tag ' +
+              (SVC_TAG[o.state] || "") +
+              '">' +
+              escapeHtml(o.state) +
+              '</span></td><td><div class="op"><button onclick="location.href=\'admin-order-detail.html?no=' +
+              encodeURIComponent(o.no) +
+              '\'">查看</button></div></td></tr>'
+            );
+          })
+          .join("");
+      }
+      renderMallOrders();
+      renderUserOrders();
     </script>
   </body>
 </html>

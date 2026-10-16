@@ -103,6 +103,8 @@
     .mall-state.shipping { color: #397EED; background: #E8F1FF; }
     .mall-state.receiving { color: #C26C16; background: #FFF1DD; }
     .mall-state.done { color: #16A34A; background: #DCFCE7; }
+    .mall-state.refund { color: #8655C5; background: #EDE6F7; }
+    .mall-state.cancel { color: #DC2626; background: #FEE2E2; }
     .mall-product-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
     .mall-product-thumb { width: 66px; height: 66px; flex: 0 0 66px; display: grid; place-items: center; border-radius: 14px; background: var(--purple-light); color: var(--purple); }
     .mall-product-thumb.blue { background: #E8F1FF; color: #397EED; }
@@ -266,7 +268,7 @@
     /* Action modal */
     .action-modal { position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(25,15,45,.48); opacity:0; pointer-events:none; transition:opacity .2s; }
     .action-modal.show { opacity:1; pointer-events:auto; }
-    .action-sheet { width:min(360px,100%); background:#fff; border-radius:22px; padding:22px 18px 16px; box-shadow:0 18px 60px rgba(35,18,70,.25); transform:translateY(12px) scale(.98); transition:transform .2s; }
+    .action-sheet { width:min(360px,100%); max-height:calc(100vh - 40px); overflow-y:auto; background:#fff; border-radius:22px; padding:22px 18px 16px; box-shadow:0 18px 60px rgba(35,18,70,.25); transform:translateY(12px) scale(.98); transition:transform .2s; }
     .action-modal.show .action-sheet { transform:none; }
     .action-icon { width:46px; height:46px; margin:0 auto 10px; border-radius:15px; display:grid; place-items:center; background:var(--purple-light); color:var(--purple); font-size:23px; }
     .action-title { text-align:center; font-size:17px; font-weight:900; }
@@ -339,7 +341,7 @@
 
       <!-- Navbar -->
       <div class="navbar">
-        <button class="back-btn" onclick="location.href='home.html'" aria-label="返回">
+        <button class="back-btn" onclick="history.length>1?history.back():location.href='home.html'" aria-label="返回">
           <svg viewBox="0 0 20 20" fill="none">
             <path d="M13 4.5L7.5 10 13 15.5" stroke="#8655C5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -369,6 +371,7 @@
         <div class="tf" onclick="filterTab(this,'payment')">待付款</div>
         <div class="tf" onclick="filterTab(this,'shipping')">待发货</div>
         <div class="tf" onclick="filterTab(this,'receiving')">待收货</div>
+        <div class="tf" onclick="filterTab(this,'refund')">退款/售后</div>
         <div class="tf" onclick="filterTab(this,'done')">已完成</div>
       </div>
 
@@ -760,45 +763,6 @@
       </div><!-- .content -->
     </div><!-- .scroll-area -->
 
-    <!-- Bottom nav -->
-    <div class="bottom-nav">
-      <a class="nav-item" href="home.html">
-        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
-          <path class="ni" d="M4.5 13.2L13 5.8l8.5 7.4V22a1.4 1.4 0 01-1.4 1.4H16V18h-6v5.4H5.9A1.4 1.4 0 014.5 22z"
-                stroke="#AEACC0" stroke-width="1.8" stroke-linejoin="round"/>
-        </svg>
-        <span class="nav-lbl">首页</span>
-      </a>
-      <a class="nav-item" href="mall.html">
-        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
-          <path class="ni" d="M5 9h16l-1 13H6L5 9zM9 10V7a4 4 0 018 0v3" stroke="#AEACC0" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
-        </svg>
-        <span class="nav-lbl">商城</span>
-      </a>
-      <a class="nav-item active" href="orders.html">
-        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
-          <rect class="ni" x="4.5" y="5.5" width="17" height="16" rx="3" stroke="#AEACC0" stroke-width="1.8"/>
-          <path class="ni" d="M8.5 2.5v5M17.5 2.5v5M4.5 12h17" stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/>
-          <path class="ni" d="M9 16.5h8M9 20h5" stroke="#AEACC0" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
-        <span class="nav-lbl">订单</span>
-      </a>
-      <a class="nav-item" href="ai-health.html">
-        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
-          <path class="ni" d="M5 6.5A3.5 3.5 0 018.5 3h9A3.5 3.5 0 0121 6.5v7a3.5 3.5 0 01-3.5 3.5H12l-4.5 4v-4.2A3.5 3.5 0 015 13.5z" stroke="#AEACC0" stroke-width="1.7" stroke-linejoin="round"/>
-          <path class="ni" d="M13 6.7v5.6M10.2 9.5h5.6" stroke="#AEACC0" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
-        <span class="nav-lbl">AI健康咨询</span>
-      </a>
-      <a class="nav-item" href="profile.html">
-        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
-          <circle class="ni" cx="13" cy="10" r="4.2" stroke="#AEACC0" stroke-width="1.8"/>
-          <path class="ni" d="M5 22.5c1.6-3.8 4.6-6 8-6s6.4 2.2 8 6" stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-        <span class="nav-lbl">我的</span>
-      </a>
-    </div>
-
   </div><!-- .phone -->
 </div><!-- .frame -->
 
@@ -861,7 +825,9 @@
     (filter || document).querySelectorAll('.tf').forEach(t => t.classList.remove('on'));
     el.classList.add('on');
     document.querySelectorAll('#orderList .order-card').forEach(card => {
-      card.style.display = status === 'all' || card.dataset.status === status ? '' : 'none';
+      var match = status === 'all' || card.dataset.status === status;
+      if (status === 'refund') match = card.dataset.status === 'refund' || card.dataset.status === 'cancel';
+      card.style.display = match ? '' : 'none';
     });
   }
   function initializeOrderTab() {
@@ -937,7 +903,9 @@
     pay:    { icon:'¥', title:'确认支付', desc:'请确认支付本次服务订单。', confirm:'确认支付' },
     'mall-pay':     { icon:'¥', title:'确认付款', desc:'请确认支付本次商城订单。', confirm:'确认付款' },
     'mall-remind':  { icon:'⌁', title:'提醒发货', desc:'已为你记录发货提醒，商家发货后会及时通知。', confirm:'知道了' },
-    'mall-receive': { icon:'✓', title:'确认收货', desc:'确认已收到商品且包装完好？', confirm:'确认收货' }
+    'mall-receive': { icon:'✓', title:'确认收货', desc:'确认已收到商品且包装完好？', confirm:'确认收货' },
+    'mall-refund-instant': { icon:'⊗', title:'申请退款', desc:'该订单尚未发货，退款将原路退回，预计 1-3 个工作日到账。', confirm:'确认退款' },
+    'mall-refund-manual':  { icon:'⊗', title:'申请退款/售后', desc:'该订单已发货，需要客服人工审核退款申请。请填写退款原因，提交后平台将在 1-3 个工作日内审核。', confirm:'提交申请' }
   };
   function openActionModal(type, trigger) {
     modalAction = type;
@@ -948,7 +916,7 @@
     document.getElementById('actionDesc').textContent = c.desc;
     document.getElementById('actionConfirm').textContent = c.confirm;
     document.getElementById('actionConfirm').onclick = confirmAction;
-    document.getElementById('refundForm').classList.toggle('show', type === 'refund');
+    document.getElementById('refundForm').classList.toggle('show', type === 'refund' || type === 'mall-refund-manual');
     document.getElementById('ratingForm').classList.remove('show');
     document.getElementById('actionModal').classList.add('show');
   }
@@ -971,6 +939,8 @@
     if (type === 'mall-remind') { showActionResult('提醒已提交', '商家发货后会及时通知你。'); return; }
     if (type === 'mall-receive') { markMallReceived(); return; }
     if (type === 'refund') { submitRefundApplication(); return; }
+    if (type === 'mall-refund-instant') { mallRefundInstant(); return; }
+    if (type === 'mall-refund-manual') { mallRefundManual(); return; }
     closeActionModal();
   }
   function markPaid() {
@@ -1004,7 +974,32 @@
   }
   function cancelPendingPayment(trigger) {
     const card = trigger.closest('.order-card');
-    card.style.display = 'none';
+    const orderId = card && card.dataset.orderId;
+    /* 提前一天可取消：服务日期距今天 >= 1 天 */
+    try {
+      var saved = JSON.parse(localStorage.getItem('ankebang_service_orders') || '[]');
+      if (Array.isArray(saved)) {
+        var order = saved.find(function(o) { return o.id === orderId; });
+        if (order && order.serviceDate) {
+          var svcDate = new Date(order.serviceDate + 'T00:00:00');
+          var today = new Date(); today.setHours(0,0,0,0);
+          var diffDays = Math.ceil((svcDate - today) / (1000*60*60*24));
+          if (diffDays < 1) {
+            alert('预约服务前24小时内不可取消，请联系客服处理。');
+            return;
+          }
+        }
+        var idx = saved.findIndex(function(o) { return o.id === orderId; });
+        if (idx >= 0) {
+          saved[idx].status = 'cancel';
+          saved[idx].state = '已取消';
+          saved[idx].actions = [];
+          localStorage.setItem('ankebang_service_orders', JSON.stringify(saved));
+        }
+      }
+    } catch (e) {}
+    if (card) card.style.display = 'none';
+    if (typeof window.renderOrderType === 'function') window.renderOrderType('service');
   }
   function submitRefundApplication() {
     const reason = document.getElementById('refundReason').value;
@@ -1022,6 +1017,60 @@
       }
     }
     showActionResult('退款申请已提交', '平台将在 1-3 个工作日内完成审核并原路退回。');
+  }
+  /* ── 商城订单：未发货直接退款 ── */
+  function mallRefundInstant() {
+    if (!modalOrder) { closeActionModal(); return; }
+    const orderId = modalOrder.dataset.orderId;
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem('ankebang_mall_orders') || '[]'); if (!Array.isArray(saved)) saved = []; } catch (e) { saved = []; }
+    const idx = saved.findIndex(function (o) { return o.id === orderId || o.no === orderId; });
+    if (idx >= 0) {
+      saved[idx].status = 'cancel';
+      saved[idx].state = '已退款';
+      saved[idx].refundState = '已退款';
+      saved[idx].refundType = 'instant';
+      saved[idx].refundAt = new Date().toISOString().slice(0, 16).replace('T', ' ');
+      saved[idx].note = '未发货，用户申请退款，系统自动退款完成';
+      localStorage.setItem('ankebang_mall_orders', JSON.stringify(saved));
+    }
+    const badge = modalOrder.querySelector('.mall-state');
+    if (badge) { badge.className = 'mall-state cancel'; badge.textContent = '已退款'; }
+    modalOrder.dataset.status = 'cancel';
+    const actions = modalOrder.querySelector('.mall-order-actions');
+    if (actions) actions.innerHTML = '<button class="mall-action" disabled style="opacity:.5">退款已完成</button>';
+    if (typeof window.renderOrderType === 'function') window.renderOrderType('mall');
+    else if (typeof window.refreshOrderFilter === 'function') window.refreshOrderFilter();
+    showActionResult('退款成功', '订单未发货，退款已原路退回，预计 1-3 个工作日到账。');
+  }
+  /* ── 商城订单：已发货提交退款申请，等待后台人工审核 ── */
+  function mallRefundManual() {
+    if (!modalOrder) { closeActionModal(); return; }
+    const reason = document.getElementById('refundReason').value;
+    const remark = document.getElementById('refundRemark').value.trim();
+    const orderId = modalOrder.dataset.orderId;
+    let saved = [];
+    try { saved = JSON.parse(localStorage.getItem('ankebang_mall_orders') || '[]'); if (!Array.isArray(saved)) saved = []; } catch (e) { saved = []; }
+    const idx = saved.findIndex(function (o) { return o.id === orderId || o.no === orderId; });
+    if (idx >= 0) {
+      saved[idx].status = 'refund';
+      saved[idx].state = '退款/售后';
+      saved[idx].refundState = '待审核';
+      saved[idx].refundType = 'manual';
+      saved[idx].refundReason = reason;
+      saved[idx].refundRemark = remark;
+      saved[idx].refundAppliedAt = new Date().toISOString().slice(0, 16).replace('T', ' ');
+      saved[idx].note = '已发货，用户申请退款：' + reason + (remark ? '（' + remark + '）' : '');
+      localStorage.setItem('ankebang_mall_orders', JSON.stringify(saved));
+    }
+    const badge = modalOrder.querySelector('.mall-state');
+    if (badge) { badge.className = 'mall-state refund'; badge.textContent = '退款处理中'; }
+    modalOrder.dataset.status = 'refund';
+    const actions = modalOrder.querySelector('.mall-order-actions');
+    if (actions) actions.innerHTML = '<button class="mall-action" disabled style="opacity:.5">退款审核中</button>';
+    if (typeof window.renderOrderType === 'function') window.renderOrderType('mall');
+    else if (typeof window.refreshOrderFilter === 'function') window.refreshOrderFilter();
+    showActionResult('退款申请已提交', '该订单已发货，需客服人工审核。平台将在 1-3 个工作日内完成审核。');
   }
   initializeOrderTab();
 </script>

@@ -31,14 +31,17 @@
   ];
 
   /* ── 订单状态模型 ── */
-  var STATES = ['待付款', '待发货', '待收货', '已完成', '退款/售后', '已取消'];
+  var STATES = ['待付款', '支付中', '已支付', '待发货', '待收货', '已完成', '退款/售后', '已退款', '已取消'];
   var DELIVERY_LABELS = { instant: '立即送达', runner: '跑腿送达', express: '快递送达' };
   var STATE_FLOW = {
     '待付款': { status: 'payment',   deliveryStatus: 'pending' },
+    '支付中': { status: 'payment',   deliveryStatus: 'pending' },
+    '已支付': { status: 'shipping',  deliveryStatus: 'processing' },
     '待发货': { status: 'shipping',  deliveryStatus: 'processing' },
     '待收货': { status: 'receiving', deliveryStatus: 'delivered' },
     '已完成': { status: 'done',      deliveryStatus: 'signed' },
     '退款/售后': { status: 'refund', deliveryStatus: 'processing' },
+    '已退款': { status: 'cancelled', deliveryStatus: 'cancelled' },
     '已取消': { status: 'cancelled', deliveryStatus: 'cancelled' }
   };
   function flowOf(state) { return STATE_FLOW[state] || STATE_FLOW['待发货']; }
@@ -76,6 +79,10 @@
   }
 
   var SEED_ORDERS = [
+    order('AKB-M2026-101601', '支付中', '2026-10-16 09:12:45', '2026-10-16', '王女士', '138****2468', '西安市雁塔区高新路 28 号', 'instant',
+      [item('电子体温计', '快速测温 · 大屏易读', 39, 1, 'assets/mall/thermometer.png', 'purple')], '', '用户正在支付，等待支付结果回调。'),
+    order('AKB-M2026-101602', '已支付', '2026-10-16 08:05:12', '2026-10-16', '王女士', '138****2468', '西安市雁塔区高新路 28 号', 'runner',
+      [item('医用无菌口罩', '医用外科 / 一次性使用', 29, 2, 'assets/mall/medical-mask.png', 'blue')], '7085', ''),
     order('AKB-M2026-101303', '已完成', '2026-10-13 08:40:12', '2026-10-13', '郑女士', '135****0218', '西安市雁塔区电子城街道 12 号', 'runner',
       [item('医用无菌口罩', '医用外科 / 一次性使用', 29, 3, 'assets/mall/medical-mask.png', 'blue')], '6114'),
     order('AKB-M2026-101302', '待收货', '2026-10-13 10:24:46', '2026-10-13', '吴先生', '188****6630', '北京市海淀区中关村南大街 18 号院', 'express',
@@ -114,6 +121,26 @@
     order('AKB-M2026-100831', '退款/售后', '2026-10-08 14:50:12', '2026-10-08', '曹女士', '155****8833', '西安市新城区长乐西路 10 号', 'express',
       [item('红外额温枪 / 耳温枪', '非接触测温 · 一机两用', 129, 1, 'assets/mall/infrared-thermometer.png', 'blue')], '3392', '用户收到后称买重复了，申请退货。', { id: 'D1001', name: '刘姐' })
   ];
+
+  /* ── 支付明细（演示）：支付方式 微信支付 / 卡兑换，含积分抵扣与实收金额 ── */
+  var SEED_PAY = {
+    'AKB-M2026-101601': { method: '微信支付' },
+    'AKB-M2026-101602': { method: '微信支付', deduct: '¥0', actual: '¥58', received: '¥58', at: '2026-10-16 08:06:38' },
+    'AKB-M2026-101303': { method: '微信支付', deduct: '¥12', actual: '¥75', received: '¥75', at: '2026-10-13 08:41:20' },
+    'AKB-M2026-101302': { method: '微信支付', deduct: '¥0', actual: '¥239', received: '¥239', at: '2026-10-13 10:26:15' },
+    'AKB-M2026-101301': { method: '微信支付', deduct: '¥0', actual: '¥129', received: '¥129', at: '2026-10-13 09:13:48' },
+    'AKB-M2026-101305': { method: '微信支付', deduct: '¥0', actual: '¥1,599', received: '¥1,599', at: '2026-10-13 08:42:02' },
+    'AKB-M2026-101118': { method: '微信支付', deduct: '¥10', actual: '¥187', received: '¥187', at: '2026-10-11 15:50:11' },
+    'AKB-M2026-101007': { method: '微信支付', deduct: '¥0', actual: '¥699', received: '¥699', at: '2026-10-10 11:07:44' },
+    'AKB-M2026-100912': { method: '微信支付', deduct: '¥0', actual: '¥199', received: '¥199', at: '2026-10-09 14:24:33' },
+    'AKB-M2026-100830': { method: '微信支付', deduct: '¥6', actual: '¥52', received: '¥52', at: '2026-10-08 16:32:19' },
+    'AKB-M2026-101304': { method: '微信支付', deduct: '¥0', actual: '¥97', received: '¥97', at: '2026-10-13 11:07:26' },
+    'AKB-M2026-101203': { method: '微信支付', deduct: '¥0', actual: '¥168', received: '¥168', at: '2026-10-12 16:42:51' },
+    'AKB-M2026-101119': { method: '微信支付', deduct: '¥0', actual: '¥145', received: '¥145', at: '2026-10-11 10:34:09' },
+    'AKB-M2026-100913': { method: '微信支付', deduct: '¥0', actual: '¥257', received: '¥257', at: '2026-10-09 09:17:44' },
+    'AKB-M2026-100831': { method: '微信支付', deduct: '¥0', actual: '¥129', received: '¥129', at: '2026-10-08 14:52:30' }
+  };
+  SEED_ORDERS.forEach(function (o) { if (SEED_PAY[o.no]) o.pay = SEED_PAY[o.no]; });
 
   /* ── 工具 ── */
   function clone(v) { return JSON.parse(JSON.stringify(v)); }
@@ -163,13 +190,34 @@
   }
 
   /* ── 商品 ── */
+  /* 统计每个商品的实际已售数量（从已完成/已发货订单的 items 中按商品名称累计） */
+  function calcActualSales() {
+    var map = {};
+    var orders = getOrders();
+    orders.forEach(function (o) {
+      /* 只统计非取消/非退款的订单 */
+      if (o.state === '已取消' || o.state === '已退款' || o.state === '待付款') return;
+      if (!Array.isArray(o.items)) return;
+      o.items.forEach(function (it) {
+        var name = it.name || it.product || '';
+        if (!name) return;
+        map[name] = (map[name] || 0) + Number(it.quantity || 1);
+      });
+    });
+    return map;
+  }
   function getProducts(includeOff) {
     var list = read(PRODUCT_KEY, DEFAULT_PRODUCTS);
     if (!Array.isArray(list) || !list.length) list = clone(DEFAULT_PRODUCTS);
+    var actualMap = calcActualSales();
     list.forEach(function (p) {
       if (!p.status) p.status = 'on';
       if (p.stock == null) p.stock = 0;
       if (p.sales == null) p.sales = 0;
+      /* 手动已售：兼容旧数据，sales 即手动已售 */
+      if (p.manualSales == null) p.manualSales = p.sales || 0;
+      /* 实际已售：从订单统计，按商品名称匹配 */
+      p.actualSales = actualMap[p.name] || 0;
       if (!p.sort) p.sort = 99;
       if (!p.tone) p.tone = 'purple';
       if (!p.icon) p.icon = 'generic';
@@ -212,7 +260,9 @@
     }
     var state = o.state;
     if (!state) {
-      if (o.deliveryStatus === 'signed') state = '已完成';
+      if (o.status === 'refund') state = '退款/售后';
+      else if (o.status === 'cancel' || o.status === 'cancelled') state = '已退款';
+      else if (o.deliveryStatus === 'signed') state = '已完成';
       else if (o.deliveryStatus === 'delivered') state = '待收货';
       else if (o.status === 'payment') state = '待付款';
       else state = '待发货';
@@ -239,7 +289,15 @@
       distId: o.distId || '',
       distName: o.distName || '',
       distRate: o.distRate || 0,
-      source: 'mini'
+      source: 'mini',
+      refundState: o.refundState || '',
+      refundType: o.refundType || '',
+      refundReason: o.refundReason || '',
+      refundRemark: o.refundRemark || '',
+      refundPhotos: o.refundPhotos || [],
+      refundAmount: o.refundAmount || '',
+      refundAt: o.refundAt || '',
+      refundAppliedAt: o.refundAppliedAt || ''
     };
   }
 

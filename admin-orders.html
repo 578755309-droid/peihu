@@ -1,6 +1,6 @@
 <!doctype html><html lang="zh-CN"><head><link rel="stylesheet" href="admin-shell.css"><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>订单管理 · 佑小邦运营后台</title><style>
 body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;min-width:1100px;overflow-x:hidden}.layout{display:flex;min-height:100vh;min-width:0}.sidebar{width:220px;position:fixed;inset:0 auto 0 0;background:#002141;color:#fff;display:flex;flex-direction:column}.brand{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.08)}.brand-title{font-size:18px;font-weight:900}.brand-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px}.nav{flex:1;padding:16px 0}.nav-label{padding:14px 20px 6px;font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.3);font-weight:800}.nav-link{display:flex;gap:11px;align-items:center;margin:2px 10px;padding:10px 20px;border-radius:10px;color:rgba(255,255,255,.6);font-size:13px;font-weight:700;text-decoration:none}.nav-link.active,.nav-link:hover{background:rgba(255,255,255,.15);color:#fff}.nav-link.active{box-shadow:inset 3px 0 #93C5FD}.nav-badge{margin-left:auto;background:#EF4444;border-radius:9px;min-width:20px;height:18px;display:grid;place-items:center;font-size:10px}.user{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}.user-av,.top-av{width:36px;height:36px;border-radius:10px;background:#224CD3;display:grid;place-items:center;font-weight:900}.user-role{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}.logout{margin-left:auto;border:0;background:rgba(255,255,255,.1);color:#fff;width:28px;height:28px;border-radius:8px}.main{margin-left:220px;flex:1;min-width:0;max-width:calc(100vw - 220px);overflow:hidden}.topbar{height:60px;background:#fff;border-bottom:1px solid #D7E8FA;display:flex;align-items:center;padding:0 28px;gap:16px;box-shadow:0 1px 8px rgba(37,99,235,.08)}.crumb{display:flex;gap:7px;color:#9AA7BA;font-size:13px;font-weight:700}.crumb .current{color:#172033}.top-actions{margin-left:auto;display:flex;gap:12px;align-items:center}.top-date{font-size:12px;color:#9AA7BA;font-weight:700}.page{min-width:0;padding:24px 28px}.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px}.page-title{font-size:22px;font-weight:900}.page-sub{font-size:13px;color:#9AA7BA;margin-top:4px}.filter{background:#fff;border:1px solid #D7E8FA;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:12px;margin-bottom:16px;box-shadow:0 2px 16px rgba(37,99,235,.1)}.filter label{font-size:12px;color:#9AA7BA;font-weight:800}.select,.search{height:36px;border:1px solid #D7E8FA;border-radius:8px;padding:0 11px;color:#657087;background:#fff;font:600 12px inherit}.search{width:220px}.result{margin-left:auto;color:#9AA7BA;font-size:12px;font-weight:700}.result strong{color:#224CD3;font-size:16px}.tabs{display:flex;gap:8px;margin-bottom:16px}.tab{height:34px;padding:0 14px;border:1px solid #D7E8FA;border-radius:9px;background:#fff;color:#657087;font:700 12px inherit;cursor:pointer}.tab.active{background:#224CD3;border-color:#224CD3;color:#fff}.table-wrap{width:100%;max-width:100%;background:#fff;border:1px solid #D7E8FA;border-radius:14px;box-shadow:0 2px 16px rgba(37,99,235,.1);overflow-x:auto;overflow-y:hidden}.table{width:100%;border-collapse:collapse}.table th{height:44px;background:#F8FBFF;color:#9AA7BA;font-size:11px;text-align:left;padding:0 18px}.table td{height:72px;padding:0 18px;border-top:1px solid #EEF5FC;font-size:12px;color:#657087;font-weight:600}.order-no{font-weight:800;color:#172033}.service{font-weight:800;color:#172033}.sub{font-size:11px;color:#9AA7BA;margin-top:3px}.tag{display:inline-flex;padding:5px 9px;border-radius:18px;font-size:11px;font-weight:800}.pay{background:#FEF3C7;color:#D97706}.accepted,.serving{background:#E7F1FD;color:#224CD3}.done{background:#DCFCE7;color:#16A34A}.refund,.cancel{background:#FEE2E2;color:#DC2626}.op{display:flex;gap:10px}.op button{border:0;background:none;color:#224CD3;font:700 12px inherit;cursor:pointer}.op .danger{color:#DC2626}
-</style><script defer src="admin-sidebar.js"></script></head><body><div class="layout"><aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div><nav class="nav"><div class="nav-label">概览</div><a class="nav-link" href="admin.html">▦ 数据总览</a><div class="nav-label">业务管理</div><a class="nav-link active" href="admin-orders.html">▤ 订单管理<span class="nav-badge">12</span></a><a class="nav-link" href="admin-caregivers.html">♙ 陪护员管理</a><a class="nav-link" href="admin-users.html">♧ 用户管理</a><a class="nav-link" href="daily-report.html">▣ 日报审核<span class="nav-badge">5</span></a><div class="nav-label">系统</div><a class="nav-link" href="profile.html">⚙ 系统设置</a></nav><div class="user"><div class="user-av">管</div><div><div style="font-size:13px;font-weight:800">管理员</div><div class="user-role">超级管理员</div></div><button class="logout">↗</button></div></aside><main class="main"><header class="topbar"><div class="crumb"><span>业务管理</span><span>›</span><span class="current">订单管理</span></div><div class="top-actions"><span class="top-date">2026年4月12日 星期日</span><div class="top-av">管</div></div></header><section class="page"><div class="page-head"><div><h1 class="page-title">订单全量管理</h1><p class="page-sub">统一追踪创建、接单、服务、完成、退款与取消全流程</p></div><button class="tab" onclick="exportOrders()">导出订单</button></div><div class="tabs" id="tabs"><button class="tab active" data-state="all">全部订单</button><button class="tab" data-state="待支付">待支付</button><button class="tab" data-state="待服务">待服务</button><button class="tab" data-state="服务中">服务中</button><button class="tab" data-state="已完成">已完成</button><button class="tab" data-state="退款/售后">退款/售后</button><button class="tab" data-state="已取消">已取消</button></div><div class="filter"><label>筛选</label><select class="select" id="service"><option value="all">全部服务类型</option><option>住院陪护</option><option>居家陪护</option><option>陪诊服务</option><option>上门助浴</option></select><select class="select" id="date"><option>全部日期</option><option>近7天</option><option>近30天</option></select><input class="search" id="search" placeholder="搜索订单号/用户/陪护员"><span class="result">共 <strong id="count">0</strong> 笔</span></div><div class="table-wrap"><table class="table"><thead><tr><th>订单信息</th><th>服务项目</th><th>用户</th><th>陪护员</th><th>服务时间</th><th>金额</th><th>状态</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div></section></main></div><script>
+</style><script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css"></head><body><div class="layout"><aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div><nav class="nav"><div class="nav-label">概览</div><a class="nav-link" href="admin.html">▦ 数据总览</a><div class="nav-label">业务管理</div><a class="nav-link active" href="admin-orders.html">▤ 订单管理<span class="nav-badge">12</span></a><a class="nav-link" href="admin-caregivers.html">♙ 陪护员管理</a><a class="nav-link" href="admin-users.html">♧ 用户管理</a><a class="nav-link" href="daily-report.html">▣ 日报审核<span class="nav-badge">5</span></a><div class="nav-label">系统</div><a class="nav-link" href="profile.html">⚙ 系统设置</a></nav><div class="user"><div class="user-av">管</div><div><div style="font-size:13px;font-weight:800">管理员</div><div class="user-role">超级管理员</div></div><button class="logout">↗</button></div></aside><main class="main"><header class="topbar"><div class="crumb"><span>业务管理</span><span>›</span><span class="current">订单管理</span></div><div class="top-actions"><span class="top-date">2026年4月12日 星期日</span><div class="top-av">管</div></div></header><section class="page"><div class="page-head"><div><h1 class="page-title">订单全量管理</h1><p class="page-sub">统一追踪创建、接单、服务、完成、退款与取消全流程</p></div><button class="tab" onclick="exportOrders()">导出订单</button></div><div class="tabs" id="tabs"><button class="tab active" data-state="all">全部订单</button><button class="tab" data-state="待支付">待支付</button><button class="tab" data-state="待服务">待服务</button><button class="tab" data-state="服务中">服务中</button><button class="tab" data-state="已完成">已完成</button><button class="tab" data-state="退款/售后">退款/售后</button><button class="tab" data-state="已取消">已取消</button></div><div class="filter"><label>筛选</label><select class="select" id="service"><option value="all">全部服务类型</option><option>住院陪护</option><option>居家陪护</option><option>陪诊服务</option><option>上门助浴</option></select><select class="select" id="date"><option value="all">全部日期</option><option value="7">近7天</option><option value="30">近30天</option></select><input class="search" id="search" placeholder="搜索订单号/用户/陪护员"><span class="result">共 <strong id="count">0</strong> 笔</span></div><div class="table-wrap"><table class="table"><thead><tr><th>订单信息</th><th>服务项目</th><th>用户</th><th>陪护员</th><th>服务时间</th><th>金额</th><th>状态</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div></section></main></div><script>
 const ORDERS=[{no:'AKB-20260412-001',orderedAt:'04/11 16:24',type:'住院陪护',item:'12小时/天 · 3天',user:'王女士',userPhone:'138****2468',nurse:'张阿姨',nursePhone:'138****2468',time:'04/12 - 04/14',amount:'¥1,080',state:'服务中'},{no:'AKB-20260412-002',orderedAt:'04/11 14:08',type:'居家陪护',item:'24小时/天 · 2天',user:'李先生',userPhone:'139****8572',nurse:'待分配',nursePhone:'—',time:'04/13 - 04/14',amount:'¥1,040',state:'待服务'},{no:'AKB-20260411-018',orderedAt:'04/10 19:36',type:'陪诊服务',item:'贵宾陪诊 · 1次',user:'赵阿姨',userPhone:'186****3016',nurse:'李师傅',nursePhone:'139****8572',time:'04/11',amount:'¥298',state:'已完成'},{no:'AKB-20260410-007',orderedAt:'04/09 11:22',type:'上门助浴',item:'助浴 · 1次',user:'陈先生',userPhone:'133****6420',nurse:'王阿姨',nursePhone:'186****3016',time:'04/10',amount:'¥168',state:'退款/售后'},{no:'AKB-20260409-031',orderedAt:'04/08 17:05',type:'陪诊服务',item:'代取报告 · 1次',user:'刘女士',userPhone:'177****9183',nurse:'赵姐',nursePhone:'133****6420',time:'04/09',amount:'¥89',state:'待支付'},{no:'AKB-20260408-023',orderedAt:'04/07 10:48',type:'居家陪护',item:'12小时/天 · 1天',user:'孙大爷',userPhone:'158****5509',nurse:'陈阿姨',nursePhone:'177****9183',time:'04/08',amount:'¥520',state:'已取消'}];
 const cls={'待支付':'pay','待服务':'accepted','服务中':'serving','已完成':'done','退款/售后':'refund','已取消':'cancel'};let current='all';
 function render(){const q=document.getElementById('search').value.trim();const s=document.getElementById('service').value;const d=ORDERS.filter(o=>(current==='all'||o.state===current)&&(s==='all'||o.type===s)&&(!q||Object.values(o).some(v=>String(v).includes(q))));document.getElementById('count').textContent=d.length;document.getElementById('rows').innerHTML=d.map(o=>`<tr><td><div class="order-no">${o.no}</div><div class="sub">下单于 ${o.orderedAt}</div></td><td><div class="service">${o.type}</div><div class="sub">${o.item}</div></td><td><div class="service">${o.user}</div><div class="sub">${o.userPhone}</div></td><td><div class="service">${o.nurse}</div><div class="sub">${o.nursePhone}</div></td><td>${o.time}</td><td class="service">${o.amount}</td><td><span class="tag ${cls[o.state]}">${o.state}</span></td><td><div class="op"><button onclick="alert('查看订单详情')">查看</button><button onclick="alert('人工处理订单')">人工介入</button></div></td></tr>`).join('')}
@@ -67,7 +67,7 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
     };
     var fallback = { patient:'服务对象待确认', patientPhone:'—', address:'服务地址待确认', addressType:'—' };
     var style = document.createElement('style');
-    style.textContent='.table-wrap{overflow-x:auto!important;overflow-y:hidden!important}.order-full-table{width:100%;min-width:1770px;table-layout:fixed}.order-full-table th{white-space:nowrap}.order-full-table th,.order-full-table td{vertical-align:middle}.order-full-table th:nth-child(1),.order-full-table td:nth-child(1){width:154px}.order-full-table th:nth-child(2),.order-full-table td:nth-child(2){width:136px}.order-full-table th:nth-child(3),.order-full-table td:nth-child(3){width:114px}.order-full-table th:nth-child(4),.order-full-table td:nth-child(4){width:144px}.order-full-table th:nth-child(5),.order-full-table td:nth-child(5){width:246px}.order-full-table th:nth-child(6),.order-full-table td:nth-child(6){width:114px}.order-full-table th:nth-child(7),.order-full-table td:nth-child(7){width:158px}.order-full-table th:nth-child(8),.order-full-table td:nth-child(8){width:146px}.order-full-table th:nth-child(9),.order-full-table td:nth-child(9){width:92px}.order-full-table th:nth-child(10),.order-full-table td:nth-child(10){width:96px}.order-full-table th:nth-child(11),.order-full-table td:nth-child(11){width:146px}.order-full-table td:nth-child(1),.order-full-table td:nth-child(2),.order-full-table td:nth-child(3),.order-full-table td:nth-child(4),.order-full-table td:nth-child(6){white-space:nowrap}.order-full-table td:nth-child(7),.order-full-table td:nth-child(8),.order-full-table td:nth-child(9),.order-full-table td:nth-child(10),.order-full-table td:nth-child(11){white-space:nowrap}.order-full-table .location{white-space:normal;line-height:1.45;word-break:break-all}.order-full-table .person-name{font-weight:800;color:#172033;white-space:nowrap}.order-full-table .address-type{display:inline-flex;margin-right:5px;padding:3px 6px;border-radius:6px;background:#E7F1FD;color:#224CD3;font-size:10px;font-weight:800;vertical-align:top}.order-full-table .address-detail{font-size:11px;color:#657087}.order-full-table .op{white-space:nowrap}';
+    style.textContent='.table-wrap{overflow-x:auto!important;overflow-y:hidden!important}.order-full-table{width:100%;min-width:2200px;table-layout:fixed}.order-full-table th{white-space:nowrap}.order-full-table th,.order-full-table td{vertical-align:middle}.order-full-table th:nth-child(1),.order-full-table td:nth-child(1){width:154px}.order-full-table th:nth-child(2),.order-full-table td:nth-child(2){width:136px}.order-full-table th:nth-child(3),.order-full-table td:nth-child(3){width:114px}.order-full-table th:nth-child(4),.order-full-table td:nth-child(4){width:144px}.order-full-table th:nth-child(5),.order-full-table td:nth-child(5){width:246px}.order-full-table th:nth-child(6),.order-full-table td:nth-child(6){width:114px}.order-full-table th:nth-child(7),.order-full-table td:nth-child(7){width:158px}.order-full-table th:nth-child(8),.order-full-table td:nth-child(8){width:146px}.order-full-table th:nth-child(9),.order-full-table td:nth-child(9){width:92px}.order-full-table th:nth-child(10),.order-full-table td:nth-child(10){width:96px}.order-full-table th:nth-child(11),.order-full-table td:nth-child(11){width:146px}.order-full-table th:nth-child(12),.order-full-table td:nth-child(12){width:96px}.order-full-table th:nth-child(13),.order-full-table td:nth-child(13){width:96px}.order-full-table th:nth-child(14),.order-full-table td:nth-child(14){width:140px}.order-full-table th:nth-child(15),.order-full-table td:nth-child(15){width:96px}.order-full-table th:nth-child(16),.order-full-table td:nth-child(16){width:146px}.order-full-table td:nth-child(1),.order-full-table td:nth-child(2),.order-full-table td:nth-child(3),.order-full-table td:nth-child(4),.order-full-table td:nth-child(6){white-space:nowrap}.order-full-table td:nth-child(7),.order-full-table td:nth-child(8),.order-full-table td:nth-child(9),.order-full-table td:nth-child(10),.order-full-table td:nth-child(11),.order-full-table td:nth-child(12),.order-full-table td:nth-child(13),.order-full-table td:nth-child(14),.order-full-table td:nth-child(15){white-space:nowrap}.order-full-table .location{white-space:normal;line-height:1.45;word-break:break-all}.order-full-table .person-name{font-weight:800;color:#172033;white-space:nowrap}.order-full-table .address-type{display:inline-flex;margin-right:5px;padding:3px 6px;border-radius:6px;background:#E7F1FD;color:#224CD3;font-size:10px;font-weight:800;vertical-align:top}.order-full-table .address-detail{font-size:11px;color:#657087}.order-full-table .op{white-space:nowrap}';
     document.head.appendChild(style);
     cls['待配送'] = 'accepted';
     cls['配送中'] = 'serving';
@@ -106,42 +106,171 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
       'AKB-20260411-018': { patient:'赵阿姨 · 女 · 61岁', patientPhone:'186****3016', address:'北京市东城区帅府园 1 号 北京协和医院西院区', addressType:'医院' },
       'AKB-20260410-007': { patient:'陈先生 · 男 · 65岁', patientPhone:'133****6420', address:'北京市朝阳区安慧北里 12 号 3 单元 502', addressType:'家' },
       'AKB-20260409-031': { patient:'刘女士 · 女 · 57岁', patientPhone:'177****9183', address:'北京市西城区复兴门内大街 55 号 北京儿童医院', addressType:'医院' },
-      'AKB-20260408-023': { patient:'孙大爷 · 男 · 76岁', patientPhone:'158****5509', address:'北京市海淀区中关村南大街 18 号 1 单元 903', addressType:'家' }
+      'AKB-20260408-023': { patient:'孙大爷 · 男 · 76岁', patientPhone:'158****5509', address:'北京市海淀区中关村南大街 18 号 1 单元 903', addressType:'家' },
+      'AKB-20260416-003': { patient:'王女士 · 女 · 34岁', patientPhone:'138****2468', address:'北京市朝阳区建国路 66 号 北京协和医院东院区', addressType:'医院' },
+      'AKB-20260416-004': { patient:'王女士 · 女 · 34岁', patientPhone:'138****2468', address:'北京市朝阳区光华路 12 号 2 单元 601', addressType:'家' }
     };
     function esc(value) { return String(value == null ? '—' : value).replace(/[&<>"']/g, function (char) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]; }); }
+    cls['支付中'] = 'pay';
+    cls['已支付'] = 'accepted';
+    /* 支付信息：支付方式（微信支付 / 卡兑换）、实付金额、积分抵扣、实收金额、支付完成时间 */
+    function bumpTime(t) { var m = /(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(String(t || '')); if (!m) return t || '—'; var mins = (+m[1]) * 60 + (+m[2]) + 2; var hh = ('0' + (Math.floor(mins / 60) % 24)).slice(-2); var mm = ('0' + (mins % 60)).slice(-2); var sec = m[3] ? '30' : '00'; return String(t).slice(0, m.index) + hh + ':' + mm + ':' + sec; }
+    function payOf(order) {
+      var p = order.pay;
+      if (p) return { method: p.method || '—', actual: p.actual || '—', deduct: p.deduct || '—', received: p.received || '—', at: p.at || '—' };
+      if (order.state === '支付中') return { method: '微信支付', actual: '—', deduct: '—', received: '—', at: '—' };
+      if (order.state === '待支付' || order.state === '已取消') return { method: '—', actual: '—', deduct: '—', received: '—', at: '—' };
+      var zero = Number(String(order.amount || '').replace(/[^0-9.]/g, '')) === 0;
+      if (zero) return { method: '卡兑换', actual: '¥0', deduct: '¥0', received: '¥0', at: bumpTime(order.orderedAt) };
+      return { method: '微信支付', actual: order.amount, deduct: '¥0', received: order.amount, at: bumpTime(order.orderedAt) };
+    }
+    /* 合并用户端提交的服务订单（localStorage） */
+    function mergeUserOrders() {
+      var saved = [];
+      try { saved = JSON.parse(localStorage.getItem('ankebang_service_orders') || '[]'); if (!Array.isArray(saved)) saved = []; } catch (e) { saved = []; }
+      var nos = {};
+      ORDERS.forEach(function (o) { nos[o.no] = true; });
+      saved.forEach(function (o) {
+        if (nos[o.id]) return;
+        nos[o.id] = true;
+        ORDERS.push({
+          no: o.id,
+          orderedAt: new Date(o.createdAt || Date.now()).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(/\//g, '-'),
+          type: o.type,
+          item: o.quantity ? o.project + ' · ' + o.quantity : o.project,
+          user: o.contact || '用户',
+          userPhone: o.phone || '—',
+          nurse: o.nurse || '待分配',
+          nursePhone: o.nursePhone || '—',
+          time: o.time,
+          amount: '¥' + o.amount,
+          state: o.state,
+          patient: o.person,
+          patientPhone: o.phone || '—',
+          address: o.address,
+          addressType: o.addressKind || '家'
+        });
+      });
+    }
+    mergeUserOrders();
     function setFilterOptions() {
       serviceSelect.innerHTML = '<option value="all">全部服务类型</option><option>住院陪护</option><option>居家陪护</option><option>陪诊服务</option><option>上门助浴</option>';
       serviceSelect.value = 'all';
       search.placeholder = '搜索订单号/用户/陪护员';
     }
     function setStatusTabs() {
-      var states = [['all','全部'],['待支付','待支付'],['待服务','待服务'],['服务中','服务中'],['已完成','已完成'],['退款/售后','退款/售后'],['已取消','已取消']];
+      var states = [['all','全部'],['待支付','待支付'],['支付中','支付中'],['已支付','已支付'],['待服务','待服务'],['服务中','服务中'],['已完成','已完成'],['退款/售后','退款/售后'],['已取消','已取消']];
       statusTabs.innerHTML = states.map(function (item) { return '<button type="button" class="tab '+(item[0] === status ? 'active' : '')+'" data-state="'+item[0]+'">'+item[1]+'</button>'; }).join('');
       statusTabs.querySelectorAll('.tab').forEach(function (tab) { tab.onclick = function () { status = tab.dataset.state; setStatusTabs(); render(); }; });
     }
     function serviceRow(order) {
-      return '<tr><td><div class="order-no">'+esc(order.no)+'</div>'+(order.interventionNote?'<div class="sub">'+esc(order.interventionNote)+'</div>':'')+'</td><td><div class="service">'+esc(order.type)+'</div><div class="sub">'+esc(order.item)+'</div></td><td><div class="person-name">'+esc(order.user)+'</div><div class="sub">'+esc(order.userPhone)+'</div></td><td><div class="person-name">'+esc(order.patient)+'</div><div class="sub">'+esc(order.patientPhone)+'</div></td><td class="location"><span class="address-type">'+esc(order.addressType)+'</span><span class="address-detail">'+esc(order.address)+'</span></td><td><div class="person-name">'+esc(order.nurse)+'</div><div class="sub">'+esc(order.nursePhone)+'</div></td><td>'+esc(order.time)+'</td><td>'+esc(order.orderedAt)+'</td><td class="service">'+esc(order.amount)+'</td><td><span class="tag '+(cls[order.state]||'')+'">'+esc(order.state)+'</span></td><td><div class="op"><button onclick="location.href=\'admin-order-detail.html?no='+encodeURIComponent(order.no)+'\'">查看</button>'+(order.state === '已完成' ? '' : '<button class="manual-op" onclick="openOrderIntervention(\''+order.no+'\')">人工介入</button>')+'</div></td></tr>';
+      var pay = payOf(order);
+      var dispatchBtn = (order.state === '待服务' && order.nurse === '待分配') ? '<button class="manual-op" onclick="openDispatchModal(\''+order.no+'\')">派单</button>' : '';
+      return '<tr><td><div class="order-no">'+esc(order.no)+'</div>'+(order.interventionNote?'<div class="sub">'+esc(order.interventionNote)+'</div>':'')+'</td><td><div class="service">'+esc(order.type)+'</div><div class="sub">'+esc(order.item)+'</div></td><td><div class="person-name">'+esc(order.user)+'</div><div class="sub">'+esc(order.userPhone)+'</div></td><td><div class="person-name">'+esc(order.patient)+'</div><div class="sub">'+esc(order.patientPhone)+'</div></td><td class="location"><span class="address-type">'+esc(order.addressType)+'</span><span class="address-detail">'+esc(order.address)+'</span></td><td><div class="person-name">'+esc(order.nurse)+'</div><div class="sub">'+esc(order.nursePhone)+'</div></td><td>'+esc(order.time)+'</td><td>'+esc(order.orderedAt)+'</td><td class="service">'+esc(order.amount)+'</td><td>'+esc(pay.method)+'</td><td>'+esc(pay.actual)+'</td><td>'+esc(pay.deduct)+'</td><td>'+esc(pay.received)+'</td><td>'+esc(pay.at)+'</td><td><span class="tag '+(cls[order.state]||'')+'">'+esc(order.state)+'</span></td><td><div class="op"><button onclick="location.href=\'admin-order-detail.html?no='+encodeURIComponent(order.no)+'\'">查看</button>'+dispatchBtn+(order.state === '已完成' ? '' : '<button class="manual-op" onclick="openOrderIntervention(\''+order.no+'\')">人工介入</button>')+'</div></td></tr>';
+    }
+    /* 日期筛选：优先取订单号中的日期（AKB-YYYYMMDD-xxx），否则解析下单时间；参考日为数据中最大下单日期 */
+    function orderDate(o) {
+      var m = /AKB-(\d{4})(\d{2})(\d{2})/.exec(o.no || '');
+      if (m) return new Date(+m[1], +m[2] - 1, +m[3]);
+      var m2 = /(\d{1,2})[\/-](\d{1,2})/.exec(String(o.orderedAt || ''));
+      if (m2) return new Date(refYear, +m2[1] - 1, +m2[2]);
+      return null;
+    }
+    var refYear = new Date().getFullYear();
+    function refDate() {
+      var max = null;
+      ORDERS.forEach(function (o) {
+        var d = orderDate(o);
+        if (d && (!max || d > max)) max = d;
+      });
+      if (max) refYear = max.getFullYear();
+      return max || new Date();
+    }
+    function withinDays(o, days) {
+      var d = orderDate(o);
+      if (!d) return true;
+      return (refDate() - d.getTime()) / 86400000 <= days;
     }
     function render() {
       var q = search.value.trim();
       var selected = serviceSelect.value;
+      var days = document.getElementById('date').value;
       var list = ORDERS.map(function (order) { return Object.assign({ patient:'—', patientPhone:'—', address:'—', addressType:'—' }, serviceProfiles[order.no] || {}, order); }).filter(function (order) {
         var matchesStatus = status === 'all' || order.state === status;
         var matchesSelect = selected === 'all' || order.type === selected;
         var matchesSearch = !q || Object.keys(order).some(function (key) { return String(order[key]).includes(q); });
-        return isService(order) && matchesStatus && matchesSelect && matchesSearch;
+        var matchesDate = days === 'all' || withinDays(order, Number(days));
+        return isService(order) && matchesStatus && matchesSelect && matchesSearch && matchesDate;
       });
       document.getElementById('count').textContent = list.length;
       var header = document.querySelector('.table thead tr');
-      header.innerHTML = '<th>订单信息</th><th>服务项目</th><th>用户</th><th>就诊人/服务对象</th><th>服务地址</th><th>陪护员</th><th>服务时间</th><th>下单时间</th><th>金额</th><th>状态</th><th>操作</th>';
+      header.innerHTML = '<th>订单信息</th><th>服务项目</th><th>用户</th><th>就诊人/服务对象</th><th>服务地址</th><th>陪护员</th><th>服务时间</th><th>下单时间</th><th>应付金额</th><th>支付方式</th><th>实付金额</th><th>积分抵扣</th><th>实收金额</th><th>支付完成时间</th><th>状态</th><th>操作</th>';
       document.querySelector('.table').classList.add('order-full-table');
       document.getElementById('rows').innerHTML = list.map(serviceRow).join('');
     }
     serviceSelect.onchange = render;
     search.oninput = render;
+    document.getElementById('date').onchange = render;
     setFilterOptions();
     setStatusTabs();
     window.render = render;
+    window.exportOrders = function () { var rows = [['订单号','服务类型','服务项目','用户','用户手机号','就诊人/服务对象','对象手机号','服务地址类型','服务地址','陪护员','服务时间','下单时间','应付金额','支付方式','实付金额','积分抵扣','实收金额','支付完成时间','状态']]; ORDERS.forEach(function (order) { var o = Object.assign({ patient:'—', patientPhone:'—', address:'—', addressType:'—' }, serviceProfiles[order.no] || {}, order); var pay = payOf(o); rows.push([o.no,o.type,o.item,o.user,o.userPhone,o.patient,o.patientPhone,o.addressType,o.address,o.nurse,o.time,o.orderedAt,o.amount,pay.method,pay.actual,pay.deduct,pay.received,pay.at,o.state]); }); var csv = rows.map(function (row) { return row.map(function (cell) { return '"' + String(cell).replace(/"/g, '""') + '"'; }).join(','); }).join('\n'); var link = document.createElement('a'); link.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type:'text/csv' })); link.download = '订单全量列表.csv'; link.click(); };
     render();
+
+    /* ── 派单弹窗 ── */
+    var CAREGIVERS = [
+      { id:'N1001', name:'张阿姨', phone:'138****2468', skills:['住院陪护','居家陪护'] },
+      { id:'N1002', name:'李师傅', phone:'139****8572', skills:['陪诊服务'] },
+      { id:'N1003', name:'王阿姨', phone:'186****3016', skills:['上门助浴','居家陪护'] },
+      { id:'N1004', name:'赵姐', phone:'133****6420', skills:['住院陪护'] },
+      { id:'N1005', name:'陈阿姨', phone:'177****9183', skills:['居家陪护'] }
+    ];
+    var dispatchOrderNo = '';
+    window.openDispatchModal = function(no) {
+      dispatchOrderNo = no;
+      var order = ORDERS.find(function(o){return o.no===no;});
+      if (!order) return;
+      var list = document.getElementById('dispatchList');
+      list.innerHTML = CAREGIVERS.map(function(c){
+        var match = order.type && c.skills.indexOf(order.type) >= 0;
+        return '<label class="dispatch-item'+(match?' match':'')+'"><input type="radio" name="dispatchNurse" value="'+c.id+'" data-name="'+c.name+'" data-phone="'+c.phone+'"><div class="dispatch-info"><div class="dispatch-name">'+c.name+(match?'<span class="dispatch-tag">匹配</span>':'')+'</div><div class="dispatch-sub">'+c.phone+' · '+c.skills.join('、')+'</div></div></label>';
+      }).join('');
+      document.getElementById('dispatchOverlay').style.display = 'flex';
+    };
+    window.closeDispatchModal = function() { document.getElementById('dispatchOverlay').style.display = 'none'; };
+    window.confirmDispatch = function() {
+      var checked = document.querySelector('input[name="dispatchNurse"]:checked');
+      if (!checked) { alert('请选择护理员'); return; }
+      var nurseName = checked.dataset.name;
+      var nursePhone = checked.dataset.phone;
+      var order = ORDERS.find(function(o){return o.no===dispatchOrderNo;});
+      if (order) { order.nurse = nurseName; order.nursePhone = nursePhone; }
+      /* 同步到 localStorage */
+      try {
+        var saved = JSON.parse(localStorage.getItem('ankebang_service_orders')||'[]');
+        if (Array.isArray(saved)) {
+          var idx = saved.findIndex(function(o){return o.id===dispatchOrderNo;});
+          if (idx>=0) { saved[idx].nurse = nurseName; saved[idx].nursePhone = nursePhone; saved[idx].avatar = nurseName.charAt(0); localStorage.setItem('ankebang_service_orders', JSON.stringify(saved)); }
+        }
+      } catch(e) {}
+      closeDispatchModal();
+      render();
+    };
   })();
-</script></body></html>
+</script>
+<!-- 派单弹窗 -->
+<div class="modal-mask" id="dispatchOverlay" onclick="if(event.target===this)closeDispatchModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:999">
+  <div class="modal" style="background:#fff;border-radius:14px;padding:20px;width:420px;max-height:80vh;overflow:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div style="font-size:16px;font-weight:900">分配护理员</div>
+      <button onclick="closeDispatchModal()" style="border:0;background:none;font-size:20px;cursor:pointer">×</button>
+    </div>
+    <div id="dispatchList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button onclick="closeDispatchModal()" style="padding:8px 16px;border:1px solid #D7E8FA;border-radius:8px;background:#fff;cursor:pointer">取消</button>
+      <button onclick="confirmDispatch()" style="padding:8px 16px;border:0;border-radius:8px;background:#224CD3;color:#fff;font-weight:800;cursor:pointer">确认派单</button>
+    </div>
+  </div>
+</div>
+<style>.dispatch-item{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #E5E7EB;border-radius:10px;cursor:pointer}.dispatch-item:hover{border-color:#224CD3}.dispatch-item.match{border-color:#22C55E;background:#F0FDF4}.dispatch-info{flex:1}.dispatch-name{font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px}.dispatch-tag{font-size:10px;background:#22C55E;color:#fff;padding:2px 6px;border-radius:4px}.dispatch-sub{font-size:11px;color:#6B7280;margin-top:3px}</style>
+</body></html>

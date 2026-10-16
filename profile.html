@@ -203,11 +203,10 @@
       padding: 4px 0; cursor: pointer; text-decoration: none;
       -webkit-tap-highlight-color: transparent;
     }
-    .nav-ico { width: 26px; height: 26px; }
+    .nav-ico { width: 26px; height: 26px; stroke:#AEACC0; fill:none; }
     .nav-lbl { font-size: 11px; font-weight: 700; color: var(--text3); }
     .nav-item.act .nav-lbl { color: var(--purple); }
-    .nav-item.act .ni { stroke: var(--purple) !important; }
-    .nav-item.act .nif { fill: var(--purple) !important; }
+    .nav-item.act .nav-ico { stroke: var(--purple); }
     .address-overlay { position:fixed; inset:0; z-index:200; background:rgba(25,15,45,.48); display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s; }
     .address-overlay.show { opacity:1; pointer-events:auto; }
     .address-sheet { width:min(430px,100%); max-height:82vh; overflow:auto; background:#fff; border-radius:24px 24px 0 0; padding:18px 16px calc(20px + env(safe-area-inset-bottom)); transform:translateY(18px); transition:transform .24s; }
@@ -356,6 +355,21 @@
       <div class="section">
         <div class="sec-title">服务管理</div>
         <div class="menu-card">
+          <div class="menu-item" onclick="location.href='my-cards.html'">
+            <div class="menu-ico orange">
+              <svg viewBox="0 0 20 20" fill="none">
+                <rect x="2" y="5" width="16" height="11" rx="2.5" stroke="#F59E0B" stroke-width="1.6"/>
+                <path d="M2 9h16" stroke="#F59E0B" stroke-width="1.6"/>
+                <path d="M10 5v11" stroke="#F59E0B" stroke-width="1.2" stroke-dasharray="2 2"/>
+              </svg>
+            </div>
+            <div class="menu-text">
+              <div class="menu-name">我的卡包</div>
+              <div class="menu-sub">上门助浴兑换卡，按次免费兑换</div>
+            </div>
+            <span class="menu-badge" id="cardBadge" style="display:none"></span>
+            <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
           <a class="menu-item" href="nurses.html">
             <div class="menu-ico blue">
               <svg viewBox="0 0 20 20" fill="none">
@@ -518,38 +532,23 @@
     <!-- Bottom nav -->
     <nav class="bottom-nav">
       <a class="nav-item" href="home.html">
-        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
-          <path class="ni" d="M4.5 13.2L13 5.8l8.5 7.4V22a1.4 1.4 0 01-1.4 1.4H16V18h-6v5.4H5.9A1.4 1.4 0 014.5 22z"
-                stroke="#AEACC0" stroke-width="1.8" stroke-linejoin="round"/>
-        </svg>
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none"><path d="M4.5 13.2L13 5.8l8.5 7.4V22a1.4 1.4 0 01-1.4 1.4H16V18h-6v5.4H5.9A1.4 1.4 0 014.5 22z" stroke-width="1.8" stroke-linejoin="round"/></svg>
         <span class="nav-lbl">首页</span>
       </a>
-      <a class="nav-item" href="mall.html">
-        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
-          <path class="ni" d="M5 9h16l-1 13H6L5 9zM9 10V7a4 4 0 018 0v3" stroke="#AEACC0" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
-        </svg>
-        <span class="nav-lbl">商城</span>
+      <a class="nav-item" href="visit-services.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none"><rect x="4.5" y="4" width="17" height="18" rx="2.5" stroke-width="1.8"/><path d="M4.5 9h17" stroke-width="1.8" stroke-linecap="round"/><circle cx="13" cy="15" r="2.5" stroke-width="1.8"/></svg>
+        <span class="nav-lbl">热门服务</span>
       </a>
-      <a class="nav-item" href="orders.html">
-        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
-          <rect class="ni" x="4.5" y="5.5" width="17" height="16" rx="3" stroke="#AEACC0" stroke-width="1.8"/>
-          <path class="ni" d="M8.5 2.5v5M17.5 2.5v5M4.5 12h17" stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/>
-          <path class="ni" d="M9 16.5h8M9 20h5" stroke="#AEACC0" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
-        <span class="nav-lbl">订单</span>
+      <a class="nav-item" href="cart.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none"><path d="M5 9h16l-1 13H6L5 9zM9 10V7a4 4 0 018 0v3" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        <span class="nav-lbl">购物车</span>
       </a>
-      <a class="nav-item" href="ai-health.html">
-        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
-          <path class="ni" d="M5 6.5A3.5 3.5 0 018.5 3h9A3.5 3.5 0 0121 6.5v7a3.5 3.5 0 01-3.5 3.5H12l-4.5 4v-4.2A3.5 3.5 0 015 13.5z" stroke="#AEACC0" stroke-width="1.7" stroke-linejoin="round"/>
-          <path class="ni" d="M13 6.7v5.6M10.2 9.5h5.6" stroke="#AEACC0" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
-        <span class="nav-lbl">AI健康咨询</span>
+      <a class="nav-item" href="messages.html">
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none"><path d="M5 6.5A3.5 3.5 0 018.5 3h9A3.5 3.5 0 0121 6.5v7a3.5 3.5 0 01-3.5 3.5H12l-4.5 4v-4.2A3.5 3.5 0 015 13.5z" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 9.5h6" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span class="nav-lbl">消息</span>
       </a>
       <a class="nav-item act" href="profile.html">
-        <svg class="nav-ico" viewBox="0 0 26 26" fill="none">
-          <circle class="ni" cx="13" cy="10" r="4.2" stroke="#AEACC0" stroke-width="1.8"/>
-          <path class="ni" d="M5 22.5c1.6-3.8 4.6-6 8-6s6.4 2.2 8 6" stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
+        <svg class="nav-ico" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="10" r="4.2" stroke-width="1.8"/><path d="M5 22.5c1.6-3.8 4.6-6 8-6s6.4 2.2 8 6" stroke-width="1.8" stroke-linecap="round"/></svg>
         <span class="nav-lbl">我的</span>
       </a>
     </nav>
@@ -579,6 +578,15 @@
 <script src="points-store.js"></script>
 <script>
   document.getElementById('profilePoints').textContent = AKBPoints.get().balance;
+  /* 我的卡包：剩余次数角标 */
+  (function () {
+    try {
+      var cards = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]');
+      if (!Array.isArray(cards)) return;
+      var left = cards.reduce(function (sum, c) { return sum + Math.max(0, (c.total || 10) - (c.used || 0)); }, 0);
+      if (left > 0) { var b = document.getElementById('cardBadge'); b.textContent = '剩 ' + left + ' 次'; b.style.display = ''; }
+    } catch (e) {}
+  })();
 </script>
 </body>
 </html>

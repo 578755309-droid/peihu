@@ -415,7 +415,7 @@
       outline:none;
     }
     .field-input:focus, .address-input:focus { border-color:var(--purple); background:#fff; }
-    .hour-option { height:44px; border:1.5px solid var(--border); border-radius:12px; background:var(--purple-bg); color:var(--text2); font:700 14px inherit; cursor:pointer; }
+    .hour-option { height:44px; border:1.5px solid transparent; border-radius:12px; background:var(--purple-bg); color:var(--text2); font:700 14px inherit; cursor:pointer; }
     .hour-option.sel { border-color:var(--purple); background:var(--purple); color:#fff; box-shadow:0 4px 12px rgba(134,85,197,.22); }
     .unit-switch { display:flex; gap:8px; margin-bottom:10px; }
     .unit-pill { flex:1; height:36px; border:1.5px solid var(--border); border-radius:10px; background:var(--purple-bg); color:var(--text2); font:700 13px inherit; cursor:pointer; }
@@ -427,6 +427,22 @@
     .custom-count-input { width:74px; height:36px; border:1.5px solid var(--border); border-radius:9px; padding:0 8px; color:var(--text); font:800 14px inherit; text-align:center; outline:0; }
     .custom-count-input:focus { border-color:var(--purple); }
     .custom-count-unit { color:var(--text2); font-size:13px; font-weight:700; }
+    /* ── 上门助浴 10 次套餐 · 按次预约 ── */
+    .bath-sessions { display:none; margin-top:14px; }
+    .bath-sessions.show { display:block; }
+    .bath-sessions-count { float:right; font-size:11px; color:var(--purple); font-weight:800; }
+    .bath-sessions-tip { font-size:12px; color:var(--text3); font-weight:600; line-height:1.5; margin:0 0 10px; }
+    .bath-session { border:1.5px solid var(--border); border-radius:12px; background:#fff; padding:12px; }
+    .bath-session + .bath-session { margin-top:10px; }
+    .bath-session-hd { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+    .bath-session-no { font-size:13px; font-weight:800; color:var(--purple); }
+    .bath-session-patient { flex:1; min-width:0; font-size:12px; color:var(--text2); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .bath-session-del { border:0; background:none; color:var(--text3); font-size:18px; line-height:1; cursor:pointer; padding:0 2px; }
+    .bath-session-bd { display:grid; gap:8px; }
+    .bath-session-addr { display:flex; align-items:center; gap:8px; width:100%; min-height:44px; padding:0 12px; border:1.5px solid var(--border); border-radius:12px; background:var(--purple-bg); color:var(--text); font:600 13px inherit; cursor:pointer; text-align:left; }
+    .bath-session-addr-text { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .bath-session-addr-text.placeholder { color:var(--text3); }
+    .bath-session-addbtn { width:100%; height:42px; margin-top:10px; border:1.5px dashed var(--purple-light); border-radius:12px; background:var(--purple-bg); color:var(--purple); font:700 13px inherit; cursor:pointer; }
     .time-summary { margin-top:12px; padding:11px 12px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:12px; font-weight:700; text-align:center; }
     .points-card { margin-top:12px; padding:13px 14px; border:1.5px solid var(--border); border-radius:14px; background:#fff; }
     .points-check { display:flex; align-items:center; gap:10px; cursor:pointer; }
@@ -487,6 +503,63 @@
     .patient-editor { margin-top:10px; padding-top:2px; }
     .patient-editor[hidden] { display:none; }
 
+    /* ── 详情态（默认） ── */
+    .detail-only{display:flex;gap:10px}
+    .buy-only{display:none}
+    .phone.buy-mode .detail-only{display:none}
+    .phone.buy-mode .buy-only{display:block}
+    /* 内容区详情态竖向堆叠（大图→服务信息→服务详情→用户评价） */
+    .scroll-area > .detail-only{display:block}
+
+    /* 大图区 */
+    .hero-img{width:100%;padding-top:82%;position:relative;background:linear-gradient(135deg,#EDE6F7 0%,#D9CFF0 100%)}
+    .hero-img svg{position:absolute;inset:0;margin:auto;width:48%;height:48%}
+    .hero-dots{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:6px}
+    .hero-dots span{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.55)}
+    .hero-dots span.on{width:18px;background:#fff}
+
+    /* 服务信息 */
+    .svc-info{background:var(--card);margin:14px 14px 0;border-radius:var(--r-lg);padding:16px;box-shadow:var(--sh)}
+    .svc-title{font-size:18px;font-weight:900;color:var(--text);line-height:1.35}
+    .svc-sub{margin-top:4px;font-size:12px;color:var(--text3);line-height:1.5}
+    .svc-price-row{display:flex;align-items:baseline;gap:10px;margin-top:10px}
+    .svc-price{font-size:24px;font-weight:900;color:#E94E4E}
+    .svc-price small{font-size:12px;font-weight:700}
+    .svc-sales{font-size:11px;color:var(--text3)}
+    .svc-badges{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+    .svc-badge{font-size:10px;font-weight:800;padding:3px 8px;border-radius:5px;line-height:1.2}
+    .svc-badge.pts{background:#FFF0F0;color:#E94E4E}
+    .svc-badge.guarantee{background:#E8F7EE;color:#22A06B}
+    .svc-badge.instant{background:#F0F6FF;color:#4F6FBE}
+
+    /* 服务详情 */
+    .svc-detail{background:var(--card);margin:14px 14px 0;border-radius:var(--r-lg);padding:16px;box-shadow:var(--sh)}
+    .svc-detail h3{font-size:15px;font-weight:900;color:var(--text);margin-bottom:12px}
+    .svc-detail ul{list-style:none}
+    .svc-detail li{position:relative;padding-left:14px;font-size:13px;color:var(--text2);line-height:1.9}
+    .svc-detail li::before{content:'·';position:absolute;left:0;color:var(--purple);font-weight:900}
+
+    /* 评论区 */
+    .review-section{background:var(--card);margin:14px 14px 14px;border-radius:var(--r-lg);padding:16px;box-shadow:var(--sh)}
+    .review-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .review-title{font-size:15px;font-weight:900;color:var(--text)}
+    .review-more{font-size:11px;color:var(--text3);cursor:pointer}
+    .review-score-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:12px;border-radius:12px;background:var(--purple-light)}
+    .review-score-num{font-size:28px;font-weight:900;color:var(--purple-dark);line-height:1}
+    .review-score-star{color:#F59E0B;font-size:12px;margin-top:2px}
+    .review-score-meta{font-size:11px;color:var(--text3);margin-top:2px}
+    .review-list{display:flex;flex-direction:column;gap:14px}
+    .review-item{padding-bottom:14px;border-bottom:1px dashed var(--border)}
+    .review-item:last-child{border-bottom:none;padding-bottom:0}
+    .review-hd{display:flex;align-items:center;gap:10px}
+    .review-avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff;background:linear-gradient(135deg,#9060D0,#6B3FAA)}
+    .review-name{font-size:13px;font-weight:800;color:var(--text)}
+    .review-stars{color:#F59E0B;font-size:11px;letter-spacing:1px}
+    .review-time{margin-left:auto;font-size:10px;color:var(--text3)}
+    .review-body{margin-top:6px;font-size:13px;color:var(--text);line-height:1.6}
+    .review-tags{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
+    .review-tag{font-size:10px;color:var(--text2);background:var(--purple-light);padding:2px 7px;border-radius:4px;font-weight:700}
+
     /* ── Bottom note ── */
     .note-bar {
       text-align:center; margin:6px 14px 14px;
@@ -541,6 +614,8 @@
     .need-textarea { width:100%; min-height:72px; resize:vertical; padding:10px 11px; border:1.5px solid var(--border); border-radius:12px; background:var(--purple-bg); color:var(--text); font:600 13px/1.5 inherit; outline:none; }
     .need-textarea:focus { border-color:var(--purple); background:#fff; }
     .service-mode-note { padding:11px 12px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:12px; font-weight:800; text-align:center; }
+    /* 隐藏"服务方式"提示（天数选择正常显示） */
+    .service-mode-note { display: none !important; }
     .needs-price-card { display:block; }
     .needs-price-card.ready { display:block; }
 
@@ -637,6 +712,62 @@
         <div class="nav-ph"></div>
       </div>
 
+      <!-- ═══ 详情态（默认显示） ═══ -->
+      <div class="detail-only">
+        <!-- 大图 -->
+        <div class="hero-img" id="heroImg">
+          <svg viewBox="0 0 100 100"><rect x="12" y="18" width="76" height="64" rx="6" fill="none" stroke="#8655C5" stroke-width="2"/><path d="M30 55l14-14 8 8 18-22" fill="none" stroke="#8655C5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="42" cy="38" r="5" fill="#8655C5"/></svg>
+          <div class="hero-dots"><span class="on"></span><span></span><span></span></div>
+        </div>
+
+        <!-- 服务信息 -->
+        <div class="svc-info">
+          <div class="svc-title" id="svcTitle">住院陪护</div>
+          <div class="svc-sub" id="svcSub">专业护理员 24 小时陪伴 · 术后康复指导 · 管道护理 · 压疮预防</div>
+          <div class="svc-price-row">
+            <span class="svc-price"><small>¥</small><span id="svcPrice">300</span><small id="svcPriceUnit">/天起</small></span>
+            <span class="svc-sales">已售 <span id="svcSales">1.2k</span></span>
+          </div>
+          <div class="svc-badges">
+            <span class="svc-badge pts">积分立减30%</span>
+            <span class="svc-badge guarantee">持证上岗</span>
+          </div>
+        </div>
+
+        <!-- 服务详情 -->
+        <div class="svc-detail">
+          <h3>服务详情</h3>
+          <ul id="svcDetailList">
+            <li>24 小时专业护理员一对一陪护</li>
+            <li>协助日常饮食、如厕、翻身等基础照护</li>
+            <li>术后伤口观察与康复护理指导</li>
+            <li>管路护理（鼻饲、导尿、引流等）</li>
+            <li>压疮预防与体位护理</li>
+            <li>每日照护记录与家属沟通</li>
+          </ul>
+        </div>
+
+        <!-- 评论区 -->
+        <div class="review-section">
+          <div class="review-head"><span class="review-title">用户评价（<span id="reviewCount">386</span>）</span><span class="review-more">全部 ›</span></div>
+          <div class="review-score-row">
+            <div>
+              <div class="review-score-num">4.9</div>
+              <div class="review-score-star">★★★★★</div>
+            </div>
+            <div style="flex:1">
+              <div style="display:flex;gap:4px;margin-bottom:2px"><span class="review-score-star" style="color:#F59E0B">★</span><span style="font-size:11px;color:var(--text2);font-weight:700">98%好评</span></div>
+              <div style="font-size:11px;color:var(--text3)">服务态度 · 专业能力 · 响应速度</div>
+            </div>
+          </div>
+          <div class="review-list" id="reviewList"></div>
+        </div>
+
+        <div style="height:72px"></div>
+      </div>
+
+      <!-- ═══ 下单态（点击立即购买后显示） ═══ -->
+      <div class="buy-only">
       <!-- Stepper -->
       <div class="stepper">
         <div class="step-item active" id="si1">
@@ -828,8 +959,8 @@
             选择服务时间
           </div>
           <div class="time-grid">
-            <div><label class="field-label" for="serviceDate">1. 选择服务日期</label><input class="field-input" id="serviceDate" type="date" /></div>
-            <div>
+            <div id="datePickRow"><label class="field-label" for="serviceDate">1. 选择服务日期</label><input class="field-input" id="serviceDate" type="date" /></div>
+            <div id="countBlock">
               <div class="service-mode-note" id="serviceModeNote">服务方式：24 小时/天</div>
               <span class="field-label" id="countLabel">选择服务天数</span>
               <div class="duration-grid" id="countGrid">
@@ -846,6 +977,13 @@
                 <span class="custom-count-unit" id="customCountUnit">天</span>
               </div>
             </div>
+          </div>
+          <!-- 上门助浴 · 10 次套餐按次预约 -->
+          <div class="bath-sessions" id="bathSessionsPanel">
+            <span class="field-label">2. 按次预约 <span class="bath-sessions-count" id="bathSessionsCount">已预约 1/10 次</span></span>
+            <div class="bath-sessions-tip">每次服务可分别选择时间与地点，服务对象自动带出；未预约的次数可在订单详情随时预约</div>
+            <div id="bathSessionsList"></div>
+            <button class="bath-session-addbtn" id="bathSessionAddBtn" type="button" onclick="addBathSession()">＋ 添加下次预约</button>
           </div>
         </div>
 
@@ -871,6 +1009,17 @@
             <div class="need-options" id="infectionPicker">
               <button class="need-option sel" type="button" data-value="none" onclick="selectNeedOption('infection',this)">无</button>
               <button class="need-option" type="button" data-value="has" onclick="selectNeedOption('infection',this)">有</button>
+            </div>
+          </div>
+          <div class="need-group" id="infectionNameGroup" style="display:none">
+            <label class="need-label" for="infectionName"><span class="req">*</span>传染病名称</label>
+            <input class="need-textarea" id="infectionName" maxlength="50" placeholder="请填写具体传染病名称，如：乙肝、肺结核等" style="min-height:auto;height:44px;padding:10px 14px" />
+          </div>
+          <div class="need-group">
+            <span class="need-label"><span class="req">*</span>有无皮肤破损</span>
+            <div class="need-options" id="skinBreakPicker">
+              <button class="need-option sel" type="button" data-value="none" onclick="selectNeedOption('skinBreak',this)">无</button>
+              <button class="need-option" type="button" data-value="has" onclick="selectNeedOption('skinBreak',this)">有</button>
             </div>
           </div>
           <div class="need-group">
@@ -900,17 +1049,26 @@
         </div><!-- /p3 -->
 
       </div><!-- .content -->
+      </div><!-- .buy-only -->
 
       <!-- Navigation bar -->
       <div class="nav-bar">
-        <div class="price-row" id="priceRow" style="display:none">
-          <span class="price-lbl" id="priceLabel">应付金额</span>
-          <span class="price-num" id="priceNum">¥336</span>
+        <!-- 详情态底部 -->
+        <div class="detail-only">
+          <button class="btn-ghost" style="flex:1" onclick="addCurrentServiceToCart()">加入购物车</button>
+          <button class="btn-primary" style="flex:2" onclick="enterBuyMode()">立即购买</button>
         </div>
-        <div class="price-save" id="priceSave" style="display:none"></div>
-        <div class="btn-row">
-          <button class="btn-ghost" id="prevBtn" onclick="prevStep()" style="display:none">上一步</button>
-          <button class="btn-primary" id="nextBtn" onclick="nextStep()">下一步</button>
+        <!-- 下单态底部 -->
+        <div class="buy-only">
+          <div class="price-row" id="priceRow">
+            <span class="price-lbl" id="priceLabel">应付金额</span>
+            <span class="price-num" id="priceNum">¥300</span>
+          </div>
+          <div class="price-save" id="priceSave" style="display:none"></div>
+          <div class="btn-row">
+            <button class="btn-ghost" onclick="exitBuyMode()">返回</button>
+            <button class="btn-primary" onclick="nextStep()">立即支付</button>
+          </div>
         </div>
       </div>
 
@@ -1016,6 +1174,61 @@
 
 <script src="points-store.js"></script><script src="service-catalog.js"></script>
 <script>
+  /* ── 详情态 ↔ 下单态 切换 ── */
+  function enterBuyMode() {
+    document.querySelector('.phone').classList.add('buy-mode');
+    document.querySelector('.scroll-area').scrollTop = 0;
+    updateTimePrice(); // 刷新价格显示
+  }
+  function exitBuyMode() {
+    document.querySelector('.phone').classList.remove('buy-mode');
+    document.querySelector('.scroll-area').scrollTop = 0;
+  }
+  /* back 按钮：下单态→详情态，详情态→home */
+  document.querySelector('.back-btn').onclick = function () {
+    if (document.querySelector('.phone').classList.contains('buy-mode')) {
+      exitBuyMode();
+    } else if (history.length > 1) {
+      history.back();
+    } else {
+      location.href = 'home.html';
+    }
+  };
+
+  /* ── 详情态种子数据（按服务类型） ── */
+  const SERVICE_DETAIL = {
+    hospital: {
+      sub: '专业护理员 24 小时陪伴 · 术后康复指导 · 管道护理 · 压疮预防',
+      priceUnit: '天',
+      sales: '1.2k',
+      detail: ['24 小时专业护理员一对一陪护','协助日常饮食、如厕、翻身等基础照护','术后伤口观察与康复护理指导','管路护理（鼻饲、导尿、引流等）','压疮预防与体位护理','每日照护记录与家属沟通']
+    },
+    home: {
+      sub: '居家照护 · 助餐助浴 · 康复陪伴 · 老人陪护',
+      priceUnit: '天',
+      sales: '860',
+      detail: ['24 小时居家护理员陪伴','协助日常饮食、穿衣、如厕','助餐、助浴、床上擦浴','康复训练陪同与指导','用药提醒与健康监测','家务协助（做饭、打扫）']
+    },
+    bath: {
+      sub: '专业上门助浴 · 适老化洗浴设备 · 双人护理安全保障',
+      priceUnit: '次',
+      sales: '420',
+      detail: ['专业护理员双人上门服务','便携式适老化洗浴设备','全程水温监控、防呛防跌','协助更衣、擦浴、吹干','洗浴后皮肤护理','安全急救预案备勤']
+    },
+    visit: {
+      sub: '专业陪诊员全程陪同挂号 · 就诊 · 取药 · 复诊预约',
+      priceUnit: '次',
+      sales: '1.5k',
+      detail: ['预约挂号与排队协调','陪同就诊协助沟通医生','协助缴费、取检查报告','取药与用药指导','复诊预约提醒','诊后反馈与家属沟通']
+    }
+  };
+  const REVIEW_SEED = [
+    { name:'张**', avatar:'张', rating:5, time:'2026-10-12', body:'护理员李阿姨特别专业，术后父亲的伤口护理和康复指导做得很到位，每天都有详细照护记录，家属很放心。', tags:['专业贴心','每日记录','管道护理'] },
+    { name:'王**', avatar:'王', rating:5, time:'2026-10-08', body:'住院期间请的陪护，从挂号到出院全程陪同，帮我跟医生沟通、跑缴费窗口、取报告，省了很多时间。', tags:['响应及时','沟通顺畅'] },
+    { name:'陈**', avatar:'陈', rating:5, time:'2026-10-03', body:'上门助浴服务，两位护理员配合默契，设备专业安全，老人很满意，下次还会再约。', tags:['安全专业','设备齐全'] },
+    { name:'刘**', avatar:'刘', rating:4, time:'2026-09-28', body:'居家陪护的护理员很耐心，帮我妈做康复训练，做饭也好吃。唯一的问题是周末排班比较紧张。', tags:['康复指导','助餐'] }
+  ];
+
   /* ── Step wizard ── */
   let step = 1;
   const TOTAL = 3;
@@ -1044,10 +1257,8 @@
       }
       if (i < TOTAL) document.getElementById('sc' + i).classList.toggle('done', i < step);
     }
-    /* bottom bar */
-    document.getElementById('prevBtn').style.display = 'none';
-    document.getElementById('nextBtn').textContent = '立即支付';
-    document.getElementById('priceRow').style.display = careNeedsReady() ? '' : 'none';
+    /* 底部栏：下单态始终显示价格 */
+    document.getElementById('priceRow').style.display = '';
   }
 
   function nextStep() {
@@ -1055,8 +1266,8 @@
       if (!selectedFromAddressId) { alert('请先选择或新增' + dualAddr.from.label); return; }
       if (!selectedToAddressId) { alert('请先选择或新增' + dualAddr.to.label); return; }
     } else if (!selectedAddressId) { alert('请先选择或新增服务地址'); return; }
-    if (!selectedPatientId) { alert('请先选择或新增' + patientDisplayName()); return; }
-    if (!validatePatientInfo()) return;
+    if (!redeemCard && !selectedPatientId) { alert('请先选择或新增' + patientDisplayName()); return; }
+    if (!redeemCard && !validatePatientInfo()) return;
     if (!document.getElementById('serviceDate').value) { alert('请选择服务日期'); document.getElementById('serviceDate').focus(); return; }
     if (!validateCareNeeds()) return;
     submitOrder();
@@ -1161,10 +1372,13 @@
     Object.keys(VISIT_SERVICE_CONFIG).forEach(k => { if (visitItems[k] && visitItems[k].status === 'on') VISIT_SERVICE_CONFIG[k].name = visitItems[k].name; });
   })();
   const serviceKey = new URLSearchParams(location.search).get('service') || 'hospital';
+  /* 兑换卡模式：?card=CARD-ID（上门助浴10次兑换卡核销） */
+  const redeemCardId = new URLSearchParams(location.search).get('card') || '';
+  let redeemCard = null;
   const service = SERVICE_CONFIG[serviceKey] || SERVICE_CONFIG.hospital;
   /* 陪诊服务（visit）下所有类型不需要护理需求选择（自理等级/管路/传染性疾病） */
   if (serviceKey === 'visit') {
-    ['independencePicker', 'tubePicker', 'infectionPicker'].forEach(function (pid) {
+    ['independencePicker', 'tubePicker', 'infectionPicker', 'skinBreakPicker'].forEach(function (pid) {
       const picker = document.getElementById(pid);
       const group = picker && picker.closest('.need-group');
       if (group) group.style.display = 'none';
@@ -1175,11 +1389,13 @@
   let selectedDailyType = 'full';
   let selectedCount = 1;
   let isCustomCount = false;
+  /* 上门助浴 10 次套餐：按次预约列表 [{date, addressId}] */
+  let bathSessions = [];
   let basePrice = 0;
   let currentPrice = 0;
   let pointsDiscount = 0;
   let pointsUsed = 0;
-  const careNeeds = { independence:'independent', tube:'none', infection:'none' };
+  const careNeeds = { independence:'independent', tube:'none', infection:'none', skinBreak:'none' };
   let availablePoints = AKBPoints.get().balance;
   const ADDRESS_KEY = 'ankebang_saved_addresses';
   const PATIENT_KEY = 'ankebang_saved_patients';
@@ -1210,15 +1426,24 @@
   let selectedFromAddressId = '';
   let selectedToAddressId = '';
   let addressDrawerSlot = '';
+  function isSessionSlot() { return addressDrawerSlot.indexOf('session:') === 0; }
+  function sessionSlotIndex() { return Number(addressDrawerSlot.split(':')[1]); }
   function currentAddressType() {
+    if (isSessionSlot()) return service.location === 'hospital' ? 'hospital' : 'home';
     if (!dualAddr) return service.location === 'hospital' ? 'hospital' : 'home';
     return dualAddr[addressDrawerSlot === 'to' ? 'to' : 'from'].type;
   }
   function currentSelectedId() {
+    if (isSessionSlot()) { const s = bathSessions[sessionSlotIndex()]; return (s && s.addressId) || ''; }
     if (!dualAddr) return selectedAddressId;
     return addressDrawerSlot === 'to' ? selectedToAddressId : selectedFromAddressId;
   }
   function setCurrentSelectedId(id) {
+    if (isSessionSlot()) {
+      const s = bathSessions[sessionSlotIndex()];
+      if (s) { s.addressId = id; renderBathSessions(); }
+      return;
+    }
     if (!dualAddr) { selectedAddressId = id; return; }
     if (addressDrawerSlot === 'to') selectedToAddressId = id; else selectedFromAddressId = id;
   }
@@ -1233,6 +1458,11 @@
     syncPatientFromId(patient.idNo || '');
   }
   function updatePatientSummary() {
+    if (redeemCard) {
+      document.getElementById('selectedPatientValue').textContent = redeemCard.patient.name + '（兑换卡锁定）';
+      document.getElementById('selectedPatientMeta').textContent = (redeemCard.patient.gender || '') + ' · ' + (redeemCard.patient.age || '?') + '岁 · 仅限首次购买时的服务对象';
+      return;
+    }
     const patient = getSavedPatients().find(function(item) { return String(item.id) === String(selectedPatientId); });
     const value = document.getElementById('selectedPatientValue');
     const meta = document.getElementById('selectedPatientMeta');
@@ -1240,6 +1470,7 @@
     const parsed = parseChineseIdCard(patient.idNo);
     value.textContent = patient.name;
     meta.textContent = (parsed ? parsed.gender + ' · ' + parsed.age + '岁' : '身份信息待完善') + (patient.condition ? ' · ' + patient.condition : '');
+    if (serviceKey === 'bath' && selectedCount === 10) renderBathSessions();
   }
   function patientDisplayName() { return ['hospital', 'visit'].includes(serviceKey) ? '就诊人' : '服务对象'; }
   function renderPatients() {
@@ -1345,33 +1576,49 @@
     return (isCustomCount ? '自定义 ' : '') + selectedCount + ' 次';
   }
 
-  function careNeedsReady() { return Boolean(careNeeds.independence && careNeeds.tube && careNeeds.infection); }
+  function careNeedsReady() { return Boolean(careNeeds.independence && careNeeds.tube && careNeeds.infection && careNeeds.skinBreak); }
   function getServicePrice() {
     const rules = catalogPricingRules[serviceKey];
     const tubeExtra = careNeeds.tube === 'has' ? (rules && rules.tubeExtra ? rules.tubeExtra : 0) : 0;
     const infectionExtra = careNeeds.infection === 'has' ? (rules && rules.infectionExtra ? rules.infectionExtra : 0) : 0;
+    const skinBreakExtra = careNeeds.skinBreak === 'has' ? (rules && rules.skinBreakExtra ? rules.skinBreakExtra : 0) : 0;
     if (rules && rules.mode === 'daily') {
       const base = (rules.independence && rules.independence[careNeeds.independence]) || 0;
-      return base + tubeExtra + infectionExtra;
+      return base + tubeExtra + infectionExtra + skinBreakExtra;
     } else if (rules && rules.mode === 'session') {
       const base = rules.basePrice || 0;
       const indepExtra = (rules.independence && rules.independence[careNeeds.independence]) || 0;
-      return base + indepExtra + tubeExtra + infectionExtra;
+      return base + indepExtra + tubeExtra + infectionExtra + skinBreakExtra;
     }
     // fallback: hardcoded defaults
     if (service.durationMode === 'daily') {
       const base = careNeeds.independence === 'independent' ? 300 : careNeeds.independence === 'partial' ? 400 : 500;
-      return base + tubeExtra + infectionExtra;
+      return base + tubeExtra + infectionExtra + skinBreakExtra;
     }
     return service.price || 0;
   }
 
   function updateTimePrice() {
     availablePoints = AKBPoints.get().balance;
+    if (redeemCard) {
+      basePrice = 0; currentPrice = 0; pointsDiscount = 0; pointsUsed = 0;
+      document.getElementById('needsPriceCard').classList.add('ready');
+      document.getElementById('priceRow').style.display = '';
+      document.getElementById('timeSummary').textContent = '兑换卡核销 · 本次 ¥0';
+      document.getElementById('pointsDetail').innerHTML = '兑换卡订单不可使用积分抵扣';
+      document.getElementById('priceLabel').textContent = '应付金额';
+      document.getElementById('priceNum').textContent = '¥0';
+      document.getElementById('priceSave').style.display = 'none';
+      return;
+    }
     const isDaily = service.durationMode === 'daily';
     const ready = careNeedsReady();
     const unitPrice = ready ? getServicePrice() : 0;
-    basePrice = unitPrice * selectedCount;
+    /* 助浴 10 次打八折 */
+    const isBath = serviceKey === 'bath';
+    const bath10Discount = isBath && selectedCount === 10;
+    const rawTotal = unitPrice * selectedCount;
+    basePrice = bath10Discount ? Math.round(rawTotal * 0.8) : rawTotal;
     const maxDiscount = Math.min(basePrice, availablePoints);
     const usePoints = document.getElementById('usePoints').checked;
     pointsDiscount = ready && usePoints ? maxDiscount : 0;
@@ -1380,14 +1627,18 @@
     const priceCard = document.getElementById('needsPriceCard');
     if (priceCard) priceCard.classList.toggle('ready', ready);
     document.getElementById('priceRow').style.display = ready ? '' : 'none';
-    document.getElementById('timeSummary').textContent = durationLabel() + ' · ¥' + basePrice + '（¥' + unitPrice + (isDaily ? '/天' : '/次') + '）';
+    const discountTag = bath10Discount ? ' · 八折优惠' : '';
+    document.getElementById('timeSummary').textContent = durationLabel() + discountTag + ' · ¥' + basePrice + '（¥' + unitPrice + (isDaily ? '/天' : '/次') + '）';
     document.getElementById('pointsBalance').textContent = '可用 ' + availablePoints + ' 积分';
     document.getElementById('pointsDetail').innerHTML = usePoints ? '已使用 <strong>' + pointsUsed + ' 积分</strong>，优惠后 <strong>¥' + currentPrice + '</strong>' : '本单最多可抵 ¥' + maxDiscount + '（' + maxDiscount + ' 积分）';
     document.getElementById('priceLabel').textContent = '应付金额';
     document.getElementById('priceNum').textContent = '¥' + currentPrice;
     const save = document.getElementById('priceSave');
-    save.style.display = usePoints ? '' : 'none';
-    save.textContent = usePoints ? '积分已抵扣 ¥' + pointsDiscount : '';
+    save.style.display = (usePoints || bath10Discount) ? '' : 'none';
+    const saveParts = [];
+    if (bath10Discount) saveParts.push('10次八折已减 ¥' + (rawTotal - basePrice));
+    if (usePoints) saveParts.push('积分已抵扣 ¥' + pointsDiscount);
+    save.textContent = saveParts.join(' · ');
   }
 
   function selectDailyType(el, type) {
@@ -1403,8 +1654,68 @@
     document.querySelectorAll('#countGrid .hour-option').forEach(btn => btn.classList.remove('sel'));
     el.classList.add('sel');
     document.getElementById('customCountGroup').classList.remove('show');
+    syncBathSessionsUI();
     updateTimePrice();
   }
+
+  /* ── 上门助浴 · 10 次套餐（购买后生成兑换卡，按次核销） ── */
+  function syncBathSessionsUI() {
+    if (serviceKey !== 'bath') return;
+    const tenPack = selectedCount === 10;
+    document.getElementById('datePickRow').style.display = '';
+    document.getElementById('countLabel').textContent = '2. 选择服务次数';
+    document.getElementById('bathSessionsPanel').classList.remove('show');
+    if (tenPack) {
+      document.getElementById('timeNoteTitle').textContent = '10 次套餐 · 八折优惠';
+      document.getElementById('timeNoteText').textContent = '首次服务按上方日期与地址安排；下单后生成 10 次兑换卡，可在「我的 - 我的卡包」中逐次免费兑换';
+    } else {
+      document.getElementById('timeNoteTitle').textContent = '按服务次数计费';
+      document.getElementById('timeNoteText').textContent = '单次服务完成后将自动核销对应次数';
+    }
+  }
+  function bathPatientChipText() {
+    const patient = getSavedPatients().find(function(item) { return String(item.id) === String(selectedPatientId); });
+    if (!patient) return '服务对象待选择';
+    const parsed = parseChineseIdCard(patient.idNo);
+    return parsed ? patient.name + ' · ' + parsed.gender + ' · ' + parsed.age + '岁' : patient.name;
+  }
+  function renderBathSessions() {
+    const listEl = document.getElementById('bathSessionsList');
+    if (!listEl) return;
+    const chip = bathPatientChipText();
+    const minDate = document.getElementById('serviceDate').min || '';
+    listEl.innerHTML = bathSessions.map(function(s, i) {
+      const addr = findAddress(s.addressId);
+      return '<div class="bath-session">' +
+        '<div class="bath-session-hd">' +
+          '<span class="bath-session-no">第' + (i + 1) + '次</span>' +
+          '<span class="bath-session-patient">' + escapeHtml(chip) + '</span>' +
+          (i > 0 ? '<button class="bath-session-del" type="button" onclick="removeBathSession(' + i + ')">×</button>' : '') +
+        '</div>' +
+        '<div class="bath-session-bd">' +
+          '<input class="field-input" type="date" min="' + minDate + '" value="' + (s.date || '') + '" onchange="setBathSessionDate(' + i + ',this.value)" />' +
+          '<button class="bath-session-addr" type="button" onclick="openAddressDrawer(\'session:' + i + '\')">' +
+            '<span class="selector-marker">地</span>' +
+            '<span class="bath-session-addr-text' + (addr ? '' : ' placeholder') + '">' + (addr ? escapeHtml(addr.detail) : '请选择服务地址') + '</span>' +
+            '<span class="selector-arrow">›</span>' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    document.getElementById('bathSessionsCount').textContent = '已预约 ' + bathSessions.length + '/10 次';
+    document.getElementById('bathSessionAddBtn').style.display = bathSessions.length >= 10 ? 'none' : '';
+  }
+  function addBathSession() {
+    if (bathSessions.length >= 10) return;
+    bathSessions.push({ date: '', addressId: selectedAddressId || '' });
+    renderBathSessions();
+  }
+  function removeBathSession(i) {
+    if (i <= 0) return;
+    bathSessions.splice(i, 1);
+    renderBathSessions();
+  }
+  function setBathSessionDate(i, value) { if (bathSessions[i]) bathSessions[i].date = value; }
 
   function selectCustomCount(el) {
     isCustomCount = true;
@@ -1431,20 +1742,76 @@
   function selectNeedOption(type, el) {
     careNeeds[type] = el.dataset.value;
     el.closest('.need-options').querySelectorAll('.need-option').forEach(function(option) { option.classList.toggle('sel', option === el); });
+    /* 传染性疾病选"有"时显示名称输入框 */
+    if (type === 'infection') {
+      document.getElementById('infectionNameGroup').style.display = (el.dataset.value === 'has') ? '' : 'none';
+      if (el.dataset.value !== 'has') document.getElementById('infectionName').value = '';
+    }
     updateTimePrice();
   }
   function careNeedLabel(type, value) {
-    const labels = { independence:{independent:'完全自理',partial:'半自理',dependent:'完全失能'}, tube:{none:'无',has:'有'}, infection:{none:'无',has:'有'} };
+    const labels = { independence:{independent:'完全自理',partial:'半自理',dependent:'完全失能'}, tube:{none:'无',has:'有'}, infection:{none:'无',has:'有'}, skinBreak:{none:'无',has:'有'} };
     return labels[type] && labels[type][value] ? labels[type][value] : '未选择';
   }
   function validateCareNeeds() {
-    if (!careNeeds.independence || !careNeeds.tube || !careNeeds.infection) { alert('请完成护理需求选择'); return false; }
+    if (!careNeeds.independence || !careNeeds.tube || !careNeeds.infection || !careNeeds.skinBreak) { alert('请完成护理需求选择'); return false; }
+    if (careNeeds.infection === 'has' && !document.getElementById('infectionName').value.trim()) { alert('请填写传染病名称'); return false; }
     return true;
   }
 
   function initService() {
-    document.getElementById('servicePageTitle').textContent = service.name + '下单';
+    document.getElementById('servicePageTitle').textContent = service.name;
     document.getElementById('payService').textContent = service.name;
+
+    /* ── 填充详情态 ── */
+    document.getElementById('svcTitle').textContent = service.name;
+    const detailKey = (serviceKey === 'visit') ? 'visit' : serviceKey;
+    const detailCfg = SERVICE_DETAIL[detailKey] || SERVICE_DETAIL.hospital;
+    document.getElementById('svcSub').textContent = detailCfg.sub;
+    /* 已售数量：优先使用后台配置的手动/实际已售，否则用种子数据 */
+    var svcSalesVal = detailCfg.sales;
+    var catalogData = window.AKBServiceCatalog && window.AKBServiceCatalog.get();
+    if (catalogData && Array.isArray(catalogData.services)) {
+      var svc = catalogData.services.find(function(s){return s.category===detailKey;});
+      if (svc) {
+        var actual = svc.actualSales || 0;
+        var manual = svc.manualSales != null ? svc.manualSales : 0;
+        svcSalesVal = svc.useManualSales !== false ? manual : actual;
+      }
+    }
+    document.getElementById('svcSales').textContent = svcSalesVal;
+    /* 价格：陪护类显示天/次起，陪诊类显示具体价 */
+    const svcPriceEl = document.getElementById('svcPrice');
+    const svcPriceUnit = document.getElementById('svcPriceUnit');
+    if (serviceKey === 'visit') {
+      svcPriceEl.textContent = selectedVisitService ? selectedVisitService.price : 0;
+      svcPriceUnit.textContent = '起';
+    } else if (service.durationMode === 'daily') {
+      svcPriceEl.textContent = catalogPricingRules[serviceKey]
+        ? (catalogPricingRules[serviceKey].independence && catalogPricingRules[serviceKey].independence.partial) || 400
+        : 400;
+      svcPriceUnit.textContent = '/天起';
+    } else {
+      svcPriceEl.textContent = (catalogPricingRules[serviceKey] && catalogPricingRules[serviceKey].basePrice) || service.price || 260;
+      svcPriceUnit.textContent = '/次起';
+    }
+    /* 服务详情列表 */
+    document.getElementById('svcDetailList').innerHTML = detailCfg.detail.map(function(item){return '<li>'+item+'</li>'}).join('');
+    /* 评论列表 */
+    document.getElementById('reviewList').innerHTML = REVIEW_SEED.map(function(r){
+      var stars = '★★★★★'.slice(0, r.rating) + '☆☆☆☆☆'.slice(0, 5-r.rating);
+      return '<div class="review-item">'+
+        '<div class="review-hd">'+
+          '<div class="review-avatar">'+r.avatar+'</div>'+
+          '<div class="review-name">'+r.name+'</div>'+
+          '<div class="review-stars">'+stars+'</div>'+
+          '<div class="review-time">'+r.time+'</div>'+
+        '</div>'+
+        '<div class="review-body">'+r.body+'</div>'+
+        '<div class="review-tags">'+r.tags.map(function(t){return '<span class="review-tag">'+t+'</span>'}).join('')+'</div>'+
+      '</div>';
+    }).join('');
+
     const isMedicalService = serviceKey === 'hospital' || serviceKey === 'visit';
     const patientName = isMedicalService ? '就诊人' : '服务对象';
     document.getElementById('patientTitle').textContent = '选择' + patientName;
@@ -1480,6 +1847,18 @@
       });
       updateAddressSummary();
     }
+    /* 上门助浴：二次预约自动带出上次助浴订单的服务地址 */
+    if (serviceKey === 'bath' && !selectedAddressId) {
+      try {
+        var prevOrders = JSON.parse(localStorage.getItem('ankebang_service_orders') || '[]');
+        if (Array.isArray(prevOrders)) {
+          var lastBath = prevOrders.find(function(o) { return o.type === '上门助浴' && o.addressId; });
+          if (lastBath && findAddress(lastBath.addressId)) {
+            selectedAddressId = lastBath.addressId;
+          }
+        }
+      } catch (e) {}
+    }
     renderOrderAddresses();
     renderPatients();
     const d = new Date();
@@ -1488,14 +1867,27 @@
     dateInput.value = date; dateInput.min = date;
     const isDaily = service.durationMode === 'daily';
     document.getElementById('serviceModeNote').textContent = isDaily ? '服务方式：24 小时/天' : '服务方式：按次服务';
-    document.getElementById('countLabel').textContent = isDaily ? '选择服务天数' : '选择服务次数';
-    document.getElementById('countGrid').innerHTML = (isDaily ? [1, 2, 3, 5, 7].map((n, i) => '<button class="hour-option ' + (i === 0 ? 'sel' : '') + '" type="button" onclick="selectCount(this,' + n + ')">' + n + ' 天</button>').join('') + '<button class="hour-option" type="button" onclick="selectCustomCount(this)">自定义天数</button>' : [1, 3, 5, 10].map((n, i) => '<button class="hour-option ' + (i === 0 ? 'sel' : '') + '" type="button" onclick="selectCount(this,' + n + ')">' + n + ' 次</button>').join('') + '<button class="hour-option" type="button" onclick="selectCustomCount(this)">自定义次数</button>');
+    document.getElementById('countLabel').textContent = isDaily ? '2. 选择服务天数' : '选择服务次数';
+    /* 助浴仅提供 1 次 / 10 次两个选项；其他 session 服务保留 1/3/5/10 + 自定义 */
+    const isBath = serviceKey === 'bath';
+    let countGridHtml;
+    if (isBath) {
+      countGridHtml = [1, 10].map((n, i) => '<button class="hour-option ' + (i === 0 ? 'sel' : '') + '" type="button" onclick="selectCount(this,' + n + ')">' + n + ' 次</button>').join('');
+    } else if (isDaily) {
+      countGridHtml = [1, 2, 3, 5, 7].map((n, i) => '<button class="hour-option ' + (i === 0 ? 'sel' : '') + '" type="button" onclick="selectCount(this,' + n + ')">' + n + ' 天</button>').join('') + '<button class="hour-option" type="button" onclick="selectCustomCount(this)">自定义天数</button>';
+    } else {
+      countGridHtml = [1, 3, 5, 10].map((n, i) => '<button class="hour-option ' + (i === 0 ? 'sel' : '') + '" type="button" onclick="selectCount(this,' + n + ')">' + n + ' 次</button>').join('') + '<button class="hour-option" type="button" onclick="selectCustomCount(this)">自定义次数</button>';
+    }
+    document.getElementById('countGrid').innerHTML = countGridHtml;
     document.getElementById('customCountGroup').classList.toggle('show', false);
     document.getElementById('customCountGroup').style.display = '';
     document.getElementById('customCountLabel').textContent = isDaily ? '自定义服务天数' : '自定义服务次数';
     document.getElementById('customCountUnit').textContent = isDaily ? '天' : '次';
     document.getElementById('timeNoteTitle').textContent = isDaily ? '按服务类型与天数计费' : '按服务次数计费';
     document.getElementById('timeNoteText').textContent = isDaily ? '服务开始后如需调整，将按实际服务时长计算费用' : '单次服务完成后将自动核销对应次数';
+    /* 陪诊服务（11 个产品）不选择服务次数，隐藏次数选择区 */
+    document.getElementById('countBlock').style.display = serviceKey === 'visit' ? 'none' : '';
+    syncBathSessionsUI();
     document.getElementById('serviceDate').addEventListener('change', updateTimePrice);
     selectedDailyType = 'full';
     selectedCount = 1;
@@ -1519,15 +1911,26 @@
       if (address) document.getElementById('payHosp').textContent = address.detail;
       document.getElementById('payLocationRow2').style.display = 'none';
     }
-    const patient = parseChineseIdCard(document.getElementById('patientIdNo').value);
-    document.getElementById('payPatient').textContent = document.getElementById('patientName').value.trim() + ' · ' + patient.gender + ' · ' + patient.age + '岁';
-    document.getElementById('payCondition').textContent = document.getElementById('patientCondition').value.trim();
-    document.getElementById('payCareNeeds').textContent = careNeedLabel('independence', careNeeds.independence) + ' · 管路' + careNeedLabel('tube', careNeeds.tube) + ' · 传染性疾病' + careNeedLabel('infection', careNeeds.infection);
+    if (redeemCard) {
+      document.getElementById('payPatient').textContent = redeemCard.patient.name + ' · ' + (redeemCard.patient.gender || '') + ' · ' + (redeemCard.patient.age || '?') + '岁（兑换卡锁定）';
+    } else {
+      const patient = parseChineseIdCard(document.getElementById('patientIdNo').value);
+      document.getElementById('payPatient').textContent = document.getElementById('patientName').value.trim() + ' · ' + patient.gender + ' · ' + patient.age + '岁';
+    }
+    document.getElementById('payCondition').textContent = document.getElementById('patientCondition').value.trim() || '—';
+    var careNeedsDisplay = careNeedLabel('independence', careNeeds.independence) + ' · 管路' + careNeedLabel('tube', careNeeds.tube) + ' · 传染性疾病' + careNeedLabel('infection', careNeeds.infection) + (careNeeds.infection === 'has' ? '（' + document.getElementById('infectionName').value.trim() + '）' : '') + ' · 皮肤破损' + careNeedLabel('skinBreak', careNeeds.skinBreak);
+    document.getElementById('payCareNeeds').textContent = careNeedsDisplay;
     const otherNeeds = document.getElementById('otherNeeds').value.trim();
     document.getElementById('payOtherNeedsRow').style.display = otherNeeds ? '' : 'none';
     document.getElementById('payOtherNeeds').textContent = otherNeeds || '—';
     const date = document.getElementById('serviceDate').value;
-    document.getElementById('payDur').textContent = date + '（' + durationLabel() + '）';
+    if (redeemCard) {
+      document.getElementById('payDur').textContent = date + '（兑换卡核销 · 本次 ¥0 · 核销后剩余 ' + (redeemCard.total - redeemCard.used - 1) + ' 次）';
+    } else if (serviceKey === 'bath' && selectedCount === 10) {
+      document.getElementById('payDur').textContent = '共 10 次（八折）· 首次 ' + date;
+    } else {
+      document.getElementById('payDur').textContent = date + '（' + durationLabel() + '）';
+    }
     if (pointsUsed) {
       const actualPoints = AKBPoints.spend(pointsUsed, service.name + '订单');
       pointsDiscount = actualPoints;
@@ -1537,13 +1940,82 @@
     document.getElementById('payPointsRow').style.display = pointsDiscount ? '' : 'none';
     document.getElementById('payPoints').textContent = '-¥' + pointsDiscount + '（' + pointsUsed + '积分）';
     document.getElementById('payAmt').textContent  = '¥' + currentPrice;
-    document.getElementById('payOrderNum').textContent =
-      '订单号：AKB-' + new Date().getFullYear() + '-' +
+    var orderNo = 'AKB-' + new Date().getFullYear() + '-' +
       String(Math.floor(Math.random() * 999999)).padStart(6, '0');
+    document.getElementById('payOrderNum').textContent = '订单号：' + orderNo;
+    /* 保存订单到 localStorage（后台派单、用户端订单列表共用） */
+    saveServiceOrder(orderNo, date);
     /* show overlay */
     const ov = document.getElementById('payOverlay');
     fitOverlayToPhone('payOverlay');
     ov.classList.add('show');
+  }
+
+  /* ── 保存服务订单（供后台派单与用户端订单列表读取） ── */
+  function saveServiceOrder(orderNo, date) {
+    var addr = findAddress(selectedAddressId) || {};
+    var patientName = redeemCard ? redeemCard.patient.name : (document.getElementById('patientName').value.trim() || '服务对象');
+    var patient = redeemCard ? { gender: redeemCard.patient.gender || '', age: redeemCard.patient.age || '' } : parseChineseIdCard(document.getElementById('patientIdNo').value);
+    var count = selectedCount;
+    var isBath10 = !redeemCard && serviceKey === 'bath' && selectedCount === 10;
+    var order = {
+      id: orderNo,
+      status: 'pending-service',
+      state: '待服务',
+      type: service.name,
+      project: service.name + '服务' + (isBath10 ? ' · 10次套餐' : ''),
+      unit: String(getServicePrice()),
+      unitLabel: service.durationMode === 'session' ? '/次' : '/天',
+      quantity: 'x' + count + (service.durationMode === 'session' ? '次' : '天'),
+      person: patientName + '｜' + (patient.age || '?') + '岁｜' + (patient.gender || '?'),
+      address: addr.detail || '—',
+      addressKind: addr.addressType === 'hospital' ? '医院' : '家',
+      time: date + '（' + durationLabel() + '）',
+      nurse: '待分配',
+      role: '护理师｜' + service.name,
+      cert: '持证上岗',
+      years: '5年经验',
+      amount: String(currentPrice),
+      avatar: '待',
+      actions: ['cancel', 'call'],
+      careNeeds: { independence: careNeeds.independence, tube: careNeeds.tube, infection: careNeeds.infection, skinBreak: careNeeds.skinBreak, infectionName: careNeeds.infection === 'has' ? document.getElementById('infectionName').value.trim() : '' },
+      createdAt: Date.now(),
+      serviceDate: date,
+      addressId: addr.id || '',
+      addressDetail: addr.detail || '',
+      contact: addr.contact || '',
+      phone: addr.phone || ''
+    };
+    /* 助浴 10 次套餐：生成 10 次兑换卡（适用对象锁定为本次服务对象） */
+    if (isBath10) {
+      order.time = '共 10 次（八折）· 首次 ' + date;
+      order.sessionSummary = '已获 10 次兑换卡 · 剩余 10 次';
+      try {
+        var cards = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]');
+        if (!Array.isArray(cards)) cards = [];
+        cards.unshift({ id: 'CARD-' + orderNo, orderNo: orderNo, total: 10, used: 0, patient: { name: patientName, gender: patient.gender || '', age: patient.age || '' }, createdAt: Date.now() });
+        localStorage.setItem('ankebang_bath_cards', JSON.stringify(cards));
+      } catch (e) {}
+    }
+    /* 兑换卡核销：0 元订单 + 扣减一次 */
+    if (redeemCard) {
+      order.project = service.name + '服务 · 兑换卡兑换';
+      order.unit = '0';
+      order.amount = '0';
+      order.cardId = redeemCard.id;
+      order.sessionSummary = '兑换卡 ' + redeemCard.id + ' · 第 ' + ((redeemCard.used || 0) + 1) + '/10 次';
+      try {
+        var cards2 = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]');
+        var hitCard = cards2.find(function (x) { return x.id === redeemCard.id; });
+        if (hitCard) { hitCard.used = (hitCard.used || 0) + 1; localStorage.setItem('ankebang_bath_cards', JSON.stringify(cards2)); }
+      } catch (e) {}
+    }
+    try {
+      var list = JSON.parse(localStorage.getItem('ankebang_service_orders') || '[]');
+      if (!Array.isArray(list)) list = [];
+      list.unshift(order);
+      localStorage.setItem('ankebang_service_orders', JSON.stringify(list));
+    } catch (e) {}
   }
 
   window.addEventListener('resize', function() {
@@ -1553,7 +2025,64 @@
     });
   });
 
+  /* ── 加入购物车 ── */
+  const CART_SERVICE_ID = { hospital: 'hospital-care', home: 'home-care', bath: 'bath-care' };
+  function currentCartServiceId() {
+    if (serviceKey === 'visit') return visitServiceId || '';
+    return CART_SERVICE_ID[serviceKey] || '';
+  }
+  function cartToast(message) {
+    let el = document.getElementById('akbCartToast');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'akbCartToast';
+      el.style.cssText = 'position:absolute;left:50%;bottom:96px;transform:translateX(-50%);background:rgba(26,24,40,.9);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:200;opacity:0;pointer-events:none;white-space:nowrap;transition:opacity .25s';
+      (document.querySelector('.phone') || document.body).appendChild(el);
+    }
+    el.textContent = message;
+    el.style.opacity = '1';
+    clearTimeout(el._timer);
+    el._timer = setTimeout(function() { el.style.opacity = '0'; }, 1600);
+  }
+  function addCurrentServiceToCart() {
+    const id = currentCartServiceId();
+    if (!id) { cartToast('该服务暂不支持加入购物车'); return; }
+    let cart = [];
+    try {
+      cart = JSON.parse(localStorage.getItem('ankebang_service_cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+    } catch (e) { cart = []; }
+    const existing = cart.find(function(item) { return item.id === id; });
+    if (existing) existing.qty += 1;
+    else cart.push({ id: id, qty: 1 });
+    try { localStorage.setItem('ankebang_service_cart', JSON.stringify(cart)); } catch (e) {}
+    cartToast('已加入购物车');
+  }
+
+  /* ── 兑换卡模式：?card=CARD-ID ── */
+  function applyRedeemMode() {
+    if (!redeemCardId) return;
+    var cards = [];
+    try { cards = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]'); } catch (e) {}
+    var hit = cards.find(function (c) { return c.id === redeemCardId; }) || null;
+    if (!hit || (hit.used || 0) >= (hit.total || 10)) { alert('兑换卡不存在或次数已用完'); return; }
+    redeemCard = hit;
+    selectedCount = 1;
+    document.getElementById('countBlock').style.display = 'none';
+    var pointsCk = document.getElementById('usePoints');
+    if (pointsCk) { pointsCk.checked = false; pointsCk.disabled = true; }
+    var pBtn = document.querySelector('#patientInfoModule .selector-trigger');
+    if (pBtn) pBtn.onclick = function () { alert('兑换卡仅限首次购买时的服务对象使用'); };
+    var banner = document.createElement('div');
+    banner.style.cssText = 'margin:0 0 12px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#8655C5,#6B3FAA);color:#fff;font-size:13px;font-weight:700;line-height:1.6;box-shadow:0 6px 18px rgba(107,63,170,.25)';
+    banner.textContent = '正在使用「上门助浴 10 次兑换卡」· 本次 ¥0 · 剩余 ' + (hit.total - hit.used) + ' 次 · 适用对象：' + hit.patient.name + '（锁定）';
+    var anchor = document.getElementById('patientInfoModule');
+    anchor.parentNode.insertBefore(banner, anchor);
+    updatePatientSummary();
+  }
+
   initService();
+  applyRedeemMode();
   updateUI();
 </script>
 </body>

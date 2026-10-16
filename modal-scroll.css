@@ -1,0 +1,5 @@
+/* 弹窗高度兜底：超出视口时限制最大高度并在弹窗内部滚动（加载于所有页面样式之后） */
+.modal-mask{align-items:flex-start;overflow-y:auto;padding:24px 12px;box-sizing:border-box}
+.modal{margin:auto;max-height:calc(100vh - 48px);overflow-y:auto;overscroll-behavior:contain}
+.modal::-webkit-scrollbar{width:8px}
+.modal::-webkit-scrollbar-thumb{background:#C9D6EE;border-radius:4px}

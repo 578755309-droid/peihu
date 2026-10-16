@@ -1,247 +1,319 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=1280" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1280">
   <title>商城订单详情 · 佑小邦运营后台</title>
-  <link rel="stylesheet" href="admin-shell.css" />
-  <link rel="stylesheet" href="admin-catalog.css" />
-  <link rel="stylesheet" href="admin-mall.css" />
-  <script src="admin-mall-data.js"></script>
+  <link rel="stylesheet" href="admin-shell.css">
   <script defer src="admin-sidebar.js"></script>
+  <style>
+    :root{--blue:#224CD3;--ink:#172033;--muted:#71809a;--line:#dce9f8;--bg:#eff6ff;--panel:#fff}
+    *{box-sizing:border-box} body{margin:0;min-width:1100px;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}.layout{display:flex;min-height:100vh}.sidebar{width:220px;background:#002141}.main{margin-left:220px;flex:1;min-width:0}.topbar{height:60px;display:flex;align-items:center;padding:0 28px;background:#fff;border-bottom:1px solid var(--line)}.crumb{display:flex;gap:8px;font-size:13px;font-weight:700;color:#94a3b8}.crumb strong{color:var(--ink)}.top-date{margin-left:auto;color:#8fa0b5;font-size:12px;font-weight:700}.top-av{display:grid;place-items:center;width:34px;height:34px;margin-left:14px;border-radius:10px;color:#fff;background:var(--blue);font-size:14px;font-weight:900}.page{padding:24px 28px 44px;max-width:1740px}.head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}.back{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);height:36px;padding:0 12px;border-radius:9px;background:#fff;color:#53647b;font:700 12px inherit;cursor:pointer}.title{font-size:24px;font-weight:900;margin:13px 0 0}.sub{margin-top:6px;color:#91a0b6;font-size:13px}.actions{display:flex;gap:9px;padding-top:11px}.btn{height:36px;border:1px solid var(--line);border-radius:9px;padding:0 13px;background:#fff;color:#41536d;font:700 12px inherit;cursor:pointer}.btn.primary{border-color:var(--blue);background:var(--blue);color:#fff}.card{border:1px solid var(--line);border-radius:15px;background:var(--panel);box-shadow:0 3px 14px rgba(34,76,211,.07)}.order-hero{padding:20px 22px;margin-bottom:16px}.order-top{display:flex;align-items:center;gap:12px;border-bottom:1px solid #edf3fb;padding-bottom:16px}.order-no{font-size:15px;font-weight:900}.state{display:inline-flex;align-items:center;padding:6px 10px;border-radius:16px;font-size:12px;font-weight:800}.serving{color:#224CD3;background:#e7f1fd}.pending{color:#d97706;background:#fef3c7}.done{color:#16a34a;background:#dcfce7}.after{color:#dc2626;background:#fee2e2}.state.shipping{color:#224CD3;background:#e7f1fd}.hero-grid{display:grid;grid-template-columns:1.2fr .85fr .85fr .85fr;gap:12px;padding-top:17px}.hero-main{display:flex;align-items:center;gap:13px}.service-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:14px;background:#e8efff;color:var(--blue);font-weight:900;font-size:20px}.eyebrow{font-size:12px;font-weight:800;color:var(--blue)}.project{margin-top:3px;font-size:19px;font-weight:900}.service-note{margin-top:5px;color:var(--muted);font-size:12px}.metric{border-left:1px solid #e7eef8;padding-left:18px}.metric-label{font-size:11px;color:#94a3b8;font-weight:700}.metric-value{margin-top:7px;color:var(--ink);font-size:16px;font-weight:900}.metric-value.blue{color:var(--blue)}.cols{display:grid;grid-template-columns:1.18fr .82fr;gap:16px}.stack{display:flex;flex-direction:column;gap:16px}.section{padding:20px 22px}.section-title{font-size:16px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:8px}.section-title:before{content:"";width:4px;height:16px;border-radius:4px;background:var(--blue)}.info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 22px}.info{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-top:1px solid #eef4fb;font-size:13px}.info:nth-child(-n+2){border-top:0}.info label{flex:0 0 auto;color:#8b99ad;font-weight:700}.info span{text-align:right;color:#25354c;font-weight:700;line-height:1.45}.address{display:flex;gap:12px;padding:15px;border-radius:11px;background:#f6faff}.address-type{height:28px;min-width:34px;display:grid;place-items:center;border-radius:8px;background:#e7f1fd;color:var(--blue);font-size:11px;font-weight:900}.address-name{font-size:13px;font-weight:850;line-height:1.5}.address-sub{margin-top:4px;color:#92a0b4;font-size:12px}.payment-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;font-size:13px;color:#68788f}.payment-row.total{margin-top:6px;padding-top:15px;border-top:1px solid #e6eef8;color:var(--ink);font-size:14px;font-weight:900}.payment-row.total strong{color:var(--blue);font-size:22px}.timeline{position:relative;margin:2px 0 2px 7px;padding-left:19px;border-left:2px solid #dbe8f8}.timeline-item{position:relative;padding:0 0 19px}.timeline-item:last-child{padding-bottom:0}.timeline-item:before{content:"";position:absolute;left:-25px;top:3px;width:10px;height:10px;border:3px solid #fff;border-radius:50%;background:#7aa0e8;box-shadow:0 0 0 2px #c3d7f4}.timeline-item.done:before{background:#22c55e}.timeline-time{font-size:11px;color:#94a3b8;font-weight:700}.timeline-title{margin-top:3px;font-size:13px;font-weight:900}.timeline-desc{margin-top:4px;color:#74849b;font-size:12px;line-height:1.55}.empty{padding:34px 0;text-align:center;color:#9aa8ba;font-size:13px}.empty strong{display:block;margin-bottom:6px;color:#60728a;font-size:14px}
+    .item-row{display:flex;align-items:center;gap:13px;padding:13px 0;border-top:1px solid #eef4fb}.item-row:first-child{border-top:0;padding-top:0}.item-img{width:56px;height:56px;border-radius:11px;object-fit:cover;background:#e7f1fd;flex:0 0 56px}.item-copy{min-width:0;flex:1}.item-name{font-size:13px;font-weight:850;color:#172033}.item-desc{margin-top:4px;color:#8b99ad;font-size:11px;line-height:1.45}.item-right{text-align:right;flex:0 0 auto}.item-price{color:#172033;font-size:13px;font-weight:900}.item-qty{margin-top:4px;color:#8b99ad;font-size:11px;font-weight:700}.order-note{margin-top:12px;padding:10px 12px;border-radius:10px;background:#f6faff;color:#5d7090;font-size:12px;line-height:1.55}.receipt-strong{color:var(--blue);letter-spacing:2px}
+    .refund-photos-label{margin:14px 0 8px;font-size:12px;font-weight:800;color:#64758D}.refund-photos{display:flex;flex-wrap:wrap;gap:8px}.refund-photo{position:relative;width:86px;height:86px;border:1px solid #d6e4f5;border-radius:10px;overflow:hidden;background:#f2f6fc;cursor:zoom-in}.refund-photo img{display:block;width:100%;height:100%;object-fit:cover}.refund-photo span{position:absolute;left:0;right:0;bottom:0;padding:2px 0;background:rgba(12,32,65,.62);color:#fff;font-size:10px;font-weight:700;text-align:center}.refund-tip{margin-top:8px;color:#8A9AB0;font-size:11px;font-weight:700}.refund-banner{margin-top:14px;padding:10px 12px;border-radius:10px;background:#fef3c7;color:#d97706;font-size:12px;font-weight:700;line-height:1.5}.full-card{grid-column:1/-1}.addr-mod{margin-top:10px;padding-left:2px;font-size:11px;font-weight:800;color:#9aa7ba}.addr-mod.modified{color:#d97706}.receipt-hero{margin-top:12px;display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:12px;background:linear-gradient(135deg,#eef3ff,#e4ecff);border:1px solid #ccd9ff}.receipt-hero.done{background:linear-gradient(135deg,#e9f9ef,#dcf5e7);border-color:#bfe8cf}.receipt-hero.warn{background:linear-gradient(135deg,#fff7e8,#fdeeda);border-color:#f3ddb0}.rh-label{font-size:11px;font-weight:800;color:#5b6b8c;letter-spacing:2px}.rh-code{font-size:34px;font-weight:900;color:#224CD3;letter-spacing:6px;line-height:1.2;font-variant-numeric:tabular-nums}.receipt-hero.done .rh-code{color:#15803d}.receipt-hero.warn .rh-code{color:#d97706}.rh-body{flex:1;min-width:0}.rh-tag{display:inline-block;padding:3px 10px;border-radius:999px;background:#224CD3;color:#fff;font-size:11px;font-weight:800}.receipt-hero.done .rh-tag{background:#15803d}.receipt-hero.warn .rh-tag{background:#d97706}.rh-hint{margin-top:6px;font-size:11px;font-weight:600;color:#5b6b8c;line-height:1.5}.rh-btn{flex-shrink:0;padding:9px 14px;border-radius:10px;border:none;background:#224CD3;color:#fff;font-size:12px;font-weight:800;cursor:pointer}.rh-btn:hover{filter:brightness(1.08)}
+  </style>
 </head>
 <body>
-<div class="layout">
-  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+  <div class="layout">
+    <aside class="sidebar"></aside>
+    <main class="main">
+      <header class="topbar"><div class="crumb"><span>商城管理</span><span>›</span><span>商城订单</span><span>›</span><strong>商城订单详情</strong></div><span class="top-date" id="topDate"></span><div class="top-av">管</div></header>
+      <section class="page">
+        <div class="head"><div><button class="back" onclick="location.href='admin-mall-orders.html'">← 返回商城订单列表</button><h1 class="title">商城订单详情</h1><div class="sub">商品明细、收货配送、支付金额与售后处理</div></div><div class="actions"><button class="btn primary" id="interveneBtn">人工介入</button></div></div>
+        <section class="card order-hero" id="orderHero"></section>
+        <div class="cols" id="detailCols">
+          <div class="stack">
+            <section class="card section"><div class="section-title">商品明细</div><div id="itemList"></div><div id="noteRow"></div></section>
+            <section class="card section"><div class="section-title">收货信息</div><div id="receiverInfo"></div><div id="receiptHero"></div><div class="info-grid" id="deliveryInfo"></div></section>
+          </div>
+          <div class="stack">
+            <section class="card section"><div class="section-title">支付信息</div><div id="paymentInfo"></div></section>
+            <section class="card section"><div class="section-title">订单动态</div><div class="timeline" id="timeline"></div></section>
+          </div>
+          <section class="card section full-card" id="refundCard" style="display:none"><div class="section-title">退款 / 售后</div><div id="refundInfo"></div></section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="admin-mall-data.js"></script>
+  <script>
+  (function () {
+    var M = window.AKBMallAdmin;
+    /* 状态命名适配：与商城订单列表页保持一致 */
+    var STATE_TO_LEGACY = { '待付款': '待支付', '待发货': '待发货', '待收货': '待收货确认', '已完成': '已完成', '退款/售后': '退款/售后', '已退款': '已退款', '已取消': '已取消' };
+    var STATE_FROM_LEGACY = { '待支付': '待付款', '待发货': '待发货', '待配送': '待发货', '配送中': '待收货', '待收货确认': '待收货', '已完成': '已完成', '退款/售后': '退款/售后', '已退款': '已退款', '已取消': '已取消' };
+    var DELIVERY_FROM_LABEL = { '立即送达': 'instant', '跑腿送达': 'runner', '快递送达': 'express' };
+    var STATUS_CLASS = { '待支付': 'pending', '支付中': 'pending', '已支付': 'shipping', '待发货': 'shipping', '待收货确认': 'pending', '已完成': 'done', '退款/售后': 'after', '已退款': 'after', '已取消': 'after' };
 
-  <main class="main">
-    <header class="topbar">
-      <div class="crumb"><span>商城管理</span><span>›</span><a href="admin-mall-orders.html" style="color:#9AA7BA;text-decoration:none">商城订单</a><span>›</span><span class="current">订单详情</span></div>
-      <div class="top-actions"><span class="top-date" id="topDate"></span><div class="top-av">管</div></div>
-    </header>
+    var no = new URLSearchParams(location.search).get('no') || '';
 
-    <section class="page" id="pageBody"></section>
-  </main>
-</div>
+    function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function info(label, value) { return '<div class="info"><label>' + esc(label) + '</label><span>' + esc(value) + '</span></div>'; }
+    function tl(time, title, desc, done) { return '<div class="timeline-item ' + (done ? 'done' : '') + '"><div class="timeline-time">' + esc(time) + '</div><div class="timeline-title">' + esc(title) + '</div><div class="timeline-desc">' + esc(desc) + '</div></div>'; }
 
-<script>
-(function () {
-  var M = window.AKBMallAdmin;
-  var no = new URLSearchParams(location.search).get('no') || '';
+    /* 与列表页 toLegacy 相同的字段桥接，供人工介入弹窗复用 */
+    function toLegacy(o) {
+      var s = o.shipInfo || {};
+      var first = (o.items && o.items[0]) || {};
+      return {
+        no: o.no, type: '商城订单',
+        product: first.name || '健康商品',
+        item: (o.items && o.items.length > 1 ? first.name + ' 等 ' + o.items.length + ' 种商品 · ' : (first.name || '健康商品') + ' · ') + o.quantity + '件',
+        quantity: o.quantity,
+        user: o.userName, userPhone: o.userPhone || '—',
+        receiver: o.userName, receiverPhone: o.userPhone || '—',
+        address: o.address,
+        deliveryType: o.deliveryLabel,
+        deliveryFee: '已含在商品售价内',
+        logisticsCompany: o.logisticsCompany || s.company || '—',
+        logisticsNo: o.logisticsNo || s.trackingNo || '—',
+        shipInfo: o.shipInfo || null,
+        receiveCode: o.receiptCode || '',
+        receiptStatus: o.state === '已完成' ? '已确认' : '',
+        deliveredAt: (o.state === '待收货' || o.state === '已完成') ? '已送达' : '—',
+        amount: M.money(o.amount),
+        orderedAt: (o.createdAt || o.date || '').replace(/:\d\d$/, ''),
+        refundState: o.refundState || '',
+        refundType: o.refundType || '',
+        refundReason: o.refundReason || '',
+        refundRemark: o.refundRemark || '',
+        refundPhotos: o.refundPhotos || [],
+        refundAppliedAt: o.refundAppliedAt || '',
+        refundAmount: o.refundAmount || '',
+        refundMethod: o.refundMethod || '',
+        state: STATE_TO_LEGACY[o.state] || o.state,
+        _raw: o
+      };
+    }
 
-  document.getElementById('topDate').textContent =
-    (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+    function shipDesc(o) {
+      var s = o.shipInfo || {};
+      var parts = [];
+      if (s.company) parts.push(s.company);
+      if (s.trackingNo) parts.push('单号 ' + s.trackingNo);
+      if (s.courier) parts.push('配送员 ' + s.courier + (s.courierPhone ? ' ' + s.courierPhone : ''));
+      return parts.length ? parts.join(' · ') : (o.deliveryLabel || '配送中') + '配送中';
+    }
 
-  var TAG_CLASS = { '待付款': 'mtag-pay', '待发货': 'mtag-ship', '待收货': 'mtag-recv', '已完成': 'mtag-done', '退款/售后': 'mtag-refund', '已取消': 'mtag-cancel' };
+    function buildTimeline(o) {
+      var out = [];
+      var paying = o.state === '支付中';
+      var payDone = o.state !== '待付款' && o.state !== '支付中';
+      var shipped = o.state === '待收货' || o.state === '已完成';
+      var at = o.createdAt || o.date || '';
+      if (o.state === '已取消') {
+        out.push(tl(at, '用户提交订单', '商城订单已创建 · ' + (o.source === 'mini' ? '小程序下单' : '后台录入'), true));
+        out.push(tl(at, '订单已取消', o.note || '订单已取消，交易关闭', false));
+        return out.join('');
+      }
+      out.push(tl(at, '用户提交订单', '商城订单已创建 · ' + (o.source === 'mini' ? '小程序下单' : '后台录入'), true));
+      out.push(tl(payDone ? at : '待处理', payDone ? '用户完成支付' : (paying ? '用户支付中' : '等待用户支付'),
+        payDone ? '微信支付 · ' + M.money(o.amount) : (paying ? '微信支付 · 等待支付结果回调' : '订单尚未完成支付，超时未付将自动取消'), payDone));
+      if (o.state === '退款/售后') {
+        out.push(tl(o.refundAppliedAt || at, '用户申请售后',
+          (o.refundType === 'manual' ? '退货退款' : '未发货退款') + (o.refundReason ? ' · ' + o.refundReason : ''), true));
+        out.push(tl('处理中', '平台审核', '请通过「人工介入」完成退款审核处理', false));
+        return out.join('');
+      }
+      if (o.state === '已退款') {
+        out.push(tl(o.refundAppliedAt || at, '用户申请退款', o.refundReason || '订单退款', true));
+        out.push(tl(o.refundAt || '已完成', '退款完成',
+          '退款金额 ' + M.money(o.refundAmount || o.amount) + ' · ' + (o.refundMethod || '原路退回'), true));
+        return out.join('');
+      }
+      if (o.state !== '支付中') {
+        out.push(tl(shipped ? at : '待处理', shipped ? '商家已发货' : '商家备货中',
+          shipped ? shipDesc(o) : '请及时安排商品备货与配送', shipped));
+      }
+      if (o.state === '已完成') {
+        out.push(tl('签收完成', '用户已签收', '收货码 ' + (o.receiptCode || '—') + ' 验证通过 · 订单完成', true));
+      } else if (shipped) {
+        out.push(tl('待确认', '等待用户签收', '收货码 ' + (o.receiptCode || '—') + '，用户凭码确认收货', false));
+      }
+      return out.join('');
+    }
 
-  function thumb(p, size) {
-    var fallback = (p.name || '商').slice(0, 1);
-    var img = p.image ? '<img src="' + M.esc(p.image) + '" alt="" onerror="this.remove()">' : '';
-    return '<div class="pdt-thumb tone-' + (p.tone || 'purple') + '" style="width:' + (size || 54) + 'px;height:' + (size || 54) + 'px;font-size:17px">' + img + fallback + '</div>';
-  }
+    function renderRefund(o) {
+      var card = document.getElementById('refundCard');
+      var show = o.state === '退款/售后' || o.state === '已退款' || o.refundState;
+      if (!show) { card.style.display = 'none'; return; }
+      card.style.display = '';
+      var type = o.refundType === 'instant' ? '未发货退款（系统自动退）' : o.refundType === 'manual' ? '退货退款（人工审核）' : '—';
+      var html = '<div class="info-grid">'
+        + info('售后类型', type)
+        + info('售后状态', o.refundState || (o.state === '退款/售后' ? '待审核' : o.state === '已退款' ? '已退款' : '—'))
+        + info('退款原因', o.refundReason || '—')
+        + info('申请时间', o.refundAppliedAt || o.date || '—');
+      if (o.state === '已退款' || o.refundAmount) {
+        html += info('退款金额', M.money(o.refundAmount || o.amount));
+        html += info('退款方式', o.refundMethod || '原路退回');
+        html += info('退款时间', o.refundAt || '—');
+      }
+      if (o.refundReviewNote) html += info('审核说明', o.refundReviewNote);
+      if (o.refundReviewedAt) html += info('审核时间', o.refundReviewedAt);
+      html += '</div>';
+      if (o.refundRemark) html += '<div class="order-note">用户补充说明：' + esc(o.refundRemark) + '</div>';
+      var photos = o.refundPhotos || [];
+      if (photos.length) {
+        html += '<div class="refund-photos-label">凭证照片（' + photos.length + '）</div><div class="refund-photos">'
+          + photos.map(function (src, i) {
+            return '<div class="refund-photo" onclick="openRefundPhoto(\'' + esc(src) + '\')"><img src="' + esc(src) + '" alt="退款凭证 ' + (i + 1) + '"><span>凭证 ' + (i + 1) + '</span></div>';
+          }).join('') + '</div><div class="refund-tip">点击缩略图可查看大图</div>';
+      } else if (o.state === '退款/售后') {
+        html += '<div class="refund-tip">用户未上传凭证照片</div>';
+      }
+      if (o.state === '退款/售后') html += '<div class="refund-banner">该售后申请待审核，请点击右上角「人工介入」完成审核处理。</div>';
+      document.getElementById('refundInfo').innerHTML = html;
+    }
 
-  /* 状态推进映射：step1 提交 → step2 付款备货 → step3 配送 → step4 签收 */
-  function timeline(o) {
-    var steps;
-    if (o.state === '已取消') {
-      steps = [
-        { t: '订单已提交', s: M.esc(o.date) + ' · 已生成商城订单', cls: 'done' },
-        { t: '订单已取消', s: M.esc(o.note || '订单已关闭，不再继续履约'), cls: 'current' }
-      ];
-    } else if (o.state === '退款/售后') {
-      steps = [
-        { t: '订单已提交', s: M.esc(o.date) + ' · 已生成商城订单', cls: 'done' },
-        { t: '付款与备货', s: '用户已付款，商家完成备货', cls: 'done' },
-        { t: '售后申请处理中', s: M.esc(o.note || '用户发起退款/售后申请，等待客服处理'), cls: 'current' }
-      ];
-    } else {
-      var level = { '待付款': 1, '待发货': 2, '待收货': 3, '已完成': 4 }[o.state] || 1;
-      var defs = [
-        { t: '订单已提交', s: M.esc(o.date) + ' · 已生成商城订单' },
-        { t: '付款确认 · 商家备货', s: level >= 2 ? '付款已确认，商品进入备货流程' : '等待用户完成支付' },
-        { t: '商品配送中', s: level >= 3 ? '已按「' + M.esc(o.deliveryLabel) + '」发出，等待用户收货码签收' : '备货完成后安排配送（' + M.esc(o.deliveryLabel) + '）' },
-        { t: '已签收 · 订单完成', s: level >= 4 ? '用户已通过收货码确认签收' : '等待收货码确认签收' }
-      ];
-      steps = defs.map(function (d, i) {
-        return { t: d.t, s: d.s, cls: i < level ? 'done' : (i === level ? 'current' : '') };
+    function render() {
+      var o = M.getOrder(no);
+      if (!o) {
+        document.getElementById('detailCols').style.display = 'none';
+        document.getElementById('interveneBtn').style.display = 'none';
+        document.getElementById('orderHero').innerHTML = '<div class="empty"><strong>未找到该商城订单</strong>请返回商城订单列表重新选择。</div>';
+        return;
+      }
+      var legacy = toLegacy(o);
+      window.ORDERS = [legacy]; /* 供人工介入弹窗查找订单 */
+
+      var firstName = (o.items && o.items[0] && o.items[0].name) || '健康商品';
+      var moreName = o.items && o.items.length > 1 ? firstName + ' 等 ' + o.items.length + ' 种商品' : firstName;
+      var stateText = STATE_TO_LEGACY[o.state] || o.state;
+      var stateClass = STATUS_CLASS[stateText] || 'pending';
+      var receiptText = (o.state === '待付款' || o.state === '支付中') ? '付款后生成' : (o.receiptCode || '待生成');
+
+      document.getElementById('orderHero').innerHTML =
+        '<div class="order-top"><div class="order-no">订单号 ' + esc(o.no) + '</div><span class="state ' + stateClass + '">' + esc(stateText) + '</span></div>'
+        + '<div class="hero-grid"><div class="hero-main"><div class="service-icon">商</div><div><div class="eyebrow">商城订单</div><div class="project">' + esc(moreName) + '</div>'
+        + '<div class="service-note">' + (o.source === 'mini' ? '小程序实时单' : '后台录入') + ' · 下单于 ' + esc(o.createdAt || o.date) + '</div></div></div>'
+        + '<div class="metric"><div class="metric-label">商品件数</div><div class="metric-value">' + esc(o.quantity) + ' 件</div></div>'
+        + '<div class="metric"><div class="metric-label">配送方式</div><div class="metric-value">' + esc(o.deliveryLabel || '—') + '</div></div>'
+        + '<div class="metric"><div class="metric-label">应付金额</div><div class="metric-value blue">' + M.money(o.amount) + '</div></div></div>';
+
+      document.getElementById('itemList').innerHTML = (o.items || []).map(function (it) {
+        return '<div class="item-row"><img class="item-img" src="' + esc(it.image) + '" alt="' + esc(it.name) + '" onerror="this.style.visibility=\'hidden\'">'
+          + '<div class="item-copy"><div class="item-name">' + esc(it.name) + '</div>' + (it.desc ? '<div class="item-desc">' + esc(it.desc) + '</div>' : '') + '</div>'
+          + '<div class="item-right"><div class="item-price">' + M.money(it.price) + '</div><div class="item-qty">× ' + esc(it.quantity) + '</div></div></div>';
+      }).join('');
+      document.getElementById('noteRow').innerHTML = o.note ? '<div class="order-note">订单备注：' + esc(o.note) + '</div>' : '';
+
+      document.getElementById('receiverInfo').innerHTML =
+        '<div class="address"><div class="address-type">收货</div><div><div class="address-name">' + esc(o.userName) + '　' + esc(o.userPhone || '') + '</div><div class="address-sub">' + esc(o.address || '—') + '</div></div></div>'
+        + '<div class="addr-mod' + (o.addressModified ? ' modified' : '') + '">收货地址' + (o.addressModified ? '已修改 · ' + esc(o.addressModifiedAt || '') + ' · ' + esc(o.addressModifiedBy || '管理员') : '未修改') + '</div>';
+      var s = o.shipInfo || {};
+      var paidFlag = o.state !== '待付款' && o.state !== '支付中';
+      /* 收货码签收卡：已支付订单醒目展示；待签收时后台可直接人工确认收货 */
+      var hero = '';
+      if (paidFlag && o.state !== '已取消' && o.state !== '已退款') {
+        /* 到货判断：优先看人工介入保存的旧版状态（配送中/待收货确认），否则看 deliveryStatus */
+        var arrived = false;
+        if (o.state === '待收货') {
+          var ovState = '';
+          try { var ovs = JSON.parse(localStorage.getItem('akb_admin_mall_order_overrides_v1') || '{}'); ovState = (ovs[no] && ovs[no].state) || ''; } catch (e) { ovState = ''; }
+          arrived = ovState ? ovState === '待收货确认' : (o.deliveryStatus !== 'shipping');
+        }
+        var cls = '', tag = '', hint = '', btn = '';
+        if (o.state === '已完成') {
+          cls = ' done';
+          tag = o.receiptStatus === '后台人工确认' ? '已签收 · 后台人工确认' : '已签收 · 用户凭码确认';
+          hint = '收货码核验通过，订单已完成' + (o.confirmedBy ? '（' + esc(o.confirmedBy) + '）' : '');
+        } else if (arrived) {
+          cls = ' warn';
+          tag = '待签收';
+          hint = '商品已送达，用户输入收货码即可完成签收';
+          btn = '<button class="rh-btn" onclick="openOrderIntervention(\'' + o.no + '\')">人工确认收货</button>';
+        } else if (o.state === '待收货') {
+          cls = '';
+          tag = '配送中';
+          hint = '商品在途，送达后用户凭收货码签收';
+        } else if (o.state === '退款/售后') {
+          cls = ' warn';
+          tag = '售后处理中';
+          hint = '售后审核期间收货码暂不可用，请通过「人工介入」处理';
+        } else {
+          cls = '';
+          tag = '待发货';
+          hint = '商品发货后，用户凭此收货码签收';
+        }
+        hero = '<div class="receipt-hero' + cls + '"><div><div class="rh-label">收货码</div><div class="rh-code">' + esc(receiptText) + '</div></div><div class="rh-body"><span class="rh-tag">' + tag + '</span><div class="rh-hint">' + hint + '</div></div>' + btn + '</div>';
+      }
+      document.getElementById('receiptHero').innerHTML = hero;
+      /* 配送信息：已发货展示 配送单号 / 配送人 / 配送人手机号 */
+      var delivery = info('配送方式', o.deliveryLabel || '—');
+      if (s.trackingNo || o.logisticsNo) delivery += info('配送单号', s.trackingNo || o.logisticsNo);
+      if (s.courier) delivery += info('配送人', s.courier);
+      if (s.courierPhone) delivery += info('配送人手机号', s.courierPhone);
+      document.getElementById('deliveryInfo').innerHTML = delivery;
+
+      var paid = o.state !== '待付款' && o.state !== '支付中';
+      var pay = o.pay || (paid ? { method: '微信支付', actual: M.money(o.amount), deduct: '¥0', received: M.money(o.amount), at: '' } : {});
+      document.getElementById('paymentInfo').innerHTML =
+        '<div class="payment-row"><span>支付方式</span><span>' + esc(pay.method || '—') + '</span></div>'
+        + '<div class="payment-row"><span>商品金额</span><span>' + M.money(o.amount) + '</span></div>'
+        + '<div class="payment-row"><span>配送费</span><span>已含在商品售价内</span></div>'
+        + '<div class="payment-row"><span>积分抵扣</span><span>' + esc(pay.deduct || '—') + '</span></div>'
+        + '<div class="payment-row"><span>实付金额</span><span>' + esc(pay.actual || '—') + '</span></div>'
+        + (pay.at ? '<div class="payment-row"><span>支付完成时间</span><span>' + esc(pay.at) + '</span></div>' : '')
+        + '<div class="payment-row"><span>支付状态</span><span>' + (paid ? '已支付' : (o.state === '支付中' ? '支付中' : '待支付')) + '</span></div>'
+        + '<div class="payment-row total"><span>应付金额</span><strong>' + M.money(o.amount) + '</strong></div>';
+
+      document.getElementById('timeline').innerHTML = buildTimeline(o);
+      renderRefund(o);
+    }
+
+    /* 人工介入保存后的回写桥：把旧字段翻译回数据层并同步小程序存储，随后刷新详情 */
+    window.AKBRefreshAdminMallOverrides = function () {
+      var overrides = {};
+      try { overrides = JSON.parse(localStorage.getItem('akb_admin_mall_order_overrides_v1') || '{}') || {}; } catch (e) { overrides = {}; }
+      var remaining = {};
+      Object.keys(overrides).forEach(function (key) {
+        var ov = overrides[key];
+        var cur = M.getOrder(key);
+        if (!cur) { remaining[key] = ov; return; } /* 非本模块订单，原样保留 */
+        var patch = {};
+        if (ov.state) patch.state = STATE_FROM_LEGACY[ov.state] || ov.state;
+        if (ov.deliveryType && DELIVERY_FROM_LABEL[ov.deliveryType]) {
+          patch.deliveryMethod = DELIVERY_FROM_LABEL[ov.deliveryType];
+          patch.deliveryLabel = ov.deliveryType;
+        }
+        if (ov.receiver) patch.userName = ov.receiver;
+        if (ov.receiverPhone) patch.userPhone = ov.receiverPhone;
+        if (ov.address) patch.address = ov.address;
+        if (ov.logisticsCompany || ov.logisticsNo || ov.shipInfo) {
+          var si = ov.shipInfo || {};
+          var company = (si.company || (ov.logisticsCompany && ov.logisticsCompany !== '—' ? ov.logisticsCompany : '')) || '';
+          var tracking = (si.trackingNo || (ov.logisticsNo && ov.logisticsNo !== '—' ? ov.logisticsNo : '')) || '';
+          var cs = cur.shipInfo || {};
+          patch.logisticsCompany = company;
+          patch.logisticsNo = tracking;
+          patch.shipInfo = { company: company, trackingNo: tracking, courier: si.courier || cs.courier || '', courierPhone: si.courierPhone || cs.courierPhone || '' };
+        }
+        if (ov.receiveCode) patch.receiptCode = ov.receiveCode;
+        if (patch.state === '待收货' && !patch.receiptCode && !cur.receiptCode) patch.receiptCode = M.genReceiptCode();
+        if (ov.refundState) patch.refundState = ov.refundState;
+        if (ov.refundAmount) patch.refundAmount = ov.refundAmount;
+        if (ov.refundMethod) patch.refundMethod = ov.refundMethod;
+        if (ov.refundReviewNote) patch.refundReviewNote = ov.refundReviewNote;
+        if (ov.refundReviewedAt) patch.refundReviewedAt = ov.refundReviewedAt;
+        if (ov.refundAt) patch.refundAt = ov.refundAt;
+        if (ov.addressModified) { patch.addressModified = true; patch.addressModifiedAt = ov.addressModifiedAt; patch.addressModifiedBy = ov.addressModifiedBy; }
+        M.updateOrder(key, patch);
       });
-    }
-    return '<div class="dtimeline">' + steps.map(function (s) {
-      return '<div class="dstep ' + s.cls + '"><div class="ddot"></div><div class="dstep-copy"><strong>' + s.t + '</strong><span>' + s.s + '</span></div></div>';
-    }).join('') + '</div>';
-  }
+      localStorage.setItem('akb_admin_mall_order_overrides_v1', JSON.stringify(remaining));
+      render();
+    };
+    window.render = render;
 
-  function actions(o) {
-    var btns = '';
-    if (o.state === '待付款') {
-      btns = '<button class="btn-action ghost" onclick="act(\'cancel\')">关闭订单</button>' +
-             '<div class="action-note">商城订单均为线上支付，付款后系统自动转入「待发货」，无需人工确认收款；用户支付超时前可关闭订单。</div>';
-    } else if (o.state === '待发货') {
-      btns = '<button class="btn-action primary" onclick="openShipModal(\'' + o.no + '\')">录入发货信息 · 进入配送</button>' +
-             '<div class="action-note">立即送达 / 跑腿订单填写配送单号与配送人信息；快递订单填写快递公司与快递单号。</div>';
-    } else if (o.state === '待收货') {
-      btns = '<button class="btn-action green" onclick="act(\'sign\')">确认用户已签收</button>' +
-             '<div class="action-note">用户输入收货码后在小程序端自动完成；如遇异常可由后台代为确认。</div>';
-    } else if (o.state === '退款/售后') {
-      btns = '<button class="btn-action danger" onclick="act(\'refund\')">同意退款 · 关闭订单</button>' +
-             '<button class="btn-action ghost" onclick="act(\'rejectRefund\')">驳回申请 · 继续履约</button>' +
-             '<div class="action-note">退款前请与用户和配送方核对商品退回情况。</div>';
-    } else {
-      btns = '<button class="btn-action" disabled>' + (o.state === '已完成' ? '订单已完成' : '订单已关闭') + '</button>';
-    }
-    return '<div class="action-box">' + btns + '</div>';
-  }
+    document.getElementById('topDate').textContent =
+      (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+    document.getElementById('interveneBtn').onclick = function () {
+      if (typeof window.openOrderIntervention === 'function') window.openOrderIntervention(no);
+    };
 
-  function render() {
-    var o = M.getOrder(no);
-    var box = document.getElementById('pageBody');
-    if (!o) {
-      box.innerHTML = '<div class="table-wrap" style="padding:80px;text-align:center;color:#8F9BB0;font-size:14px">' +
-        '未找到订单号「' + M.esc(no) + '」对应的商城订单<br><br>' +
-        '<a class="btn btn-primary" href="admin-mall-orders.html" style="text-decoration:none;display:inline-flex">返回订单列表</a></div>';
-      return;
-    }
-    document.title = o.no + ' · 商城订单详情';
-
-    var goodsTotal = o.items.reduce(function (s, i) { return s + Number(i.price) * i.quantity; }, 0);
-
-    box.innerHTML =
-      '<div class="page-head" style="margin-bottom:18px"><div>' +
-        '<h1 class="page-title" style="font-size:20px">订单详情</h1>' +
-        '<p class="page-sub"><a href="admin-mall-orders.html" style="color:#224CD3;text-decoration:none">‹ 返回商城订单</a></p>' +
-      '</div></div>' +
-
-      '<div class="detail-hero"><div>' +
-        '<div class="detail-hero-kicker">健康商城订单</div>' +
-        '<div class="detail-hero-title">' + M.esc(o.items[0].name) + (o.items.length > 1 ? ' 等 ' + o.items.length + ' 款商品' : '') + '</div>' +
-        '<div class="detail-hero-no">' + o.no + '</div>' +
-      '</div><span class="mtag ' + TAG_CLASS[o.state] + '" style="background:rgba(255,255,255,.18);color:#fff">' +
-        '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#fff"></span>' + o.state + '</span></div>' +
-
-      '<div class="detail-grid"><div>' +
-        /* 商品明细 */
-        '<div class="dcard"><div class="dcard-hd">商品明细</div><div class="dcard-bd">' +
-          o.items.map(function (i) {
-            var subTotal = Number(i.price) * i.quantity;
-            return '<div class="oi-item">' + thumb(i) +
-              '<div class="oi-info"><div class="oi-name">' + M.esc(i.name) + '</div>' +
-              '<div class="oi-sub">' + M.esc(i.desc || '') + '</div></div>' +
-              '<div class="oi-mid"><span>' + M.money(i.price) + '</span><span class="oi-qty">x' + i.quantity + '</span>' +
-              '<span class="oi-price">' + M.money(subTotal) + '</span></div></div>';
-          }).join('') +
-          '<div class="oi-total"><span>商品合计（' + o.quantity + ' 件，含配送费）</span><strong>' + M.money(goodsTotal) + '</strong></div>' +
-        '</div></div>' +
-
-        /* 收货信息 */
-        '<div class="dcard"><div class="dcard-hd">收货与配送</div><div class="dcard-bd">' +
-          row('收货人', M.esc(o.userName) + ' <span class="drow-val muted">' + M.esc(o.userPhone || '') + '</span>') +
-          row('收货地址', M.esc(o.address)) +
-          row('配送方式', '<span class="delivery-tag">' + M.esc(o.deliveryLabel) + '</span>') +
-          shipRows(o) +
-          row('下单时间', M.esc(o.createdAt || o.date)) +
-          row('订单来源', o.source === 'mini' ? '小程序实时下单' : '后台演示订单') +
-          distRow(o) +
-          (o.note ? row('订单备注', M.esc(o.note)) : '') +
-        '</div></div>' +
-
-        /* 进度 */
-        '<div class="dcard"><div class="dcard-hd">订单进度</div><div class="dcard-bd">' + timeline(o) + '</div></div>' +
-      '</div>' +
-
-      '<div>' +
-        /* 费用 */
-        '<div class="dcard"><div class="dcard-hd">费用信息</div><div class="dcard-bd">' +
-          row('商品金额', M.money(goodsTotal)) +
-          row('配送费', '已含在商品售价内', true) +
-          row('实付金额', '<strong style="color:#DC2626;font-size:16px">' + M.money(o.amount) + '</strong>') +
-          commRow(o) +
-        '</div></div>' +
-
-        /* 收货码 */
-        codeCard(o) +
-
-        /* 操作 */
-        '<div class="dcard"><div class="dcard-hd">订单操作</div><div class="dcard-bd">' + actions(o) + '</div></div>' +
-      '</div></div>';
-  }
-
-  /* 分销归属行：无归属不显示 */
-  function distRow(o) {
-    var c = M.distCommission(o);
-    if (!c) return '';
-    return row('分销归属', '<span class="dist-tag">' + M.esc(c.name) + '（' + M.esc(c.id) + '）</span>');
-  }
-  /* 分销佣金行：按分销员比例计算，取消/退款单不结算 */
-  function commRow(o) {
-    var c = M.distCommission(o);
-    if (!c) return '';
-    return row('分销佣金', '<strong style="color:#D97706">' + M.money(c.amount) + '</strong>' +
-      ' <span class="drow-val muted">（' + M.esc(c.name) + ' · 分成 ' + (Math.round(c.rate * 1000) / 10) + '%' + (c.settled ? '）' : '，取消/退款单不结算）') + '</span>');
-  }
-
-  function row(lbl, val, muted) {
-    return '<div class="drow"><span class="drow-lbl">' + lbl + '</span><span class="drow-val' + (muted ? ' muted' : '') + '">' + val + '</span></div>';
-  }
-
-  /* 已录入的发货信息 */
-  function shipRows(o) {
-    var s = o.shipInfo;
-    if (!s) return '';
-    var noLabel = o.deliveryMethod === 'express' ? '快递单号' : (o.deliveryMethod === 'runner' ? '跑腿订单号' : '配送单号');
-    var rows = '';
-    if (s.company) rows += row('快递公司', M.esc(s.company));
-    if (s.trackingNo) rows += row(noLabel, M.esc(s.trackingNo));
-    if (s.courier) rows += row('配送人', M.esc(s.courier) + ' <span class="drow-val muted">' + M.esc(s.courierPhone || '') + '</span>');
-    if (s.shippedAt) rows += row('发货时间', M.esc(s.shippedAt));
-    return rows;
-  }
-
-  function codeCard(o) {
-    if (o.state === '已完成') {
-      return '<div class="dcard"><div class="dcard-hd">签收收货码</div><div class="dcard-bd">' +
-        '<div class="code-box signed"><div class="code">' + M.esc(o.receiptCode || '— — — —') + '</div>' +
-        '<div class="code-hint">收货码已验证，订单于 ' + M.esc(o.date) + ' 完成签收</div></div></div></div>';
-    }
-    if (o.state === '待付款') {
-      return '<div class="dcard"><div class="dcard-hd">签收收货码</div><div class="dcard-bd">' +
-        '<div class="code-box"><div class="code" style="color:#94A3B8">— — — —</div>' +
-        '<div class="code-hint">订单为线上支付，完成付款并由商家发货后生成收货码</div></div></div></div>';
-    }
-    if (o.state === '待收货' || o.state === '待发货') {
-      var hint = o.state === '待收货' ? '商品已发出，配送员送达后由用户输入此码完成签收' :
-                 '订单已付款，发货后用户凭此收货码签收';
-      return '<div class="dcard"><div class="dcard-hd">签收收货码</div><div class="dcard-bd">' +
-        '<div class="code-box"><div class="code">' +
-        M.esc(o.receiptCode || '— — — —') + '</div>' +
-        '<div class="code-hint">' + hint + '</div></div></div></div>';
-    }
-    return '';
-  }
-
-  window.act = function (type) {
-    var o = M.getOrder(no);
-    if (!o) return;
-    if (type === 'cancel') {
-      if (!confirm('确认关闭该订单？')) return;
-      M.updateOrder(no, { state: '已取消', note: '管理员关闭：未完成支付' });
-    } else if (type === 'sign') {
-      if (!confirm('确认用户已实际收到商品并代为完成签收？')) return;
-      M.updateOrder(no, { state: '已完成' });
-    } else if (type === 'refund') {
-      if (!confirm('确认同意退款并关闭订单？')) return;
-      M.updateOrder(no, { state: '已取消', note: '售后退款已完成' });
-    } else if (type === 'rejectRefund') {
-      if (!confirm('驳回售后申请，订单继续按原流程履约？')) return;
-      M.updateOrder(no, { state: '待发货', note: '售后申请已驳回，订单继续履约' });
-    }
     render();
-  };
-
-  window.AKBRefreshMallPage = render;
-
-  render();
-})();
-</script>
-<script src="admin-mall-ship.js"></script>
+  })();
+  </script>
+  <script src="admin-order-intervention.js"></script>
 </body>
 </html>

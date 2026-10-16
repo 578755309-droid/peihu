@@ -10,7 +10,7 @@
     {id:'home-care',category:'home',name:'居家陪护',summary:'居家场景的日常照护服务',description:'提供居家场景的日常照护服务，按自理等级计费，特殊情况额外加收。',status:'on',sort:1,
       pricingRules:{mode:'daily',independence:{independent:260,partial:360,dependent:460},tubeExtra:50,infectionExtra:200}},
     {id:'bath-care',category:'bath',name:'上门助浴',summary:'上门提供安全、舒适的助浴服务',description:'上门提供安全、舒适的助浴服务，按次计费，特殊情况额外加收。',status:'on',sort:1,
-      pricingRules:{mode:'session',basePrice:280,independence:{independent:0,partial:50,dependent:100},tubeExtra:50,infectionExtra:100}},
+      pricingRules:{mode:'session',basePrice:499,independence:{independent:0,partial:100,dependent:200},tubeExtra:50,infectionExtra:100,skinBreakExtra:0}},
     {id:'vip',category:'visit',name:'贵宾陪诊',summary:'全流程就医陪同与诊后回访',description:'了解患者情况、确认医院科室、办理挂号签到，陪同检查取药并记录诊疗方案。',status:'on',sort:1},
     {id:'premium',category:'visit',name:'优享陪诊',summary:'含目标医院目标科室门诊医生预约',description:'代约目标医院目标科室门诊医生，提供全流程就医陪同与诊后回访。',status:'on',sort:2},
     {id:'medicine',category:'visit',name:'代买药',summary:'协助沟通、问诊、取药及快递寄送',description:'确认药品信息、医院及报销方式，完成挂号、问诊、缴费取药和快递寄送。',status:'on',sort:3},
@@ -43,7 +43,16 @@
       if(!target.pricingRules)target.pricingRules=clone(c.pricingRules);
       delete c.pricingRules;
     });
-    v.services.forEach(function(s){if(s.pricing==null)s.pricing='per_order';if(s.price==null&&prices[s.id]!=null)s.price=prices[s.id];if(s.cover==null)s.cover='';if(s.detailHtml==null)s.detailHtml='';});
+    /* 定价规则迁移：补充 skinBreakExtra 字段；助浴旧默认定价升级为 499/599/699 */
+    v.services.forEach(function(s){
+      if(!s.pricingRules)return;
+      if(s.pricingRules.skinBreakExtra==null)s.pricingRules.skinBreakExtra=0;
+      if(s.id==='bath-care'&&s.pricingRules.mode==='session'){
+        var oldDefault=s.pricingRules.basePrice===280&&s.pricingRules.independence&&s.pricingRules.independence.partial===50&&s.pricingRules.independence.dependent===100;
+        if(oldDefault){s.pricingRules.basePrice=499;s.pricingRules.independence.independent=0;s.pricingRules.independence.partial=100;s.pricingRules.independence.dependent=200;}
+      }
+    });
+    v.services.forEach(function(s){if(s.pricing==null)s.pricing='per_order';if(s.price==null&&prices[s.id]!=null)s.price=prices[s.id];if(s.cover==null)s.cover='';if(s.detailHtml==null)s.detailHtml='';if(s.manualSales==null)s.manualSales=0;if(s.useManualSales==null)s.useManualSales=true;});
     return v;
   }
   function get(){try{var v=JSON.parse(localStorage.getItem('akb-service-catalog'));if(v&&v.categories&&v.services)return normalize(v)}catch(e){}return normalize(clone(defaults))}

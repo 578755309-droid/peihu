@@ -116,3 +116,8 @@ body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMa
 .ud-row .p.plus{color:#16A34A}
 .ud-row .p.minus{color:#DC2626}
 .ud-empty{padding:10px 12px;border:1px dashed #D6E4F5;border-radius:9px;color:#9AA7BA;font-size:12px;font-weight:700}
+.ud-filter{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:8px;background:#F8FBFF;border:1px solid #EEF5FC;border-radius:9px;flex-wrap:wrap}
+.ud-filter label{font-size:11px;color:#9AA7BA;font-weight:800;white-space:nowrap}
+.ud-filter .select,.ud-filter input[type=date]{height:30px;border:1px solid #D7E8FA;border-radius:7px;padding:0 8px;color:#657087;background:#fff;font:600 12px inherit}
+.ud-filter .result{margin-left:auto;font-size:11px;color:#9AA7BA;font-weight:700}
+.ud-filter .result strong{color:#224CD3}

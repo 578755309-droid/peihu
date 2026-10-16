@@ -253,6 +253,21 @@
         background: #fff;
         font: 600 12px inherit;
       }
+      .search {
+        height: 36px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0 11px;
+        color: #657087;
+        background: #fff;
+        font: 600 12px inherit;
+        min-width: 180px;
+        outline: 0;
+      }
+      .search:focus,
+      .select:focus {
+        border-color: var(--b);
+      }
       .count {
         margin-left: auto;
         color: var(--muted);
@@ -341,6 +356,10 @@
       .leave {
         background: #fef3c7;
         color: #d97706;
+      }
+      .biz {
+        background: #dbeafe;
+        color: #224cd3;
       }
       .rating {
         color: #d97706;
@@ -447,7 +466,12 @@
               <option>居家陪护</option>
               <option>陪诊服务</option>
               <option>上门助浴</option></select
-            ><span class="count"
+            ><select class="select" id="empType">
+              <option value="all">全部人员类型</option>
+              <option>自营</option>
+              <option>个人</option>
+              <option>企业</option></select
+            ><input class="search" id="kw" placeholder="搜索姓名 / 手机号 / 编号 / 企业" /><span class="count"
               >共 <strong id="count">0</strong> 位陪护员</span
             >
           </div>
@@ -458,6 +482,8 @@
                   <th>陪护员</th>
                   <th>手机号</th>
                   <th>服务技能</th>
+                  <th>人员类型</th>
+                  <th>入驻企业</th>
                   <th>服务评分</th>
                   <th>累计订单</th>
                   <th>在岗状态</th>
@@ -480,6 +506,8 @@
           rating: "4.9",
           orders: 128,
           state: "on",
+          employmentType: "self",
+          companyName: "",
         },
         {
           id: "N1002",
@@ -489,6 +517,8 @@
           rating: "4.8",
           orders: 96,
           state: "on",
+          employmentType: "enterprise",
+          companyName: "西安康护家政服务有限公司",
         },
         {
           id: "N1003",
@@ -498,6 +528,8 @@
           rating: "4.7",
           orders: 74,
           state: "leave",
+          employmentType: "enterprise",
+          companyName: "雁塔区助老服务中心",
         },
         {
           id: "N1004",
@@ -507,6 +539,8 @@
           rating: "4.6",
           orders: 52,
           state: "off",
+          employmentType: "self",
+          companyName: "",
         },
         {
           id: "N1005",
@@ -516,6 +550,8 @@
           rating: "4.9",
           orders: 88,
           state: "on",
+          employmentType: "self",
+          companyName: "",
         },
       ];
       const st = {
@@ -535,10 +571,19 @@
         total.textContent = DATA.length;
         onDuty.textContent = DATA.filter((x) => x.state === "on").length;
         orders.textContent = DATA.reduce((a, x) => a + x.orders, 0);
+        const etMap = {
+          self: ["自营", "on"],
+          personal: ["个人", "leave"],
+          enterprise: ["企业", "biz"],
+          "full-time": ["自营", "on"],
+          "part-time": ["企业", "biz"],
+        };
+        const etLabel = (t) => (etMap[t] || etMap.self)[0];
+        const etClass = (t) => (etMap[t] || etMap.self)[1];
         rows.innerHTML = d
           .map(
             (x) =>
-              `<tr><td><div class="profile"><div class="avatar">${x.name.slice(0, 1)}</div><div><div class="name">${x.name}</div><div class="small">档案编号 ${x.id}</div></div></div></td><td>${x.phone}</td><td>${x.skills.join("、")}</td><td class="rating">★ ${x.rating}</td><td>${x.orders} 单</td><td><span class="state ${st[x.state][1]}">${st[x.state][0]}</span></td><td><div class="ops"><button onclick="location.href='admin-caregiver-detail.html?id=${x.id}'">查看档案</button><button onclick="alert('编辑陪护员')">编辑</button></div></td></tr>`,
+              `<tr><td><div class="profile"><div class="avatar">${x.name.slice(0, 1)}</div><div><div class="name">${x.name}</div><div class="small">档案编号 ${x.id}</div></div></div></td><td>${x.phone}</td><td>${x.skills.join("、")}</td><td><span class="state ${etClass(x.employmentType)}">${etLabel(x.employmentType)}</span></td><td>${x.companyName || '<span style="color:var(--muted)">—</span>'}</td><td class="rating">★ ${x.rating}</td><td>${x.orders} 单</td><td><span class="state ${st[x.state][1]}">${st[x.state][0]}</span></td><td><div class="ops"><button onclick="location.href='admin-caregiver-detail.html?id=${x.id}'">查看档案</button><button onclick="alert('编辑陪护员')">编辑</button></div></td></tr>`,
           )
           .join("");
       }
@@ -547,5 +592,41 @@
       render();
     </script>
     <script src="admin-caregiver-create.js"></script>
+    <script>
+      /* 页面内筛选：在侧边栏渲染基础上，对人员类型与关键词做行级过滤 */
+      (function () {
+        var emp = document.getElementById("empType");
+        var kw = document.getElementById("kw");
+        if (!emp || !kw) return;
+        var EMP_TYPE_COL = 5; /* 人员类型列 */
+        function applyFilters() {
+          var empV = emp.value;
+          var kwV = kw.value.trim();
+          var rows = document.querySelectorAll("#rows tr");
+          var visible = 0;
+          rows.forEach(function (tr) {
+            var show = true;
+            if (empV !== "all") {
+              var cell = tr.children[EMP_TYPE_COL];
+              show = !!cell && cell.textContent.trim() === empV;
+            }
+            if (show && kwV) {
+              show = (tr.textContent || "").indexOf(kwV) > -1;
+            }
+            tr.style.display = show ? "" : "none";
+            if (show) visible++;
+          });
+          var count = document.getElementById("count");
+          if (count) count.textContent = visible;
+        }
+        emp.addEventListener("change", applyFilters);
+        kw.addEventListener("input", applyFilters);
+        /* 在岗状态/服务技能变化时，侧边栏会重渲染表格，延迟复用本过滤 */
+        ["state", "skill"].forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) el.addEventListener("change", function () { setTimeout(applyFilters, 0); });
+        });
+      })();
+    </script>
   </body>
 </html>

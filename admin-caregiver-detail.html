@@ -377,6 +377,42 @@
           grid-template-columns: repeat(2, 1fr);
         }
       }
+      /* 隐藏订单记录表格中的「服务评价」列（第 9 列） */
+      .caregiver-order-table th:nth-child(9),
+      .caregiver-order-table td:nth-child(9) {
+        display: none;
+      }
+      /* 资质证书图片/文件展示列 */
+      .cert-att {
+        display: inline-grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        font-size: 12px;
+        font-weight: 800;
+        vertical-align: middle;
+      }
+      .cert-att.img {
+        background: #E7F1FD;
+        color: #224CD3;
+      }
+      .cert-att.file {
+        background: #EEF5FC;
+        color: #657087;
+      }
+      .cert-att-name {
+        margin-left: 8px;
+        font-size: 12px;
+        color: #637895;
+        vertical-align: middle;
+      }
+      .cert-no-sub {
+        margin-top: 2px;
+        font-size: 11px;
+        color: #9AA7BA;
+        font-weight: 600;
+      }
     </style>
     <script defer src="admin-sidebar.js"></script>
   </head>
@@ -428,6 +464,10 @@
               <div class="name">张阿姨</div>
               <div class="id">档案编号 · N1001</div>
               <span class="state">在岗</span>
+              <div class="skill-tags" id="cgSkillTags">
+                <span class="skill-tag">住院陪护</span
+                ><span class="skill-tag">居家陪护</span>
+              </div>
               <div class="side-list">
                 <div class="side-row">
                   <span>手机号</span><span>138****2468</span>
@@ -465,10 +505,7 @@
               <div class="tabs">
                 <button class="tab active" data-tab="base">基本信息</button
                 ><button class="tab" data-tab="cert">资质证书</button
-                ><button class="tab" data-tab="skill">服务技能</button
-                ><button class="tab" data-tab="orders">订单记录</button
-                ><button class="tab" data-tab="complaint">投诉记录</button
-                ><button class="tab" data-tab="violation">违规记录</button>
+                ><button class="tab" data-tab="orders">订单记录</button>
               </div>
               <div class="panel active" id="base">
                 <div class="section-title">人员基本信息</div>
@@ -482,8 +519,8 @@
                     <div class="v">女 / 46 岁</div>
                   </div>
                   <div class="kv">
-                    <div class="k">服务区域</div>
-                    <div class="v">西安市雁塔区</div>
+                    <div class="k">人员类型</div>
+                    <div class="v">自营</div>
                   </div>
                   <div class="kv">
                     <div class="k">身份证号</div>
@@ -494,8 +531,20 @@
                     <div class="v">李女士 139****8572</div>
                   </div>
                   <div class="kv">
+                    <div class="k">入驻企业单位</div>
+                    <div class="v">—</div>
+                  </div>
+                  <div class="kv">
+                    <div class="k">服务区域</div>
+                    <div class="v">西安市雁塔区</div>
+                  </div>
+                  <div class="kv">
                     <div class="k">在岗状态</div>
                     <div class="v">正常在岗</div>
+                  </div>
+                  <div class="kv">
+                    <div class="k">工龄</div>
+                    <div class="v">8 年</div>
                   </div>
                 </div>
               </div>
@@ -506,42 +555,31 @@
                     <th>证书名称</th>
                     <th>证书编号</th>
                     <th>有效期</th>
+                    <th>证书图片/文件</th>
                     <th>审核状态</th>
                   </tr>
                   <tr>
-                    <td>养老护理员（三级）</td>
+                    <td>护士证</td>
                     <td>YL20250812001</td>
                     <td>2028-08-11</td>
+                    <td><span class="cert-att img">图</span><span class="cert-att-name" title="护士证扫描件.jpg">护士证扫描件.jpg</span></td>
                     <td><span class="tag">已审核</span></td>
                   </tr>
                   <tr>
-                    <td>急救技能培训证</td>
+                    <td>毕业证</td>
                     <td>JQ20250319018</td>
                     <td>2027-03-18</td>
+                    <td><span class="cert-att img">图</span><span class="cert-att-name" title="毕业证扫描件.jpg">毕业证扫描件.jpg</span></td>
+                    <td><span class="tag">已审核</span></td>
+                  </tr>
+                  <tr>
+                    <td>健康证</td>
+                    <td>JK20260106025</td>
+                    <td>2027-01-06</td>
+                    <td><span class="cert-att file">文</span><span class="cert-att-name" title="健康证电子版.pdf">健康证电子版.pdf</span></td>
                     <td><span class="tag">已审核</span></td>
                   </tr>
                 </table>
-              </div>
-              <div class="panel" id="skill">
-                <div class="section-title">服务技能</div>
-                <div class="grid">
-                  <div class="kv">
-                    <div class="k">住院陪护</div>
-                    <div class="v">熟练</div>
-                  </div>
-                  <div class="kv">
-                    <div class="k">居家陪护</div>
-                    <div class="v">熟练</div>
-                  </div>
-                  <div class="kv">
-                    <div class="k">基础护理</div>
-                    <div class="v">熟练</div>
-                  </div>
-                  <div class="kv">
-                    <div class="k">康复协助</div>
-                    <div class="v">良好</div>
-                  </div>
-                </div>
               </div>
               <div class="panel" id="orders">
                 <div class="section-title">订单记录</div>
@@ -568,14 +606,6 @@
                     <td><span class="tag">已完成</span></td>
                   </tr>
                 </table>
-              </div>
-              <div class="panel" id="complaint">
-                <div class="section-title">投诉记录</div>
-                <div class="empty">暂无投诉记录</div>
-              </div>
-              <div class="panel" id="violation">
-                <div class="section-title">违规记录</div>
-                <div class="empty">暂无违规记录</div>
               </div>
             </div>
           </div>

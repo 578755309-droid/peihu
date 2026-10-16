@@ -21,6 +21,7 @@
     .mall-order-row .address-type{display:inline-flex;margin-right:5px;padding:3px 6px;border-radius:6px;background:#E7F1FD;color:#224CD3;font-size:10px;font-weight:800;vertical-align:top}
     .mall-order-row .address-detail{font-size:11px;color:#657087}
     .mall-order-row .delivery-type{font-weight:800;color:#224CD3;white-space:nowrap}
+    .mall-order-row .pay-cell{white-space:nowrap}
     .mall-order-row .logistics{line-height:1.5;white-space:normal;font-weight:700;color:#41536D}
     .mall-order-row .tag{display:inline-flex;padding:5px 9px;border-radius:18px;font-size:11px;font-weight:800;white-space:nowrap}
     .mall-order-row .tag.pay{background:#FEF3C7;color:#D97706}
@@ -84,8 +85,8 @@
 
       <!-- 表格：列结构与旧版订单管理商城订单一致 -->
       <div class="table-wrap mall-table-wrap">
-        <table class="table mall-table" style="min-width:1480px">
-          <thead><tr><th>订单信息</th><th>商品</th><th>收货人</th><th>收货地址</th><th>配送方式</th><th>物流信息</th><th>下单时间</th><th>金额</th><th>状态</th><th>操作</th></tr></thead>
+        <table class="table mall-table" style="min-width:2020px">
+          <thead><tr><th>订单信息</th><th>商品</th><th>收货人</th><th>收货地址</th><th>配送方式</th><th>物流信息</th><th>下单时间</th><th>应付金额</th><th>支付方式</th><th>实付金额</th><th>积分抵扣</th><th>实收金额</th><th>支付完成时间</th><th>状态</th><th>操作</th></tr></thead>
           <tbody id="rows"></tbody>
         </table>
         <div class="empty-state" id="emptyState" style="display:none">暂无符合条件的订单</div>
@@ -100,13 +101,13 @@
   var M = window.AKBMallAdmin;
 
   /* ── 状态命名适配：数据层（小程序同步）↔ 旧版商城订单展示 ── */
-  var STATE_TO_LEGACY = { '待付款': '待支付', '待发货': '待发货', '待收货': '待收货确认', '已完成': '已完成', '退款/售后': '退款/售后', '已取消': '已取消' };
-  var STATE_FROM_LEGACY = { '待支付': '待付款', '待发货': '待发货', '待配送': '待发货', '配送中': '待收货', '待收货确认': '待收货', '已完成': '已完成', '退款/售后': '退款/售后', '已取消': '已取消' };
+  var STATE_TO_LEGACY = { '待付款': '待支付', '待发货': '待发货', '待收货': '待收货确认', '已完成': '已完成', '退款/售后': '退款/售后', '已退款': '已退款', '已取消': '已取消' };
+  var STATE_FROM_LEGACY = { '待支付': '待付款', '待发货': '待发货', '待配送': '待发货', '配送中': '待收货', '待收货确认': '待收货', '已完成': '已完成', '退款/售后': '退款/售后', '已退款': '已退款', '已取消': '已取消' };
   var DELIVERY_FROM_LABEL = { '立即送达': 'instant', '跑腿送达': 'runner', '快递送达': 'express' };
 
-  var TABS = ['all', '待支付', '待发货', '配送中', '待收货确认', '已完成', '退款/售后'];
-  var TAB_LABELS = { all: '全部订单', '待支付': '待付款', '待发货': '待发货', '配送中': '配送中', '待收货确认': '待收货确认', '已完成': '已完成', '退款/售后': '退款/售后' };
-  var TAG_CLASS = { '待支付': 'pay', '待发货': 'accepted', '配送中': 'serving', '待收货确认': 'pending', '已完成': 'done', '退款/售后': 'refund', '已取消': 'cancel' };
+  var TABS = ['all', '待支付', '支付中', '已支付', '待发货', '配送中', '待收货确认', '已完成', '退款/售后', '已退款'];
+  var TAB_LABELS = { all: '全部订单', '待支付': '待付款', '支付中': '支付中', '已支付': '已支付', '待发货': '待发货', '配送中': '配送中', '待收货确认': '待收货确认', '已完成': '已完成', '退款/售后': '退款/售后', '已退款': '已退款' };
+  var TAG_CLASS = { '待支付': 'pay', '支付中': 'pay', '已支付': 'accepted', '待发货': 'accepted', '配送中': 'serving', '待收货确认': 'pending', '已完成': 'done', '退款/售后': 'refund', '已退款': 'cancel', '已取消': 'cancel' };
 
   var current = new URLSearchParams(location.search).get('state') || 'all';
   if (current !== 'all') current = STATE_TO_LEGACY[current] || current;
@@ -141,6 +142,12 @@
       deliveredAt: (o.state === '待收货' || o.state === '已完成') ? '已送达' : '—',
       amount: M.money(o.amount),
       orderedAt: (o.createdAt || o.date || '').replace(/:\d\d$/, ''),
+      refundState: o.refundState || '',
+      refundReason: o.refundReason || '',
+      refundRemark: o.refundRemark || '',
+      refundPhotos: o.refundPhotos || [],
+      refundAppliedAt: o.refundAppliedAt || '',
+      refundAmount: o.refundAmount || '',
       state: STATE_TO_LEGACY[o.state] || o.state,
       _raw: o
     };
@@ -214,7 +221,7 @@
   function logisticsOf(order) {
     if (order.deliveryType === '快递送达') {
       if (order.logisticsCompany && order.logisticsCompany !== '—') return esc(order.logisticsCompany) + '<br>' + esc(order.logisticsNo);
-      if (order.state === '待支付' || order.state === '待发货') return '待发货';
+      if (['待支付', '支付中', '已支付', '待发货'].indexOf(order.state) > -1) return '待发货';
       if (order.state === '已完成') return '配送完成';
       return '配送中';
     }
@@ -223,23 +230,43 @@
   }
   function receiptOf(order) {
     if (order.receiptStatus === '已确认') return '已确认收货';
-    if (order.state === '待支付' || order.state === '已取消') return '付款后生成收货码';
+    if (order.state === '待支付' || order.state === '支付中' || order.state === '已取消') return '付款后生成收货码';
     return order.receiveCode ? '收货码：' + esc(order.receiveCode) : '待生成收货码';
+  }
+
+  /* ── 支付信息：支付方式（微信支付 / 卡兑换）、实付金额、积分抵扣、实收金额、支付完成时间 ── */
+  function bumpTime(t) { var m = /(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(String(t || '')); if (!m) return t || '—'; var mins = (+m[1]) * 60 + (+m[2]) + 2; var hh = ('0' + (Math.floor(mins / 60) % 24)).slice(-2); var mm = ('0' + (mins % 60)).slice(-2); var sec = m[3] ? '30' : '00'; return String(t).slice(0, m.index) + hh + ':' + mm + ':' + sec; }
+  function payOf(raw) {
+    var p = raw && raw.pay;
+    if (p) return { method: p.method || '—', actual: p.actual || '—', deduct: p.deduct || '—', received: p.received || '—', at: p.at || '—' };
+    var state = raw && raw.state;
+    if (state === '支付中') return { method: '微信支付', actual: '—', deduct: '—', received: '—', at: '—' };
+    if (state === '待付款' || state === '已取消') return { method: '—', actual: '—', deduct: '—', received: '—', at: '—' };
+    var amount = raw ? raw.amount : '';
+    var zero = Number(String(amount || '').replace(/[^0-9.]/g, '')) === 0;
+    if (zero) return { method: '卡兑换', actual: '¥0', deduct: '¥0', received: '¥0', at: bumpTime((raw && (raw.createdAt || raw.date)) || '') };
+    return { method: '微信支付', actual: M.money(amount), deduct: '¥0', received: M.money(amount), at: bumpTime((raw && (raw.createdAt || raw.date)) || '') };
   }
 
   /* ── 行渲染：与旧版订单管理商城订单一致；操作仅保留 查看 + 人工介入 ── */
   function mallRow(order) {
+    var pay = payOf(order._raw);
     var ops = '<button onclick="location.href=\'admin-mall-order-detail.html?no=' + encodeURIComponent(order.no) + '\'">查看</button>' +
       (order.state === '已完成' ? '' : '<button onclick="openOrderIntervention(\'' + order.no + '\')">人工介入</button>');
     return '<tr class="mall-order-row">' +
-      '<td><div class="order-no">' + esc(order.no) + '</div><div class="sub">下单于 ' + esc(order.orderedAt) + '</div></td>' +
+      '<td><div class="order-no">' + esc(order.no) + '</div></td>' +
       '<td><div class="product-name">' + esc(order.product) + '</div><div class="sub">数量：' + esc(order.quantity) + ' 件</div></td>' +
       '<td><div class="person-name">' + esc(order.receiver) + '</div><div class="sub">' + esc(order.receiverPhone) + '</div></td>' +
       '<td class="location"><span class="address-type">收货地址</span><span class="address-detail">' + esc(order.address) + '</span></td>' +
       '<td><div class="delivery-type">' + esc(order.deliveryType) + '</div><div class="sub">配送费：' + esc(order.deliveryFee) + '</div></td>' +
       '<td class="logistics">' + logisticsOf(order) + '<div class="sub">' + receiptOf(order) + '</div></td>' +
       '<td>' + esc(order.orderedAt) + '</td>' +
-      '<td class="service">' + esc(order.amount) + '</td>' +
+      '<td class="service pay-cell">' + esc(order.amount) + '</td>' +
+      '<td class="pay-cell">' + esc(pay.method) + '</td>' +
+      '<td class="pay-cell">' + esc(pay.actual) + '</td>' +
+      '<td class="pay-cell">' + esc(pay.deduct) + '</td>' +
+      '<td class="pay-cell">' + esc(pay.received) + '</td>' +
+      '<td class="pay-cell">' + esc(pay.at) + '</td>' +
       '<td><span class="tag ' + (TAG_CLASS[order.state] || '') + '">' + esc(order.state) + '</span></td>' +
       '<td><div class="op">' + ops + '</div></td>' +
     '</tr>';
@@ -271,12 +298,13 @@
   window.exportOrders = function () {
     var list = M.getOrders().filter(function (o) { return current === 'all' || (STATE_TO_LEGACY[o.state] || o.state) === current; });
     M.exportCsv('商城订单列表.csv',
-      ['订单号', '下单时间', '用户', '联系方式', '收货地址', '配送方式', '商品明细', '件数', '金额', '收货码', '状态', '来源', '分销员', '分销佣金', '备注'],
+      ['订单号', '下单时间', '用户', '联系方式', '收货地址', '配送方式', '商品明细', '件数', '应付金额', '支付方式', '实付金额', '积分抵扣', '实收金额', '支付完成时间', '收货码', '状态', '来源', '分销员', '分销佣金', '备注'],
       list.map(function (o) {
         var c = M.distCommission(o);
+        var pay = payOf(o);
         return [o.no, o.createdAt || o.date, o.userName, o.userPhone, o.address, o.deliveryLabel,
           o.items.map(function (i) { return i.name + ' x' + i.quantity; }).join('；'),
-          o.quantity, o.amount, o.receiptCode, o.state, o.source === 'mini' ? '小程序实时单' : '后台',
+          o.quantity, o.amount, pay.method, pay.actual, pay.deduct, pay.received, pay.at, o.receiptCode, o.state, o.source === 'mini' ? '小程序实时单' : '后台',
           c ? c.name : '', c ? c.amount.toFixed(2) : '', o.note];
       }));
   };
@@ -313,6 +341,10 @@
       if (patch.state === '待收货' && !patch.receiptCode && !cur.receiptCode) patch.receiptCode = M.genReceiptCode();
       if (ov.refundState) patch.refundState = ov.refundState;
       if (ov.refundAmount) patch.refundAmount = ov.refundAmount;
+      if (ov.refundMethod) patch.refundMethod = ov.refundMethod;
+      if (ov.refundReviewNote) patch.refundReviewNote = ov.refundReviewNote;
+      if (ov.refundReviewedAt) patch.refundReviewedAt = ov.refundReviewedAt;
+      if (ov.refundAt) patch.refundAt = ov.refundAt;
       M.updateOrder(no, patch);
     });
     localStorage.setItem('akb_admin_mall_order_overrides_v1', JSON.stringify(remaining));

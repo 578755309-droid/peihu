@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>积分概览 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script></head>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>积分概览 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css"></head>
 <body><div class="layout">
   <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
   <main class="main">
@@ -13,9 +13,7 @@
           <h1 class="page-title">积分概览</h1>
           <p class="page-sub">查看积分整体发放与使用情况，配置积分获取与抵扣全局规则</p>
         </div>
-        <div class="actions" style="display:flex;gap:10px">
-          <button class="btn btn-primary" onclick="saveRules()">保存规则</button>
-        </div>
+        <div class="actions" style="display:flex;gap:10px"></div>
       </div>
 
       <!-- 统计 -->
@@ -53,8 +51,8 @@
         </div>
       </div>
 
-      <!-- 明细入口 -->
-      <div class="pt-links">
+      <!-- 明细入口（隐藏） -->
+      <div class="pt-links" style="display:none">
         <a class="pt-link" href="admin-points-users.html">
           <div class="pt-link-ico" style="background:#F0E9FA;color:#7F55B8"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="6" r="3"/><circle cx="13" cy="7" r="2.3"/><path d="M1.5 16c.4-3 2.1-4.7 5-4.7s4.6 1.7 5 4.7M11.2 11.5c2.7-.2 4.6 1.1 5.2 4"/></svg></div>
           <div><div class="pt-link-name">用户积分</div><div class="pt-link-sub" id="lkUsers">—</div></div>
@@ -73,9 +71,48 @@
         </a>
       </div>
 
+      <!-- 用户积分（嵌入自用户积分页） -->
+      <div class="users-block">
+        <div class="users-block-head">
+          <div>
+            <div class="users-block-title">用户积分</div>
+            <div class="users-block-sub">查看每位用户的可用积分、累计获取与使用情况，可进入个人积分明细</div>
+          </div>
+          <button class="btn" onclick="exportUsers()">导出 CSV</button>
+        </div>
+        <div class="filter">
+          <label>关键词</label>
+          <input class="search" id="fSearch" placeholder="搜索用户姓名 / 手机号" />
+          <span class="result">共 <strong id="count">0</strong> 位用户</span>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>用户</th><th>手机号</th><th>可用积分</th><th>累计获取</th><th>累计使用</th><th>邀请好友</th><th>注册时间</th><th>操作</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+          <div class="empty" id="empty" style="display:none"><div class="e-icon">·</div><div class="e-title">暂无数据</div></div>
+        </div>
+      </div>
+
     </section>
   </main>
 </div>
+
+<!-- 用户积分明细弹窗 -->
+<div class="modal-mask" id="userModal" onclick="if(event.target===this)closeUserModal()">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title" id="userModalTitle">用户积分明细</div><button class="modal-close" onclick="closeUserModal()">×</button></div>
+    <div class="modal-body" id="userModalBody"></div>
+    <div class="modal-foot"><button class="btn" onclick="closeUserModal()">关闭</button></div>
+  </div>
+</div>
+
+<style>
+  .users-block{margin-top:18px}
+  .users-block-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:14px}
+  .users-block-title{font-size:16px;font-weight:900}
+  .users-block-sub{font-size:12px;color:var(--text3);margin-top:4px}
+</style>
 
 <script>
 (function () {
@@ -87,7 +124,6 @@
   function renderStats() {
     var s = P.summarize();
     var cards = [
-      { v: s.userCount, l: '积分用户', f: '注册即自动开通积分账户', c: 'total' },
       { v: '+' + s.totalEarned, l: '累计发放积分', f: '邀请奖励 + 消费返积分', c: 'earn' },
       { v: '-' + s.totalSpent, l: '累计使用积分', f: '订单抵扣 1 积分 = 1 元', c: 'spend' },
       { v: s.totalBalance, l: '当前可用积分总额', f: s.pendingInvite ? ('待注册邀请 ' + s.pendingInvite + ' 条，奖励暂未发放') : '邀请奖励均已发放', c: 'balance' }
@@ -132,6 +168,96 @@
 
   fillRules();
   renderStats();
+})();
+
+/* ── 用户积分区块（嵌入自用户积分页） ── */
+(function () {
+  var P = window.AKBPointsAdmin;
+
+  function filtered() {
+    var kw = document.getElementById('fSearch').value.trim().toLowerCase();
+    return P.getUsers().filter(function (u) {
+      return !kw || (u.name + u.phone + u.id).toLowerCase().indexOf(kw) > -1;
+    });
+  }
+
+  function renderUsers() {
+    var list = filtered();
+    document.getElementById('count').textContent = list.length;
+    document.getElementById('empty').style.display = list.length ? 'none' : 'block';
+    document.getElementById('rows').innerHTML = list.map(function (u) {
+      return '<tr>' +
+        '<td><div class="name-cell"><div class="main">' + P.esc(u.name) + '</div><div class="sub">' + P.esc(u.id) + '</div></div></td>' +
+        '<td class="mono">' + P.esc(u.phone) + '</td>' +
+        '<td><span class="pt-val" style="color:#7F55B8">' + u.balance + '</span></td>' +
+        '<td><span class="pt-val plus" style="font-size:13px">+' + u.totalEarned + '</span></td>' +
+        '<td><span class="pt-val minus" style="font-size:13px">-' + u.totalSpent + '</span></td>' +
+        '<td>' + u.inviteCount + ' 人</td>' +
+        '<td class="time-cell">' + P.esc(u.joinedAt) + '</td>' +
+        '<td><div class="op"><button onclick="openUserDetail(\'' + P.esc(u.id) + '\')">查看明细</button></div></td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  window.openUserDetail = function (userId) {
+    var d = P.userDetail(userId);
+    if (!d.user) return;
+    var u = d.user;
+    document.getElementById('userModalTitle').textContent = u.name + ' · 积分明细';
+    var all = [];
+    d.earn.forEach(function (r) {
+      all.push({ kind: 'earn', date: r.date, time: r.time || '', tag: '<span class="tag ' + (r.type === '邀请好友' ? 'invite' : 'consume') + '">' + P.esc(r.type) + '</span>', desc: r.detail, points: r.points });
+    });
+    d.spend.forEach(function (r) {
+      all.push({ kind: 'spend', date: r.date, time: r.time || '', tag: '<span class="tag ' + (r.orderType === '商城订单' ? 'mall' : 'service') + '">' + P.esc(r.orderType) + '</span>', desc: r.orderNo + ' · ' + r.detail, points: r.points });
+    });
+    all.sort(function (a, b) { return String(b.date + b.time).localeCompare(String(a.date + a.time)); });
+    document.getElementById('userModalBody').innerHTML =
+      '<div class="ud-summary">' +
+        '<div><div class="k">可用积分</div><div class="v purple">' + u.balance + '</div></div>' +
+        '<div><div class="k">累计获取</div><div class="v green">+' + u.totalEarned + '</div></div>' +
+        '<div><div class="k">累计使用</div><div class="v orange">-' + u.totalSpent + '</div></div>' +
+        '<div><div class="k">邀请好友</div><div class="v blue">' + u.inviteCount + ' 人</div></div>' +
+      '</div>' +
+      '<div class="ud-section"><div class="ud-section-title">积分明细（获取 + 使用，按时间倒序）</div>' +
+        '<div class="ud-filter">' +
+          '<label>类型</label><select class="select" id="udFType"><option value="all">全部</option><option value="earn">获取</option><option value="spend">使用</option></select>' +
+          '<label>开始日期</label><input type="date" id="udFStart">' +
+          '<label>结束日期</label><input type="date" id="udFEnd">' +
+          '<span class="result">共 <strong id="udFCount">0</strong> 条</span>' +
+        '</div>' +
+        '<div id="udList"></div>' +
+      '</div>';
+    function renderUdList() {
+      var t = document.getElementById('udFType').value;
+      var s = document.getElementById('udFStart').value;
+      var e = document.getElementById('udFEnd').value;
+      var list = all.filter(function (r) {
+        if (t !== 'all' && r.kind !== t) return false;
+        if (s && r.date < s) return false;
+        if (e && r.date > e) return false;
+        return true;
+      });
+      document.getElementById('udFCount').textContent = list.length;
+      document.getElementById('udList').innerHTML = list.length ? list.map(function (r) {
+        return '<div class="ud-row"><span class="t">' + P.esc(r.date) + '</span>' + r.tag + '<span class="d">' + P.esc(r.desc) + '</span><span class="p ' + (r.kind === 'earn' ? 'plus">+' : 'minus">-') + r.points + '</span></div>';
+      }).join('') : '<div class="ud-empty">暂无符合条件的记录</div>';
+    }
+    document.getElementById('udFType').onchange = renderUdList;
+    document.getElementById('udFStart').onchange = renderUdList;
+    document.getElementById('udFEnd').onchange = renderUdList;
+    renderUdList();
+    document.getElementById('userModal').classList.add('show');
+  };
+  window.closeUserModal = function () { document.getElementById('userModal').classList.remove('show'); };
+
+  window.exportUsers = function () {
+    P.exportCsv('用户积分.csv', ['用户ID', '姓名', '手机号', '可用积分', '累计获取', '累计使用', '邀请好友数', '注册时间'],
+      filtered().map(function (u) { return [u.id, u.name, u.phone, u.balance, u.totalEarned, u.totalSpent, u.inviteCount, u.joinedAt]; }));
+  };
+
+  document.getElementById('fSearch').oninput = renderUsers;
+  renderUsers();
 })();
 </script>
 </body></html>

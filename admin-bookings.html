@@ -109,7 +109,7 @@ body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMa
 .form-row select,.form-row textarea{width:100%;border:1px solid #D7E8FA;border-radius:8px;padding:10px 12px;font-size:13px;color:#172033;outline:none;background:#fff;font-family:inherit;box-sizing:border-box}
 .form-row select:focus,.form-row textarea:focus{border-color:#224CD3;box-shadow:0 0 0 3px rgba(34,76,211,.1)}
 .form-row textarea{resize:vertical;min-height:90px;line-height:1.6}
-</style><script defer src="admin-sidebar.js"></script></head>
+</style><script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css"></head>
 <body><div class="layout">
   <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
   <main class="main">
@@ -231,8 +231,7 @@ function fmtTime(ts){var d=new Date(ts),p=function(n){return String(n).padStart(
 function srcLabel(s){return s==='banner'?'一键预约':s==='catalog'?'服务卡片':'其他';}
 function stLabel(s){return s==='pending'?'未跟进':s==='processing'?'处理中':'已完成';}
 
-function seedDemoData(){
-  var existing=load();if(existing.length>0&&!confirm('已有数据，确定覆盖生成演示数据？'))return;
+function buildDemoData(){
   var names=['王女士','李先生','张阿姨','刘大爷','陈小姐','赵叔叔','孙奶奶','周女士','吴先生','郑阿姨','黄先生','杨女士'];
   var phones=['138****2468','139****8572','186****3016','133****6420','177****9183','158****5509','136****7234','159****8890','182****4456','155****3322'];
   var sources=['banner','catalog','banner','banner','catalog','banner','other','banner','catalog','banner','banner','banner'];
@@ -240,7 +239,11 @@ function seedDemoData(){
   var notes=['','','已联系，明天上午上门评估','家属要求安排有ICU经验的护理员','患者术后恢复期，需要24小时陪护','已完成服务，家属反馈满意','','多次未接通，需继续跟进','已报价，家属正在考虑中','已转单给护理员李桂芳','紧急需求，今天下午就要到岗','确认住院陪护，3天'];
   var now=Date.now(),demo=[];
   for(var i=0;i<12;i++){var daysAgo=Math.floor(Math.random()*14);demo.push({id:'BK'+String(now-i).slice(-8),name:names[i],phone:phones[i%phones.length],source:sources[i],status:statuses[i],note:notes[i],createdAt:now-daysAgo*86400000-Math.floor(Math.random()*3600000),updatedAt:now-Math.floor(Math.random()*86400000)});}
-  save(demo);render();
+  return demo;
+}
+function seedDemoData(){
+  var existing=load();if(existing.length>0&&!confirm('已有数据，确定覆盖生成演示数据？'))return;
+  save(buildDemoData());render();
 }
 
 function getFiltered(){
@@ -341,5 +344,6 @@ function exportCSV(){
 }
 
 (function(){var d=new Date(),w=['日','一','二','三','四','五','六'];document.getElementById('topDate').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+w[d.getDay()];})();
+if(load().length===0)save(buildDemoData());
 render();
 </script></body></html>

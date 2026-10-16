@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>购物车 · 佑小邦陪护</title>
+  <style>
+    :root{--purple:#8655C5;--purple-dark:#6B3FAA;--purple-light:#EDE6F7;--purple-bg:#F5F3FA;--card:#fff;--text:#1A1828;--text2:#6B6880;--text3:#AEACC0;--border:#EDE9F5;--r-md:16px;--r-lg:22px;--sh:0 2px 12px rgba(100,60,160,.06)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;background:var(--purple-bg);color:var(--text);-webkit-font-smoothing:antialiased}
+    .frame{display:flex;justify-content:center;min-height:100vh;background:#E4DDF0}
+    .phone{width:100%;max-width:430px;display:flex;flex-direction:column;background:var(--purple-bg);min-height:100vh;position:relative}
+    @media(min-width:520px){.frame{align-items:flex-start;padding:20px 0 40px}.phone{height:900px;min-height:unset;border-radius:42px;overflow:hidden;box-shadow:0 24px 72px rgba(80,40,140,.22)}}
+    .scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+    .scroll-area::-webkit-scrollbar{display:none}
+
+    /* 状态栏 */
+    .status-bar{display:flex;justify-content:space-between;align-items:center;padding:13px 22px 6px;font-size:13px;font-weight:700;background:linear-gradient(135deg,#EDE6F7,#F5F3FA)}
+    .status-right{display:flex;align-items:center;gap:5px}
+    .status-right svg{width:17px;height:17px}
+
+    /* 顶部导航 */
+    .top-bar{display:flex;align-items:center;justify-content:center;height:56px;padding:0 14px;background:linear-gradient(135deg,#EDE6F7,#F5F3FA);position:relative}
+    .top-bar h1{font-size:18px;font-weight:900;color:var(--text)}
+
+    /* 分类 Tab */
+    .cat-tabs{display:flex;background:#fff;border-bottom:1px solid var(--border);padding:0 14px}
+    .cat-tab{flex:1;text-align:center;padding:14px 0;font-size:15px;font-weight:700;color:var(--text3);cursor:pointer;position:relative}
+    .cat-tab.on{color:var(--purple)}
+    .cat-tab.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:24px;height:3px;border-radius:2px;background:var(--purple)}
+
+    /* 购物车列表 */
+    .cart-list{padding:14px}
+    .cart-item{display:flex;gap:12px;background:#fff;border-radius:var(--r-md);padding:12px;margin-bottom:12px;box-shadow:var(--sh)}
+    .cart-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--text3);flex-shrink:0;margin-top:2px;display:grid;place-items:center;cursor:pointer}
+    .cart-item.checked .cart-check{background:var(--purple);border-color:var(--purple)}
+    .cart-check svg{width:12px;height:12px;color:#fff;display:none}
+    .cart-item.checked .cart-check svg{display:block}
+    .cart-img{width:80px;height:80px;border-radius:12px;flex-shrink:0;display:grid;place-items:center;background:var(--purple-light);color:var(--purple)}
+    .cart-img svg{width:40px;height:40px}
+    .cart-info{flex:1;min-width:0;display:flex;flex-direction:column}
+    .cart-name{font-size:14px;font-weight:800;color:var(--text);line-height:1.3}
+    .cart-sub{font-size:12px;color:var(--text3);margin-top:4px;line-height:1.4}
+    .cart-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
+    .cart-price{font-size:16px;font-weight:900;color:#E94E4E}
+    .qty-ctrl{display:flex;align-items:center;gap:8px}
+    .qty-btn{width:24px;height:24px;border:1px solid var(--border);border-radius:7px;background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--text2);font-size:15px;font-weight:700}
+    .qty-num{font-size:14px;font-weight:700;color:var(--text);min-width:16px;text-align:center}
+    .cart-del{font-size:12px;color:var(--text3);cursor:pointer;margin-left:8px}
+
+    /* 空状态 */
+    .empty{text-align:center;padding:80px 20px;color:var(--text3)}
+    .empty svg{width:64px;height:64px;color:var(--text3);opacity:.5;margin-bottom:16px}
+    .empty p{font-size:14px;margin-bottom:16px}
+    .empty button{padding:10px 24px;border:0;border-radius:20px;background:var(--purple);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+
+    /* 底部结算栏 */
+    .checkout-bar{flex-shrink:0;display:flex;align-items:center;background:#fff;border-top:1px solid var(--border);padding:12px 14px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(83,47,130,.06)}
+    .checkout-left{flex:1}
+    .checkout-total{font-size:13px;color:var(--text2)}
+    .checkout-total b{font-size:18px;color:#E94E4E}
+    .checkout-btn{padding:11px 28px;border:0;border-radius:22px;background:var(--purple);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+    .checkout-btn:disabled{background:var(--text3);cursor:not-allowed}
+
+    /* 底部 Tab */
+    .bottom-nav{flex-shrink:0;display:flex;background:#fff;border-top:1px solid var(--border);padding:8px 0 calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(83,47,130,.06)}
+    .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;text-decoration:none;min-width:0}
+    .nav-ico{width:26px;height:26px;stroke:#AEACC0;fill:none}
+    .nav-lbl{font-size:11px;font-weight:700;color:var(--text3);white-space:nowrap}
+    .nav-item.act .nav-ico{stroke:var(--purple)}
+    .nav-item.act .nav-lbl{color:var(--purple)}
+  </style>
+</head>
+<body>
+<div class="frame"><div class="phone">
+  <div class="scroll-area">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-right">
+        <svg viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="1.5" width="3" height="10.5" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".28"/></svg>
+        <svg viewBox="0 0 17 13" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M8.5 9.5a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8z" fill="currentColor" stroke="none"/><path d="M5.2 7a4.7 4.7 0 016.6 0" stroke-width="1.5"/><path d="M2 4a8.8 8.8 0 0113 0" stroke-width="1.5"/></svg>
+        <svg viewBox="0 0 24 12" fill="none"><rect x=".6" y=".6" width="20" height="10.8" rx="2.8" stroke="currentColor" stroke-width="1.2"/><rect x="21.2" y="3.6" width="2.2" height="4.8" rx="1.1" fill="currentColor"/><rect x="2" y="2" width="15" height="8" rx="1.8" fill="currentColor"/></svg>
+      </div>
+    </div>
+
+    <div class="top-bar"><h1>购物车</h1></div>
+
+    <!-- 分类 Tab -->
+    <div class="cat-tabs">
+      <div class="cat-tab" data-cat="service" onclick="switchCat('service')">服务商品</div>
+      <div class="cat-tab on" data-cat="mall" onclick="switchCat('mall')">商城商品</div>
+    </div>
+
+    <!-- 服务商品 -->
+    <div class="cart-list" id="cartService" style="display:none"></div>
+
+    <!-- 商城商品 -->
+    <div class="cart-list" id="cartMall"></div>
+
+    <div style="height:72px"></div>
+  </div>
+
+  <!-- 积分抵扣行 -->
+  <div id="pointsRow" style="display:none;flex-shrink:0;background:#fff;padding:10px 14px;border-top:1px solid var(--border)">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)">
+      <input type="checkbox" id="pointsCheck" onchange="togglePoints(this)" style="width:16px;height:16px;accent-color:var(--purple)">
+      <span style="font-weight:700;color:var(--text)">积分抵扣</span>
+      <span id="pointsInfo" style="flex:1;text-align:right;color:var(--text3)">可用积分 0</span>
+    </label>
+  </div>
+
+  <!-- 结算栏 -->
+  <div class="checkout-bar">
+    <div class="checkout-left">
+      <div class="checkout-total">合计：<span id="totalPrice"><b>¥0</b></span></div>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" onclick="checkout()" disabled>结算(0)</button>
+  </div>
+
+  <!-- 底部 Tab -->
+  <nav class="bottom-nav">
+    <a class="nav-item" href="home.html">
+      <svg class="nav-ico" viewBox="0 0 26 26" fill="none"><path d="M4.5 13.2L13 5.8l8.5 7.4V22a1.4 1.4 0 01-1.4 1.4H16V18h-6v5.4H5.9A1.4 1.4 0 014.5 22z" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <span class="nav-lbl">首页</span>
+    </a>
+    <a class="nav-item" href="visit-services.html">
+      <svg class="nav-ico" viewBox="0 0 26 26" fill="none"><rect x="4.5" y="4" width="17" height="18" rx="2.5" stroke-width="1.8"/><path d="M4.5 9h17" stroke-width="1.8" stroke-linecap="round"/><circle cx="13" cy="15" r="2.5" stroke-width="1.8"/></svg>
+      <span class="nav-lbl">热门服务</span>
+    </a>
+    <a class="nav-item act" href="cart.html">
+      <svg class="nav-ico" viewBox="0 0 26 26" fill="none"><path d="M5 9h16l-1 13H6L5 9zM9 10V7a4 4 0 018 0v3" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <span class="nav-lbl">购物车</span>
+    </a>
+    <a class="nav-item" href="messages.html">
+      <svg class="nav-ico" viewBox="0 0 26 26" fill="none"><path d="M5 6.5A3.5 3.5 0 018.5 3h9A3.5 3.5 0 0121 6.5v7a3.5 3.5 0 01-3.5 3.5H12l-4.5 4v-4.2A3.5 3.5 0 015 13.5z" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 9.5h6" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <span class="nav-lbl">消息</span>
+    </a>
+    <a class="nav-item" href="profile.html">
+      <svg class="nav-ico" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="10" r="4.2" stroke-width="1.8"/><path d="M5 22.5c1.6-3.8 4.6-6 8-6s6.4 2.2 8 6" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="nav-lbl">我的</span>
+    </a>
+  </nav>
+</div></div>
+<script src="points-store.js"></script>
+<script>
+  /* 商城商品数据 */
+  const PRODUCTS = [
+    {id:'thermometer',name:'电子体温计',sub:'快速测温 · 大屏易读',price:39,tone:'purple',image:'assets/mall/thermometer.png'},
+    {id:'infrared',name:'红外额温枪 / 耳温枪',sub:'非接触测温 · 一机两用',price:129,tone:'blue',image:'assets/mall/infrared-thermometer.png'},
+    {id:'bp',name:'电子血压计',sub:'上臂式无创血压计',price:239,tone:'blue',image:'assets/mall/blood-pressure-monitor.png'},
+    {id:'glucose',name:'血糖仪 + 血糖试纸',sub:'家用血糖监测套装',price:168,tone:'green',image:'assets/mall/glucose-meter.png'},
+    {id:'oxygen',name:'家用制氧机',sub:'医用级 · 安静运行',price:1599,tone:'green',image:'assets/mall/oxygen-concentrator.png'},
+    {id:'nebulizer',name:'家用雾化器',sub:'细雾雾化 · 便携易收纳',price:199,tone:'purple',image:'assets/mall/nebulizer.png'},
+    {id:'hearing',name:'助听器',sub:'轻巧隐形 · 日常交流辅助',price:699,tone:'orange',image:'assets/mall/hearing-aid.png'},
+    {id:'mask',name:'医用无菌口罩',sub:'医用外科 / 一次性使用',price:29,tone:'blue',image:'assets/mall/medical-mask.png'},
+    {id:'fetal',name:'家用胎心仪',sub:'胎心监护 · 孕期辅助',price:299,tone:'red',image:'assets/mall/fetal-monitor.png'}
+  ];
+
+  /* 服务商品数据 */
+  const SERVICE_PRODUCTS = [
+    {id:'hospital-care',name:'住院陪护',sub:'住院期间专业陪护 · 含生活照料',price:300,unit:'/天',image:'assets/icons/hospital.png'},
+    {id:'home-care',name:'居家陪护',sub:'居家场景日常照护服务',price:260,unit:'/天',image:'assets/icons/home.png'},
+    {id:'bath-care',name:'上门助浴',sub:'专业设备上门 · 双人服务',price:499,unit:'/次',image:'assets/icons/bath.png'},
+    {id:'vip',name:'贵宾陪诊',sub:'全流程就医陪同与诊后回访',price:298,unit:'/次',image:'assets/icons/vip.png'},
+    {id:'premium',name:'优享陪诊',sub:'含目标医院目标科室门诊医生预约',price:698,unit:'/次',image:'assets/icons/premium.png'},
+    {id:'medicine',name:'代买药',sub:'协助沟通问诊取药快递寄送',price:99,unit:'/次',image:'assets/icons/medicine.png'},
+    {id:'exam-booking',name:'代约检查',sub:'协助开检查单、缴费并预约检查',price:169,unit:'/次',image:'assets/icons/exam-booking.png'},
+    {id:'result',name:'代看检查结果',sub:'协助问诊、解读医嘱及后续办理',price:169,unit:'/次',image:'assets/icons/result.png'},
+    {id:'admission',name:'代办住院手续',sub:'协助获取住院证并办理入院手续',price:300,unit:'/次',image:'assets/icons/admission.png'},
+    {id:'discharge',name:'代办出院手续',sub:'协助出院、报销与资料邮寄',price:300,unit:'/次',image:'assets/icons/discharge.png'},
+    {id:'ring-pickup',name:'三环内接/送患者',sub:'安排商务车辆接送患者',price:150,unit:'/次',image:'assets/icons/ring-pickup.png'},
+    {id:'airport',name:'机场接/送患者',sub:'司机与陪诊员协同完成接送机',price:380,unit:'/次',image:'assets/icons/airport.png'},
+    {id:'report',name:'代取报告',sub:'协助取检查报告并顺丰寄送',price:89,unit:'/次',image:'assets/icons/report.png'},
+    {id:'station',name:'西安北站接送患者',sub:'安排商务车辆接送患者',price:200,unit:'/次',image:'assets/icons/station.png'}
+  ];
+
+  const MALL_CART_KEY = 'ankebang_mall_cart';
+  const SVC_CART_KEY = 'ankebang_service_cart';
+  let mallCart = loadCart(MALL_CART_KEY, [
+    {id:'thermometer',qty:1},{id:'mask',qty:2},{id:'nebulizer',qty:1}
+  ]);
+  let svcCart = loadCart(SVC_CART_KEY, [
+    {id:'bath-care',qty:1},{id:'vip',qty:1}
+  ]);
+  let selected = new Set();  // key: type+id
+  let usePoints = false;
+  let currentCat = 'mall';
+
+  function loadCart(key, preset){
+    try{
+      const v = JSON.parse(localStorage.getItem(key));
+      if(Array.isArray(v) && v.length) return v;
+    }catch(e){}
+    localStorage.setItem(key, JSON.stringify(preset));
+    return preset.slice();
+  }
+  function saveCart(){
+    localStorage.setItem(MALL_CART_KEY, JSON.stringify(mallCart));
+    localStorage.setItem(SVC_CART_KEY, JSON.stringify(svcCart));
+  }
+  function getProduct(id){ return PRODUCTS.find(function(p){return p.id===id;}); }
+  function getService(id){ return SERVICE_PRODUCTS.find(function(p){return p.id===id;}); }
+  function getCurrentCart(){ return currentCat==='mall' ? mallCart : svcCart; }
+
+  function render(){
+    /* 商城商品 */
+    const mallEl = document.getElementById('cartMall');
+    if(!mallCart.length){
+      mallEl.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 3h2l.5 3h13l1.5-7H6.5"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg><p>购物车空空如也</p><button onclick="location.href=\'mall.html\'">去商城逛逛</button></div>';
+    }else{
+      mallEl.innerHTML = mallCart.map(function(item){
+        const p = getProduct(item.id); if(!p) return '';
+        return renderItem(item, p, 'mall');
+      }).join('');
+    }
+    /* 服务商品 */
+    const svcEl = document.getElementById('cartService');
+    if(!svcCart.length){
+      svcEl.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><p>暂无服务商品</p><button onclick="location.href=\'visit-services.html\'">去预约服务</button></div>';
+    }else{
+      svcEl.innerHTML = svcCart.map(function(item){
+        const p = getService(item.id); if(!p) return '';
+        return renderItem(item, p, 'service');
+      }).join('');
+    }
+    updateTotal();
+  }
+
+  function renderItem(item, p, type){
+    const key = type+':'+item.id;
+    const checked = selected.has(key);
+    return '<div class="cart-item '+(checked?'checked':'')+'" data-key="'+key+'">'+
+      '<div class="cart-check" onclick="toggleCheck(\''+key+'\')"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5l3 3 4-5"/></svg></div>'+
+      '<div class="cart-img" style="background:var(--purple-light)">'+(p.image?'<img src="'+p.image+'" alt="'+p.name+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px" onerror="this.style.display=\'none\'">':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg>')+'</div>'+
+      '<div class="cart-info">'+
+        '<div class="cart-name">'+p.name+'</div>'+
+        '<div class="cart-sub">'+p.sub+(p.unit?' · '+p.unit:'')+'</div>'+
+        '<div class="cart-foot">'+
+          '<div class="cart-price">¥'+p.price+'</div>'+
+          '<div class="qty-ctrl">'+
+            '<button class="qty-btn" onclick="changeQty(\''+type+'\',\''+item.id+'\',-1)">−</button>'+
+            '<span class="qty-num">'+item.qty+'</span>'+
+            '<button class="qty-btn" onclick="changeQty(\''+type+'\',\''+item.id+'\',1)">+</button>'+
+            '<span class="cart-del" onclick="removeItem(\''+type+'\',\''+item.id+'\')">删除</span>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  function switchCat(cat){
+    currentCat = cat;
+    document.querySelectorAll('.cat-tab').forEach(function(t){ t.classList.toggle('on', t.dataset.cat===cat); });
+    document.getElementById('cartService').style.display = cat==='service' ? '' : 'none';
+    document.getElementById('cartMall').style.display = cat==='mall' ? '' : 'none';
+  }
+
+  function toggleCheck(key){
+    if(selected.has(key)) selected.delete(key); else selected.add(key);
+    render();
+  }
+
+  function changeQty(type, id, delta){
+    const list = type==='mall' ? mallCart : svcCart;
+    const item = list.find(function(i){return i.id===id;});
+    if(!item) return;
+    item.qty = Math.max(1, item.qty + delta);
+    saveCart();
+    render();
+  }
+
+  function removeItem(type, id){
+    if(type==='mall') mallCart = mallCart.filter(function(i){return i.id!==id;});
+    else svcCart = svcCart.filter(function(i){return i.id!==id;});
+    selected.delete(type+':'+id);
+    saveCart();
+    render();
+  }
+
+  /* 获取选中商品的明细和总价 */
+  function getSelectedItems(){
+    var items = [];
+    mallCart.forEach(function(item){
+      if(selected.has('mall:'+item.id)){
+        var p = getProduct(item.id);
+        if(p) items.push({type:'mall',id:item.id,name:p.name,sub:p.sub,price:p.price,qty:item.qty,image:p.image,tone:p.tone});
+      }
+    });
+    svcCart.forEach(function(item){
+      if(selected.has('service:'+item.id)){
+        var s = getService(item.id);
+        if(s) items.push({type:'service',id:item.id,name:s.name,sub:s.sub,price:s.price,qty:item.qty,image:s.image,tone:'purple'});
+      }
+    });
+    return items;
+  }
+
+  /* 计算积分可抵扣金额：1积分=1元，最多抵扣订单30%，不超过积分余额 */
+  function getPointsDiscount(total){
+    if(!usePoints || !window.AKBPoints) return 0;
+    var balance = window.AKBPoints.get().balance || 0;
+    var maxByOrder = Math.floor(total * 0.3);
+    return Math.min(balance, maxByOrder);
+  }
+
+  function updateTotal(){
+    var items = getSelectedItems();
+    var total = items.reduce(function(sum,it){ return sum + it.price*it.qty; }, 0);
+    var count = items.reduce(function(sum,it){ return sum + it.qty; }, 0);
+    var discount = getPointsDiscount(total);
+    var finalPrice = total - discount;
+    document.getElementById('totalPrice').innerHTML = discount > 0 ? '<s style="font-size:13px;color:#AEACC0;font-weight:400">¥'+total+'</s> <b style="color:#E94E4E">¥'+finalPrice+'</b>' : '<b>¥'+total+'</b>';
+    document.getElementById('pointsRow').style.display = items.length ? '' : 'none';
+    var ptsBalance = window.AKBPoints ? window.AKBPoints.get().balance : 0;
+    document.getElementById('pointsInfo').textContent = '可用积分 '+ptsBalance+'，本单可抵扣 ¥'+getPointsDiscount(total);
+    document.getElementById('pointsCheck').checked = usePoints;
+    const btn = document.getElementById('checkoutBtn');
+    btn.textContent = '结算('+count+')';
+    btn.disabled = count===0;
+  }
+
+  function togglePoints(el){
+    usePoints = el.checked;
+    updateTotal();
+  }
+
+  /* 结算下单 */
+  function checkout(){
+    var items = getSelectedItems();
+    if(!items.length) return;
+    var total = items.reduce(function(sum,it){ return sum + it.price*it.qty; }, 0);
+    var discount = getPointsDiscount(total);
+    var finalPrice = total - discount;
+
+    /* 扣减积分 */
+    if(discount > 0 && window.AKBPoints){
+      window.AKBPoints.spend(discount, '购物车订单');
+    }
+
+    var now = new Date();
+    var dateStr = now.toISOString().slice(0,10);
+    var timeStr = now.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
+
+    /* 商城商品订单 */
+    var mallItems = items.filter(function(it){return it.type==='mall';});
+    if(mallItems.length){
+      var orderNo = 'AKB-M'+now.getFullYear()+String(Math.floor(Math.random()*999999)).padStart(6,'0');
+      var code = String(Math.floor(1000+Math.random()*9000));
+      var first = mallItems[0];
+      var order = {
+        id: orderNo, status:'shipping', state:'待发货',
+        product: first.name, desc: first.sub,
+        price: String(first.price),
+        quantity: mallItems.reduce(function(s,i){return s+i.qty;},0),
+        amount: String(mallItems.reduce(function(s,i){return s+i.price*i.qty;},0)),
+        pointsDiscount: discount,
+        finalAmount: String(finalPrice),
+        date: dateStr, address:'默认收货地址',
+        image: first.image||'', tone: first.tone||'purple',
+        deliveryMethod:'instant', deliveryLabel:'立即送达', receiptCode: code,
+        deliveryStatus:'processing',
+        items: mallItems.map(function(i){return {product:i.name,desc:i.sub,price:String(i.price),quantity:i.qty,image:i.image,tone:i.tone};})
+      };
+      try{
+        var saved = JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');
+        if(!Array.isArray(saved)) saved = [];
+        saved.unshift(order);
+        localStorage.setItem('ankebang_mall_orders', JSON.stringify(saved));
+      }catch(e){}
+    }
+
+    /* 服务商品订单 */
+    var svcItems = items.filter(function(it){return it.type==='service';});
+    if(svcItems.length){
+      svcItems.forEach(function(s){
+        var svcNo = 'AKB-'+now.getFullYear()+'-'+String(Math.floor(Math.random()*999999)).padStart(6,'0');
+        var svcOrder = {
+          id: svcNo, status:'pending-service', state:'待服务',
+          type: s.name, project: s.name+'服务',
+          unit: String(s.price), unitLabel: s.id==='bath-care'?'/次':'/天',
+          quantity: 'x'+s.qty+(s.id==='bath-care'?'次':'天'),
+          person: '待填写', address: '待填写地址', addressKind: '家',
+          time: dateStr+'（待确认）', nurse: '待分配',
+          role: '护理师｜'+s.name, cert: '持证上岗', years: '5年经验',
+          amount: String(s.price*s.qty), avatar: '待',
+          actions: ['cancel','call'],
+          createdAt: Date.now(), serviceDate: dateStr
+        };
+        try{
+          var svSaved = JSON.parse(localStorage.getItem('ankebang_service_orders')||'[]');
+          if(!Array.isArray(svSaved)) svSaved = [];
+          svSaved.unshift(svcOrder);
+          localStorage.setItem('ankebang_service_orders', JSON.stringify(svSaved));
+        }catch(e){}
+      });
+    }
+
+    /* 从购物车移除已结算商品 */
+    items.forEach(function(it){
+      if(it.type==='mall'){
+        mallCart = mallCart.filter(function(c){return c.id!==it.id;});
+        selected.delete('mall:'+it.id);
+      }else{
+        svcCart = svcCart.filter(function(c){return c.id!==it.id;});
+        selected.delete('service:'+it.id);
+      }
+    });
+    saveCart();
+    usePoints = false;
+    showSuccess(total, discount, finalPrice);
+  }
+
+  function showSuccess(total, discount, finalPrice){
+    var overlay = document.getElementById('successOverlay');
+    document.getElementById('successTotal').textContent = '商品合计：¥'+total;
+    document.getElementById('successDiscount').style.display = discount>0 ? '' : 'none';
+    document.getElementById('successDiscount').textContent = '积分抵扣：-¥'+discount;
+    document.getElementById('successAmt').textContent = '实付：¥'+finalPrice;
+    overlay.style.display = 'flex';
+    render();
+  }
+  function closeSuccess(){ document.getElementById('successOverlay').style.display='none'; }
+
+  render();
+</script>
+
+<!-- 下单成功弹窗 -->
+<div id="successOverlay" onclick="if(event.target===this)closeSuccess()" style="position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:999">
+  <div style="background:#fff;border-radius:18px;padding:28px 24px;width:300px;text-align:center">
+    <div style="width:56px;height:56px;border-radius:50%;background:#DCFCE7;display:grid;place-items:center;margin:0 auto 14px">
+      <svg viewBox="0 0 28 28" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l5 5 11-11"/></svg>
+    </div>
+    <div style="font-size:18px;font-weight:900;margin-bottom:6px">下单成功</div>
+    <div style="font-size:13px;color:#6B6880;margin-bottom:16px">护理员将尽快为您处理</div>
+    <div id="successTotal" style="font-size:13px;color:#6B6880;margin-bottom:4px"></div>
+    <div id="successDiscount" style="font-size:13px;color:#16A34A;margin-bottom:4px;display:none"></div>
+    <div id="successAmt" style="font-size:16px;font-weight:900;color:#E94E4E;margin-bottom:18px"></div>
+    <button onclick="closeSuccess();location.href='orders.html'" style="width:100%;height:42px;border:0;border-radius:12px;background:var(--purple);color:#fff;font-weight:800;cursor:pointer">查看订单</button>
+  </div>
+</div>
+</body>
+</html>

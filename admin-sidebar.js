@@ -17,12 +17,9 @@
       item('mall-dist','分销管理','admin-mall-distribution.html','<circle cx="4.5" cy="9" r="2"/><circle cx="13.5" cy="4.5" r="2"/><circle cx="13.5" cy="13.5" r="2"/><path d="M6.3 7.9l5.4-2.5M6.3 10.1l5.4 2.5"/>')+
       '<div class="sb-section-lbl">积分管理</div>'+
       item('points','积分概览','admin-points.html','<circle cx="9" cy="9" r="7.2"/><path d="M6.6 5.6L9 8.8l2.4-3.2M9 8.8v4.6M6.9 9.8h4.2M6.9 11.8h4.2"/>')+
-      item('points-users','用户积分','admin-points-users.html','<circle cx="6.5" cy="6" r="3"/><circle cx="13" cy="7" r="2.3"/><path d="M1.5 16c.4-3 2.1-4.7 5-4.7s4.6 1.7 5 4.7M11.2 11.5c2.7-.2 4.6 1.1 5.2 4"/>')+
-      item('points-earn','获取明细','admin-points-earn.html','<circle cx="9" cy="9" r="7"/><path d="M9 5.5v7M5.5 9h7"/>')+
-      item('points-spend','使用明细','admin-points-spend.html','<circle cx="9" cy="9" r="7"/><path d="M5.5 9h7"/>')+
-      item('points-invite','邀请明细','admin-points-invite.html','<path d="M7 11a3.5 3.5 0 004.95 0l2.3-2.3a3.5 3.5 0 00-4.95-4.95l-1.15 1.15"/><path d="M11 7a3.5 3.5 0 00-4.95 0l-2.3 2.3a3.5 3.5 0 004.95 4.95l1.15-1.15"/>')+
-      '<div class="sb-section-lbl">资讯管理</div>'+
-      item('consult','资讯管理','admin-consult.html','<path d="M3 3.5h12v9H8l-3.4 2.6c-.3.2-.6 0-.6-.4z"/><path d="M6 7h6M6 9.6h4"/>')+
+      '<div class="sb-section-lbl">其他</div>'+
+      item('consult','资讯内容','admin-consult.html','<path d="M3 3.5h12v9H8l-3.4 2.6c-.3.2-.6 0-.6-.4z"/><path d="M6 7h6M6 9.6h4"/>')+
+      item('comments','评论管理','admin-comments.html','<path d="M3 4.5A1.5 1.5 0 014.5 3h9A1.5 1.5 0 0115 4.5v6A1.5 1.5 0 0113.5 12H8l-3.5 2.8c-.3.2-.5 0-.5-.4z"/><path d="M6 6.5h6M6 9h4"/>')+
       '<div class="sb-section-lbl">系统</div>'+item('settings','系统设置','profile.html','<circle cx="9" cy="9" r="2.5"/><path d="M9 1.5v2M9 14.5v2M1.5 9h2M14.5 9h2M3.6 3.6L5 5M13 13l1.4 1.4M3.6 14.4L5 13M13 5l1.4-1.4"/>')+'</nav>'+
       '<div class="sb-user"><div class="sb-av">管</div><div><div class="sb-uname">超级管理员</div><div class="sb-urole">admin@akb.com</div></div><button class="sb-logout" onclick="if(confirm(\'确认退出？\'))location.href=\'index.html\'">↗</button></div>';
     if(file.indexOf('user-detail')>-1||file.indexOf('caregiver-detail')>-1){
@@ -50,24 +47,28 @@
     else topbar.appendChild(links);
   }
   var caregiverProfiles={
-    N1001:{avatar:'张',name:'张阿姨',phone:'138****2468',certification:'审核通过',certificationClass:'approved',workYears:'6年'},
-    N1002:{avatar:'李',name:'李师傅',phone:'139****8572',certification:'审核通过',certificationClass:'approved',workYears:'4年'},
-    N1003:{avatar:'王',name:'王阿姨',phone:'186****3016',certification:'审核中',certificationClass:'reviewing',workYears:'3年'},
-    N1004:{avatar:'赵',name:'赵姐',phone:'133****6420',certification:'审核驳回',certificationClass:'rejected',workYears:'2年'},
-    N1005:{avatar:'陈',name:'陈阿姨',phone:'177****9183',certification:'未提交',certificationClass:'unsubmitted',workYears:'1年'}
+    N1001:{avatar:'张',name:'张阿姨',phone:'138****2468',certification:'审核通过',certificationClass:'approved',workYears:'6年',employmentType:'full-time',companyName:'',skills:['住院陪护','居家陪护']},
+    N1002:{avatar:'李',name:'李师傅',phone:'139****8572',certification:'审核通过',certificationClass:'approved',workYears:'4年',employmentType:'part-time',companyName:'西安康护家政服务有限公司',skills:['陪诊服务']},
+    N1003:{avatar:'王',name:'王阿姨',phone:'186****3016',certification:'审核中',certificationClass:'reviewing',workYears:'3年',employmentType:'part-time',companyName:'雁塔区助老服务中心',skills:['上门助浴','居家陪护']},
+    N1004:{avatar:'赵',name:'赵姐',phone:'133****6420',certification:'审核驳回',certificationClass:'rejected',workYears:'2年',employmentType:'full-time',companyName:'',skills:['住院陪护']},
+    N1005:{avatar:'陈',name:'陈阿姨',phone:'177****9183',certification:'未提交',certificationClass:'unsubmitted',workYears:'1年',employmentType:'full-time',companyName:'',skills:['居家陪护']}
   };
   try{
     var storedCaregivers=JSON.parse(sessionStorage.getItem('akbNewCaregivers')||'[]');
     var certificationClasses={'审核通过':'approved','审核中':'reviewing','审核驳回':'rejected','未提交':'unsubmitted'};
     storedCaregivers.forEach(function(caregiver){
-      caregiverProfiles[caregiver.id]={avatar:caregiver.name.slice(0,1),name:caregiver.name,phone:caregiver.phone,certification:caregiver.certification||'未提交',certificationClass:certificationClasses[caregiver.certification]||'unsubmitted',workYears:caregiver.workYears||'—'};
+      caregiverProfiles[caregiver.id]={avatar:caregiver.name.slice(0,1),name:caregiver.name,phone:caregiver.phone,certification:caregiver.certification||'未提交',certificationClass:certificationClasses[caregiver.certification]||'unsubmitted',workYears:caregiver.workYears||'—',employmentType:caregiver.employmentType||'full-time',companyName:caregiver.companyName||'',skills:caregiver.skills||[]};
     });
   }catch(error){}
+  var CG_ET_LABELS={self:'自营',personal:'个人',enterprise:'企业','full-time':'自营','part-time':'企业'};
+  var CG_ET_CLASSES={self:'on',personal:'leave',enterprise:'biz','full-time':'on','part-time':'biz'};
+  function cgEtLabel(t){return CG_ET_LABELS[t]||'自营';}
+  function cgEtClass(t){return CG_ET_CLASSES[t]||'on';}
   function addCaregiverProfileStyles(){
     if(document.getElementById('caregiver-profile-style'))return;
     var style=document.createElement('style');
     style.id='caregiver-profile-style';
-    style.textContent='.caregiver-list-scroll{overflow-x:auto!important;overflow-y:hidden!important}.caregiver-list-table{min-width:1180px}.caregiver-list-table th{white-space:nowrap}.caregiver-list-table td{white-space:nowrap}.caregiver-list-table .cg-avatar{width:36px;height:36px;border-radius:10px;background:#E7F1FD;color:#224CD3;display:grid;place-items:center;font-weight:900}.caregiver-list-table .cg-profile{display:flex;gap:10px;align-items:center}.caregiver-list-table .cg-name{color:#172033;font-weight:800}.caregiver-list-table .cg-id{color:#8F9BB0;font-size:10px;margin-top:2px}.cg-cert{display:inline-flex;align-items:center;padding:5px 9px;border-radius:16px;font-size:11px;font-weight:800}.cg-cert.approved{color:#16A34A;background:#DCFCE7}.cg-cert.reviewing{color:#D97706;background:#FEF3C7}.cg-cert.rejected{color:#DC2626;background:#FEE2E2}.cg-cert.unsubmitted{color:#657087;background:#EEF5FC}.identity .profile-cert{margin-left:6px}.identity .profile-cert.cg-cert{vertical-align:middle}.identity .side-row .cg-cert{padding:4px 8px}';
+    style.textContent='.caregiver-list-scroll{overflow-x:auto!important;overflow-y:hidden!important}.caregiver-list-table{min-width:1180px}.caregiver-list-table th{white-space:nowrap}.caregiver-list-table td{white-space:nowrap}.caregiver-list-table .cg-avatar{width:36px;height:36px;border-radius:10px;background:#E7F1FD;color:#224CD3;display:grid;place-items:center;font-weight:900}.caregiver-list-table .cg-profile{display:flex;gap:10px;align-items:center}.caregiver-list-table .cg-name{color:#172033;font-weight:800}.caregiver-list-table .cg-id{color:#8F9BB0;font-size:10px;margin-top:2px}.cg-cert{display:inline-flex;align-items:center;padding:5px 9px;border-radius:16px;font-size:11px;font-weight:800}.cg-cert.approved{color:#16A34A;background:#DCFCE7}.cg-cert.reviewing{color:#D97706;background:#FEF3C7}.cg-cert.rejected{color:#DC2626;background:#FEE2E2}.cg-cert.unsubmitted{color:#657087;background:#EEF5FC}.identity .profile-cert{margin-left:6px}.identity .profile-cert.cg-cert{vertical-align:middle}.identity .side-row .cg-cert{padding:4px 8px}.state.biz{background:#DBEAFE;color:#224CD3}.skill-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0 2px}.skill-tag{padding:4px 10px;border-radius:999px;background:#EEF5FC;color:#224CD3;font-size:11px;font-weight:800}';
     document.head.appendChild(style);
   }
   function initCaregiverManagement(){
@@ -77,7 +78,7 @@
     addCaregiverProfileStyles();
     table.parentElement.classList.add('caregiver-list-scroll');
     table.classList.add('caregiver-list-table');
-    table.querySelector('thead tr').innerHTML='<th>头像</th><th>陪护员</th><th>手机号</th><th>认证状态</th><th>工龄</th><th>服务技能</th><th>服务评分</th><th>累计订单</th><th>在岗状态</th><th>操作</th>';
+    table.querySelector('thead tr').innerHTML='<th>头像</th><th>陪护员</th><th>手机号</th><th>认证状态</th><th>工龄</th><th>人员类型</th><th>入驻企业</th><th>服务技能</th><th>服务评分</th><th>累计订单</th><th>在岗状态</th><th>操作</th>';
     var labels={on:'在岗',leave:'休息',off:'停用'};
     function renderCaregivers(){
       var stateSelect=document.getElementById('state');
@@ -90,8 +91,12 @@
       document.getElementById('onDuty').textContent=DATA.filter(function(caregiver){return caregiver.state==='on';}).length;
       document.getElementById('orders').textContent=DATA.reduce(function(sum,caregiver){return sum+caregiver.orders;},0);
       rows.innerHTML=list.map(function(caregiver){
-        var profile=caregiverProfiles[caregiver.id]||{avatar:caregiver.name.slice(0,1),certification:'未提交',certificationClass:'unsubmitted',workYears:'—'};
-        return '<tr><td><div class="cg-avatar">'+profile.avatar+'</div></td><td><div class="cg-name">'+caregiver.name+'</div><div class="cg-id">档案编号 '+caregiver.id+'</div></td><td>'+caregiver.phone+'</td><td><span class="cg-cert '+profile.certificationClass+'">'+profile.certification+'</span></td><td>'+profile.workYears+'</td><td>'+caregiver.skills.join('、')+'</td><td class="rating">★ '+caregiver.rating+'</td><td>'+caregiver.orders+' 单</td><td><span class="state '+caregiver.state+'">'+labels[caregiver.state]+'</span></td><td><div class="ops"><button onclick="location.href=\'admin-caregiver-detail.html?id='+caregiver.id+'\'">查看档案</button><button onclick="alert(\'编辑陪护员\')">编辑</button></div></td></tr>';
+        var profile=caregiverProfiles[caregiver.id]||{avatar:caregiver.name.slice(0,1),certification:'未提交',certificationClass:'unsubmitted',workYears:'—',employmentType:caregiver.employmentType||'full-time',companyName:caregiver.companyName||''};
+        var et=profile.employmentType||caregiver.employmentType||'full-time';
+        var etLabel=cgEtLabel(et);
+        var etClass=cgEtClass(et);
+        var company=profile.companyName||caregiver.companyName||'';
+        return '<tr><td><div class="cg-avatar">'+profile.avatar+'</div></td><td><div class="cg-name">'+caregiver.name+'</div><div class="cg-id">档案编号 '+caregiver.id+'</div></td><td>'+caregiver.phone+'</td><td><span class="cg-cert '+profile.certificationClass+'">'+profile.certification+'</span></td><td>'+profile.workYears+'</td><td><span class="state '+etClass+'">'+etLabel+'</span></td><td>'+(company||'<span style="color:#8F9BB0">—</span>')+'</td><td>'+caregiver.skills.join('、')+'</td><td class="rating">★ '+caregiver.rating+'</td><td>'+caregiver.orders+' 单</td><td><span class="state '+caregiver.state+'">'+labels[caregiver.state]+'</span></td><td><div class="ops"><button onclick="location.href=\'admin-caregiver-detail.html?id='+caregiver.id+'\'">查看档案</button><button onclick="alert(\'编辑陪护员\')">编辑</button></div></td></tr>';
       }).join('');
     }
     document.getElementById('state').onchange=renderCaregivers;
@@ -112,9 +117,13 @@
     if(name)name.textContent=profile.name;
     if(id)id.textContent='档案编号 · '+(params.get('id')||'N1001');
     if(phoneRow){var phoneValue=phoneRow.querySelector('span:last-child');if(phoneValue)phoneValue.textContent=profile.phone;}
+    var tagBox=document.getElementById('cgSkillTags');
+    if(tagBox){var pSkills=profile.skills&&profile.skills.length?profile.skills:['住院陪护'];tagBox.innerHTML=pSkills.map(function(s){return '<span class="skill-tag">'+s+'</span>';}).join('');}
     var sideList=identity.querySelector('.side-list');
     if(sideList&&!sideList.querySelector('.certification-row')){
-      sideList.insertAdjacentHTML('beforeend','<div class="side-row certification-row"><span>认证状态</span><span class="cg-cert '+profile.certificationClass+'">'+profile.certification+'</span></div><div class="side-row work-years-row"><span>工龄</span><span>'+profile.workYears+'</span></div>');
+      var etLabel=cgEtLabel(profile.employmentType);
+      var companyHtml=profile.companyName?'<div class="side-row company-row"><span>入驻企业</span><span>'+profile.companyName+'</span></div>':'';
+      sideList.insertAdjacentHTML('beforeend','<div class="side-row employment-row"><span>人员类型</span><span>'+etLabel+'</span></div>'+companyHtml+'<div class="side-row certification-row"><span>认证状态</span><span class="cg-cert '+profile.certificationClass+'">'+profile.certification+'</span></div><div class="side-row work-years-row"><span>工龄</span><span>'+profile.workYears+'</span></div>');
     }
     var contentTitle=document.querySelector('.content-title');
     if(contentTitle)contentTitle.textContent=profile.name+'的陪护员档案';

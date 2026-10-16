@@ -1,10 +1,12 @@
 (function (window) {
   window.AKBAdminOverviewData = {
     orders: [
-      { no: 'AKB-20260412-001', orderedAt: '04/11 16:24:36', type: '住院陪护', item: '12小时/天 · 3天', user: '王女士', userPhone: '138****2468', nurse: '张阿姨', nursePhone: '138****2468', time: '04/12 08时 - 04/14 20时', amount: '¥1,080', state: '服务中' },
-      { no: 'AKB-20260412-002', orderedAt: '04/11 14:08:19', type: '居家陪护', item: '24小时/天 · 2天', user: '李先生', userPhone: '139****8572', nurse: '待分配', nursePhone: '—', time: '04/13 08时 - 04/15 08时', amount: '¥1,040', state: '待服务' },
-      { no: 'AKB-20260411-018', orderedAt: '04/10 19:36:42', type: '陪诊服务', item: '贵宾陪诊 · 1次', user: '赵阿姨', userPhone: '186****3016', nurse: '李师傅', nursePhone: '139****8572', time: '04/11 09时', amount: '¥298', state: '已完成' },
-      { no: 'AKB-20260410-007', orderedAt: '04/09 11:22:08', type: '上门助浴', item: '助浴 · 1次', user: '陈先生', userPhone: '133****6420', nurse: '王阿姨', nursePhone: '186****3016', time: '04/10 14时', amount: '¥168', state: '退款/售后',
+      { no: 'AKB-20260416-003', orderedAt: '04/16 09:12:45', type: '陪诊服务', item: '贵宾陪诊 · 1次', user: '王女士', userPhone: '138****2468', nurse: '待分配', nursePhone: '—', time: '04/17 09时', amount: '¥298', state: '支付中', pay: { method: '微信支付' } },
+      { no: 'AKB-20260416-004', orderedAt: '04/16 08:05:12', type: '上门助浴', item: '助浴 · 1次', user: '王女士', userPhone: '138****2468', nurse: '待分配', nursePhone: '—', time: '04/16 14时', amount: '¥168', state: '已支付', pay: { method: '微信支付', deduct: '¥0', actual: '¥168', received: '¥168', at: '04/16 08:06:38' } },
+      { no: 'AKB-20260412-001', orderedAt: '04/11 16:24:36', type: '住院陪护', item: '12小时/天 · 3天', user: '王女士', userPhone: '138****2468', nurse: '张阿姨', nursePhone: '138****2468', time: '04/12 08时 - 04/14 20时', amount: '¥1,080', state: '服务中', pay: { method: '微信支付', deduct: '¥30', actual: '¥1,050', received: '¥1,050', at: '04/11 16:26:10' } },
+      { no: 'AKB-20260412-002', orderedAt: '04/11 14:08:19', type: '居家陪护', item: '24小时/天 · 2天', user: '李先生', userPhone: '139****8572', nurse: '待分配', nursePhone: '—', time: '04/13 08时 - 04/15 08时', amount: '¥1,040', state: '待服务', pay: { method: '微信支付', deduct: '¥0', actual: '¥1,040', received: '¥1,040', at: '04/11 14:10:33' } },
+      { no: 'AKB-20260411-018', orderedAt: '04/10 19:36:42', type: '陪诊服务', item: '贵宾陪诊 · 1次', user: '赵阿姨', userPhone: '186****3016', nurse: '李师傅', nursePhone: '139****8572', time: '04/11 09时', amount: '¥298', state: '已完成', pay: { method: '微信支付', deduct: '¥28', actual: '¥270', received: '¥270', at: '04/10 19:38:05' } },
+      { no: 'AKB-20260410-007', orderedAt: '04/09 11:22:08', type: '上门助浴', item: '助浴 · 1次', user: '陈先生', userPhone: '133****6420', nurse: '王阿姨', nursePhone: '186****3016', time: '04/10 14时', amount: '¥168', state: '退款/售后', pay: { method: '微信支付', deduct: '¥0', actual: '¥168', received: '¥168', at: '04/09 11:24:41' },
         refundApp: {
           reason: '服务内容不符合预期',
           amount: '168',
