@@ -20,15 +20,11 @@
     .status-right{display:flex;align-items:center;gap:5px}
     .status-right svg{width:17px;height:17px}
 
-    /* ── 顶部搜索栏（与 home.html 一致） ── */
-    .top-bar{display:flex;align-items:center;gap:10px;padding:8px 14px 12px;background:linear-gradient(135deg,#DDF7F1,#EFFBF8)}
+    /* ── 顶部栏（定位 + 头像） ── */
+    .top-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px 12px;background:linear-gradient(135deg,#DDF7F1,#EFFBF8)}
     .city-pill{display:inline-flex;align-items:center;gap:3px;padding:4px 8px 4px 5px;border-radius:14px;background:#fff;font-size:12px;font-weight:800;color:var(--purple-dark);cursor:pointer;flex-shrink:0}
     .city-pill svg{width:13px;height:13px}
     .city-pill .chev{width:10px;height:10px;opacity:.5}
-    .top-search{flex:1;display:flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:17px;background:#fff}
-    .top-search svg{width:16px;height:16px;opacity:.5}
-    .top-search input{flex:1;border:0;background:none;outline:none;font-size:12px;color:var(--text2);font-family:inherit}
-    .top-search input::placeholder{color:var(--text3)}
     .top-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;cursor:pointer}
     .top-actions svg{width:22px;height:22px;color:var(--purple-dark)}
     .top-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#2BD8BC,#0FA98C);display:grid;place-items:center;font-size:12px;font-weight:900;color:#fff;flex-shrink:0}
@@ -247,10 +243,9 @@
     <!-- 状态栏 -->
     <div class="status-bar"><span>9:41</span><div class="status-right"><svg viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="1.5" width="3" height="10.5" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 24 12" fill="none"><rect x=".6" y=".6" width="20" height="10.8" rx="2.8" stroke="currentColor" stroke-width="1.2"/><rect x="21.2" y="3.6" width="2.2" height="4.8" rx="1.1" fill="currentColor"/></svg></div></div>
 
-    <!-- 顶部搜索栏 -->
+    <!-- 顶部栏 -->
     <div class="top-bar">
       <div class="city-pill"><svg viewBox="0 0 14 14" fill="none"><path d="M7 1a4.5 4.5 0 014.5 4.5C11.5 9 7 13 7 13S2.5 9 2.5 5.5A4.5 4.5 0 017 1z" stroke="#1CD8B7" stroke-width="1.4"/><circle cx="7" cy="5.5" r="1.5" fill="#1CD8B7"/></svg><span>西安</span><svg class="chev" viewBox="0 0 12 12" fill="none"><path d="M3 4.5l3 3 3-3" stroke="#1CD8B7" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div class="top-search"><svg viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M12.5 12.5L16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="searchInput" placeholder="搜索体温计、血压计等" oninput="renderProducts()" /></div>
       <div class="top-avatar">管</div>
     </div>
 
@@ -372,7 +367,7 @@
   function iconSvg(product,cls){return '<svg class="'+(cls||'')+'" viewBox="0 0 28 28" fill="none" aria-hidden="true">'+icon(product.icon)+'</svg>'}
   function productVisual(product,cls){const image=product.image?'<img class="product-image" src="'+esc(product.image)+'" alt="'+esc(product.name)+'" onload="this.nextElementSibling.style.display=\'none\'" onerror="this.remove()">':'';return image+iconSvg(product,'fallback-icon '+(cls||''))}
   function setCategory(button,value){category=value;document.querySelectorAll('.category').forEach(function(item){item.classList.toggle('active',item===button)});renderProducts()}
-  function renderProducts(){const keyword=(document.getElementById('searchInput').value||'').trim().toLowerCase(),list=PRODUCTS.filter(function(p){return (category==='all'||p.category===category)&&(!keyword||(p.name+p.sub).toLowerCase().includes(keyword))}),box=document.getElementById('productGrid');box.innerHTML=list.length?list.map(function(p){return '<article class="product-card" onclick="openDetail(\''+p.id+'\')"><div class="product-badge">'+esc(p.badge)+'</div><div class="product-inner"><div class="product-art '+p.tone+'">'+productVisual(p)+'</div><div class="product-info"><div class="product-name">'+esc(p.name)+'</div><div class="product-sub">'+esc(p.sub)+'</div><div class="product-pts"><span class="pts-tag">积分立减30%</span><span class="pts-link">我的积分 30</span></div><div class="product-foot"><div class="price"><small>¥</small>'+p.price+'<small>起</small></div><div class="sales">已售 '+(((p.manualSales!=null?p.manualSales:p.sales)||0)+(p.actualSales||0))+'+</div></div></div></div><button class="product-add" onclick="event.stopPropagation();addToCart(\''+p.id+'\')">+</button></article>'}).join(''):'<div class="empty" style="grid-column:1/-1">没有找到相关商品</div>'}
+  function renderProducts(){const searchEl=document.getElementById('searchInput');const keyword=((searchEl&&searchEl.value)||'').trim().toLowerCase(),list=PRODUCTS.filter(function(p){return (category==='all'||p.category===category)&&(!keyword||(p.name+p.sub).toLowerCase().includes(keyword))}),box=document.getElementById('productGrid');box.innerHTML=list.length?list.map(function(p){return '<article class="product-card" onclick="openDetail(\''+p.id+'\')"><div class="product-badge">'+esc(p.badge)+'</div><div class="product-inner"><div class="product-art '+p.tone+'">'+productVisual(p)+'</div><div class="product-info"><div class="product-name">'+esc(p.name)+'</div><div class="product-sub">'+esc(p.sub)+'</div><div class="product-pts"><span class="pts-tag">积分立减30%</span><span class="pts-link">我的积分 30</span></div><div class="product-foot"><div class="price"><small>¥</small>'+p.price+'<small>起</small></div><div class="sales">已售 '+(((p.manualSales!=null?p.manualSales:p.sales)||0)+(p.actualSales||0))+'+</div></div></div></div><button class="product-add" onclick="event.stopPropagation();addToCart(\''+p.id+'\')">+</button></article>'}).join(''):'<div class="empty" style="grid-column:1/-1">没有找到相关商品</div>'}
   var detailProduct=null;
   var DETAIL_REVIEWS=[
     {name:'零度可乐',time:'1小时前',score:'5.0',text:'质量很好，测量很准，物流也很快，过程比较顺利。'},
