@@ -225,6 +225,10 @@
         font-size: 11px;
         font-weight: 800;
       }
+      .state.disabled {
+        background: #fee2e2;
+        color: #dc2626;
+      }
       .identity-list {
         text-align: left;
         border-top: 1px solid #eef5fc;
@@ -879,10 +883,10 @@
                 </div>
               </div>
               <div class="identity-actions">
-                <button class="btn" onclick="alert('编辑用户')">编辑资料</button
-                ><button class="btn" onclick="alert('邀请关系')">
+                <button class="btn" onclick="openEditModal()">编辑资料</button
+                ><button class="btn" onclick="openInviteModal()">
                   查看邀请关系</button
-                ><button class="btn btn-primary" onclick="alert('禁用用户')">
+                ><button class="btn btn-primary" onclick="toggleUserStatus()">
                   禁用用户
                 </button>
               </div>
@@ -1209,6 +1213,41 @@
         </div>
       </section>
     </div>
+    <div class="patient-modal-mask" id="editModal" onclick="if(event.target===this)closeEditModal()">
+      <section class="patient-modal">
+        <div class="patient-modal-head">
+          <div class="patient-modal-title">编辑用户资料</div>
+          <button class="patient-modal-close" type="button" onclick="closeEditModal()">×</button>
+        </div>
+        <div class="patient-form-grid">
+          <div class="patient-field"><label for="editNickname">昵称</label><input id="editNickname" maxlength="20" /></div>
+          <div class="patient-field"><label for="editRealName">真实姓名</label><input id="editRealName" maxlength="20" /></div>
+          <div class="patient-field"><label for="editPhone">手机号</label><input id="editPhone" maxlength="11" /></div>
+          <div class="patient-field"><label for="editGender">性别</label><select id="editGender"><option>女</option><option>男</option></select></div>
+          <div class="patient-field"><label for="editAge">年龄</label><input id="editAge" type="number" min="0" max="120" /></div>
+          <div class="patient-field"><label for="editInviter">邀请人</label><input id="editInviter" readonly /></div>
+        </div>
+        <div class="patient-modal-foot">
+          <button type="button" onclick="closeEditModal()">取消</button
+          ><button class="save" type="button" onclick="saveEditModal()">保存</button>
+        </div>
+      </section>
+    </div>
+    <div class="patient-modal-mask" id="inviteModal" onclick="if(event.target===this)closeInviteModal()">
+      <section class="patient-modal">
+        <div class="patient-modal-head">
+          <div class="patient-modal-title">邀请关系</div>
+          <button class="patient-modal-close" type="button" onclick="closeInviteModal()">×</button>
+        </div>
+        <div class="patient-form-grid">
+          <div class="patient-field full"><label>邀请人</label><input id="inviteInviter" readonly /></div>
+          <div class="patient-field full"><label>被邀请人</label><div id="inviteList" style="max-height:200px;overflow-y:auto"></div></div>
+        </div>
+        <div class="patient-modal-foot">
+          <button type="button" onclick="closeInviteModal()">关闭</button>
+        </div>
+      </section>
+    </div>
     <script src="admin-overview-data.js"></script>
     <script src="admin-mall-data.js"></script>
     <script>
@@ -1462,6 +1501,84 @@
           1,
         );
         renderPatients();
+      }
+
+      /* ── 编辑资料 / 邀请关系 / 禁用用户 ── */
+      var currentUser = {
+        id: "U10001",
+        nickname: "暖心小王",
+        realName: "王丽",
+        gender: "女",
+        age: 42,
+        phone: "138****2468",
+        inviter: "—",
+        status: "enabled"
+      };
+      var allUsers = [
+        { id: "U10001", nickname: "暖心小王", realName: "王丽", inviter: "—" },
+        { id: "U10002", nickname: "温暖同行", realName: "李伟", inviter: "暖心小王" },
+        { id: "U10003", nickname: "晴天阿姨", realName: "赵敏", inviter: "—" },
+        { id: "U10004", nickname: "陈先生", realName: "陈志强", inviter: "晴天阿姨" },
+        { id: "U10005", nickname: "安心陪诊", realName: "刘芳", inviter: "暖心小王" },
+        { id: "U10006", nickname: "乐享晚年", realName: "孙建国", inviter: "—" }
+      ];
+      function openEditModal() {
+        document.getElementById("editNickname").value = currentUser.nickname;
+        document.getElementById("editRealName").value = currentUser.realName;
+        document.getElementById("editPhone").value = currentUser.phone;
+        document.getElementById("editGender").value = currentUser.gender;
+        document.getElementById("editAge").value = currentUser.age;
+        document.getElementById("editInviter").value = currentUser.inviter;
+        document.getElementById("editModal").classList.add("show");
+      }
+      function closeEditModal() {
+        document.getElementById("editModal").classList.remove("show");
+      }
+      function saveEditModal() {
+        var nickname = document.getElementById("editNickname").value.trim();
+        var realName = document.getElementById("editRealName").value.trim();
+        var phone = document.getElementById("editPhone").value.trim();
+        if (!nickname || !realName || !phone) { alert("请完善用户信息"); return; }
+        currentUser.nickname = nickname;
+        currentUser.realName = realName;
+        currentUser.phone = phone;
+        currentUser.gender = document.getElementById("editGender").value;
+        currentUser.age = document.getElementById("editAge").value;
+        document.querySelector(".identity-card .name").textContent = realName;
+        document.querySelector(".identity-card .avatar").textContent = realName.charAt(0);
+        document.querySelectorAll(".identity-row")[0].querySelector("span:last-child").textContent = phone;
+        closeEditModal();
+        alert("用户资料已保存");
+      }
+      function openInviteModal() {
+        document.getElementById("inviteInviter").value = currentUser.inviter;
+        var list = allUsers.filter(function(u) { return u.inviter === currentUser.nickname; });
+        var html = list.length
+          ? list.map(function(u) {
+              return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F1F4F9;font-size:13px"><span>' + escapeHtml(u.realName) + '（' + escapeHtml(u.nickname) + '）</span><span style="color:#98A2B3">' + u.id + '</span></div>';
+            }).join("")
+          : '<div style="padding:16px;text-align:center;color:#98A2B3;font-size:13px">暂无被邀请人</div>';
+        document.getElementById("inviteList").innerHTML = html;
+        document.getElementById("inviteModal").classList.add("show");
+      }
+      function closeInviteModal() {
+        document.getElementById("inviteModal").classList.remove("show");
+      }
+      async function toggleUserStatus() {
+        var next = currentUser.status === "enabled" ? "disabled" : "enabled";
+        var msg = next === "disabled" ? "禁用后该用户将无法登录和下单，确认继续？" : "确认恢复该用户的登录和下单权限？";
+        if (!await showConfirm(msg)) return;
+        currentUser.status = next;
+        document.querySelector(".identity-card .state").textContent = next === "enabled" ? "正常" : "已禁用";
+        document.querySelector(".identity-card .state").className = "state " + next;
+        var btn = document.querySelector(".identity-actions .btn-primary");
+        btn.textContent = next === "enabled" ? "禁用用户" : "启用用户";
+        btn.className = next === "enabled" ? "btn btn-primary" : "btn btn-primary danger";
+      }
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>'"]/g, function(c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c];
+        });
       }
       document.querySelectorAll(".tab").forEach(
         (tab) =>
