@@ -406,8 +406,16 @@
   /* 卡包剩余次数 */
   (function () {
     try {
-      var cards = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]');
-      if (!Array.isArray(cards)) return;
+      var raw = localStorage.getItem('ankebang_bath_cards');
+      var cards;
+      if (raw === null) {
+        /* 首次访问：写入演示兑换卡 */
+        cards = [{ id: 'CARD-DEMO-001', orderNo: 'AKB-DEMO-0001', total: 9, used: 0, patient: { name: '张爷爷', gender: '男', age: '68' }, createdAt: Date.now() }];
+        localStorage.setItem('ankebang_bath_cards', JSON.stringify(cards));
+      } else {
+        cards = JSON.parse(raw || '[]');
+        if (!Array.isArray(cards)) return;
+      }
       cards = cards.filter(function (c) { return c.id && String(c.id).indexOf('CARD-') === 0; });
       var total = cards.length;
       var left = cards.reduce(function (sum, c) { return sum + Math.max(0, (c.total || 10) - (c.used || 0)); }, 0);

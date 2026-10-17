@@ -74,10 +74,19 @@
 <script>
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function loadCards(){
-    try{var v=JSON.parse(localStorage.getItem('ankebang_bath_cards')||'[]');if(!Array.isArray(v))return [];return v.filter(function(c){return c.id&&String(c.id).indexOf('CARD-')===0;});}catch(e){return [];}
+    try{
+      var raw=localStorage.getItem('ankebang_bath_cards');
+      if(raw===null){
+        /* 首次访问（如公网演示环境）：写入演示兑换卡，保证可体验兑换流程 */
+        var demo=[{id:'CARD-DEMO-001',orderNo:'AKB-DEMO-0001',total:9,used:0,patient:{name:'张爷爷',gender:'男',age:'68'},createdAt:Date.now()}];
+        localStorage.setItem('ankebang_bath_cards',JSON.stringify(demo));
+        return demo;
+      }
+      var v=JSON.parse(raw||'[]');if(!Array.isArray(v))return [];return v.filter(function(c){return c.id&&String(c.id).indexOf('CARD-')===0;});
+    }catch(e){return [];}
   }
   function useCard(id){
-    location.href='http://localhost:5173/hospital-care.html?service=bath&card='+encodeURIComponent(id);
+    location.href='hospital-care.html?service=bath&card='+encodeURIComponent(id);
   }
   function render(){
     var cards=loadCards();
