@@ -408,6 +408,7 @@
     try {
       var cards = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]');
       if (!Array.isArray(cards)) return;
+      cards = cards.filter(function (c) { return c.id && String(c.id).indexOf('CARD-') === 0; });
       var total = cards.length;
       var left = cards.reduce(function (sum, c) { return sum + Math.max(0, (c.total || 10) - (c.used || 0)); }, 0);
       document.getElementById('cardCountSub').textContent = total + '张卡包 · ' + left + '次服务';

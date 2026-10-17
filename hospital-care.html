@@ -2155,6 +2155,8 @@
     if (!redeemCardId) return;
     var cards = [];
     try { cards = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]'); } catch (e) {}
+    /* 过滤旧测试卡（id 非 CARD- 开头） */
+    cards = cards.filter(function (c) { return c.id && String(c.id).indexOf('CARD-') === 0; });
     var hit = cards.find(function (c) { return c.id === redeemCardId; }) || null;
     if (!hit || (hit.used || 0) >= (hit.total || 10)) { alert('兑换卡不存在或次数已用完'); return; }
     redeemCard = hit;
