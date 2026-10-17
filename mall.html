@@ -193,8 +193,17 @@
     .pay-qty span{font-size:13px;font-weight:800;min-width:16px;text-align:center}
     .pay-sec{padding:13px 0;border-bottom:1px solid var(--border)}
     .pay-sec-label{font-size:12px;color:var(--text2);font-weight:700;margin-bottom:8px}
-    .pay-addr{font-size:13px;color:var(--text);font-weight:700;line-height:1.5;display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .pay-addr{font-size:13px;color:var(--text);font-weight:700;line-height:1.5;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}
     .pay-addr svg{width:14px;height:14px;color:var(--text3);flex-shrink:0}
+    /* 收货地址选择抽屉（与服务订单地址选择一致） */
+    .addr-list{display:flex;flex-direction:column;gap:10px;max-height:46vh;overflow:auto}
+    .addr-item{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--border);border-radius:12px;cursor:pointer}
+    .addr-item.sel{border-color:var(--purple);background:var(--purple-light)}
+    .addr-radio{width:16px;height:16px;border:2px solid #D5CFE0;border-radius:50%;flex-shrink:0;margin-top:2px}
+    .addr-item.sel .addr-radio{border-color:var(--purple);background:radial-gradient(circle,var(--purple) 0 5px,transparent 6px)}
+    .addr-detail{font-size:13px;font-weight:700;color:var(--text);line-height:1.5}
+    .addr-sub{font-size:12px;color:var(--text3);margin-top:4px}
+    .addr-add{width:100%;height:42px;margin-top:12px;border:1px dashed #C9B4E8;border-radius:12px;background:var(--purple-bg);color:var(--purple);font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0}
     .pay-dlv-row{display:flex;gap:8px}
     .pay-dlv{flex:1;height:38px;border:1px solid var(--border);border-radius:9px;background:#fff;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;font-family:inherit;position:relative;transition:all .15s}
     .pay-dlv.on{border-color:#F59E0B;color:#D97706;background:#FFFBEB}
@@ -326,11 +335,17 @@
   <div class="overlay" id="payOverlay" onclick="closeBackdrop(event,'payOverlay')"><section class="sheet pay-sheet">
     <div class="pay-scroll">
       <div class="pay-product"><div class="pay-thumb" id="payThumb"></div><div class="pay-info"><div class="pay-price-row"><span class="pay-discount-tag">抵扣后</span><span class="pay-price"><small>¥</small><span id="payPriceVal">0</span><small>起</small></span></div><div class="pay-pts-row"><span class="pay-pts-tag">积分立减30%</span><span class="pay-mypts">我的积分 30 ›</span></div><div class="pay-qty"><button onclick="payChangeQty(-1)">−</button><span id="payQty">1</span><button onclick="payChangeQty(1)">＋</button></div></div></div>
-      <div class="pay-sec"><div class="pay-sec-label">收货地址</div><div class="pay-addr"><span id="payAddr">陕西省西安市莲湖区桃园北路888号（桃园北路与明堂路交叉路口）</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></div></div>
+      <div class="pay-sec"><div class="pay-sec-label">收货地址</div><div class="pay-addr" onclick="openAddrDrawer()"><span id="payAddr">陕西省西安市莲湖区桃园北路888号（桃园北路与明堂路交叉路口）</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></div></div>
       <div class="pay-sec"><div class="pay-sec-label">配送方式</div><div class="pay-dlv-row"><button class="pay-dlv on" data-dlv="instant" onclick="paySetDelivery('instant',this)">立即送达</button><button class="pay-dlv" data-dlv="runner" onclick="paySetDelivery('runner',this)">跑腿送达</button><button class="pay-dlv" data-dlv="express" onclick="paySetDelivery('express',this)">快递送达</button></div></div>
       <div class="pay-sec" style="border-bottom:0"><div class="pay-points-row"><span class="pay-points-txt">可抵 ¥30(30 积分)</span><button class="pay-toggle on" id="payToggle" onclick="payTogglePoints()"></button></div></div>
     </div>
     <button class="pay-confirm" id="payConfirmBtn" onclick="payConfirm()">立即支付 ¥0</button>
+  </section></div>
+  <!-- 收货地址选择抽屉 -->
+  <div class="overlay" id="addrOverlay" onclick="closeBackdrop(event,'addrOverlay')"><section class="sheet">
+    <div class="sheet-head"><div class="sheet-title">选择收货地址</div><button class="close" onclick="closeOverlay('addrOverlay')" aria-label="关闭">×</button></div>
+    <div class="addr-list" id="addrList"></div>
+    <button class="addr-add" onclick="location.href='address-edit.html?return=mall'">＋ 新增收货地址</button>
   </section></div>
 </div></div>
 
@@ -375,6 +390,18 @@
   function detailAddCart(){if(!detailProduct)return;addToCart(detailProduct.id)}
   function detailBuyNow(){if(!detailProduct)return;buyNow(detailProduct.id)}
   function addToCart(id,qty){const existing=cart.find(function(item){return item.id===id});if(existing)existing.qty+=qty||1;else cart.push({id,qty:qty||1});saveCart();showToast('已加入购物车')}
+  /* ── 收货地址（与服务订单同一数据源 ankebang_saved_addresses）── */
+  var ADDR_KEY='ankebang_saved_addresses';
+  var fallbackAddrs=[
+    {id:1,detail:'北京市朝阳区望京街道 88 号 2 单元 1602',contact:'张女士',phone:'138****2468',addressType:'home'},
+    {id:2,detail:'北京市朝阳区建国路 66 号 北京协和医院东院区',contact:'张女士',phone:'138****2468',addressType:'hospital'}
+  ];
+  var payAddrId='';
+  function getMallAddresses(){try{const v=JSON.parse(localStorage.getItem(ADDR_KEY));if(!Array.isArray(v))return fallbackAddrs.slice();const list=v.map(function(a){return Object.assign({addressType:'home'},a)});if(!list.some(function(a){return a.addressType==='hospital'}))list.push(fallbackAddrs[1]);return list}catch(e){return fallbackAddrs.slice()}}
+  function renderPayAddr(){var list=getMallAddresses();var sel=list.find(function(a){return String(a.id)===String(payAddrId)});if(!sel&&list.length){sel=list[0];payAddrId=sel.id}document.getElementById('payAddr').textContent=sel?sel.detail:'请选择收货地址';return sel}
+  function openAddrDrawer(){renderAddrList();document.getElementById('addrOverlay').classList.add('show')}
+  function renderAddrList(){var list=getMallAddresses();document.getElementById('addrList').innerHTML=list.length?list.map(function(a){return '<div class="addr-item'+(String(a.id)===String(payAddrId)?' sel':'')+'" onclick="selectPayAddr(\''+a.id+'\')"><div class="addr-radio"></div><div><div class="addr-detail">'+esc(a.detail)+'</div><div class="addr-sub">'+esc(a.contact||'')+(a.phone?' · '+esc(a.phone):'')+'</div></div></div>'}).join(''):'<div style="text-align:center;color:var(--text3);font-size:12px;padding:10px 0">暂无收货地址，请新增</div>'}
+  function selectPayAddr(id){payAddrId=id;renderPayAddr();renderAddrList();closeOverlay('addrOverlay')}
   /* ── 立即支付弹窗 ── */
   var payProduct=null, payQtyNum=1, payDelivery='instant', payUsePoints=true;
   var POINTS_DEDUCT=30, MY_POINTS=30;
@@ -387,6 +414,7 @@
     document.getElementById('payQty').textContent=payQtyNum;
     document.getElementById('payToggle').classList.add('on');
     document.querySelectorAll('.pay-dlv').forEach(function(b){b.classList.toggle('on',b.dataset.dlv==='instant')});
+    renderPayAddr();
     payUpdatePrice();
     document.getElementById('payOverlay').classList.add('show');
   }
@@ -402,7 +430,9 @@
     var code=String(Math.floor(1000+Math.random()*9000));
     var labels={instant:'立即送达',runner:'跑腿送达',express:'快递送达'};
     var total=payCalcTotal();
-    var order={id:number,status:'shipping',state:'待发货',product:payProduct.name,desc:payProduct.sub,price:String(payProduct.price),quantity:payQtyNum,amount:String(total),date:new Date().toISOString().slice(0,10),address:'陕西省西安市莲湖区桃园北路888号（桃园北路与明堂路交叉路口）',image:payProduct.image||'',tone:payProduct.tone||'purple',deliveryMethod:payDelivery,deliveryLabel:labels[payDelivery],receiptCode:code,deliveryStatus:'processing',items:[{product:payProduct.name,desc:payProduct.sub,price:String(payProduct.price),quantity:payQtyNum,image:payProduct.image,tone:payProduct.tone}],distId:distInfo?distInfo.id:'',distName:distInfo?distInfo.name:'',distRate:distInfo?distInfo.rate:0,pointsDeduct:payUsePoints?Math.min(POINTS_DEDUCT,payProduct.price*payQtyNum):0};
+    var selAddr=renderPayAddr();
+    var addrText=selAddr?(selAddr.detail+(selAddr.contact?' · '+selAddr.contact:'')):'请选择收货地址';
+    var order={id:number,status:'shipping',state:'待发货',product:payProduct.name,desc:payProduct.sub,price:String(payProduct.price),quantity:payQtyNum,amount:String(total),date:new Date().toISOString().slice(0,10),address:addrText,image:payProduct.image||'',tone:payProduct.tone||'purple',deliveryMethod:payDelivery,deliveryLabel:labels[payDelivery],receiptCode:code,deliveryStatus:'processing',items:[{product:payProduct.name,desc:payProduct.sub,price:String(payProduct.price),quantity:payQtyNum,image:payProduct.image,tone:payProduct.tone}],distId:distInfo?distInfo.id:'',distName:distInfo?distInfo.name:'',distRate:distInfo?distInfo.rate:0,pointsDeduct:payUsePoints?Math.min(POINTS_DEDUCT,payProduct.price*payQtyNum):0};
     var saved=[];try{saved=JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');if(!Array.isArray(saved))saved=[]}catch(e){saved=[]}
     saved.unshift(order);localStorage.setItem('ankebang_mall_orders',JSON.stringify(saved));
     closeOverlay('payOverlay');
