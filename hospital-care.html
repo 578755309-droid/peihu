@@ -533,6 +533,14 @@
     .svc-badge.guarantee{background:#E8F7EE;color:#22A06B}
     .svc-badge.instant{background:#F0F6FF;color:#4F6FBE}
 
+    /* 详情/评价 Tab 卡（对齐商城商品详情） */
+    .svc-tab-card{background:var(--card);margin:14px 14px 0;border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden}
+    .svc-tab-card .dtabs{display:flex;border-bottom:1px solid var(--border)}
+    .svc-tab-card .dtab{flex:1;padding:13px 0;border:0;background:none;font-size:14px;font-weight:700;color:var(--text3);cursor:pointer;position:relative;font-family:inherit}
+    .svc-tab-card .dtab.on{color:var(--text);font-weight:900}
+    .svc-tab-card .dtab.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:3px;border-radius:2px;background:var(--purple)}
+    .svc-tab-card .svc-detail,.svc-tab-card .review-section{margin:0;border-radius:0;box-shadow:none}
+
     /* 服务详情 */
     .svc-detail{background:var(--card);margin:14px 14px 0;border-radius:var(--r-lg);padding:16px;box-shadow:var(--sh)}
     .svc-detail h3{font-size:15px;font-weight:900;color:var(--text);margin-bottom:12px}
@@ -745,33 +753,43 @@
           </div>
         </div>
 
-        <!-- 服务详情 -->
-        <div class="svc-detail">
-          <h3>服务详情</h3>
-          <ul id="svcDetailList">
-            <li>24 小时专业护理员一对一陪护</li>
-            <li>协助日常饮食、如厕、翻身等基础照护</li>
-            <li>术后伤口观察与康复护理指导</li>
-            <li>管路护理（鼻饲、导尿、引流等）</li>
-            <li>压疮预防与体位护理</li>
-            <li>每日照护记录与家属沟通</li>
-          </ul>
-        </div>
-
-        <!-- 评论区 -->
-        <div class="review-section">
-          <div class="review-head"><span class="review-title">用户评价（<span id="reviewCount">386</span>）</span><span class="review-more">全部 ›</span></div>
-          <div class="review-score-row">
-            <div>
-              <div class="review-score-num">4.9</div>
-              <div class="review-score-star">★★★★★</div>
-            </div>
-            <div style="flex:1">
-              <div style="display:flex;gap:4px;margin-bottom:2px"><span class="review-score-star" style="color:#F59E0B">★</span><span style="font-size:11px;color:var(--text2);font-weight:700">98%好评</span></div>
-              <div style="font-size:11px;color:var(--text3)">服务态度 · 专业能力 · 响应速度</div>
+        <!-- 服务详情 / 评价 Tab 卡 -->
+        <div class="svc-tab-card">
+          <div class="dtabs">
+            <button class="dtab on" data-svctab="info" onclick="switchSvcTab(this)">详情</button>
+            <button class="dtab" data-svctab="review" onclick="switchSvcTab(this)">评价</button>
+          </div>
+          <div id="svcTabInfo">
+            <!-- 服务详情 -->
+            <div class="svc-detail">
+              <h3>服务详情</h3>
+              <ul id="svcDetailList">
+                <li>24 小时专业护理员一对一陪护</li>
+                <li>协助日常饮食、如厕、翻身等基础照护</li>
+                <li>术后伤口观察与康复护理指导</li>
+                <li>管路护理（鼻饲、导尿、引流等）</li>
+                <li>压疮预防与体位护理</li>
+                <li>每日照护记录与家属沟通</li>
+              </ul>
             </div>
           </div>
-          <div class="review-list" id="reviewList"></div>
+          <div id="svcTabReview" style="display:none">
+            <!-- 评论区 -->
+            <div class="review-section">
+              <div class="review-head"><span class="review-title">用户评价（<span id="reviewCount">386</span>）</span><span class="review-more">全部 ›</span></div>
+              <div class="review-score-row">
+                <div>
+                  <div class="review-score-num">4.9</div>
+                  <div class="review-score-star">★★★★★</div>
+                </div>
+                <div style="flex:1">
+                  <div style="display:flex;gap:4px;margin-bottom:2px"><span class="review-score-star" style="color:#F59E0B">★</span><span style="font-size:11px;color:var(--text2);font-weight:700">98%好评</span></div>
+                  <div style="font-size:11px;color:var(--text3)">服务态度 · 专业能力 · 响应速度</div>
+                </div>
+              </div>
+              <div class="review-list" id="reviewList"></div>
+            </div>
+          </div>
         </div>
 
         <div style="height:72px"></div>
@@ -1961,6 +1979,14 @@
     document.getElementById('customCountInput').value = 1;
     document.getElementById('usePoints').checked = false;
     updateTimePrice();
+  }
+
+  /* 详情/评价 Tab 切换 */
+  function switchSvcTab(btn){
+    var tab=btn.getAttribute('data-svctab');
+    document.querySelectorAll('.svc-tab-card .dtab').forEach(function(b){b.classList.toggle('on',b===btn)});
+    document.getElementById('svcTabInfo').style.display=tab==='info'?'':'none';
+    document.getElementById('svcTabReview').style.display=tab==='review'?'':'none';
   }
 
   /* ── Submit ── */
