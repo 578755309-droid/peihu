@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>服务地址 · 佑小邦</title>
   <style>
@@ -26,6 +27,6 @@
   function render(){const box=document.getElementById('list'), list=data(); if(!list.length){box.innerHTML='<div class="empty">还没有保存服务地址<br>点击下方按钮添加一个吧</div>';return} box.innerHTML=list.map(a=>{const raw=a.contact||'';const phone=(a.phone||raw.split('·')[1]||'').trim();const contact=(a.phone?raw:(raw.split('·')[0]||raw)).trim();const type=a.addressType==='hospital'?'医院':'家';return '<article class="address-card '+(a.isDefault?'default':'')+'"><div class="card-top"><span class="default-tag">'+type+'</span>'+(a.isDefault?'<span class="default-tag">默认</span>':'')+'<span class="contact">'+esc(contact)+'　'+esc(phone)+'</span></div><div class="detail">'+esc(a.detail||'')+'</div><div class="region">'+esc(a.region||'')+'</div><div class="card-foot">'+(!a.isDefault?'<button class="plain" onclick="setDefault('+a.id+')">设为默认</button>':'')+'<button onclick="edit('+a.id+')">编辑</button><button class="danger" onclick="removeAddress('+a.id+')">删除</button></div></article>'}).join('')}
   function edit(id){location.href='address-edit.html?return=addresses&id='+encodeURIComponent(id)}
   function setDefault(id){const list=data().map(a=>({...a,isDefault:String(a.id)===String(id)}));save(list);render()}
-  function removeAddress(id){if(!confirm('确认删除该地址？'))return;let list=data().filter(a=>String(a.id)!==String(id));if(list.length&&!list.some(a=>a.isDefault))list[0].isDefault=true;save(list);render()}
+  async function removeAddress(id){if(!await showConfirm('确认删除该地址？'))return;let list=data().filter(a=>String(a.id)!==String(id));if(list.length&&!list.some(a=>a.isDefault))list[0].isDefault=true;save(list);render()}
   render();
 </script></body></html>

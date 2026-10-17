@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>我的订单</title>
   <style>
@@ -902,6 +903,7 @@
     call:   { icon:'⌕', title:'联系护理员', desc:'护理员电话：138****2468\n现在拨打电话吗？', confirm:'拨打电话' },
     pay:    { icon:'¥', title:'确认支付', desc:'请确认支付本次服务订单。', confirm:'确认支付' },
     'mall-pay':     { icon:'¥', title:'确认付款', desc:'请确认支付本次商城订单。', confirm:'确认付款' },
+    'mall-cancel':  { icon:'⊗', title:'取消订单', desc:'确认取消该商城订单？取消后不可恢复，未支付订单不会产生任何费用。', confirm:'确认取消' },
     'mall-remind':  { icon:'⌁', title:'提醒发货', desc:'已为你记录发货提醒，商家发货后会及时通知。', confirm:'知道了' },
     'mall-receive': { icon:'✓', title:'确认收货', desc:'确认已收到商品且包装完好？', confirm:'确认收货' },
     'mall-refund-instant': { icon:'⊗', title:'申请退款', desc:'该订单尚未发货，退款将原路退回，预计 1-3 个工作日到账。', confirm:'确认退款' },
@@ -936,6 +938,7 @@
     if (type === 'call') { showActionResult('正在联系护理员', '已为你发起电话联系，请留意接听。'); return; }
     if (type === 'pay') { markPaid(); return; }
     if (type === 'mall-pay') { markMallPaid(); return; }
+    if (type === 'mall-cancel') { mallCancel(); return; }
     if (type === 'mall-remind') { showActionResult('提醒已提交', '商家发货后会及时通知你。'); return; }
     if (type === 'mall-receive') { markMallReceived(); return; }
     if (type === 'refund') { submitRefundApplication(); return; }
@@ -953,6 +956,28 @@
     }
     if (typeof window.refreshOrderFilter === 'function') window.refreshOrderFilter();
     showActionResult('支付成功', '订单已支付成功，等待护理员为你提供服务。');
+  }
+  function mallCancel() {
+    const orderId = modalOrder && modalOrder.dataset ? modalOrder.dataset.orderId : '';
+    if (modalOrder) {
+      modalOrder.dataset.status = 'cancel';
+      const badge = modalOrder.querySelector('.mall-state');
+      if (badge) { badge.className = 'mall-state cancel'; badge.textContent = '已取消'; }
+      const acts = modalOrder.querySelector('.mall-order-actions');
+      if (acts) acts.innerHTML = '';
+    }
+    if (orderId) {
+      if (typeof window.cancelMallOrder === 'function') { window.cancelMallOrder(orderId); }
+      else {
+        let saved = [];
+        try { saved = JSON.parse(localStorage.getItem('ankebang_mall_orders') || '[]'); if (!Array.isArray(saved)) saved = []; } catch (error) { saved = []; }
+        const idx = saved.findIndex(function(item){ return item.id === orderId; });
+        if (idx >= 0) { saved[idx].status = 'cancel'; saved[idx].state = '已取消'; saved[idx].note = '用户取消订单'; }
+        localStorage.setItem('ankebang_mall_orders', JSON.stringify(saved));
+      }
+    }
+    if (typeof window.refreshOrderFilter === 'function') window.refreshOrderFilter();
+    showActionResult('订单已取消', '该商城订单已取消，未支付订单不会产生任何费用。');
   }
   function markMallPaid() {
     if (modalOrder) {

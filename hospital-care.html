@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>住院陪护 · 单页下单</title>
   <style>
@@ -668,6 +669,16 @@
       transition:transform .12s, filter .12s;
     }
     .pay-home:active { transform:scale(.98); filter:brightness(.95); }
+    .pay-home-ghost {
+      width:100%; height:44px; border-radius:14px; border:1.5px solid var(--border);
+      background:#fff; color:var(--text2); font-size:14px; font-weight:600;
+      margin-top:10px; cursor:pointer; letter-spacing:.5px;
+      -webkit-tap-highlight-color:transparent;
+      transition:transform .12s, filter .12s;
+    }
+    .pay-home-ghost:active { transform:scale(.98); filter:brightness(.95); }
+    .pay-btn-row { display:flex; gap:10px; margin-top:16px; }
+    .pay-btn-row .pay-home { margin-top:0; flex:1; }
     .pay-order-num { font-size:12px; color:var(--text3); margin-top:14px; }
   </style>
 </head>
@@ -825,14 +836,14 @@
         <div class="module">
           <div class="module-title">
             <div class="module-num">2</div>
-            选择护理员
+            选择护理员<span id="nurseTitleHint" style="font-size:11px;color:var(--text3);font-weight:600;margin-left:6px"></span>
           </div>
 
           <!-- Nurse cards -->
           <div class="nurse-list" id="nurseList0">
 
             <!-- 李桂芳 -->
-            <div class="nurse-card sel" onclick="selNurse(this)">
+            <div class="nurse-card sel" onclick="selNurse(this)" data-phone="13811223344">
               <div class="nc-hd">
                 <div class="nc-avatar" style="background:linear-gradient(140deg,#7B3FBE,#AA7AE0)">李</div>
                 <div class="nc-right">
@@ -870,7 +881,7 @@
             </div>
 
             <!-- 张秀英 -->
-            <div class="nurse-card" onclick="selNurse(this)">
+            <div class="nurse-card" onclick="selNurse(this)" data-phone="13922334455">
               <div class="nc-hd">
                 <div class="nc-avatar" style="background:linear-gradient(140deg,#1A9896,#38CFC7)">张</div>
                 <div class="nc-right">
@@ -908,7 +919,7 @@
             </div>
 
             <!-- 王美玲 -->
-            <div class="nurse-card" onclick="selNurse(this)">
+            <div class="nurse-card" onclick="selNurse(this)" data-phone="13733445566">
               <div class="nc-hd">
                 <div class="nc-avatar" style="background:linear-gradient(140deg,#C75510,#F4A030)">王</div>
                 <div class="nc-right">
@@ -1055,14 +1066,19 @@
       <div class="nav-bar">
         <!-- 详情态底部 -->
         <div class="detail-only">
-          <button class="btn-ghost" style="flex:1" onclick="addCurrentServiceToCart()">加入购物车</button>
-          <button class="btn-primary" style="flex:2" onclick="enterBuyMode()">立即购买</button>
+          <button class="btn-primary" style="flex:1" onclick="enterBuyMode()">立即购买</button>
         </div>
         <!-- 下单态底部 -->
         <div class="buy-only">
+          <div id="redeemBannerBox" style="display:none;margin-bottom:8px"></div>
           <div class="price-row" id="priceRow">
             <span class="price-lbl" id="priceLabel">应付金额</span>
             <span class="price-num" id="priceNum">¥300</span>
+          </div>
+          <div class="price-row" id="actualPayRow" style="display:none">
+            <span class="price-lbl" id="actualPayLabel">实付金额</span>
+            <span class="price-num" id="actualPayNum" style="color:var(--green)">¥0</span>
+            <span class="price-lbl" style="margin-left:6px">卡兑换</span>
           </div>
           <div class="price-save" id="priceSave" style="display:none"></div>
           <div class="btn-row">
@@ -1123,6 +1139,10 @@
       <div class="pay-title">支付成功</div>
       <div class="pay-sub">订单已提交，护理员将在<strong>30分钟内</strong>与您确认</div>
       <div class="pay-card">
+        <div class="pay-row" id="payBath10Tip" style="display:none">
+        <span class="pay-key">卡包提醒</span>
+        <span class="pay-val" style="color:var(--purple);font-weight:700">首次已付款，剩余9次请在「我的-我的卡包」中预约兑换</span>
+      </div>
         <div class="pay-row">
           <span class="pay-key">服务类型</span>
           <span class="pay-val" id="payService">住院陪护</span>
@@ -1164,7 +1184,16 @@
           <span class="pay-val purple" id="payAmt">¥336</span>
         </div>
       </div>
-      <button class="pay-home" onclick="location.href='home.html'">返回首页</button>
+      <div id="payBtnsNormal">
+        <button class="pay-home" onclick="location.href='home.html'">返回首页</button>
+      </div>
+      <div id="payBtnsBath10" style="display:none">
+        <div class="pay-btn-row">
+          <button class="pay-home" onclick="location.href='orders.html'">订单详情</button>
+          <button class="pay-home" onclick="location.href='my-cards.html'">去卡包</button>
+        </div>
+        <button class="pay-home-ghost" onclick="location.href='home.html'">返回首页</button>
+      </div>
       <div class="pay-order-num" id="payOrderNum">订单号：AKB-2026-000001</div>
     </div>
   </div>
@@ -1326,10 +1355,37 @@
   }
 
   /* ── Nurse selection ── */
+  let selectedNurses = [];
+  function getNurseInfo(el) {
+    return { el: el, name: (el.querySelector('.nc-name') && el.querySelector('.nc-name').textContent) || '', phone: el.getAttribute('data-phone') || '' };
+  }
   function selNurse(el) {
     if (el.classList.contains('busy-card')) return;
-    document.querySelectorAll('.nurse-card').forEach(c => c.classList.remove('sel'));
-    el.classList.add('sel');
+    var isBath = serviceKey === 'bath';
+    if (isBath) {
+      if (el.classList.contains('sel')) {
+        el.classList.remove('sel');
+        selectedNurses = selectedNurses.filter(function(n){ return n.el !== el; });
+      } else {
+        if (selectedNurses.length >= 2) {
+          var first = selectedNurses.shift();
+          if (first) first.el.classList.remove('sel');
+        }
+        el.classList.add('sel');
+        selectedNurses.push(getNurseInfo(el));
+      }
+    } else {
+      document.querySelectorAll('.nurse-card').forEach(c => c.classList.remove('sel'));
+      el.classList.add('sel');
+      selectedNurses = [getNurseInfo(el)];
+    }
+  }
+  /* 初始化：同步默认选中的护理员卡片（在 serviceKey 定义后调用） */
+  function initNurseSelection(){
+    var presel = document.querySelectorAll('.nurse-card.sel');
+    if (!presel.length) return;
+    presel.forEach(function(c, i){ if (i > 0) c.classList.remove('sel'); });
+    selectedNurses = [getNurseInfo(presel[0])];
   }
 
   /* ── Service / address / time ── */
@@ -1376,6 +1432,11 @@
   const redeemCardId = new URLSearchParams(location.search).get('card') || '';
   let redeemCard = null;
   const service = SERVICE_CONFIG[serviceKey] || SERVICE_CONFIG.hospital;
+  if (serviceKey === 'bath') {
+    var nurseTitleHintEl = document.getElementById('nurseTitleHint');
+    if (nurseTitleHintEl) nurseTitleHintEl.textContent = '（上门助浴可最多选择 2 位护理员）';
+  }
+  initNurseSelection();
   /* 陪诊服务（visit）下所有类型不需要护理需求选择（自理等级/管路/传染性疾病） */
   if (serviceKey === 'visit') {
     ['independencePicker', 'tubePicker', 'infectionPicker', 'skinBreakPicker'].forEach(function (pid) {
@@ -1606,9 +1667,12 @@
       document.getElementById('priceRow').style.display = '';
       document.getElementById('timeSummary').textContent = '兑换卡核销 · 本次 ¥0';
       document.getElementById('pointsDetail').innerHTML = '兑换卡订单不可使用积分抵扣';
+      var singlePrice = getServicePrice();
       document.getElementById('priceLabel').textContent = '应付金额';
-      document.getElementById('priceNum').textContent = '¥0';
+      document.getElementById('priceNum').textContent = '¥' + singlePrice;
       document.getElementById('priceSave').style.display = 'none';
+      var actualPayRow = document.getElementById('actualPayRow');
+      if (actualPayRow) { actualPayRow.style.display = ''; document.getElementById('actualPayNum').textContent = '¥0'; }
       return;
     }
     const isDaily = service.durationMode === 'daily';
@@ -1624,6 +1688,8 @@
     pointsDiscount = ready && usePoints ? maxDiscount : 0;
     pointsUsed = pointsDiscount;
     currentPrice = ready ? basePrice - pointsDiscount : 0;
+    var actualPayRow = document.getElementById('actualPayRow');
+    if (actualPayRow) actualPayRow.style.display = 'none';
     const priceCard = document.getElementById('needsPriceCard');
     if (priceCard) priceCard.classList.toggle('ready', ready);
     document.getElementById('priceRow').style.display = ready ? '' : 'none';
@@ -1940,6 +2006,16 @@
     document.getElementById('payPointsRow').style.display = pointsDiscount ? '' : 'none';
     document.getElementById('payPoints').textContent = '-¥' + pointsDiscount + '（' + pointsUsed + '积分）';
     document.getElementById('payAmt').textContent  = '¥' + currentPrice;
+    /* 上门助浴10次套餐：显示卡包提醒与快捷入口 */
+    var isBath10Order = !redeemCard && serviceKey === 'bath' && selectedCount === 10;
+    document.getElementById('payBath10Tip').style.display = isBath10Order ? '' : 'none';
+    document.getElementById('payBtnsNormal').style.display = isBath10Order ? 'none' : '';
+    document.getElementById('payBtnsBath10').style.display = isBath10Order ? '' : 'none';
+    if (isBath10Order) {
+      document.querySelector('.pay-sub').innerHTML = '订单已提交，<strong>首次服务已付款</strong><br/>剩余9次请在「我的-我的卡包」中预约兑换';
+    } else {
+      document.querySelector('.pay-sub').innerHTML = '订单已提交，护理员将在<strong>30分钟内</strong>与您确认';
+    }
     var orderNo = 'AKB-' + new Date().getFullYear() + '-' +
       String(Math.floor(Math.random() * 999999)).padStart(6, '0');
     document.getElementById('payOrderNum').textContent = '订单号：' + orderNo;
@@ -1971,12 +2047,13 @@
       address: addr.detail || '—',
       addressKind: addr.addressType === 'hospital' ? '医院' : '家',
       time: date + '（' + durationLabel() + '）',
-      nurse: '待分配',
+      nurse: selectedNurses[0] ? selectedNurses[0].name : '待分配',
+      nursePhone: selectedNurses[0] ? (selectedNurses[0].phone || '') : '',
       role: '护理师｜' + service.name,
       cert: '持证上岗',
       years: '5年经验',
       amount: String(currentPrice),
-      avatar: '待',
+      avatar: selectedNurses[0] ? selectedNurses[0].name.charAt(0) : '待',
       actions: ['cancel', 'call'],
       careNeeds: { independence: careNeeds.independence, tube: careNeeds.tube, infection: careNeeds.infection, skinBreak: careNeeds.skinBreak, infectionName: careNeeds.infection === 'has' ? document.getElementById('infectionName').value.trim() : '' },
       createdAt: Date.now(),
@@ -1986,16 +2063,63 @@
       contact: addr.contact || '',
       phone: addr.phone || ''
     };
-    /* 助浴 10 次套餐：生成 10 次兑换卡（适用对象锁定为本次服务对象） */
+    /* 上门助浴：支持双护理员，第二位写入 nurse2/nursePhone2 */
+    if (selectedNurses[1]) {
+      order.nurse2 = selectedNurses[1].name;
+      order.nursePhone2 = selectedNurses[1].phone || '';
+    }
+    /* 助浴 10 次套餐：生成 ①10次卡主订单（待服务）②首次 1 次预约订单 ③9 次兑换卡 */
+    var firstOrder = null;
     if (isBath10) {
       order.time = '共 10 次（八折）· 首次 ' + date;
-      order.sessionSummary = '已获 10 次兑换卡 · 剩余 10 次';
+      /* 主订单按次预约记录（含首次） */
+      var bookedSessions = bathSessions.filter(function (s) { return s.date; }).map(function (s, i) {
+        var sAddr = findAddress(s.addressId) || addr;
+        return { seq: i + 1, date: s.date, time: s.time || '09:00-11:00', addressDetail: sAddr.detail || addr.detail || '', contact: sAddr.contact || addr.contact || patientName, phone: sAddr.phone || addr.phone || '' };
+      });
+      if (!bookedSessions.length) bookedSessions = [{ seq: 1, date: date, time: '09:00-11:00', addressDetail: addr.detail || '', contact: addr.contact || patientName, phone: addr.phone || '' }];
+      order.sessions = bookedSessions;
+      order.sessionSummary = '已预约 ' + bookedSessions.length + '/10 次 · 下次 ' + bookedSessions[0].date;
+      /* ③ 9 次兑换卡（首次已随主订单占用 1 次） */
       try {
         var cards = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]');
         if (!Array.isArray(cards)) cards = [];
-        cards.unshift({ id: 'CARD-' + orderNo, orderNo: orderNo, total: 10, used: 0, patient: { name: patientName, gender: patient.gender || '', age: patient.age || '' }, createdAt: Date.now() });
+        cards.unshift({ id: 'CARD-' + orderNo, orderNo: orderNo, total: 9, used: 0, patient: { name: patientName, gender: patient.gender || '', age: patient.age || '' }, createdAt: Date.now() });
         localStorage.setItem('ankebang_bath_cards', JSON.stringify(cards));
       } catch (e) {}
+      /* ② 首次 1 次预约订单（随套餐已支付，实付 0） */
+      firstOrder = {
+        id: orderNo + '-01',
+        status: 'pending-service',
+        state: '待服务',
+        type: service.name,
+        project: service.name + '服务 · 套餐首次',
+        unit: String(getServicePrice()),
+        unitLabel: '/次',
+        quantity: 'x1次',
+        person: order.person,
+        address: order.address,
+        addressKind: order.addressKind,
+        time: bookedSessions[0].date + ' ' + bookedSessions[0].time,
+        nurse: order.nurse,
+        nursePhone: order.nursePhone,
+        role: order.role,
+        cert: order.cert,
+        years: order.years,
+        avatar: order.avatar,
+        amount: '0',
+        actions: ['cancel', 'call'],
+        careNeeds: order.careNeeds,
+        createdAt: Date.now(),
+        serviceDate: bookedSessions[0].date,
+        addressId: order.addressId,
+        addressDetail: order.addressDetail,
+        contact: order.contact,
+        phone: order.phone,
+        packOrderNo: orderNo,
+        note: '10次套餐首次服务 · 已随套餐支付'
+      };
+      if (order.nurse2) { firstOrder.nurse2 = order.nurse2; firstOrder.nursePhone2 = order.nursePhone2; }
     }
     /* 兑换卡核销：0 元订单 + 扣减一次 */
     if (redeemCard) {
@@ -2014,6 +2138,7 @@
       var list = JSON.parse(localStorage.getItem('ankebang_service_orders') || '[]');
       if (!Array.isArray(list)) list = [];
       list.unshift(order);
+      if (firstOrder) list.unshift(firstOrder);
       localStorage.setItem('ankebang_service_orders', JSON.stringify(list));
     } catch (e) {}
   }
@@ -2025,40 +2150,6 @@
     });
   });
 
-  /* ── 加入购物车 ── */
-  const CART_SERVICE_ID = { hospital: 'hospital-care', home: 'home-care', bath: 'bath-care' };
-  function currentCartServiceId() {
-    if (serviceKey === 'visit') return visitServiceId || '';
-    return CART_SERVICE_ID[serviceKey] || '';
-  }
-  function cartToast(message) {
-    let el = document.getElementById('akbCartToast');
-    if (!el) {
-      el = document.createElement('div');
-      el.id = 'akbCartToast';
-      el.style.cssText = 'position:absolute;left:50%;bottom:96px;transform:translateX(-50%);background:rgba(26,24,40,.9);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:200;opacity:0;pointer-events:none;white-space:nowrap;transition:opacity .25s';
-      (document.querySelector('.phone') || document.body).appendChild(el);
-    }
-    el.textContent = message;
-    el.style.opacity = '1';
-    clearTimeout(el._timer);
-    el._timer = setTimeout(function() { el.style.opacity = '0'; }, 1600);
-  }
-  function addCurrentServiceToCart() {
-    const id = currentCartServiceId();
-    if (!id) { cartToast('该服务暂不支持加入购物车'); return; }
-    let cart = [];
-    try {
-      cart = JSON.parse(localStorage.getItem('ankebang_service_cart') || '[]');
-      if (!Array.isArray(cart)) cart = [];
-    } catch (e) { cart = []; }
-    const existing = cart.find(function(item) { return item.id === id; });
-    if (existing) existing.qty += 1;
-    else cart.push({ id: id, qty: 1 });
-    try { localStorage.setItem('ankebang_service_cart', JSON.stringify(cart)); } catch (e) {}
-    cartToast('已加入购物车');
-  }
-
   /* ── 兑换卡模式：?card=CARD-ID ── */
   function applyRedeemMode() {
     if (!redeemCardId) return;
@@ -2069,15 +2160,20 @@
     redeemCard = hit;
     selectedCount = 1;
     document.getElementById('countBlock').style.display = 'none';
+    /* 兑换卡核销：护理需求沿用首购信息，隐藏需求问卷与价格/积分抵扣卡（付费固定为 0） */
+    var needsModule = document.querySelector('.single-page-needs');
+    if (needsModule) needsModule.style.display = 'none';
     var pointsCk = document.getElementById('usePoints');
     if (pointsCk) { pointsCk.checked = false; pointsCk.disabled = true; }
     var pBtn = document.querySelector('#patientInfoModule .selector-trigger');
     if (pBtn) pBtn.onclick = function () { alert('兑换卡仅限首次购买时的服务对象使用'); };
     var banner = document.createElement('div');
-    banner.style.cssText = 'margin:0 0 12px;padding:12px 14px;border-radius:14px;background:linear-gradient(135deg,#8655C5,#6B3FAA);color:#fff;font-size:13px;font-weight:700;line-height:1.6;box-shadow:0 6px 18px rgba(107,63,170,.25)';
+    banner.style.cssText = 'padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,#8655C5,#6B3FAA);color:#fff;font-size:12px;font-weight:700;line-height:1.5;box-shadow:0 4px 14px rgba(107,63,170,.2);text-align:center';
     banner.textContent = '正在使用「上门助浴 10 次兑换卡」· 本次 ¥0 · 剩余 ' + (hit.total - hit.used) + ' 次 · 适用对象：' + hit.patient.name + '（锁定）';
-    var anchor = document.getElementById('patientInfoModule');
-    anchor.parentNode.insertBefore(banner, anchor);
+    var bannerBox = document.getElementById('redeemBannerBox');
+    if (bannerBox) { bannerBox.appendChild(banner); bannerBox.style.display = ''; }
+    var actualPayRow = document.getElementById('actualPayRow');
+    if (actualPayRow) actualPayRow.style.display = '';
     updatePatientSummary();
   }
 

@@ -1,4 +1,5 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>积分概览 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css"></head>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<script src="common-ui.js"></script><meta name="viewport" content="width=1280"><title>积分概览 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css"></head>
 <body><div class="layout">
   <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
   <main class="main">
@@ -32,8 +33,12 @@
               <div class="rule-row">每邀请 1 位好友注册 <input id="rInvite" type="number" min="0"> <span class="unit">积分</span></div>
             </div>
             <div class="rule-item">
-              <div class="k">消费返积分</div>
-              <div class="rule-row">每消费 <input id="rConsume" type="number" min="0"> <span class="unit">元返 1 积分</span></div>
+              <div class="k">商城消费返积分</div>
+              <div class="rule-row">每消费 <input id="rMallConsume" type="number" min="0"> <span class="unit">元返 1 积分</span></div>
+            </div>
+            <div class="rule-item">
+              <div class="k">服务消费返积分</div>
+              <div class="rule-row">每消费 <input id="rServiceConsume" type="number" min="0"> <span class="unit">元返 1 积分</span></div>
             </div>
             <div class="rule-item">
               <div class="k">商城订单积分抵扣</div>
@@ -140,7 +145,8 @@
   function fillRules() {
     var c = P.getConfig();
     document.getElementById('rInvite').value = c.inviteReward;
-    document.getElementById('rConsume').value = c.consumePerYuan;
+    document.getElementById('rMallConsume').value = c.mallConsumePerYuan;
+    document.getElementById('rServiceConsume').value = c.serviceConsumePerYuan;
     document.getElementById('rMallEnabled').value = c.mallEnabled ? 'on' : 'off';
     document.getElementById('rMallCap').value = c.mallCapPercent;
     document.getElementById('rServiceEnabled').value = c.serviceEnabled ? 'on' : 'off';
@@ -148,15 +154,17 @@
   }
   window.saveRules = function () {
     var invite = Number(document.getElementById('rInvite').value);
-    var consume = Number(document.getElementById('rConsume').value);
+    var mallConsume = Number(document.getElementById('rMallConsume').value);
+    var serviceConsume = Number(document.getElementById('rServiceConsume').value);
     var mallCap = Number(document.getElementById('rMallCap').value);
     var serviceCap = Number(document.getElementById('rServiceCap').value);
-    if (!(invite >= 0) || !(consume >= 0)) { alert('请填写正确的积分获取规则'); return; }
+    if (!(invite >= 0) || !(mallConsume >= 0) || !(serviceConsume >= 0)) { alert('请填写正确的积分获取规则'); return; }
     if (!(mallCap >= 1 && mallCap <= 100)) { alert('商城订单抵扣上限需为 1 - 100 之间的数字'); return; }
     if (!(serviceCap >= 1 && serviceCap <= 100)) { alert('服务订单抵扣上限需为 1 - 100 之间的数字'); return; }
     P.saveConfig({
       inviteReward: Math.floor(invite),
-      consumePerYuan: Math.floor(consume),
+      mallConsumePerYuan: Math.floor(mallConsume),
+      serviceConsumePerYuan: Math.floor(serviceConsume),
       mallEnabled: document.getElementById('rMallEnabled').value === 'on',
       mallCapPercent: mallCap,
       serviceEnabled: document.getElementById('rServiceEnabled').value === 'on',

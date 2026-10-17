@@ -163,15 +163,16 @@
     Object.keys(keep).forEach(function (id) { var el = document.getElementById(id); if (el) el.value = keep[id]; });
   };
 
-  window.openOrderIntervention = function (no) {
+  window.openOrderIntervention = function (no, preset) {
     activeOrder = findOrder(no);
     if (!activeOrder) return;
     var actions = activeOrder.type === '商城订单' ? mallPlans(activeOrder.state) : (plans[activeOrder.state] || []);
     if (!actions.length) { showToast('当前订单暂无可执行的人工介入操作'); return; }
+    var initAction = (preset && actions.indexOf(preset) > -1) ? preset : actions[0];
     document.getElementById('interventionOrderNo').textContent = '订单人工介入 · ' + activeOrder.no;
     document.getElementById('interventionOrder').innerHTML = '<b>' + activeOrder.type + ' · ' + activeOrder.item + '</b>　当前状态：' + activeOrder.state + '　用户：' + activeOrder.user;
-    document.getElementById('interventionOptions').innerHTML = actions.map(function (action, index) { return '<button type="button" class="intervention-option ' + (index === 0 ? 'active' : '') + '" data-action="' + action + '">' + action + '</button>'; }).join('');
-    activeAction = actions[0];
+    document.getElementById('interventionOptions').innerHTML = actions.map(function (action) { return '<button type="button" class="intervention-option ' + (action === initAction ? 'active' : '') + '" data-action="' + action + '">' + action + '</button>'; }).join('');
+    activeAction = initAction;
     document.getElementById('interventionRemark').value = '';
     renderRefundInfo();
     setRemarkLabel(activeAction);

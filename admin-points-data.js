@@ -14,7 +14,8 @@
   /* ── 全局积分规则（默认值与小程序端文案一致：邀请好友各得 30 分、消费 10 元返 1 分、抵扣上限 10%） ── */
   var DEFAULT_CONFIG = {
     inviteReward: 30,        // 每邀请 1 位好友注册，双方各得积分
-    consumePerYuan: 10,      // 每消费 X 元返 1 积分
+    mallConsumePerYuan: 10,  // 商城每消费 X 元返 1 积分
+    serviceConsumePerYuan: 10,// 服务每消费 X 元返 1 积分
     mallEnabled: true,       // 商城订单是否可用积分抵扣
     mallCapPercent: 10,      // 商城订单抵扣上限（订单金额的 %）
     serviceEnabled: true,    // 服务订单是否可用积分抵扣

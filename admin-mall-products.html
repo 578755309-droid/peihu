@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=1280" />
   <title>商品管理 · 佑小邦运营后台</title>
   <link rel="stylesheet" href="admin-shell.css" />
@@ -361,17 +362,17 @@
     persist(); renderMetrics(); render();
   };
 
-  window.removeProduct = function (id) {
+  window.removeProduct = async function (id) {
     var p = products.filter(function (x) { return x.id === id; })[0];
     if (!p) return;
-    if (!confirm('确认删除商品「' + p.name + '」？删除后小程序商城将不再展示。')) return;
+    if (!await showConfirm('确认删除商品「' + p.name + '」？删除后小程序商城将不再展示。', { danger: true, okText: '删除' })) return;
     delete selected[id];
     products = products.filter(function (x) { return x.id !== id; });
     persist(); renderMetrics(); render();
   };
 
-  window.resetData = function () {
-    if (!confirm('确认恢复为默认的 9 款商品？当前在后台新增/修改的商品信息将被重置。')) return;
+  window.resetData = async function () {
+    if (!await showConfirm('确认恢复为默认的 9 款商品？当前在后台新增/修改的商品信息将被重置。')) return;
     localStorage.removeItem('akb_admin_mall_products');
     selected = {};
     products = M.getProducts(true);

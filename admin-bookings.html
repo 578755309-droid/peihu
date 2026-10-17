@@ -1,4 +1,5 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>预约管理 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><style>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<script src="common-ui.js"></script><meta name="viewport" content="width=1280"><title>预约管理 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><style>
 body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;min-width:1100px;overflow-x:hidden}
 .layout{display:flex;min-height:100vh;min-width:0}
 .main{margin-left:220px;flex:1;min-width:0;max-width:calc(100vw - 220px);overflow:hidden}
@@ -42,10 +43,10 @@ body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMa
 .table-wrap{width:100%;max-width:100%;background:#fff;border:1px solid #D7E8FA;border-radius:14px;box-shadow:0 2px 16px rgba(37,99,235,.06);overflow-x:auto;overflow-y:hidden}
 .table{width:100%;border-collapse:collapse}
 .table th{height:44px;background:#F8FBFF;color:#9AA7BA;font-size:11px;text-align:left;padding:0 18px;font-weight:800;letter-spacing:.3px}
-.table td{height:72px;padding:0 18px;border-top:1px solid #EEF5FC;font-size:12px;color:#657087;font-weight:600;vertical-align:middle}
+.table td{height:72px;padding:14px 18px;border-top:1px solid #EEF5FC;font-size:12px;color:#657087;font-weight:600;vertical-align:top}
 .table tr:first-child td{border-top:none}
 
-.name-cell .main{font-weight:800;color:#172033;font-size:13px}
+.name-cell .main{font-weight:800;color:#172033;font-size:13px;white-space:nowrap}
 .name-cell .sub{font-size:11px;color:#9AA7BA;margin-top:3px}
 .phone-cell{font-weight:700;color:#172033;font-family:-apple-system,"SF Mono",Consolas,monospace;font-size:13px}
 .source-tag{display:inline-flex;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:800}
@@ -62,10 +63,10 @@ body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMa
 .tag.processing .dot{background:#F59E0B}
 .tag.done{background:#DCFCE7;color:#16A34A}
 .tag.done .dot{background:#16A34A}
-.note-cell{max-width:260px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.5}
+.note-cell{overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.5}
 .note-cell.empty{color:#9AA7BA;font-style:italic}
 .op{display:flex;gap:10px}
-.op button{border:0;background:none;color:#224CD3;font:700 12px inherit;cursor:pointer;padding:0}
+.op button{border:0;background:none;color:#224CD3;font:700 12px inherit;cursor:pointer;padding:0;white-space:nowrap}
 .op .danger{color:#DC2626}
 
 /* empty */
@@ -82,6 +83,44 @@ body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMa
 .pg-ctrl button:hover:not(:disabled){background:#E7F1FD}
 .pg-ctrl button.active{background:#224CD3;color:#fff;border-color:#224CD3}
 .pg-ctrl button:disabled{opacity:.4;cursor:not-allowed}
+
+/* sms notify card */
+.sms-card{margin:0 0 20px;display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:16px;background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);border:1px solid #BFDBFE;cursor:pointer;transition:transform .15s}
+.sms-card:hover{transform:translateY(-2px)}
+.sms-icon{width:46px;height:46px;border-radius:14px;background:#224CD3;display:grid;place-items:center;flex-shrink:0;color:#fff}
+.sms-icon svg{width:22px;height:22px}
+.sms-info{flex:1}
+.sms-info .sms-title{font-size:15px;font-weight:900;color:#172033}
+.sms-info .sms-desc{font-size:12px;color:#657087;margin-top:4px;line-height:1.5}
+.sms-ctl{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sms-count{font-size:12px;color:#224CD3;font-weight:800;background:#fff;border-radius:20px;padding:4px 12px;border:1px solid #BFDBFE}
+.sms-switch{position:relative;width:46px;height:26px;cursor:pointer}
+.sms-switch input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;z-index:1}
+.sms-switch .track{position:absolute;inset:0;background:#CBD5E1;border-radius:999px;transition:background .2s}
+.sms-switch .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 2px 5px rgba(0,0,0,.15)}
+.sms-switch input:checked ~ .track{background:#224CD3}
+.sms-switch input:checked ~ .knob{transform:translateX(20px)}
+
+/* sms receiver list in modal */
+.sms-receiver{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #E5EEF9;border-radius:9px;background:#FAFCFF;margin-bottom:8px}
+.sms-receiver .name{font-weight:800;font-size:13px;color:#172033;min-width:60px}
+.sms-receiver .phone{font-size:12px;color:#657087;font-family:monospace;flex:1}
+.sms-receiver .del{border:0;background:none;color:#DC2626;font-size:18px;cursor:pointer;width:28px;height:28px;border-radius:7px;flex:none;line-height:1}
+.sms-receiver .del:hover{background:#FEE2E2}
+.sms-add{display:flex;gap:8px;margin-top:10px}
+.sms-add input{flex:1;height:38px;border:1px solid #D7E8FA;border-radius:8px;padding:0 12px;font-size:13px;color:#172033;outline:none;font-family:inherit}
+.sms-add input:focus{border-color:#224CD3;box-shadow:0 0 0 3px rgba(34,76,211,.1)}
+.sms-add .btn{white-space:nowrap}
+
+/* custom confirm / toast */
+.cfm-mask{position:fixed;inset:0;background:rgba(20,33,65,.4);display:none;align-items:center;justify-content:center;z-index:300}
+.cfm-mask.show{display:flex}
+.cfm{background:#fff;border-radius:16px;width:340px;padding:24px;box-shadow:0 20px 50px rgba(20,33,65,.18);text-align:center}
+.cfm-msg{font-size:14px;color:#172033;font-weight:700;line-height:1.6;margin-bottom:20px}
+.cfm-btns{display:flex;gap:10px;justify-content:center}
+.cfm-btns .btn{min-width:90px}
+.toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:rgba(26,24,40,.92);color:#fff;font-size:13px;font-weight:700;padding:10px 22px;border-radius:30px;z-index:400;opacity:0;pointer-events:none;transition:opacity .25s;white-space:nowrap}
+.toast.show{opacity:1}
 
 /* modal — clean design */
 .modal-mask{position:fixed;inset:0;background:rgba(20,33,65,.45);display:none;align-items:center;justify-content:center;z-index:200}
@@ -100,9 +139,9 @@ body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMa
 .btn-primary:hover{background:#1A3DB0}
 
 /* inline info row */
-.info-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;padding:14px;background:#F8FBFF;border-radius:10px;border:1px solid #EEF5FC}
-.info-row .info-item .k{font-size:11px;color:#9AA7BA;font-weight:700;margin-bottom:3px}
-.info-row .info-item .v{font-size:13px;color:#172033;font-weight:800}
+	.info-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;padding:14px;background:#F8FBFF;border-radius:10px;border:1px solid #EEF5FC}
+	.info-row .info-item .k{font-size:11px;color:#9AA7BA;font-weight:700;margin-bottom:3px}
+	.info-row .info-item .v{font-size:13px;color:#172033;font-weight:800}
 
 .form-row{margin-bottom:14px}
 .form-row label{display:block;font-size:12px;color:#657087;font-weight:800;margin-bottom:6px}
@@ -139,6 +178,18 @@ body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMa
         <div class="stat done"><div class="stat-label">已完成</div><div class="stat-value" id="statDone">0</div><div class="stat-sub">服务已交付</div></div>
       </div>
 
+      <div class="sms-card" onclick="openSmsManager()">
+        <div class="sms-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <div class="sms-info">
+          <div class="sms-title">短信通知</div>
+          <div class="sms-desc">有人提交预约时，自动向以下号码发送通知短信</div>
+        </div>
+        <div class="sms-ctl" onclick="event.stopPropagation()">
+          <span class="sms-count" id="smsCount">0 人</span>
+          <div class="sms-switch"><input type="checkbox" id="smsEnabled" onchange="toggleSms()"><span class="track"></span><span class="knob"></span></div>
+        </div>
+      </div>
+
       <div class="tabs" id="tabs">
         <button class="tab active" data-status="all" onclick="filterStatus(this)">全部 <span class="num" id="chipAll">0</span></button>
         <button class="tab" data-status="pending" onclick="filterStatus(this)">未跟进 <span class="num" id="chipPending">0</span></button>
@@ -161,13 +212,13 @@ body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMa
       <div class="table-wrap">
         <table class="table">
           <thead><tr>
-            <th style="width:18%">预约人</th>
-            <th style="width:14%">手机号码</th>
-            <th style="width:10%">来源</th>
-            <th style="width:18%">预约时间</th>
-            <th style="width:11%">跟进情况</th>
+            <th>预约人</th>
+            <th>手机号码</th>
+            <th>来源</th>
+            <th>预约时间</th>
+            <th>跟进情况</th>
             <th>备注</th>
-            <th style="width:14%">操作</th>
+            <th>操作</th>
           </tr></thead>
           <tbody id="bookingTable"></tbody>
         </table>
@@ -217,12 +268,57 @@ body{margin:0;background:#EFF6FF;color:#172033;font-family:-apple-system,BlinkMa
   </div>
 </div>
 
+<div class="modal-mask" id="smsModal" onclick="if(event.target===this)closeSmsManager()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">短信通知设置</div>
+      <button class="modal-close" onclick="closeSmsManager()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <label>收短信的人（有人预约时通知）</label>
+        <div id="smsReceiverList"></div>
+        <div class="sms-add">
+          <input id="smsNewName" placeholder="姓名">
+          <input id="smsNewPhone" placeholder="手机号">
+          <button class="btn btn-primary" onclick="addSmsReceiver()">添加</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeSmsManager()">完成</button>
+    </div>
+  </div>
+</div>
+
+<div class="cfm-mask" id="cfmMask">
+  <div class="cfm">
+    <div class="cfm-msg" id="cfmMsg"></div>
+    <div class="cfm-btns">
+      <button class="btn" onclick="cfmCancel()">取消</button>
+      <button class="btn btn-primary" id="cfmOk" onclick="cfmConfirm()">确定</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
 <script>
 var STORAGE_KEY='akb_bookings';
 var PAGE_SIZE=10;
 var currentFilter={status:'all',source:'all',search:''};
 var editingId='';
 var currentPage=1;
+
+/* ── 自定义确认弹窗 / Toast ── */
+var _cfmCb=null;
+function showConfirm(msg,cb){document.getElementById('cfmMsg').textContent=msg;_cfmCb=cb||null;document.getElementById('cfmMask').classList.add('show');}
+function cfmConfirm(){document.getElementById('cfmMask').classList.remove('show');if(_cfmCb)_cfmCb();_cfmCb=null;}
+function cfmCancel(){document.getElementById('cfmMask').classList.remove('show');_cfmCb=null;}
+function showToast(msg){
+  var el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},2000);
+}
 
 function load(){try{var v=JSON.parse(localStorage.getItem(STORAGE_KEY));if(Array.isArray(v))return v;}catch(e){}return [];}
 function save(list){localStorage.setItem(STORAGE_KEY,JSON.stringify(list));}
@@ -242,7 +338,8 @@ function buildDemoData(){
   return demo;
 }
 function seedDemoData(){
-  var existing=load();if(existing.length>0&&!confirm('已有数据，确定覆盖生成演示数据？'))return;
+  var existing=load();
+  if(existing.length>0){showConfirm('已有数据，确定覆盖生成演示数据？',function(){save(buildDemoData());render();});return;}
   save(buildDemoData());render();
 }
 
@@ -293,10 +390,10 @@ function render(){
       '<td class="time-cell">'+dateStr+'<span class="sub">'+p(date.getHours())+':'+p(date.getMinutes())+' 提交</span></td>'+
       '<td><span class="tag '+b.status+'" onclick="openEdit(\''+b.id+'\')"><span class="dot"></span>'+stLabel(b.status)+'</span></td>'+
       '<td class="note-cell '+(b.note?'':'empty')+'">'+(b.note||'暂无备注')+'</td>'+
-      '<td class="op">'+
+      '<td><div class="op">'+
         '<button onclick="openEdit(\''+b.id+'\')">跟进</button>'+
         '<button class="danger" onclick="deleteBooking(\''+b.id+'\')">删除</button>'+
-      '</td></tr>';
+      '</div></td></tr>';
   }).join('');
   document.getElementById('pgInfo').textContent='共 '+all.length+' 条 · 第 '+currentPage+'/'+totalPages+' 页';
   var ctrl='<button '+(currentPage===1?'disabled':'')+' onclick="gotoPage('+(currentPage-1)+')">‹</button>';
@@ -332,18 +429,74 @@ function saveBooking(){
   save(list);closeModal();render();
 }
 function deleteBooking(id){
-  if(!confirm('确定删除此预约？'))return;
-  save(load().filter(function(x){return x.id!==id;}));render();
+  showConfirm('确定删除此预约？',function(){
+    save(load().filter(function(x){return x.id!==id;}));render();
+  });
 }
 function exportCSV(){
-  var list=load();if(!list.length){alert('暂无数据');return;}
+  var list=load();if(!list.length){showToast('暂无数据');return;}
   var rows=[['预约ID','姓名','手机号','来源','跟进状态','备注','创建时间','更新时间']];
   list.forEach(function(b){rows.push([b.id,b.name||'',b.phone||'',srcLabel(b.source),stLabel(b.status),(b.note||'').replace(/[\r\n,]/g,' '),fmtTime(b.createdAt),fmtTime(b.updatedAt||b.createdAt)]);});
   var csv='\uFEFF'+rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='预约管理_'+fmtTime(Date.now()).replace(/[:\s-]/g,'').slice(0,14)+'.csv';a.click();
 }
 
+/* ── 短信通知管理 ── */
+var SMS_KEY='akb_sms_notify';
+function loadSms(){try{var v=JSON.parse(localStorage.getItem(SMS_KEY));if(v&&typeof v==='object')return v;}catch(e){}return {enabled:true,receivers:[]};}
+function saveSms(v){localStorage.setItem(SMS_KEY,JSON.stringify(v));}
+function renderSms(){
+  var s=loadSms();
+  document.getElementById('smsEnabled').checked=!!s.enabled;
+  document.getElementById('smsCount').textContent=s.receivers.length+' 人';
+  var list=document.getElementById('smsReceiverList');
+  if(!s.receivers.length){list.innerHTML='<div style="padding:20px;text-align:center;color:#9AA7BA;font-size:13px">暂无收信人，请在下方添加</div>';return;}
+  list.innerHTML=s.receivers.map(function(r,i){
+    return '<div class="sms-receiver"><span class="name">'+r.name+'</span><span class="phone">'+r.phone+'</span><button class="del" onclick="delSmsReceiver('+i+')" title="删除">×</button></div>';
+  }).join('');
+}
+function toggleSms(){
+  var s=loadSms();s.enabled=!s.enabled;saveSms(s);renderSms();
+}
+function addSmsReceiver(){
+  var nameEl=document.getElementById('smsNewName'),phoneEl=document.getElementById('smsNewPhone');
+  var name=nameEl.value.trim(),phone=phoneEl.value.trim();
+  if(!name){nameEl.focus();return;}
+  if(!phone||!/^1\d{10}$/.test(phone)){phoneEl.focus();phoneEl.style.borderColor='#DC2626';setTimeout(function(){phoneEl.style.borderColor='';},1500);return;}
+  var s=loadSms();
+  if(s.receivers.some(function(r){return r.phone===phone;})){showToast('该手机号已存在');phoneEl.focus();return;}
+  s.receivers.push({name:name,phone:phone});
+  saveSms(s);
+  nameEl.value='';phoneEl.value='';nameEl.focus();
+  renderSms();
+}
+function delSmsReceiver(i){
+  var s=loadSms();
+  showConfirm('确定删除「'+s.receivers[i].name+'」吗？',function(){
+    s.receivers.splice(i,1);saveSms(s);renderSms();
+  });
+}
+function openSmsManager(){
+  renderSms();
+  document.getElementById('smsModal').classList.add('show');
+  setTimeout(function(){document.getElementById('smsNewName').focus();},150);
+}
+function closeSmsManager(){document.getElementById('smsModal').classList.remove('show');}
+
+/* 供其他页面调用：有新预约时触发短信 */
+window.sendSmsNotify=function(booking){
+  var s=loadSms();
+  if(!s.enabled||!s.receivers.length)return;
+  var msg='【佑小邦】新预约提醒：'+booking.name+' '+booking.phone+' 于'+fmtTime(booking.createdAt||Date.now())+'提交了预约（来源：'+srcLabel(booking.source)+'）。';
+  s.receivers.forEach(function(r){
+    console.log('[短信通知] → '+r.name+'('+r.phone+'): '+msg);
+    /* 实际项目中此处调用短信网关API */
+  });
+  return s.receivers.length;
+};
+
 (function(){var d=new Date(),w=['日','一','二','三','四','五','六'];document.getElementById('topDate').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+w[d.getDay()];})();
 if(load().length===0)save(buildDemoData());
+renderSms();
 render();
 </script></body></html>

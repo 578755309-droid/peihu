@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>陪诊服务 · 安科邦陪护</title>
   <style>
@@ -32,7 +33,7 @@
     .svc-tile .svc-points{margin-top:4px;display:flex;align-items:center;gap:4px}
     .svc-tile .svc-points .pts-tag{font-size:10px;font-weight:800;color:#E94E4E;background:#FFF0F0;padding:1px 5px;border-radius:4px}
     .svc-tile .svc-points .pts-link{font-size:10px;color:var(--purple);font-weight:700}
-    .svc-tile-wrap .svc-add{position:absolute;right:10px;bottom:10px;width:28px;height:28px;border:0;border-radius:50%;background:var(--purple);color:#fff;font-size:18px;font-weight:900;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 6px rgba(134,85,197,.35);z-index:2}
+
     .svc-tile-wrap{position:relative}
 
     /* ── 底部 Tab ── */
@@ -111,7 +112,7 @@
             '<div class="svc-sales">已售 '+fmtSales(sales)+'</div>'+
           '</div>'+
         '</div>'+
-      '</article><button class="svc-add" onclick="event.stopPropagation();selectService(\''+s.id+'\')">+</button></div>';
+      '</article></div>';
     }).join('');
   }
   /* 兜底静态列表 */

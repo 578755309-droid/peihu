@@ -50,7 +50,8 @@
   function item(name, desc, price, qty, image, tone) {
     return { name: name, desc: desc, price: String(price), quantity: qty, image: image, tone: tone || 'purple' };
   }
-  function order(no, state, createdAt, date, userName, userPhone, address, deliveryMethod, items, receiptCode, note, dist) {
+  function order(no, state, createdAt, date, userName, userPhone, address, deliveryMethod, items, receiptCode, note, dist, meta) {
+    meta = meta || {};
     var quantity = items.reduce(function (s, i) { return s + i.quantity; }, 0);
     var amount = items.reduce(function (s, i) { return s + Number(i.price) * i.quantity; }, 0);
     var flow = flowOf(state);
@@ -71,6 +72,11 @@
       quantity: quantity,
       amount: String(amount),
       note: note || '',
+      orderType: meta.orderType || '普通订单',
+      payer: meta.payer || userName,
+      payerPhone: meta.payerPhone || userPhone,
+      creator: meta.creator || '用户自主下单',
+      updatedAt: meta.updatedAt || createdAt,
       shipInfo: null,
       distId: dist ? dist.id : '',
       distName: dist ? dist.name : '',
@@ -115,6 +121,15 @@
       [item('医用无菌口罩', '医用外科 / 一次性使用', 29, 5, 'assets/mall/medical-mask.png', 'blue')], '2684', '', { id: 'D1001', name: '刘姐' }),
     order('AKB-M2026-101008', '待付款', '2026-10-10 19:22:07', '2026-10-10', '韩女士', '132****6641', '西安市雁塔区电子正街 26 号', 'instant',
       [item('电子体温计', '快速测温 · 大屏易读', 39, 2, 'assets/mall/thermometer.png', 'purple')], '5539', '', { id: 'D1001', name: '刘姐' }),
+
+    /* ── 待付款演示订单 ── */
+    order('AKB-M2026-101603', '待付款', '2026-10-16 10:32:18', '2026-10-16', '刘女士', '152****8890', '西安市雁塔区小寨东路 126 号', 'instant',
+      [item('家用雾化器', '细雾雾化 · 便携易收纳', 199, 1, 'assets/mall/nebulizer.png', 'purple')], '', '用户下单后未完成支付，已发送支付提醒。'),
+    order('AKB-M2026-101604', '待付款', '2026-10-16 11:05:47', '2026-10-16', '张先生', '139****2205', '北京市朝阳区建国路 89 号 3 号楼', 'express',
+      [item('血糖仪 + 血糖试纸', '家用血糖监测套装', 168, 1, 'assets/mall/glucose-meter.png', 'green'),
+       item('电子体温计', '快速测温 · 大屏易读', 39, 1, 'assets/mall/thermometer.png', 'purple')], '', ''),
+    order('AKB-M2026-101605', '待付款', '2026-10-16 13:41:02', '2026-10-16', '陈女士', '186****5531', '上海市静安区南京西路 1266 号 40 层', 'runner',
+      [item('助听器', '轻巧隐形 · 日常交流辅助', 699, 1, 'assets/mall/hearing-aid.png', 'orange')], '', '', { id: 'D1002', name: '陈先生' }),
     order('AKB-M2026-100913', '已完成', '2026-10-09 09:15:31', '2026-10-09', '杨大爷', '186****2287', '西安市碑林区南大街 41 号', 'express',
       [item('家用雾化器', '细雾雾化 · 便携易收纳', 199, 1, 'assets/mall/nebulizer.png', 'purple'),
        item('医用无菌口罩', '医用外科 / 一次性使用', 29, 2, 'assets/mall/medical-mask.png', 'blue')], '8451', '', { id: 'D1001', name: '刘姐' }),
@@ -141,6 +156,13 @@
     'AKB-M2026-100831': { method: '微信支付', deduct: '¥0', actual: '¥129', received: '¥129', at: '2026-10-08 14:52:30' }
   };
   SEED_ORDERS.forEach(function (o) { if (SEED_PAY[o.no]) o.pay = SEED_PAY[o.no]; });
+
+  /* 订单类型等元数据（演示）：订单类型 普通订单 / 续费订单；创建人默认用户自主下单 */
+  var SEED_META = {
+    'AKB-M2026-101118': { orderType: '续费订单' },
+    'AKB-M2026-101601': { creator: '管理员' }
+  };
+  SEED_ORDERS.forEach(function (o) { var m = SEED_META[o.no]; if (m) { if (m.orderType) o.orderType = m.orderType; if (m.creator) o.creator = m.creator; } });
 
   /* ── 工具 ── */
   function clone(v) { return JSON.parse(JSON.stringify(v)); }
@@ -187,6 +209,15 @@
   function categoryName(id) {
     var c = categoryMap()[id];
     return c ? c.name : '未分类';
+  }
+  /* 按商品名称反查所属分类名称（订单列表商品列前缀展示） */
+  function itemCategory(name) {
+    if (!name) return '';
+    var list = getProducts();
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].name === name) return categoryName(list[i].category) || '';
+    }
+    return '';
   }
 
   /* ── 商品 ── */
@@ -303,7 +334,24 @@
 
   function getAdminOrders() {
     var list = read(ORDER_KEY, SEED_ORDERS);
-    if (!Array.isArray(list)) list = clone(SEED_ORDERS);
+    if (!Array.isArray(list) || !list.length) list = clone(SEED_ORDERS);
+    /* 新增种子订单自动并入已有本地存储（缺失的按种子补齐，已有订单不动） */
+    var haveNo = {};
+    list.forEach(function (o) { haveNo[o.no] = true; });
+    var seedAdded = false;
+    SEED_ORDERS.forEach(function (s) { if (!haveNo[s.no]) { list.push(clone(s)); seedAdded = true; } });
+    if (seedAdded) write(ORDER_KEY, list);
+    /* 兼容旧本地存储：回填新增字段默认值（订单类型/支付人/创建人/更新时间），不覆盖已有值 */
+    var seedMap = {};
+    SEED_ORDERS.forEach(function (s) { seedMap[s.no] = s; });
+    list.forEach(function (o) {
+      var s = seedMap[o.no] || {};
+      if (!o.orderType) o.orderType = s.orderType || '普通订单';
+      if (!o.payer) o.payer = s.payer || o.userName || '';
+      if (!o.payerPhone) o.payerPhone = s.payerPhone || o.userPhone || '';
+      if (!o.creator) o.creator = s.creator || (o.source === 'mini' ? '用户自主下单' : '管理员');
+      if (!o.updatedAt) o.updatedAt = s.updatedAt || o.createdAt || o.date || '';
+    });
     return list;
   }
 
@@ -330,10 +378,13 @@
   }
   function saveAdminOrders(list) { write(ORDER_KEY, list); }
 
-  /* 状态流转：更新管理端订单，若订单来自小程序则同步回小程序存储 */
+  /* 状态流转：更新管理端订单，若订单来自小程序则同步回小程序存储；自动写入更新时间 */
   function updateOrder(no, patch) {
     var list = getAdminOrders();
     var found = false;
+    var d = new Date();
+    var p2 = function (n) { return ('0' + n).slice(-2); };
+    patch.updatedAt = d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()) + ':' + p2(d.getSeconds());
     list.forEach(function (o) {
       if (o.no === no) {
         found = true;
@@ -500,6 +551,7 @@
     saveCategories: saveCategories,
     categoryName: categoryName,
     categoryMap: categoryMap,
+    itemCategory: itemCategory,
     getProducts: getProducts,
     saveProducts: saveProducts,
     productById: productById,

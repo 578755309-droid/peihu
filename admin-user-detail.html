@@ -3,6 +3,7 @@
   <head>
     <link rel="stylesheet" href="admin-shell.css" />
     <meta charset="utf-8" />
+<script src="common-ui.js"></script>
     <meta name="viewport" content="width=1280" />
     <title>用户详情 · 佑小邦运营后台</title>
     <style>
@@ -1064,8 +1065,8 @@
                   <div class="ud-row" data-kind="earn" data-date="2026-04-06"><span class="t">2026-04-06</span><span class="tag consume">消费返积分</span><span class="d">服务订单 AKB-20260406-009 · 实付 ¥1,560</span><span class="p plus">+156</span></div>
                   <div class="ud-row" data-kind="spend" data-date="2026-04-05"><span class="t">2026-04-05</span><span class="tag mall">商城订单</span><span class="d">订单 AKB-M2026-100930 · 医用无菌口罩 x2 · 抵扣 ¥10</span><span class="p minus">-10</span></div>
                 </div>
-                <div class="ud-section-title" style="margin-top:16px">邀请明细</div>
-                <div class="ud-list">
+                <div class="ud-section-title" style="margin-top:16px;display:none">邀请明细</div>
+                <div class="ud-list" style="display:none">
                   <div class="ud-row"><span class="t">2026-04-10</span><span class="d">邀请 王先生（135****8843）</span><span class="tag waiting">待注册</span><span class="p">待发放</span></div>
                   <div class="ud-row"><span class="t">2026-04-08</span><span class="d">邀请 李先生（137****3325）</span><span class="tag done">已注册</span><span class="p plus">+30</span></div>
                 </div>
@@ -1449,11 +1450,11 @@
         renderPatients();
         closePatientModal();
       }
-      function deletePatient(id) {
+      async function deletePatient(id) {
         const patient = patients.find((item) => item.id === id);
         if (
           !patient ||
-          !confirm("确认删除“" + patient.name + "”的就诊人档案？")
+          !await showConfirm("确认删除“" + patient.name + "”的就诊人档案？", { danger: true, okText: "删除" })
         )
           return;
         patients.splice(

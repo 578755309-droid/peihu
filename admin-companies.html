@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head><link rel="stylesheet" href="admin-shell.css">
   <meta charset="utf-8" />
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=1280" />
   <title>陪护公司管理 · 佑小邦运营后台</title>
   <style>
@@ -254,7 +255,7 @@
         <div class="sb-uname">管理员</div>
         <div class="sb-urole">超级管理员</div>
       </div>
-      <button class="sb-logout" onclick="if(confirm('确认退出？'))location.href='index.html'">
+      <button class="sb-logout" onclick="showConfirm('确认退出？').then(function(ok){if(ok)location.href='index.html'})">
         <svg viewBox="0 0 16 16" fill="none"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>

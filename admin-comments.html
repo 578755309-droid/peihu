@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=1280">
   <title>评论管理 · 佑小邦运营后台</title>
   <link rel="stylesheet" href="admin-shell.css">
@@ -30,6 +31,51 @@
     tr.row-hidden td{opacity:.55}
     .tag.hidden-tag{color:#64748b;background:#e2e8f0}
     .empty{padding:48px 0;text-align:center;color:#9aa8ba;font-size:13px}
+    /* 列表图片缩略图 */
+    .img-thumbs{display:flex;align-items:center;gap:5px}
+    .img-thumb{position:relative;width:44px;height:44px;border-radius:8px;overflow:hidden;flex:none;border:1px solid #e7eef8;cursor:zoom-in;background:#f6faff}
+    .img-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .img-more{width:44px;height:44px;border-radius:8px;background:#eef4fb;color:#5b6b83;font-size:11px;font-weight:800;display:grid;place-items:center;flex:none;cursor:pointer}
+    /* 详情弹窗 */
+    .modal-mask{position:fixed;inset:0;z-index:60;background:rgba(15,28,51,.5);display:none;align-items:center;justify-content:center;padding:24px}
+    .modal-mask.show{display:flex}
+    .modal{width:620px;max-width:100%;max-height:88vh;display:flex;flex-direction:column;background:#fff;border-radius:16px;overflow:hidden}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line);flex:none}
+    .modal-title{font-size:17px;font-weight:900}
+    .modal-close{width:30px;height:30px;border:0;border-radius:9px;background:#eef4fb;color:#5b6b83;font-size:18px;cursor:pointer}
+    .modal-body{overflow-y:auto;padding:20px 22px;min-height:0}
+    .rv-svc{display:flex;gap:13px;align-items:center;padding:14px;border-radius:13px;background:#f6faff;border:1px solid var(--line)}
+    .rv-cover{width:52px;height:52px;border-radius:11px;object-fit:cover;flex:none;background:#E7F7EF}
+    .rv-svc-name{font-size:15px;font-weight:900}
+    .rv-svc-meta{margin-top:4px;font-size:12px;color:var(--muted);font-weight:600}
+    .rv-svc-no{margin-top:4px;font-size:11px;color:#94a3b8;font-weight:700}
+    .rv-block{margin-top:20px}
+    .rv-block-title{font-size:13px;font-weight:900;margin-bottom:11px}
+    .rv-dim{display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:13px;color:#41536d;font-weight:600}
+    .rv-dim .stars{font-size:14px}
+    .rv-tags{display:flex;flex-wrap:wrap;gap:8px}
+    .rv-tags .qtag{padding:5px 12px;border-radius:15px;background:var(--purple-light);color:var(--purple);font-size:12px;font-weight:800}
+    .rv-tags .none,.rv-dims .none{color:#a3b0c2;font-size:12px;font-weight:600}
+    .rv-text-box{padding:13px 14px;border-radius:11px;background:#f8fafd;border:1px solid var(--line);font-size:13px;line-height:1.7;color:#41536d;white-space:pre-wrap}
+    .rv-imgs{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+    .rv-imgs .ph{position:relative;padding-top:100%;border-radius:10px;overflow:hidden;border:1px solid var(--line);cursor:zoom-in}
+    .rv-imgs .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    /* 商家回复 */
+    .reply-list{display:grid;gap:10px;margin-bottom:13px}
+    .reply-item{padding:11px 13px;border-radius:11px;background:#fff7ed;border:1px solid #fed7aa}
+    .reply-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+    .reply-by{font-size:12px;font-weight:900;color:#c2410c}
+    .reply-time{font-size:11px;color:#a3b0c2;font-weight:600}
+    .reply-txt{font-size:13px;line-height:1.65;color:#41536d;white-space:pre-wrap}
+    .reply-input{width:100%;min-height:76px;resize:vertical;padding:11px 12px;border:1px solid var(--line);border-radius:11px;font:600 13px/1.6 inherit;color:var(--ink);outline:none}
+    .reply-input:focus{border-color:var(--blue)}
+    .reply-foot{display:flex;justify-content:flex-end;margin-top:10px}
+    .btn-primary{border:0;border-radius:9px;padding:9px 22px;background:var(--blue);color:#fff;font:800 13px inherit;cursor:pointer}
+    .btn-primary:disabled{background:#a3b0c2;cursor:not-allowed}
+    /* 大图预览 */
+    .lightbox{position:fixed;inset:0;z-index:70;background:rgba(10,18,34,.85);display:none;align-items:center;justify-content:center;padding:40px;cursor:zoom-out}
+    .lightbox.show{display:flex}
+    .lightbox img{max-width:100%;max-height:100%;border-radius:10px}
     .toast{position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:80;background:rgba(23,32,51,.92);color:#fff;font-size:13px;font-weight:700;padding:11px 20px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}
   </style>
 </head>
@@ -56,11 +102,20 @@
             </select>
             <span class="result">共 <strong id="count">0</strong> 条评价</span>
           </div>
-          <div class="table-wrap"><table class="table"><thead><tr><th>订单信息</th><th>服务 / 护理员</th><th>用户</th><th>星级</th><th>评价内容</th><th>评价时间</th><th>是否对外显示</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div>
+          <div class="table-wrap"><table class="table"><thead><tr><th>订单信息</th><th>服务 / 护理员</th><th>用户</th><th>星级</th><th>评价内容</th><th>图片</th><th>评价时间</th><th>是否对外显示</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div>
         </section>
       </section>
     </main>
   </div>
+  <!-- 评价详情弹窗 -->
+  <div class="modal-mask" id="detailMask" onclick="if(event.target===this)closeDetail()">
+    <div class="modal">
+      <div class="modal-head"><div class="modal-title">评价详情</div><button class="modal-close" onclick="closeDetail()">×</button></div>
+      <div class="modal-body" id="detailBody"></div>
+    </div>
+  </div>
+  <!-- 大图预览 -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()"><img id="lightboxImg" alt="评价大图"></div>
   <div class="toast" id="toast"></div>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -79,14 +134,31 @@ document.addEventListener('DOMContentLoaded', function () {
     'AKB-2026-041206': { service: '居家陪护', project: '12小时居家陪护', nurse: '赵阿姨', user: '王女士', userPhone: '133****7742' }
   };
 
+  /* 简单内联 SVG，模拟用户评价上传的现场照片（离线可用） */
+  function photoSvg(v){
+    var themes=[
+      {bg1:'#dbeafe',bg2:'#bfdbfe',fg:'#1d4ed8',icon:'M12 12a4 4 0 100-8 4 4 0 000 8zm-7 8a7 7 0 0114 0',t:'服务现场'},
+      {bg1:'#dcfce7',bg2:'#bbf7d0',fg:'#15803d',icon:'M12 21s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.6-7 10-7 10z',t:'贴心照护'},
+      {bg1:'#fef3c7',bg2:'#fde68a',fg:'#b45309',icon:'M4 19h16M6 19V9l6-4 6 4v10M10 19v-5h4v5',t:'居家陪护'},
+      {bg1:'#fce7f3',bg2:'#fbcfe8',fg:'#be185d',icon:'M12 5v14M5 12h14',t:'康复护理'},
+      {bg1:'#e0e7ff',bg2:'#c7d2fe',fg:'#4338ca',icon:'M8 10h8M8 14h5M5 4h14a1 1 0 011 1v15l-4-2-4 2-4-2-4 2V5a1 1 0 011-1z',t:'服务记录'}
+    ];
+    var th=themes[v%themes.length];
+    var svg='<svg xmlns="http://www.w3.org/2000/svg" width="480" height="480"><defs><linearGradient id="g'+v+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+th.bg1+'"/><stop offset="1" stop-color="'+th.bg2+'"/></linearGradient></defs><rect width="480" height="480" fill="url(#g'+v+')"/><circle cx="380" cy="90" r="70" fill="#ffffff" opacity=".35"/><circle cx="90" cy="400" r="90" fill="#ffffff" opacity=".28"/><g transform="translate(190,180) scale(4.2)" fill="'+th.fg+'" opacity=".85"><path d="'+th.icon+'"/></g><text x="240" y="410" font-size="30" font-weight="bold" text-anchor="middle" fill="'+th.fg+'" opacity=".75" font-family="sans-serif">'+th.t+'</text></svg>';
+    return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+  }
+  function coverSvg(bg,fg,label){var svg='<svg xmlns="http://www.w3.org/2000/svg" width="108" height="108"><rect width="108" height="108" rx="14" fill="'+bg+'"/><circle cx="84" cy="22" r="26" fill="'+fg+'" opacity=".18"/><text x="54" y="60" font-size="15" font-weight="bold" text-anchor="middle" fill="'+fg+'" font-family="sans-serif">'+label+'</text></svg>';return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)}
+  var COVER_BY_SERVICE={'住院陪护':coverSvg('#E7F7EF','#16965A','住院陪护'),'居家陪护':coverSvg('#E7F7EF','#16965A','居家陪护'),'上门助浴':coverSvg('#EAF3FF','#397EBA','上门助浴'),'陪诊服务':coverSvg('#FFF3E1','#C17A24','陪诊服务')};
+  function dims(a,b,c,d,e){return {punctual:a,professional:b,patience:c,responsibility:d,manner:e}}
+
   /* 种子评价数据（演示用，实际数据来自用户端 localStorage） */
   var SEED_REVIEWS = {
-    'AKB-2026-022301': { userScore: 5, total: 4.9, stars: '★★★★★', text: '张秀英护理师非常专业，术后康复期照顾得很周到，家属很放心。', createdAt: '2026-04-05 10:23' },
-    'AKB-2026-040318': { userScore: 2, total: 3.2, stars: '★★☆☆☆', text: '助浴服务体验一般，设备不够干净，希望改进。', createdAt: '2026-04-08 15:40' },
-    'AKB-2026-039105': { userScore: 4, total: 4.5, stars: '★★★★☆', text: '陪诊师很负责，全程陪同检查，沟通顺畅。', createdAt: '2026-04-12 11:15' },
-    'AKB-2026-038421': { userScore: 5, total: 4.8, stars: '★★★★★', text: '李桂芳护理师经验丰富，对老人很有耐心，强烈推荐。', createdAt: '2026-04-11 09:30' },
-    'AKB-2026-031085': { userScore: 1, total: 2.5, stars: '★☆☆☆☆', text: '重症陪护不到位，夜间巡视不及时，态度也不好。', createdAt: '2026-04-10 20:15' },
-    'AKB-2026-041206': { userScore: 5, total: 4.9, stars: '★★★★★', text: '赵阿姨居家照护很细心，老人状态明显好转。', createdAt: '2026-04-16 14:20' }
+    'AKB-2026-022301': { userScore: 5, total: 4.9, stars: '★★★★★', text: '张秀英护理师非常专业，术后康复期照顾得很周到，家属很放心。', createdAt: '2026-04-05 10:23', dimensions: dims(5,5,5,5,5), tags: ['专业细致','有耐心','照护周到'], images: [photoSvg(1),photoSvg(4)], replies: [{by:'运营客服',text:'感谢您的认可，我们会继续为您提供优质的陪护服务，祝老人早日康复！',time:'2026-04-05 11:02'}] },
+    'AKB-2026-040318': { userScore: 2, total: 3.2, stars: '★★☆☆☆', text: '助浴服务体验一般，设备不够干净，希望改进。', createdAt: '2026-04-08 15:40', dimensions: dims(3,3,2,2,2), tags: [], images: [], replies: [] },
+    'AKB-2026-039105': { userScore: 4, total: 4.5, stars: '★★★★☆', text: '陪诊师很负责，全程陪同检查，沟通顺畅。', createdAt: '2026-04-12 11:15', dimensions: dims(5,4,5,4,4), tags: ['服务态度好','响应及时'], images: [photoSvg(0)], replies: [] },
+    'AKB-2026-038421': { userScore: 5, total: 4.8, stars: '★★★★★', text: '李桂芳护理师经验丰富，对老人很有耐心，强烈推荐。', createdAt: '2026-04-11 09:30', dimensions: dims(5,5,5,5,4), tags: ['有耐心','有亲和力','专业细致'], images: [], replies: [] },
+    'AKB-2026-031085': { userScore: 1, total: 2.5, stars: '★☆☆☆☆', text: '重症陪护不到位，夜间巡视不及时，态度也不好。', createdAt: '2026-04-10 20:15', dimensions: dims(2,1,1,2,2), tags: [], images: [photoSvg(2)], replies: [] },
+    'AKB-2026-041206': { userScore: 5, total: 4.9, stars: '★★★★★', text: '赵阿姨居家照护很细心，老人状态明显好转。', createdAt: '2026-04-16 14:20', dimensions: dims(5,5,5,5,5), tags: ['服务态度好','有耐心','有亲和力','照护周到'], images: [photoSvg(1),photoSvg(3),photoSvg(4)], replies: [] }
   };
 
   function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -122,6 +194,11 @@ document.addEventListener('DOMContentLoaded', function () {
         stars: r.stars || '',
         text: r.text || '',
         createdAt: r.createdAt || '—',
+        dimensions: r.dimensions || null,
+        tags: Array.isArray(r.tags) ? r.tags : [],
+        images: Array.isArray(r.images) ? r.images : [],
+        replies: Array.isArray(r.replies) ? r.replies : [],
+        cover: r.cover || COVER_BY_SERVICE[info.service] || COVER_BY_SERVICE['住院陪护'],
         service: info.service,
         project: info.project,
         nurse: info.nurse,
@@ -181,13 +258,22 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('count').textContent = list.length;
     var rows = document.getElementById('rows');
     if (!list.length) {
-      rows.innerHTML = '<tr><td colspan="8"><div class="empty">暂无符合条件的评价</div></td></tr>';
+      rows.innerHTML = '<tr><td colspan="9"><div class="empty">暂无符合条件的评价</div></td></tr>';
       return;
     }
     rows.innerHTML = list.map(function (r) {
       var isBad = r.userScore <= 2;
       var textHtml = r.text ? esc(r.text) : '<span class="empty">（未填写文字评价）</span>';
+      var thumbHtml;
+      if (!r.images.length) {
+        thumbHtml = '<span style="color:#a3b0c2;font-size:11px">—</span>';
+      } else {
+        thumbHtml = '<div class="img-thumbs">' + r.images.slice(0, 2).map(function (src) {
+          return '<div class="img-thumb" onclick="openLightbox(this.querySelector(\'img\').src)"><img src="' + esc(src) + '" alt="评价图片"></div>';
+        }).join('') + (r.images.length > 2 ? '<div class="img-more" onclick="openDetail(\'' + r.no + '\')">+' + (r.images.length - 2) + '</div>' : '') + '</div>';
+      }
       var ops = '<div class="ops">' +
+        '<button class="link-btn" onclick="openDetail(\'' + r.no + '\')">详情</button>' +
         '<button class="link-btn" onclick="viewOrder(\'' + r.no + '\')">查看订单</button>' +
         (isBad ? '<button class="link-btn danger" onclick="deleteReview(\'' + r.no + '\')">删除差评</button>' : '') +
         '</div>';
@@ -198,6 +284,7 @@ document.addEventListener('DOMContentLoaded', function () {
         '<td><span class="cell-main">' + esc(r.user) + '</span><span class="cell-sub">' + esc(r.userPhone) + '</span></td>' +
         '<td>' + starHtml(r.stars) + '<div class="cell-sub" style="margin-top:5px"><span class="tag ' + tagClass(r.userScore) + '">' + tagLabel(r.userScore) + '</span>' + (r.hidden ? ' <span class="tag hidden-tag">已隐藏</span>' : '') + ' ' + esc(r.total) + ' 分</div></td>' +
         '<td><div class="review-text">' + textHtml + '</div></td>' +
+        '<td>' + thumbHtml + '</td>' +
         '<td>' + esc(r.createdAt) + '</td>' +
         '<td style="text-align:center">' + visCell + '</td>' +
         '<td>' + ops + '</td>' +
@@ -209,8 +296,120 @@ document.addEventListener('DOMContentLoaded', function () {
     location.href = 'order-detail.html?no=' + encodeURIComponent(no);
   };
 
-  window.deleteReview = function (no) {
-    if (!window.confirm('确认删除该差评？删除后该评价将不再展示，且不可恢复。')) return;
+  /* ── 评价详情 / 回复 / 大图 ── */
+  var DIM_LABELS = [
+    { key: 'punctual', label: '服务守时' },
+    { key: 'professional', label: '照护专业度' },
+    { key: 'patience', label: '耐心与沟通' },
+    { key: 'responsibility', label: '责任心与细心' },
+    { key: 'manner', label: '个人素养与习惯' }
+  ];
+  var currentDetailNo = null;
+
+  function findReview(no) {
+    return getReviews().filter(function (r) { return r.no === no; })[0] || null;
+  }
+  function starStr(score) {
+    var n = Math.max(0, Math.min(5, Math.round(Number(score) || 0)));
+    return '★'.repeat(n) + '☆'.repeat(5 - n);
+  }
+  function nowStr() {
+    var d = new Date();
+    function p(n) { return String(n).padStart(2, '0'); }
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+  /* 种子评价需要写操作时，复制完整副本到 localStorage */
+  function ensureReview(no) {
+    var reviews = readReviews();
+    if (!reviews[no]) {
+      reviews[no] = JSON.parse(JSON.stringify(SEED_REVIEWS[no] || { userScore: 0, total: 0, stars: '', text: '', createdAt: '', dimensions: null, tags: [], images: [], replies: [] }));
+    }
+    var r = reviews[no];
+    if (!Array.isArray(r.tags)) r.tags = [];
+    if (!Array.isArray(r.images)) r.images = [];
+    if (!Array.isArray(r.replies)) r.replies = [];
+    return reviews;
+  }
+
+  window.openDetail = function (no) {
+    var r = findReview(no);
+    if (!r) return;
+    currentDetailNo = no;
+
+    var dim = r.dimensions || {};
+    var dimsHtml = DIM_LABELS.map(function (d) {
+      var v = dim[d.key] != null ? dim[d.key] : r.userScore;
+      return '<div class="rv-dim"><span>' + d.label + '</span><span class="stars">' + starStr(v) + ' <b style="color:#F3B63F;margin-left:4px">' + (v != null && dim[d.key] != null ? v.toFixed(1) : (v || 0).toFixed(1)) + '</b></span></div>';
+    }).join('');
+
+    var tagsHtml = r.tags.length
+      ? r.tags.map(function (t) { return '<span class="qtag">' + esc(t) + '</span>'; }).join('')
+      : '<span class="none">用户未选择标签</span>';
+
+    var textHtml = r.text ? esc(r.text) : '<span class="none">用户未填写文字评价</span>';
+
+    var imgsHtml = r.images.length
+      ? r.images.map(function (src) { return '<div class="ph" onclick="openLightbox(this.querySelector(\'img\').src)"><img src="' + esc(src) + '" alt="评价图片"></div>'; }).join('')
+      : '<span class="none">用户未上传图片</span>';
+
+    var body = document.getElementById('detailBody');
+    body.innerHTML =
+      '<div class="rv-svc"><img class="rv-cover" src="' + esc(r.cover) + '" alt="服务封面"><div style="flex:1;min-width:0"><div class="rv-svc-name">' + esc(r.project) + '</div><div class="rv-svc-meta">护理员：' + esc(r.nurse) + ' · ' + esc(r.service) + '</div><div class="rv-svc-no">订单号：' + esc(r.no) + ' · 评价时间 ' + esc(r.createdAt) + '</div></div></div>' +
+      '<div class="rv-block"><div class="rv-block-title">综合评分</div><div style="display:flex;align-items:center;gap:10px"><span class="stars" style="font-size:18px">' + esc(r.stars || starStr(r.total)) + '</span><span class="tag ' + tagClass(r.userScore) + '">' + tagLabel(r.userScore) + '</span><b style="color:#F3B63F;font-size:15px">' + esc(r.total) + ' 分</b></div></div>' +
+      '<div class="rv-block"><div class="rv-block-title">分项评分</div><div class="rv-dims">' + dimsHtml + '</div></div>' +
+      '<div class="rv-block"><div class="rv-block-title">印象标签</div><div class="rv-tags">' + tagsHtml + '</div></div>' +
+      '<div class="rv-block"><div class="rv-block-title">文字评价</div><div class="rv-text-box">' + textHtml + '</div></div>' +
+      '<div class="rv-block"><div class="rv-block-title">评价图片（' + r.images.length + '）</div><div class="rv-imgs">' + imgsHtml + '</div></div>' +
+      '<div class="rv-block"><div class="rv-block-title">商家回复</div><div class="reply-list" id="replyList"></div><textarea class="reply-input" id="replyInput" maxlength="200" placeholder="回复用户的评价，回复后用户端可见（200字以内）"></textarea><div class="reply-foot"><button class="btn-primary" onclick="submitReply(\'' + no + '\')">发送回复</button></div></div>';
+
+    renderReplies(r.replies);
+    document.getElementById('detailMask').classList.add('show');
+  };
+
+  function renderReplies(replies) {
+    var box = document.getElementById('replyList');
+    if (!box) return;
+    if (!replies.length) {
+      box.innerHTML = '<div style="font-size:12px;color:#a3b0c2;font-weight:600;padding:2px 0 4px">暂未回复，快来回复用户吧～</div>';
+      return;
+    }
+    box.innerHTML = replies.map(function (rp) {
+      return '<div class="reply-item"><div class="reply-top"><span class="reply-by">' + esc(rp.by || '运营客服') + '</span><span class="reply-time">' + esc(rp.time || '') + '</span></div><div class="reply-txt">' + esc(rp.text || '') + '</div></div>';
+    }).join('');
+  }
+
+  window.closeDetail = function () {
+    document.getElementById('detailMask').classList.remove('show');
+    currentDetailNo = null;
+  };
+
+  window.submitReply = function (no) {
+    var input = document.getElementById('replyInput');
+    var text = input.value.trim();
+    if (!text) { toast('请输入回复内容'); return; }
+    var reviews = ensureReview(no);
+    reviews[no].replies.push({ by: '运营客服', text: text, time: nowStr() });
+    writeReviews(reviews);
+    input.value = '';
+    renderReplies(reviews[no].replies);
+    render();
+    toast('回复已发送');
+  };
+
+  window.openLightbox = function (src) {
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightbox').classList.add('show');
+  };
+  window.closeLightbox = function () {
+    document.getElementById('lightbox').classList.remove('show');
+    document.getElementById('lightboxImg').src = '';
+  };
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { window.closeLightbox(); window.closeDetail(); }
+  });
+
+  window.deleteReview = async function (no) {
+    if (!await window.showConfirm('确认删除该差评？删除后该评价将不再展示，且不可恢复。', { danger: true, okText: '删除' })) return;
     var reviews = readReviews();
     /* 如果是种子数据，给它加 deleted 标记；如果是用户端数据，直接删除 */
     if (reviews[no]) {
@@ -226,16 +425,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* 显示 / 隐藏开关：种子数据写入完整副本并打 hidden 标记 */
   window.toggleReview = function (no, visible) {
-    var reviews = readReviews();
-    if (reviews[no]) {
-      reviews[no].hidden = !visible;
-    } else {
-      var seed = SEED_REVIEWS[no] || {};
-      reviews[no] = { userScore: seed.userScore || 0, total: seed.total || 0, stars: seed.stars || '', text: seed.text || '', createdAt: seed.createdAt || '', hidden: !visible };
-    }
+    var reviews = ensureReview(no);
+    reviews[no].hidden = !visible;
     writeReviews(reviews);
     renderStats();
     render();
+    if (currentDetailNo === no) window.openDetail(no);
     toast(visible ? '评价已恢复显示' : '评价已隐藏');
   };
 

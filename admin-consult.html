@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=1280">
   <title>资讯内容 · 佑小邦运营后台</title>
   <link rel="stylesheet" href="admin-shell.css">
@@ -305,10 +306,10 @@ window.clearCover=function(){setCovers([]);};
       toast(item.enabled?'资讯已启用':'资讯已停用');
     };
 
-    window.removeItem=function(id){
+    window.removeItem=async function(id){
       var item=getList().find(function(i){return i.id===id;});
       if(!item)return;
-      if(!window.confirm('确认删除资讯「'+item.name+'」？删除后不可恢复。'))return;
+      if(!await window.showConfirm('确认删除资讯「'+item.name+'」？删除后不可恢复。',{danger:true,okText:'删除'}))return;
       write(getList().filter(function(i){return i.id!==id;}));
       renderStats();renderRows();
       toast('资讯已删除');

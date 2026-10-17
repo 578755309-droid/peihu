@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>购物车 · 佑小邦陪护</title>
   <style>
@@ -22,12 +23,6 @@
     /* 顶部导航 */
     .top-bar{display:flex;align-items:center;justify-content:center;height:56px;padding:0 14px;background:linear-gradient(135deg,#EDE6F7,#F5F3FA);position:relative}
     .top-bar h1{font-size:18px;font-weight:900;color:var(--text)}
-
-    /* 分类 Tab */
-    .cat-tabs{display:flex;background:#fff;border-bottom:1px solid var(--border);padding:0 14px}
-    .cat-tab{flex:1;text-align:center;padding:14px 0;font-size:15px;font-weight:700;color:var(--text3);cursor:pointer;position:relative}
-    .cat-tab.on{color:var(--purple)}
-    .cat-tab.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:24px;height:3px;border-radius:2px;background:var(--purple)}
 
     /* 购物车列表 */
     .cart-list{padding:14px}
@@ -84,15 +79,6 @@
     </div>
 
     <div class="top-bar"><h1>购物车</h1></div>
-
-    <!-- 分类 Tab -->
-    <div class="cat-tabs">
-      <div class="cat-tab" data-cat="service" onclick="switchCat('service')">服务商品</div>
-      <div class="cat-tab on" data-cat="mall" onclick="switchCat('mall')">商城商品</div>
-    </div>
-
-    <!-- 服务商品 -->
-    <div class="cart-list" id="cartService" style="display:none"></div>
 
     <!-- 商城商品 -->
     <div class="cart-list" id="cartMall"></div>
@@ -156,35 +142,12 @@
     {id:'fetal',name:'家用胎心仪',sub:'胎心监护 · 孕期辅助',price:299,tone:'red',image:'assets/mall/fetal-monitor.png'}
   ];
 
-  /* 服务商品数据 */
-  const SERVICE_PRODUCTS = [
-    {id:'hospital-care',name:'住院陪护',sub:'住院期间专业陪护 · 含生活照料',price:300,unit:'/天',image:'assets/icons/hospital.png'},
-    {id:'home-care',name:'居家陪护',sub:'居家场景日常照护服务',price:260,unit:'/天',image:'assets/icons/home.png'},
-    {id:'bath-care',name:'上门助浴',sub:'专业设备上门 · 双人服务',price:499,unit:'/次',image:'assets/icons/bath.png'},
-    {id:'vip',name:'贵宾陪诊',sub:'全流程就医陪同与诊后回访',price:298,unit:'/次',image:'assets/icons/vip.png'},
-    {id:'premium',name:'优享陪诊',sub:'含目标医院目标科室门诊医生预约',price:698,unit:'/次',image:'assets/icons/premium.png'},
-    {id:'medicine',name:'代买药',sub:'协助沟通问诊取药快递寄送',price:99,unit:'/次',image:'assets/icons/medicine.png'},
-    {id:'exam-booking',name:'代约检查',sub:'协助开检查单、缴费并预约检查',price:169,unit:'/次',image:'assets/icons/exam-booking.png'},
-    {id:'result',name:'代看检查结果',sub:'协助问诊、解读医嘱及后续办理',price:169,unit:'/次',image:'assets/icons/result.png'},
-    {id:'admission',name:'代办住院手续',sub:'协助获取住院证并办理入院手续',price:300,unit:'/次',image:'assets/icons/admission.png'},
-    {id:'discharge',name:'代办出院手续',sub:'协助出院、报销与资料邮寄',price:300,unit:'/次',image:'assets/icons/discharge.png'},
-    {id:'ring-pickup',name:'三环内接/送患者',sub:'安排商务车辆接送患者',price:150,unit:'/次',image:'assets/icons/ring-pickup.png'},
-    {id:'airport',name:'机场接/送患者',sub:'司机与陪诊员协同完成接送机',price:380,unit:'/次',image:'assets/icons/airport.png'},
-    {id:'report',name:'代取报告',sub:'协助取检查报告并顺丰寄送',price:89,unit:'/次',image:'assets/icons/report.png'},
-    {id:'station',name:'西安北站接送患者',sub:'安排商务车辆接送患者',price:200,unit:'/次',image:'assets/icons/station.png'}
-  ];
-
   const MALL_CART_KEY = 'ankebang_mall_cart';
-  const SVC_CART_KEY = 'ankebang_service_cart';
   let mallCart = loadCart(MALL_CART_KEY, [
     {id:'thermometer',qty:1},{id:'mask',qty:2},{id:'nebulizer',qty:1}
   ]);
-  let svcCart = loadCart(SVC_CART_KEY, [
-    {id:'bath-care',qty:1},{id:'vip',qty:1}
-  ]);
-  let selected = new Set();  // key: type+id
+  let selected = new Set();
   let usePoints = false;
-  let currentCat = 'mall';
 
   function loadCart(key, preset){
     try{
@@ -196,14 +159,10 @@
   }
   function saveCart(){
     localStorage.setItem(MALL_CART_KEY, JSON.stringify(mallCart));
-    localStorage.setItem(SVC_CART_KEY, JSON.stringify(svcCart));
   }
   function getProduct(id){ return PRODUCTS.find(function(p){return p.id===id;}); }
-  function getService(id){ return SERVICE_PRODUCTS.find(function(p){return p.id===id;}); }
-  function getCurrentCart(){ return currentCat==='mall' ? mallCart : svcCart; }
 
   function render(){
-    /* 商城商品 */
     const mallEl = document.getElementById('cartMall');
     if(!mallCart.length){
       mallEl.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 3h2l.5 3h13l1.5-7H6.5"/><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/></svg><p>购物车空空如也</p><button onclick="location.href=\'mall.html\'">去商城逛逛</button></div>';
@@ -211,16 +170,6 @@
       mallEl.innerHTML = mallCart.map(function(item){
         const p = getProduct(item.id); if(!p) return '';
         return renderItem(item, p, 'mall');
-      }).join('');
-    }
-    /* 服务商品 */
-    const svcEl = document.getElementById('cartService');
-    if(!svcCart.length){
-      svcEl.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg><p>暂无服务商品</p><button onclick="location.href=\'visit-services.html\'">去预约服务</button></div>';
-    }else{
-      svcEl.innerHTML = svcCart.map(function(item){
-        const p = getService(item.id); if(!p) return '';
-        return renderItem(item, p, 'service');
       }).join('');
     }
     updateTotal();
@@ -248,21 +197,13 @@
     '</div>';
   }
 
-  function switchCat(cat){
-    currentCat = cat;
-    document.querySelectorAll('.cat-tab').forEach(function(t){ t.classList.toggle('on', t.dataset.cat===cat); });
-    document.getElementById('cartService').style.display = cat==='service' ? '' : 'none';
-    document.getElementById('cartMall').style.display = cat==='mall' ? '' : 'none';
-  }
-
   function toggleCheck(key){
     if(selected.has(key)) selected.delete(key); else selected.add(key);
     render();
   }
 
   function changeQty(type, id, delta){
-    const list = type==='mall' ? mallCart : svcCart;
-    const item = list.find(function(i){return i.id===id;});
+    const item = mallCart.find(function(i){return i.id===id;});
     if(!item) return;
     item.qty = Math.max(1, item.qty + delta);
     saveCart();
@@ -270,9 +211,8 @@
   }
 
   function removeItem(type, id){
-    if(type==='mall') mallCart = mallCart.filter(function(i){return i.id!==id;});
-    else svcCart = svcCart.filter(function(i){return i.id!==id;});
-    selected.delete(type+':'+id);
+    mallCart = mallCart.filter(function(i){return i.id!==id;});
+    selected.delete('mall:'+id);
     saveCart();
     render();
   }
@@ -284,12 +224,6 @@
       if(selected.has('mall:'+item.id)){
         var p = getProduct(item.id);
         if(p) items.push({type:'mall',id:item.id,name:p.name,sub:p.sub,price:p.price,qty:item.qty,image:p.image,tone:p.tone});
-      }
-    });
-    svcCart.forEach(function(item){
-      if(selected.has('service:'+item.id)){
-        var s = getService(item.id);
-        if(s) items.push({type:'service',id:item.id,name:s.name,sub:s.sub,price:s.price,qty:item.qty,image:s.image,tone:'purple'});
       }
     });
     return items;
@@ -342,68 +276,34 @@
     var timeStr = now.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
 
     /* 商城商品订单 */
-    var mallItems = items.filter(function(it){return it.type==='mall';});
-    if(mallItems.length){
-      var orderNo = 'AKB-M'+now.getFullYear()+String(Math.floor(Math.random()*999999)).padStart(6,'0');
-      var code = String(Math.floor(1000+Math.random()*9000));
-      var first = mallItems[0];
-      var order = {
-        id: orderNo, status:'shipping', state:'待发货',
-        product: first.name, desc: first.sub,
-        price: String(first.price),
-        quantity: mallItems.reduce(function(s,i){return s+i.qty;},0),
-        amount: String(mallItems.reduce(function(s,i){return s+i.price*i.qty;},0)),
-        pointsDiscount: discount,
-        finalAmount: String(finalPrice),
-        date: dateStr, address:'默认收货地址',
-        image: first.image||'', tone: first.tone||'purple',
-        deliveryMethod:'instant', deliveryLabel:'立即送达', receiptCode: code,
-        deliveryStatus:'processing',
-        items: mallItems.map(function(i){return {product:i.name,desc:i.sub,price:String(i.price),quantity:i.qty,image:i.image,tone:i.tone};})
-      };
-      try{
-        var saved = JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');
-        if(!Array.isArray(saved)) saved = [];
-        saved.unshift(order);
-        localStorage.setItem('ankebang_mall_orders', JSON.stringify(saved));
-      }catch(e){}
-    }
-
-    /* 服务商品订单 */
-    var svcItems = items.filter(function(it){return it.type==='service';});
-    if(svcItems.length){
-      svcItems.forEach(function(s){
-        var svcNo = 'AKB-'+now.getFullYear()+'-'+String(Math.floor(Math.random()*999999)).padStart(6,'0');
-        var svcOrder = {
-          id: svcNo, status:'pending-service', state:'待服务',
-          type: s.name, project: s.name+'服务',
-          unit: String(s.price), unitLabel: s.id==='bath-care'?'/次':'/天',
-          quantity: 'x'+s.qty+(s.id==='bath-care'?'次':'天'),
-          person: '待填写', address: '待填写地址', addressKind: '家',
-          time: dateStr+'（待确认）', nurse: '待分配',
-          role: '护理师｜'+s.name, cert: '持证上岗', years: '5年经验',
-          amount: String(s.price*s.qty), avatar: '待',
-          actions: ['cancel','call'],
-          createdAt: Date.now(), serviceDate: dateStr
-        };
-        try{
-          var svSaved = JSON.parse(localStorage.getItem('ankebang_service_orders')||'[]');
-          if(!Array.isArray(svSaved)) svSaved = [];
-          svSaved.unshift(svcOrder);
-          localStorage.setItem('ankebang_service_orders', JSON.stringify(svSaved));
-        }catch(e){}
-      });
-    }
+    var orderNo = 'AKB-M'+now.getFullYear()+String(Math.floor(Math.random()*999999)).padStart(6,'0');
+    var code = String(Math.floor(1000+Math.random()*9000));
+    var first = items[0];
+    var order = {
+      id: orderNo, status:'shipping', state:'待发货',
+      product: first.name, desc: first.sub,
+      price: String(first.price),
+      quantity: items.reduce(function(s,i){return s+i.qty;},0),
+      amount: String(items.reduce(function(s,i){return s+i.price*i.qty;},0)),
+      pointsDiscount: discount,
+      finalAmount: String(finalPrice),
+      date: dateStr, address:'默认收货地址',
+      image: first.image||'', tone: first.tone||'purple',
+      deliveryMethod:'instant', deliveryLabel:'立即送达', receiptCode: code,
+      deliveryStatus:'processing',
+      items: items.map(function(i){return {product:i.name,desc:i.sub,price:String(i.price),quantity:i.qty,image:i.image,tone:i.tone};})
+    };
+    try{
+      var saved = JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');
+      if(!Array.isArray(saved)) saved = [];
+      saved.unshift(order);
+      localStorage.setItem('ankebang_mall_orders', JSON.stringify(saved));
+    }catch(e){}
 
     /* 从购物车移除已结算商品 */
     items.forEach(function(it){
-      if(it.type==='mall'){
-        mallCart = mallCart.filter(function(c){return c.id!==it.id;});
-        selected.delete('mall:'+it.id);
-      }else{
-        svcCart = svcCart.filter(function(c){return c.id!==it.id;});
-        selected.delete('service:'+it.id);
-      }
+      mallCart = mallCart.filter(function(c){return c.id!==it.id;});
+      selected.delete('mall:'+it.id);
     });
     saveCart();
     usePoints = false;

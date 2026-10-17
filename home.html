@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>佑小邦陪护 · 首页</title>
   <style>
@@ -148,22 +149,7 @@
       <svg viewBox="0 0 24 12" fill="none"><rect x=".6" y=".6" width="20" height="10.8" rx="2.8" stroke="currentColor" stroke-width="1.2"/><rect x="21.2" y="3.6" width="2.2" height="4.8" rx="1.1" fill="currentColor"/></svg>
     </div></div>
 
-    <!-- 顶部搜索栏 -->
-    <div class="top-bar">
-      <div class="city-pill" onclick="openCityPicker()">
-        <svg viewBox="0 0 14 14" fill="none"><path d="M7 1a4.5 4.5 0 014.5 4.5C11.5 9 7 13 7 13S2.5 9 2.5 5.5A4.5 4.5 0 017 1z" stroke="#8655C5" stroke-width="1.4"/><circle cx="7" cy="5.5" r="1.5" fill="#8655C5"/></svg>
-        <span id="currentCity">西安</span>
-        <svg class="chev" viewBox="0 0 12 12" fill="none"><path d="M3 4.5l3 3 3-3" stroke="#8655C5" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </div>
-      <div class="top-search">
-        <svg viewBox="0 0 18 18" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M12.5 12.5L16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <input placeholder="搜索服务、护理员、商城商品…" />
-      </div>
-      <div class="top-actions">
-        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="6" cy="12" r="1.5" fill="currentColor"/><circle cx="18" cy="12" r="1.5" fill="currentColor"/></svg>
-      </div>
-      <div class="top-avatar">管</div>
-    </div>
+    <!-- 顶部搜索栏（已隐藏） -->
 
     <!-- Tab -->
     <div class="top-tabs">
@@ -394,7 +380,10 @@
   function cancelBooking(e){if(e&&e.target!==document.getElementById('bookOverlay'))return;document.getElementById('bookOverlay').classList.remove('show')}
   function confirmBooking(){
     document.getElementById('bookOverlay').classList.remove('show');
-    try{var list=JSON.parse(localStorage.getItem('akb_bookings')||'[]');list.unshift({id:'BK'+Date.now(),name:'用户',phone:localStorage.getItem('ankebang_user_phone')||'138****2468',source:'banner',status:'pending',createdAt:Date.now()});localStorage.setItem('akb_bookings',JSON.stringify(list))}catch(e){}
+    var bk={id:'BK'+Date.now(),name:'用户',phone:localStorage.getItem('ankebang_user_phone')||'138****2468',source:'banner',status:'pending',createdAt:Date.now()};
+    try{var list=JSON.parse(localStorage.getItem('akb_bookings')||'[]');list.unshift(bk);localStorage.setItem('akb_bookings',JSON.stringify(list))}catch(e){}
+    /* 触发短信通知 */
+    try{var sms=JSON.parse(localStorage.getItem('akb_sms_notify')||'{}');if(sms.enabled!==false&&sms.receivers&&sms.receivers.length){var msg='【佑小邦】新预约提醒：'+bk.name+' '+bk.phone+' 提交了预约。';sms.receivers.forEach(function(r){console.log('[短信通知] → '+r.name+'('+r.phone+'): '+msg);});}}catch(e){}
     var t=document.createElement('div');t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1A1828;color:#fff;font-size:14px;font-weight:700;padding:12px 22px;border-radius:40px;box-shadow:0 8px 24px rgba(0,0,0,.22);display:flex;align-items:center;gap:9px;z-index:300;white-space:nowrap';
     t.innerHTML='预约成功！稍后平台人员将致电联系您';document.body.appendChild(t);setTimeout(function(){t.remove()},2800);
   }

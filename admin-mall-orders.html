@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=1280" />
   <title>商城订单 · 佑小邦运营后台</title>
   <link rel="stylesheet" href="admin-shell.css" />
@@ -22,7 +23,13 @@
     .mall-order-row .address-detail{font-size:11px;color:#657087}
     .mall-order-row .delivery-type{font-weight:800;color:#224CD3;white-space:nowrap}
     .mall-order-row .pay-cell{white-space:nowrap}
-    .mall-order-row .logistics{line-height:1.5;white-space:normal;font-weight:700;color:#41536D}
+    .mall-table-wrap{overflow-x:auto}
+    /* 商品分类前缀徽章（取商品分类管理中的分类） */
+    .mall-cat{display:inline-block;font-size:11px;color:#1d4ed8;background:#eef4ff;border-radius:4px;padding:1px 8px;margin-bottom:4px}
+    /* 订单类型标签：普通订单 / 续费订单 */
+    .order-type{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;white-space:nowrap}
+    .order-type.renew{background:#fff7ed;color:#b45309;border-color:#fdba74}
+    .mall-order-row .note-cell{font-size:12px;color:#5b6b8c;min-width:120px;max-width:180px;white-space:normal;word-break:break-all}
     .mall-order-row .tag{display:inline-flex;padding:5px 9px;border-radius:18px;font-size:11px;font-weight:800;white-space:nowrap}
     .mall-order-row .tag.pay{background:#FEF3C7;color:#D97706}
     .mall-order-row .tag.accepted,.mall-order-row .tag.serving{background:#E7F1FD;color:#224CD3}
@@ -85,8 +92,8 @@
 
       <!-- 表格：列结构与旧版订单管理商城订单一致 -->
       <div class="table-wrap mall-table-wrap">
-        <table class="table mall-table" style="min-width:2020px">
-          <thead><tr><th>订单信息</th><th>商品</th><th>收货人</th><th>收货地址</th><th>配送方式</th><th>物流信息</th><th>下单时间</th><th>应付金额</th><th>支付方式</th><th>实付金额</th><th>积分抵扣</th><th>实收金额</th><th>支付完成时间</th><th>状态</th><th>操作</th></tr></thead>
+        <table class="table mall-table" style="min-width:2580px">
+          <thead><tr><th>订单信息</th><th>商品</th><th>订单类型</th><th>收货人</th><th>收货地址</th><th>配送方式</th><th>下单时间</th><th>支付方式</th><th>应付金额</th><th>实付金额</th><th>积分抵扣</th><th>实收金额</th><th>支付完成时间</th><th>支付人</th><th>支付人电话</th><th>创建人</th><th>更新时间</th><th>备注</th><th>状态</th><th>操作</th></tr></thead>
           <tbody id="rows"></tbody>
         </table>
         <div class="empty-state" id="emptyState" style="display:none">暂无符合条件的订单</div>
@@ -250,23 +257,32 @@
 
   /* ── 行渲染：与旧版订单管理商城订单一致；操作仅保留 查看 + 人工介入 ── */
   function mallRow(order) {
-    var pay = payOf(order._raw);
+    var raw = order._raw || {};
+    var pay = payOf(raw);
+    var firstItem = (raw.items || [])[0] || {};
+    var cat = (M.itemCategory && firstItem.name) ? M.itemCategory(firstItem.name) : '';
+    var orderType = raw.orderType || '普通订单';
     var ops = '<button onclick="location.href=\'admin-mall-order-detail.html?no=' + encodeURIComponent(order.no) + '\'">查看</button>' +
       (order.state === '已完成' ? '' : '<button onclick="openOrderIntervention(\'' + order.no + '\')">人工介入</button>');
     return '<tr class="mall-order-row">' +
       '<td><div class="order-no">' + esc(order.no) + '</div></td>' +
-      '<td><div class="product-name">' + esc(order.product) + '</div><div class="sub">数量：' + esc(order.quantity) + ' 件</div></td>' +
+      '<td>' + (cat ? '<span class="mall-cat">' + esc(cat) + '</span>' : '') + '<div class="product-name">' + esc(order.product) + '</div><div class="sub">数量：' + esc(order.quantity) + ' 件</div></td>' +
+      '<td><span class="order-type' + (orderType === '续费订单' ? ' renew' : '') + '">' + esc(orderType) + '</span></td>' +
       '<td><div class="person-name">' + esc(order.receiver) + '</div><div class="sub">' + esc(order.receiverPhone) + '</div></td>' +
       '<td class="location"><span class="address-type">收货地址</span><span class="address-detail">' + esc(order.address) + '</span></td>' +
       '<td><div class="delivery-type">' + esc(order.deliveryType) + '</div><div class="sub">配送费：' + esc(order.deliveryFee) + '</div></td>' +
-      '<td class="logistics">' + logisticsOf(order) + '<div class="sub">' + receiptOf(order) + '</div></td>' +
       '<td>' + esc(order.orderedAt) + '</td>' +
-      '<td class="service pay-cell">' + esc(order.amount) + '</td>' +
       '<td class="pay-cell">' + esc(pay.method) + '</td>' +
+      '<td class="service pay-cell">' + esc(order.amount) + '</td>' +
       '<td class="pay-cell">' + esc(pay.actual) + '</td>' +
       '<td class="pay-cell">' + esc(pay.deduct) + '</td>' +
       '<td class="pay-cell">' + esc(pay.received) + '</td>' +
       '<td class="pay-cell">' + esc(pay.at) + '</td>' +
+      '<td class="pay-cell">' + esc(raw.payer || order.receiver || '—') + '</td>' +
+      '<td class="pay-cell">' + esc(raw.payerPhone || order.receiverPhone || '—') + '</td>' +
+      '<td class="pay-cell">' + esc(raw.creator || (raw.source === 'mini' ? '用户自主下单' : '管理员')) + '</td>' +
+      '<td class="pay-cell">' + esc(raw.updatedAt || raw.createdAt || '—') + '</td>' +
+      '<td class="note-cell">' + esc(raw.note || '—') + '</td>' +
       '<td><span class="tag ' + (TAG_CLASS[order.state] || '') + '">' + esc(order.state) + '</span></td>' +
       '<td><div class="op">' + ops + '</div></td>' +
     '</tr>';
@@ -298,13 +314,15 @@
   window.exportOrders = function () {
     var list = M.getOrders().filter(function (o) { return current === 'all' || (STATE_TO_LEGACY[o.state] || o.state) === current; });
     M.exportCsv('商城订单列表.csv',
-      ['订单号', '下单时间', '用户', '联系方式', '收货地址', '配送方式', '商品明细', '件数', '应付金额', '支付方式', '实付金额', '积分抵扣', '实收金额', '支付完成时间', '收货码', '状态', '来源', '分销员', '分销佣金', '备注'],
+      ['订单号', '下单时间', '订单类型', '用户', '联系方式', '收货地址', '配送方式', '商品明细', '商品分类', '件数', '支付方式', '应付金额', '实付金额', '积分抵扣', '实收金额', '支付完成时间', '支付人', '支付人电话', '创建人', '更新时间', '收货码', '状态', '来源', '分销员', '分销佣金', '备注'],
       list.map(function (o) {
         var c = M.distCommission(o);
         var pay = payOf(o);
-        return [o.no, o.createdAt || o.date, o.userName, o.userPhone, o.address, o.deliveryLabel,
-          o.items.map(function (i) { return i.name + ' x' + i.quantity; }).join('；'),
-          o.quantity, o.amount, pay.method, pay.actual, pay.deduct, pay.received, pay.at, o.receiptCode, o.state, o.source === 'mini' ? '小程序实时单' : '后台',
+        var firstItem = (o.items || [])[0] || {};
+        var cat = (M.itemCategory && firstItem.name) ? M.itemCategory(firstItem.name) : '';
+        return [o.no, o.createdAt || o.date, o.orderType || '普通订单', o.userName, o.userPhone, o.address, o.deliveryLabel,
+          o.items.map(function (i) { return i.name + ' x' + i.quantity; }).join('；'), cat,
+          o.quantity, pay.method, o.amount, pay.actual, pay.deduct, pay.received, pay.at, o.payer || o.userName, o.payerPhone || o.userPhone, o.creator || (o.source === 'mini' ? '用户自主下单' : '管理员'), o.updatedAt || o.createdAt || '', o.receiptCode, o.state, o.source === 'mini' ? '小程序实时单' : '后台',
           c ? c.name : '', c ? c.amount.toFixed(2) : '', o.note];
       }));
   };

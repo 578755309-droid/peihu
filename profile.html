@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
+<script src="common-ui.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>我的 · 佑小邦</title>
   <style>
@@ -49,15 +50,15 @@
     .status-bar {
       display: flex; justify-content: space-between; align-items: center;
       padding: 12px 20px 6px;
-      background: linear-gradient(135deg,#8655C5,#6B3FAA);
+      background: linear-gradient(135deg,#2DD4BF,#10B981);
     }
     .status-bar span { font-size: 12px; font-weight: 700; color: #fff; }
     .status-right { display: flex; align-items: center; gap: 5px; }
 
     /* Hero */
     .hero {
-      background: linear-gradient(160deg,#8655C5 0%,#6B3FAA 100%);
-      padding: 20px 20px 36px;
+      background: linear-gradient(135deg,#2DD4BF 0%,#10B981 100%);
+      padding: 12px 20px 40px;
       position: relative; overflow: hidden;
     }
     .hero::after {
@@ -65,52 +66,48 @@
       width: 240px; height: 240px; border-radius: 50%;
       background: rgba(255,255,255,.06); top: -80px; right: -60px; pointer-events: none;
     }
-    .hero-row { display: flex; align-items: center; gap: 16px; }
+    .hero-top-actions { position: absolute; top: 8px; right: 16px; display: flex; gap: 10px; align-items: center; z-index: 2; }
+    .hero-top-actions svg { width: 22px; height: 22px; color: rgba(255,255,255,.85); }
+    .hero-row { display: flex; align-items: center; gap: 16px; position: relative; z-index: 1; }
     .avatar-wrap { position: relative; flex-shrink: 0; }
     .avatar {
-      width: 72px; height: 72px; border-radius: 50%;
-      background: linear-gradient(140deg,#C98FFF,#9060D0);
+      width: 64px; height: 64px; border-radius: 50%;
+      background: linear-gradient(140deg,#FCD34D,#F59E0B);
       display: grid; place-items: center;
-      border: 3px solid rgba(255,255,255,.4);
-      font-size: 28px; font-weight: 900; color: #fff;
-      box-shadow: 0 6px 20px rgba(0,0,0,.2);
+      border: 3px solid rgba(255,255,255,.45);
+      font-size: 24px; font-weight: 900; color: #fff;
+      box-shadow: 0 6px 20px rgba(0,0,0,.15);
     }
-    .avatar-edit {
-      position: absolute; bottom: 0; right: 0;
-      width: 22px; height: 22px; border-radius: 50%;
-      background: #fff; display: grid; place-items: center;
-      border: 2px solid var(--purple-light); cursor: pointer;
-    }
-    .avatar-edit svg { width: 11px; height: 11px; }
     .hero-info { flex: 1; min-width: 0; }
-    .hero-name { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 4px; }
-    .hero-id { font-size: 12px; color: rgba(255,255,255,.6); font-weight: 600; margin-bottom: 8px; }
-    .hero-badges { display: flex; gap: 6px; flex-wrap: wrap; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      background: rgba(255,255,255,.15); border-radius: 20px;
-      padding: 3px 10px; font-size: 11px; font-weight: 700; color: rgba(255,255,255,.9);
+    .hero-name-row { display: flex; align-items: center; gap: 8px; }
+    .hero-name { font-size: 18px; font-weight: 900; color: #fff; }
+    .hero-id-inline { font-size: 13px; color: rgba(255,255,255,.75); font-weight: 700; }
+    .hero-cert {
+      display: inline-block; margin-top: 6px;
+      background: #F59E0B; border-radius: 4px;
+      padding: 2px 7px; font-size: 11px; font-weight: 800; color: #fff;
     }
-    .badge svg { width: 11px; height: 11px; }
+    .hero-arrow { color: rgba(255,255,255,.6); flex-shrink: 0; margin-left: auto; }
+    .hero-arrow svg { width: 20px; height: 20px; }
 
     /* Stats card */
     .stats-card {
       background: var(--card); border-radius: var(--r-lg);
       margin: -20px 14px 0; position: relative; z-index: 2;
-      box-shadow: 0 8px 28px rgba(107,63,170,.15);
-      display: flex;
+      box-shadow: 0 8px 28px rgba(16,185,129,.12);
+      display: flex; overflow: hidden;
     }
     .stat-item {
-      flex: 1; padding: 16px 8px; display: flex; flex-direction: column;
-      align-items: center; gap: 3px; cursor: pointer;
+      flex: 1; padding: 14px 16px; display: flex; flex-direction: column;
+      align-items: center; gap: 4px; cursor: pointer;
       -webkit-tap-highlight-color: transparent; transition: background .12s;
-      border-radius: var(--r-lg);
     }
     .stat-item:active { background: var(--purple-bg); }
-    .stat-item + .stat-item { border-left: 1px solid var(--border); border-radius: 0; }
-    .stat-item:last-child { border-radius: 0 var(--r-lg) var(--r-lg) 0; }
-    .stat-num { font-size: 22px; font-weight: 900; color: var(--purple); }
-    .stat-lbl { font-size: 11px; font-weight: 700; color: var(--text3); }
+    .stat-item + .stat-item { border-left: 1px solid var(--border); }
+    .stat-num { font-size: 20px; font-weight: 900; color: var(--text); }
+    .stat-lbl { font-size: 12px; font-weight: 700; color: var(--text2); }
+    .stat-sub { font-size: 10px; color: var(--text3); }
+    .stat-tag { display: inline-block; background: #F59E0B; border-radius: 3px; padding: 1px 5px; font-size: 10px; font-weight: 800; color: #fff; margin-top: 2px; }
 
     /* Section */
     .section { margin: 16px 14px 0; }
@@ -150,6 +147,26 @@
       background: var(--red); color: #fff; font-size: 10px; font-weight: 800;
       border-radius: 20px; padding: 2px 7px; margin-right: 4px;
     }
+
+    /* Invite banner */
+    .invite-banner {
+      margin: 16px 14px 0; border-radius: var(--r-lg); overflow: hidden;
+      background: linear-gradient(135deg,#F97316,#EA580C);
+      display: flex; align-items: center; padding: 18px 20px;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      position: relative; box-shadow: 0 6px 20px rgba(249,115,22,.25);
+    }
+    .invite-banner:active { filter: brightness(.93); }
+    .invite-text { flex: 1; color: #fff; }
+    .invite-title { font-size: 17px; font-weight: 900; }
+    .invite-sub { font-size: 12px; font-weight: 700; opacity: .85; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+    .invite-sub svg { width: 14px; height: 14px; }
+    .invite-icon { width: 52px; height: 52px; flex-shrink: 0; margin-left: 12px; }
+    .invite-icon svg { width: 100%; height: 100%; }
+
+    /* Logout */
+    .logout-wrap { margin: 28px 14px 0; text-align: center; }
+    .logout-btn { border: 0; background: none; color: var(--text3); font: 700 14px inherit; cursor: pointer; padding: 10px 20px; }
 
     /* Points card */
     .points-card {
@@ -250,279 +267,105 @@
 
       <!-- Hero -->
       <div class="hero">
+        <div class="hero-top-actions">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="6" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="18" cy="12" r="1.5" fill="currentColor"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+        </div>
         <div class="hero-row">
-          <div class="avatar-wrap">
-            <div class="avatar">用</div>
-            <div class="avatar-edit">
-              <svg viewBox="0 0 12 12" fill="none">
-                <path d="M8.5 1.5L10.5 3.5L4 10H2v-2L8.5 1.5z" stroke="#8655C5" stroke-width="1.2" stroke-linejoin="round"/>
-              </svg>
-            </div>
-          </div>
+          <div class="avatar-wrap"><div class="avatar">章</div></div>
           <div class="hero-info">
-            <div class="hero-name">用户</div>
-            <div class="hero-id">ID：AKB-20241001</div>
-            <div class="hero-badges">
-              <div class="badge">
-                <svg viewBox="0 0 12 12" fill="none">
-                  <circle cx="6" cy="6" r="5" fill="#FFD700" opacity=".9"/>
-                  <path d="M4 6l1.5 1.5L8 4" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                已实名
-              </div>
-              <div class="badge">
-                <svg viewBox="0 0 12 12" fill="none">
-                  <path d="M6 1l1.2 2.8 3 .3-2.2 2 .7 3L6 7.8 3.3 9.1l.7-3L1.8 4.1l3-.3z" fill="#FFD700"/>
-                </svg>
-                普通会员
-              </div>
+            <div class="hero-name-row">
+              <span class="hero-name">章北海</span>
+              <span class="hero-id-inline">10001000</span>
             </div>
+            <span class="hero-cert">已认证</span>
           </div>
+          <div class="hero-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
         </div>
       </div>
 
       <!-- Stats -->
       <div class="stats-card">
-        <div class="stat-item" onclick="location.href='orders.html'">
-          <span class="stat-num">3</span>
-          <span class="stat-lbl">全部订单</span>
+        <div class="stat-item" onclick="location.href='my-cards.html'">
+          <span class="stat-num">1张</span>
+          <span class="stat-lbl">卡包</span>
+          <span class="stat-sub" id="cardCountSub">9次服务</span>
         </div>
-        <div class="stat-item" onclick="location.href='orders.html'">
-          <span class="stat-num">1</span>
-          <span class="stat-lbl">服务中</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num">2</span>
-          <span class="stat-lbl">已完成</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num">0</span>
-          <span class="stat-lbl">收藏</span>
+        <div class="stat-item" onclick="location.href='points.html'">
+          <span class="stat-num" id="profilePointsNum">123</span>
+          <span class="stat-lbl">积分</span>
+          <span class="stat-tag">去使用</span>
         </div>
       </div>
 
-      <!-- Order shortcuts -->
+      <!-- 我的订单 -->
       <div class="section">
         <div class="order-shortcuts">
           <div class="order-shortcuts-head">
             <span class="order-shortcuts-title">我的订单</span>
-            <button class="order-all" id="orderAllLink" onclick="openProfileOrders()">查看订单<svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="order-all" onclick="location.href='orders.html'">全部<svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           </div>
-          <div class="order-type-switch" role="tablist" aria-label="订单类型">
-            <button class="order-type-option on" type="button" role="tab" aria-selected="true" data-order-type="service" onclick="switchProfileOrderType('service')">服务订单</button>
-            <button class="order-type-option" type="button" role="tab" aria-selected="false" data-order-type="mall" onclick="switchProfileOrderType('mall')">商城订单</button>
-          </div>
-          <div class="order-shortcuts-list" data-order-list="service">
+          <div class="order-shortcuts-list">
             <button class="order-shortcut" onclick="location.href='orders.html?tab=payment'"><span class="shortcut-ico"><svg viewBox="0 0 28 28" fill="none"><rect x="5" y="6" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M5 11h18M9 16h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="shortcut-name">待支付</span></button>
             <button class="order-shortcut" onclick="location.href='orders.html?tab=pending-service'"><span class="shortcut-ico"><svg viewBox="0 0 28 28" fill="none"><path d="M8 7h12v15H8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M11 4v5M17 4v5M11 14h6M11 18h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="shortcut-name">待服务</span></button>
             <button class="order-shortcut" onclick="location.href='orders.html?tab=active'"><span class="shortcut-ico"><svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M14 9v5l3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="shortcut-name">服务中</span></button>
             <button class="order-shortcut" onclick="location.href='orders.html?tab=done'"><span class="shortcut-ico"><svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M10 14l2.6 2.7L18.5 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="shortcut-name">已完成</span></button>
-            <button class="order-shortcut" onclick="location.href='orders.html?tab=refund'"><span class="shortcut-ico"><svg viewBox="0 0 28 28" fill="none"><path d="M19 9.5A8 8 0 006.5 12L4 14.5m0 0L7.5 15m-3.5-.5L4.5 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 18.5A8 8 0 0021.5 16l2.5-2.5m0 0L20.5 13m3.5.5L23.5 17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="shortcut-name">退款售后</span></button>
-          </div>
-          <div class="order-shortcuts-list" data-order-list="mall" hidden>
-            <button class="order-shortcut" onclick="location.href='orders.html?type=mall&tab=all'"><span class="shortcut-ico"><svg viewBox="0 0 28 28" fill="none"><path d="M5 8h18l-1.4 14H6.4L5 8zM9 9V7a5 5 0 0110 0v2" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/></svg></span><span class="shortcut-name">全部</span></button>
-            <button class="order-shortcut" onclick="location.href='orders.html?type=mall&tab=payment'"><span class="shortcut-ico"><svg viewBox="0 0 28 28" fill="none"><rect x="4.5" y="6" width="19" height="16" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M5 11h18M9 16h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="shortcut-name">待付款</span></button>
-            <button class="order-shortcut" onclick="location.href='orders.html?type=mall&tab=shipping'"><span class="shortcut-ico"><svg viewBox="0 0 28 28" fill="none"><path d="M4 7h13v13H4zM17 11h4l3 3v6h-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="9" cy="21" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="20" cy="21" r="2" stroke="currentColor" stroke-width="1.5"/></svg></span><span class="shortcut-name">待发货</span></button>
-            <button class="order-shortcut" onclick="location.href='orders.html?type=mall&tab=receiving'"><span class="shortcut-ico"><svg viewBox="0 0 28 28" fill="none"><path d="M4 7h13v13H4zM17 11h4l3 3v6h-7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 11v5m-2.5-2.5L9 16l2.5-2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="shortcut-name">待收货</span></button>
-            <button class="order-shortcut" onclick="location.href='orders.html?type=mall&tab=done'"><span class="shortcut-ico"><svg viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="8.5" stroke="currentColor" stroke-width="1.7"/><path d="M10 14l2.6 2.7L18.5 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="shortcut-name">已完成</span></button>
+            <button class="order-shortcut" onclick="location.href='orders.html?tab=refund'"><span class="shortcut-ico"><svg viewBox="0 0 28 28" fill="none"><path d="M19 9.5A8 8 0 006.5 12L4 14.5m0 0L7.5 15m-3.5-.5L4.5 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 18.5A8 8 0 0021.5 16l2.5-2.5m0 0L20.5 13m3.5.5L23.5 17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="shortcut-name">退款/售后</span></button>
           </div>
         </div>
       </div>
 
-      <!-- Points -->
-      <div class="section">
-        <div class="points-card" onclick="location.href='points.html'">
-          <div class="points-ico">
-            <svg viewBox="0 0 26 26" fill="none">
-              <circle cx="13" cy="13" r="8.5" stroke="#fff" stroke-width="1.8"/>
-              <path d="M13 8.5v9M16 10.5c-.7-.7-1.7-1.1-3-1.1-1.6 0-2.7.8-2.7 2 0 3 5.4 1.3 5.4 4.1 0 1.2-1.1 2.1-2.8 2.1-1.3 0-2.5-.5-3.2-1.2" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <div class="points-info">
-            <div class="points-title">我的积分</div>
-            <div class="points-num" id="profilePoints">0</div>
-          </div>
-          <div class="points-sub">邀请好友得积分</div>
-          <div class="points-arrow">
-            <svg viewBox="0 0 18 18" fill="none">
-              <path d="M7 5l4 4-4 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
+      <!-- 邀请好友横幅 -->
+      <div class="invite-banner" onclick="location.href='invite-friends.html'">
+        <div class="invite-text">
+          <div class="invite-title">邀请好友</div>
+          <div class="invite-sub">邀请好友得积分<svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+        <div class="invite-icon">
+          <svg viewBox="0 0 52 52" fill="none"><rect x="6" y="14" width="40" height="28" rx="4" fill="rgba(255,255,255,.15)"/><rect x="10" y="10" width="32" height="6" rx="2" fill="rgba(255,255,255,.2)"/><circle cx="18" cy="28" r="3" fill="rgba(255,255,255,.25)"/><circle cx="34" cy="28" r="3" fill="rgba(255,255,255,.25)"/><path d="M20 38h12" stroke="rgba(255,255,255,.3)" stroke-width="2" stroke-linecap="round"/></svg>
         </div>
       </div>
 
-      <!-- 服务管理 -->
+      <!-- 菜单 -->
       <div class="section">
-        <div class="sec-title">服务管理</div>
         <div class="menu-card">
-          <div class="menu-item" onclick="location.href='my-cards.html'">
-            <div class="menu-ico orange">
-              <svg viewBox="0 0 20 20" fill="none">
-                <rect x="2" y="5" width="16" height="11" rx="2.5" stroke="#F59E0B" stroke-width="1.6"/>
-                <path d="M2 9h16" stroke="#F59E0B" stroke-width="1.6"/>
-                <path d="M10 5v11" stroke="#F59E0B" stroke-width="1.2" stroke-dasharray="2 2"/>
-              </svg>
-            </div>
-            <div class="menu-text">
-              <div class="menu-name">我的卡包</div>
-              <div class="menu-sub">上门助浴兑换卡，按次免费兑换</div>
-            </div>
-            <span class="menu-badge" id="cardBadge" style="display:none"></span>
-            <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-          <a class="menu-item" href="nurses.html">
-            <div class="menu-ico blue">
-              <svg viewBox="0 0 20 20" fill="none">
-                <circle cx="10" cy="7" r="3.5" stroke="#3B82F6" stroke-width="1.6"/>
-                <path d="M3.5 17c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5" stroke="#3B82F6" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div class="menu-text">
-              <div class="menu-name">常用护理员</div>
-              <div class="menu-sub">再次选择熟悉的护理员</div>
-            </div>
-            <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </a>
-        </div>
-      </div>
-
-      <!-- 账户设置 -->
-      <div class="section">
-        <div class="sec-title">账户与设置</div>
-        <div class="menu-card">
-          <div class="menu-item" onclick="location.href='patients.html'">
-            <div class="menu-ico purple">
-              <svg viewBox="0 0 20 20" fill="none">
-                <circle cx="8" cy="6.5" r="3" stroke="#8655C5" stroke-width="1.6"/>
-                <path d="M2.5 16.5c.7-3 2.7-4.7 5.5-4.7s4.8 1.7 5.5 4.7" stroke="#8655C5" stroke-width="1.6" stroke-linecap="round"/>
-                <path d="M15.5 8v5m-2.5-2.5h5" stroke="#8655C5" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div class="menu-text">
-              <div class="menu-name">就诊人管理</div>
-              <div class="menu-sub">维护就诊人信息，下单时快速选择</div>
-            </div>
-            <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
           <div class="menu-item" onclick="location.href='addresses.html'">
-            <div class="menu-ico orange">
-              <svg viewBox="0 0 20 20" fill="none">
-                <path d="M10 2a5.5 5.5 0 015.5 5.5C15.5 12 10 18 10 18S4.5 12 4.5 7.5A5.5 5.5 0 0110 2z" stroke="#F59E0B" stroke-width="1.6"/>
-                <circle cx="10" cy="7.5" r="2" fill="#F59E0B" opacity=".8"/>
-              </svg>
-            </div>
-            <div class="menu-text">
-              <div class="menu-name">服务地址</div>
-            <div class="menu-sub">管理家与医院服务地址</div>
-            </div>
-            <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-          <div class="menu-item" onclick="location.href='invite-friends.html'">
-            <div class="menu-ico green">
-              <svg viewBox="0 0 20 20" fill="none">
-                <circle cx="8" cy="7" r="3" stroke="#22C55E" stroke-width="1.6"/>
-                <path d="M2.5 17c.7-3 2.7-4.7 5.5-4.7s4.8 1.7 5.5 4.7" stroke="#22C55E" stroke-width="1.6" stroke-linecap="round"/>
-                <path d="M15.5 6.5v5M13 9h5" stroke="#22C55E" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div class="menu-text">
-              <div class="menu-name">邀请好友</div>
-              <div class="menu-sub">好友成功注册，即得 30 积分</div>
-            </div>
-            <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-          <div class="menu-item" onclick="alert('通知设置功能即将上线')">
-            <div class="menu-ico purple">
-              <svg viewBox="0 0 20 20" fill="none">
-                <path d="M10 3a5 5 0 00-5 5v4l-1.5 2h13L15 12V8a5 5 0 00-5-5z" stroke="#8655C5" stroke-width="1.6" stroke-linejoin="round"/>
-                <path d="M8.5 16.5a1.5 1.5 0 003 0" stroke="#8655C5" stroke-width="1.4" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div class="menu-text">
-              <div class="menu-name">消息通知</div>
-              <div class="menu-sub">订单状态、服务提醒</div>
-            </div>
-            <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-          <div class="menu-item" onclick="alert('隐私设置功能即将上线')">
-            <div class="menu-ico gray">
-              <svg viewBox="0 0 20 20" fill="none">
-                <rect x="4" y="9" width="12" height="9" rx="2.5" stroke="#6B7280" stroke-width="1.6"/>
-                <path d="M7 9V7a3 3 0 016 0v2" stroke="#6B7280" stroke-width="1.6" stroke-linecap="round"/>
-                <circle cx="10" cy="13.5" r="1.2" fill="#6B7280"/>
-              </svg>
-            </div>
-            <div class="menu-text">
-              <div class="menu-name">隐私设置</div>
-              <div class="menu-sub">个人信息与数据管理</div>
-            </div>
-            <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 帮助 -->
-      <div class="section">
-        <div class="sec-title">帮助与关于</div>
-        <div class="menu-card">
-          <div class="menu-item" onclick="alert('帮助中心功能即将上线')">
             <div class="menu-ico blue">
               <svg viewBox="0 0 20 20" fill="none">
-                <circle cx="10" cy="10" r="7.5" stroke="#3B82F6" stroke-width="1.6"/>
-                <path d="M10 14v-1" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"/>
-                <path d="M7.5 8a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 3.5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M10 2a5.5 5.5 0 015.5 5.5C15.5 12 10 18 10 18S4.5 12 4.5 7.5A5.5 5.5 0 0110 2z" stroke="#3B82F6" stroke-width="1.6"/>
+                <circle cx="10" cy="7.5" r="2" fill="#3B82F6" opacity=".8"/>
               </svg>
             </div>
-            <div class="menu-text">
-              <div class="menu-name">帮助中心</div>
-              <div class="menu-sub">常见问题解答</div>
-            </div>
+            <div class="menu-text"><div class="menu-name">常用地址</div></div>
             <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           </div>
-          <div class="menu-item" onclick="alert('感谢您的使用！如有意见请联系客服 400-888-XXXX')">
+          <div class="menu-item" onclick="alert('感谢您的使用！如有意见请联系客服 400-888-9999')">
+            <div class="menu-ico orange">
+              <svg viewBox="0 0 20 20" fill="none">
+                <path d="M2 14V7a5 5 0 0110 0v1h1a3 3 0 010 6H3a3 3 0 01-1-5.83" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M10 14l1.5 3L13 14" stroke="#F59E0B" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="menu-text"><div class="menu-name">意见反馈</div></div>
+            <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="menu-item" onclick="alert('安科邦陪护服务\n版本 V1.0\n© 2026 安科邦健康科技')">
             <div class="menu-ico green">
               <svg viewBox="0 0 20 20" fill="none">
-                <path d="M2 14V7a5 5 0 0110 0v1h1a3 3 0 010 6H3a3 3 0 01-1-5.83" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round"/>
-                <path d="M10 14l1.5 3L13 14" stroke="#22C55E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="10" cy="7" r="3" stroke="#22C55E" stroke-width="1.6"/>
+                <path d="M2.5 17c.7-3 2.7-4.7 5.5-4.7s4.8 1.7 5.5 4.7" stroke="#22C55E" stroke-width="1.6" stroke-linecap="round"/>
               </svg>
             </div>
-            <div class="menu-text">
-              <div class="menu-name">意见反馈</div>
-              <div class="menu-sub">帮助我们持续改进</div>
-            </div>
-            <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          </div>
-          <div class="menu-item" onclick="alert('佑小邦服务\n版本 1.0.0\n© 2024 佑小邦健康科技')">
-            <div class="menu-ico gray">
-              <svg viewBox="0 0 20 20" fill="none">
-                <circle cx="10" cy="10" r="7.5" stroke="#6B7280" stroke-width="1.6"/>
-                <path d="M10 6v4l2.5 2.5" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div class="menu-text">
-              <div class="menu-name">关于我们</div>
-              <div class="menu-sub">版本 1.0.0</div>
-            </div>
+            <div class="menu-text"><div class="menu-name">关于我们</div></div>
+            <span style="font-size:12px;color:var(--text3);font-weight:700">V1.0</span>
             <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
           </div>
         </div>
       </div>
 
       <!-- 退出 -->
-      <div class="section">
-        <div class="menu-card">
-          <div class="menu-item" onclick="if(confirm('确认退出登录？'))location.href='index.html'">
-            <div class="menu-ico red">
-              <svg viewBox="0 0 20 20" fill="none">
-                <path d="M7.5 10h9M13.5 7l3 3-3 3" stroke="#EF4444" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M10 4H4.5A1.5 1.5 0 003 5.5v9A1.5 1.5 0 004.5 16H10" stroke="#EF4444" stroke-width="1.6" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div class="menu-text">
-              <div class="menu-name" style="color:var(--red)">退出登录</div>
-            </div>
-          </div>
-        </div>
+      <div class="logout-wrap">
+        <button class="logout-btn" onclick="showConfirm('确认退出登录？').then(function(ok){if(ok)location.href='index.html'})">退出登录</button>
       </div>
 
       <div class="bottom-space"></div>
@@ -556,35 +399,18 @@
   </div><!-- .phone -->
 </div><!-- .frame -->
 
-<script>
-  let profileOrderType = 'service';
-  function switchProfileOrderType(type) {
-    profileOrderType = type === 'mall' ? 'mall' : 'service';
-    document.querySelectorAll('.order-type-option').forEach(function (tab) {
-      const active = tab.dataset.orderType === profileOrderType;
-      tab.classList.toggle('on', active);
-      tab.setAttribute('aria-selected', String(active));
-    });
-    document.querySelectorAll('[data-order-list]').forEach(function (list) {
-      list.hidden = list.dataset.orderList !== profileOrderType;
-    });
-  }
-  function openProfileOrders() {
-    location.href = profileOrderType === 'mall'
-      ? 'orders.html?type=mall&tab=all'
-      : 'orders.html?tab=payment';
-  }
-</script>
 <script src="points-store.js"></script>
 <script>
-  document.getElementById('profilePoints').textContent = AKBPoints.get().balance;
-  /* 我的卡包：剩余次数角标 */
+  /* 积分 */
+  document.getElementById('profilePointsNum').textContent = AKBPoints.get().balance;
+  /* 卡包剩余次数 */
   (function () {
     try {
       var cards = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]');
       if (!Array.isArray(cards)) return;
+      var total = cards.length;
       var left = cards.reduce(function (sum, c) { return sum + Math.max(0, (c.total || 10) - (c.used || 0)); }, 0);
-      if (left > 0) { var b = document.getElementById('cardBadge'); b.textContent = '剩 ' + left + ' 次'; b.style.display = ''; }
+      document.getElementById('cardCountSub').textContent = total + '张卡包 · ' + left + '次服务';
     } catch (e) {}
   })();
 </script>
