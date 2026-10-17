@@ -628,66 +628,49 @@
     .needs-price-card { display:block; }
     .needs-price-card.ready { display:block; }
 
-    /* ── Payment success overlay ── */
+    /* ── Payment success overlay（整页，与商城订单一致）── */
     .pay-overlay {
       position:fixed; inset:auto; z-index:100;
-      background:rgba(30,20,50,.45);
-      display:flex; align-items:flex-end; justify-content:center;
+      background:var(--purple-bg);
       opacity:0; pointer-events:none;
       transition:opacity .28s;
     }
     .pay-overlay.show { opacity:1; pointer-events:auto; }
     .pay-sheet {
-      width:100%; max-width:430px;
-      background:#fff; border-radius:28px 28px 0 0;
-      padding:32px 28px calc(36px + env(safe-area-inset-bottom));
-      transform:translateY(100%);
-      transition:transform .32s cubic-bezier(.22,.88,.36,1);
-      text-align:center;
+      width:100%; min-height:100%;
+      background:var(--purple-bg);
+      display:flex; flex-direction:column;
+      text-align:center; overflow:auto;
     }
-    .pay-overlay.show .pay-sheet { transform:translateY(0); }
+    .pay-success-top { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:42px 20px 20px; }
     .pay-circle {
-      width:76px; height:76px; border-radius:50%;
-      background:linear-gradient(135deg,#7FD98A,#2EAA5A);
+      width:66px; height:66px; border-radius:50%;
+      background:linear-gradient(135deg,#34D399,#10B981);
       display:grid; place-items:center;
-      margin:0 auto 18px;
-      box-shadow:0 8px 28px rgba(46,170,90,.28);
+      margin-bottom:16px;
+      box-shadow:0 8px 28px rgba(16,185,129,.28);
       animation:popIn .4s .15s both cubic-bezier(.34,1.56,.64,1);
     }
     @keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
-    .pay-circle svg { width:38px; height:38px; }
-    .pay-title { font-size:22px; font-weight:900; color:var(--text); margin-bottom:6px; }
-    .pay-sub   { font-size:14px; color:var(--text2); line-height:1.6; margin-bottom:24px; }
+    .pay-circle svg { width:32px; height:32px; }
+    .pay-title { font-size:20px; font-weight:900; color:var(--text); margin-bottom:8px; }
+    .pay-sub   { font-size:13px; color:var(--text2); line-height:1.65; max-width:300px; }
     .pay-card  {
-      background:var(--purple-bg); border-radius:16px;
-      padding:16px 18px; margin-bottom:24px; text-align:left;
+      background:#fff; border-radius:16px;
+      padding:4px 18px; margin:20px 16px 0; text-align:left;
+      box-shadow:var(--sh);
     }
-    .pay-row   { display:flex; justify-content:space-between; align-items:center; padding:5px 0; }
+    .pay-row   { display:flex; justify-content:space-between; align-items:center; padding:12px 0; }
     .pay-row + .pay-row { border-top:1px solid var(--border); }
-    .pay-key   { font-size:13px; color:var(--text3); font-weight:600; }
-    .pay-val   { max-width:62%; font-size:13px; color:var(--text); font-weight:700; text-align:right; overflow-wrap:anywhere; }
+    .pay-key   { font-size:13px; color:var(--text3); font-weight:600; flex-shrink:0; margin-right:12px; }
+    .pay-val   { font-size:13px; color:var(--text); font-weight:700; text-align:right; overflow-wrap:anywhere; }
     .pay-val.purple { color:var(--purple); font-size:15px; font-weight:900; }
-    .pay-home  {
-      width:100%; height:52px; border-radius:16px; border:none;
-      background:linear-gradient(135deg,#9060D0 0%,#6B3FAA 100%);
-      color:#fff; font-size:16px; font-weight:800; letter-spacing:.5px;
-      font-family:inherit; cursor:pointer;
-      box-shadow:0 8px 22px rgba(107,63,170,.25);
-      -webkit-tap-highlight-color:transparent;
-      transition:transform .12s, filter .12s;
-    }
-    .pay-home:active { transform:scale(.98); filter:brightness(.95); }
-    .pay-home-ghost {
-      width:100%; height:44px; border-radius:14px; border:1.5px solid var(--border);
-      background:#fff; color:var(--text2); font-size:14px; font-weight:600;
-      margin-top:10px; cursor:pointer; letter-spacing:.5px;
-      -webkit-tap-highlight-color:transparent;
-      transition:transform .12s, filter .12s;
-    }
-    .pay-home-ghost:active { transform:scale(.98); filter:brightness(.95); }
-    .pay-btn-row { display:flex; gap:10px; margin-top:16px; }
-    .pay-btn-row .pay-home { margin-top:0; flex:1; }
-    .pay-order-num { font-size:12px; color:var(--text3); margin-top:14px; }
+    .pay-val.deduct { color:#EF4444; }
+    .pay-btns { display:flex; gap:12px; padding:14px 16px calc(14px + env(safe-area-inset-bottom)); background:#fff; border-top:1px solid var(--border); }
+    .pay-btns button { flex:1; height:46px; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; }
+    .pay-btn-ghost { border:1px solid #C5BDD8; background:#fff; color:var(--purple); }
+    .pay-btn-primary { border:0; background:linear-gradient(135deg,#9060D0,#6B3FAA); color:#fff; }
+    .pay-order-num { font-size:12px; color:var(--text3); text-align:center; padding:12px 0 4px; }
   </style>
 </head>
 <body>
@@ -1149,13 +1132,15 @@
   <!-- Payment success overlay -->
   <div class="pay-overlay" id="payOverlay">
     <div class="pay-sheet">
-      <div class="pay-circle">
-        <svg viewBox="0 0 38 38" fill="none">
-          <path d="M9 19l7 7 13-13" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+      <div class="pay-success-top">
+        <div class="pay-circle">
+          <svg viewBox="0 0 38 38" fill="none">
+            <path d="M9 19l7 7 13-13" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="pay-title">支付成功</div>
+        <div class="pay-sub">订单已提交，护理员将在<strong>30分钟内</strong>与您确认</div>
       </div>
-      <div class="pay-title">支付成功</div>
-      <div class="pay-sub">订单已提交，护理员将在<strong>30分钟内</strong>与您确认</div>
       <div class="pay-card">
         <div class="pay-row" id="payBath10Tip" style="display:none">
         <span class="pay-key">卡包提醒</span>
@@ -1193,26 +1178,33 @@
           <span class="pay-key">服务时长</span>
           <span class="pay-val" id="payDur">2026-09-02（4小时）</span>
         </div>
+        <div class="pay-row">
+          <span class="pay-key">支付方式</span>
+          <span class="pay-val">微信支付</span>
+        </div>
+        <div class="pay-row">
+          <span class="pay-key">应付金额</span>
+          <span class="pay-val" id="payBaseAmt">¥0</span>
+        </div>
         <div class="pay-row" id="payPointsRow" style="display:none">
           <span class="pay-key">积分抵扣</span>
-          <span class="pay-val" id="payPoints">-¥0</span>
+          <span class="pay-val deduct" id="payPoints">-¥0</span>
         </div>
         <div class="pay-row">
           <span class="pay-key">实付金额</span>
           <span class="pay-val purple" id="payAmt">¥336</span>
         </div>
       </div>
-      <div id="payBtnsNormal">
-        <button class="pay-home" onclick="location.href='home.html'">返回首页</button>
-      </div>
-      <div id="payBtnsBath10" style="display:none">
-        <div class="pay-btn-row">
-          <button class="pay-home" onclick="location.href='orders.html'">订单详情</button>
-          <button class="pay-home" onclick="location.href='my-cards.html'">去卡包</button>
-        </div>
-        <button class="pay-home-ghost" onclick="location.href='home.html'">返回首页</button>
-      </div>
       <div class="pay-order-num" id="payOrderNum">订单号：AKB-2026-000001</div>
+      <div class="pay-btns" id="payBtnsNormal">
+        <button class="pay-btn-ghost" onclick="location.href='home.html'">返回首页</button>
+        <button class="pay-btn-primary" onclick="location.href='orders.html'">查看订单</button>
+      </div>
+      <div class="pay-btns" id="payBtnsBath10" style="display:none">
+        <button class="pay-btn-ghost" onclick="location.href='home.html'">返回首页</button>
+        <button class="pay-btn-primary" onclick="location.href='orders.html'">订单详情</button>
+        <button class="pay-btn-primary" onclick="location.href='my-cards.html'">去卡包</button>
+      </div>
     </div>
   </div>
 
@@ -2031,7 +2023,14 @@
     }
     document.getElementById('payPointsRow').style.display = pointsDiscount ? '' : 'none';
     document.getElementById('payPoints').textContent = '-¥' + pointsDiscount + '（' + pointsUsed + '积分）';
-    document.getElementById('payAmt').textContent  = '¥' + currentPrice;
+    /* 应付金额 / 实付金额（兑换卡：应付=单次实际价格，实付0 标注卡兑换） */
+    if (redeemCard) {
+      document.getElementById('payBaseAmt').textContent = '¥' + getServicePrice();
+      document.getElementById('payAmt').textContent = '¥0（卡兑换）';
+    } else {
+      document.getElementById('payBaseAmt').textContent = '¥' + basePrice;
+      document.getElementById('payAmt').textContent = '¥' + currentPrice;
+    }
     /* 上门助浴10次套餐：显示卡包提醒与快捷入口 */
     var isBath10Order = !redeemCard && serviceKey === 'bath' && selectedCount === 10;
     document.getElementById('payBath10Tip').style.display = isBath10Order ? '' : 'none';
