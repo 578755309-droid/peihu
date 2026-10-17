@@ -2048,7 +2048,7 @@
     saveServiceOrder(orderNo, date);
     /* show overlay */
     const ov = document.getElementById('payOverlay');
-    fitOverlayToPhone('payOverlay');
+    ov.style.cssText = '';
     ov.classList.add('show');
   }
 
@@ -2171,7 +2171,7 @@
   }
 
   window.addEventListener('resize', function() {
-    ['addressDrawer', 'patientDrawer', 'payOverlay'].forEach(function(id) {
+    ['addressDrawer', 'patientDrawer'].forEach(function(id) {
       const overlay = document.getElementById(id);
       if (overlay && overlay.classList.contains('show')) fitOverlayToPhone(id);
     });
