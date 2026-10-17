@@ -1544,8 +1544,8 @@
         currentUser.phone = phone;
         currentUser.gender = document.getElementById("editGender").value;
         currentUser.age = document.getElementById("editAge").value;
-        document.querySelector(".identity-card .name").textContent = realName;
-        document.querySelector(".identity-card .avatar").textContent = realName.charAt(0);
+        document.querySelector(".identity .name").textContent = realName;
+        document.querySelector(".identity .avatar").textContent = realName.charAt(0);
         document.querySelectorAll(".identity-row")[0].querySelector("span:last-child").textContent = phone;
         closeEditModal();
         alert("用户资料已保存");
@@ -1564,16 +1564,15 @@
       function closeInviteModal() {
         document.getElementById("inviteModal").classList.remove("show");
       }
-      async function toggleUserStatus() {
+      function toggleUserStatus() {
         var next = currentUser.status === "enabled" ? "disabled" : "enabled";
-        var msg = next === "disabled" ? "禁用后该用户将无法登录和下单，确认继续？" : "确认恢复该用户的登录和下单权限？";
-        if (!await showConfirm(msg)) return;
         currentUser.status = next;
-        document.querySelector(".identity-card .state").textContent = next === "enabled" ? "正常" : "已禁用";
-        document.querySelector(".identity-card .state").className = "state " + next;
+        var stateEl = document.querySelector(".identity .state");
+        stateEl.textContent = next === "enabled" ? "正常" : "已禁用";
+        stateEl.className = next === "enabled" ? "state" : "state disabled";
         var btn = document.querySelector(".identity-actions .btn-primary");
         btn.textContent = next === "enabled" ? "禁用用户" : "启用用户";
-        btn.className = next === "enabled" ? "btn btn-primary" : "btn btn-primary danger";
+        showToast(next === "enabled" ? "已恢复该用户权限" : "已禁用该用户");
       }
       function escapeHtml(value) {
         return String(value).replace(/[&<>'"]/g, function(c) {
