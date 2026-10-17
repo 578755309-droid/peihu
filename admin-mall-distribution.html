@@ -152,7 +152,7 @@
       { v: M.money(totComm), l: '累计应结佣金', f: '按各自分成比例计算', c: 'warn' }
     ];
     document.getElementById('metricCards').innerHTML = cards.map(function (c) {
-      return '<div class="mall-metric"><div class="mm-ico" style="background:#F3E8FF"><svg viewBox="0 0 22 22" fill="none"><circle cx="7" cy="8" r="3" stroke="#7F55B8" stroke-width="1.5"/><path d="M2.5 18c.6-3 2.5-4.5 4.5-4.5s3.9 1.5 4.5 4.5" stroke="#7F55B8" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="7" r="2.4" stroke="#7F55B8" stroke-width="1.5"/><path d="M15 12.6c2.3.2 3.9 1.7 4.4 4.2" stroke="#7F55B8" stroke-width="1.5" stroke-linecap="round"/></svg></div>' +
+      return '<div class="mall-metric"><div class="mm-ico" style="background:#DFF8F2"><svg viewBox="0 0 22 22" fill="none"><circle cx="7" cy="8" r="3" stroke="#17BFA3" stroke-width="1.5"/><path d="M2.5 18c.6-3 2.5-4.5 4.5-4.5s3.9 1.5 4.5 4.5" stroke="#17BFA3" stroke-width="1.5" stroke-linecap="round"/><circle cx="16" cy="7" r="2.4" stroke="#17BFA3" stroke-width="1.5"/><path d="M15 12.6c2.3.2 3.9 1.7 4.4 4.2" stroke="#17BFA3" stroke-width="1.5" stroke-linecap="round"/></svg></div>' +
         '<div><div class="mm-val">' + c.v + '</div><div class="mm-lbl">' + c.l + '</div><div class="mm-foot ' + c.c + '">' + c.f + '</div></div></div>';
     }).join('');
   }

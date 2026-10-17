@@ -7,33 +7,33 @@
   <title>佑小邦 · 运营后台</title>
   <style>
     :root {
-      --purple:       #224CD3;
-      --purple-dark:  #224CD3;
-      --purple-light: #E7F1FD;
-      --purple-bg:    #F4F8FD;
+      --purple:       #1CD8B7;
+      --purple-dark:  #1CD8B7;
+      --purple-light: #DDF7F1;
+      --purple-bg:    #EFFBF8;
       --sidebar-w:    220px;
       --topbar-h:     60px;
       --card:         #FFFFFF;
       --text:         #1A1828;
       --text2:        #6B6880;
       --text3:        #AEACC0;
-      --border:       #D7E8FA;
+      --border:       #CFF5ED;
       --green:        #16A34A;
       --green-bg:     #DCFCE7;
       --amber:        #D97706;
       --amber-bg:     #FEF3C7;
       --red:          #DC2626;
       --red-bg:       #FEE2E2;
-      --blue:         #224CD3;
-      --blue-bg:      #E7F1FD;
-      --sh: 0 2px 16px rgba(37,99,235,.10);
+      --blue:         #1CD8B7;
+      --blue-bg:      #DDF7F1;
+      --sh: 0 2px 16px rgba(15,201,167,.10);
       --r-lg: 14px; --r-md: 10px; --r-sm: 8px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
                    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-      background: #EFF6FF; color: var(--text);
+      background: #E8FBF6; color: var(--text);
       -webkit-font-smoothing: antialiased;
       min-width: 1100px;
     }
@@ -70,7 +70,7 @@
     .nav-link:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.9); }
     .nav-link.active {
       background: rgba(255,255,255,.15); color: #fff;
-      box-shadow: inset 3px 0 0 #93C5FD;
+      box-shadow: inset 3px 0 0 #7FE5D0;
     }
     .nav-badge {
       margin-left: auto; min-width: 20px; height: 18px; border-radius: 9px;
@@ -107,7 +107,7 @@
       border-bottom: 1px solid var(--border);
       display: flex; align-items: center; padding: 0 28px; gap: 16px;
       position: sticky; top: 0; z-index: 50;
-      box-shadow: 0 1px 8px rgba(37,99,235,.08);
+      box-shadow: 0 1px 8px rgba(15,201,167,.08);
     }
     .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--text3); flex: 1; }
     .breadcrumb .cur { color: var(--text); }
@@ -144,7 +144,7 @@
     }
     .tb-av {
       width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
-      background: #224CD3;
+      background: #1CD8B7;
       display: grid; place-items: center;
       font-size: 14px; font-weight: 900; color: #fff;
     }
@@ -168,10 +168,10 @@
     .btn-outline svg { width: 14px; height: 14px; }
     .btn-primary {
       height: 36px; padding: 0 18px; border-radius: 9px; border: none; cursor: pointer;
-      background: #224CD3; color: #fff;
+      background: #1CD8B7; color: #fff;
       font-size: 13px; font-weight: 800; font-family: inherit;
       display: flex; align-items: center; gap: 6px;
-      box-shadow: 0 4px 12px rgba(37,99,235,.25); transition: filter .15s;
+      box-shadow: 0 4px 12px rgba(15,201,167,.25); transition: filter .15s;
     }
     .btn-primary:hover { filter: brightness(1.08); }
     .btn-primary svg { width: 14px; height: 14px; }
@@ -288,9 +288,9 @@
     .bill-link {
       display: flex; align-items: center; gap: 6px;
       padding: 7px 16px; border-radius: 8px; border: none; cursor: pointer;
-      background: #224CD3; color: #fff;
+      background: #1CD8B7; color: #fff;
       font-size: 12px; font-weight: 800; font-family: inherit;
-      box-shadow: 0 3px 10px rgba(37,99,235,.22); transition: filter .15s;
+      box-shadow: 0 3px 10px rgba(15,201,167,.22); transition: filter .15s;
     }
     .bill-link:hover { filter: brightness(1.08); }
     .bill-link svg { width: 13px; height: 13px; }
@@ -420,11 +420,11 @@
       <div class="metrics-grid">
         <div class="metric-card">
           <div class="metric-top">
-            <div class="metric-icon" style="background:#DBEAFE">
-              <svg viewBox="0 0 22 22" fill="none"><rect x="3" y="2.5" width="16" height="17" rx="3" stroke="#2563EB" stroke-width="1.5"/><path d="M7 8h8M7 12h8M7 16h5" stroke="#2563EB" stroke-width="1.4" stroke-linecap="round"/></svg>
+            <div class="metric-icon" style="background:#C9F4EA">
+              <svg viewBox="0 0 22 22" fill="none"><rect x="3" y="2.5" width="16" height="17" rx="3" stroke="#1CD8B7" stroke-width="1.5"/><path d="M7 8h8M7 12h8M7 16h5" stroke="#1CD8B7" stroke-width="1.4" stroke-linecap="round"/></svg>
             </div>
-            <div class="metric-badge" style="background:#DBEAFE;color:#2563EB">
-              <svg viewBox="0 0 10 10" fill="none" width="9" height="9"><path d="M2 7l3-4 3 4" stroke="#2563EB" stroke-width="1.3" stroke-linecap="round"/></svg>+12%
+            <div class="metric-badge" style="background:#C9F4EA;color:#1CD8B7">
+              <svg viewBox="0 0 10 10" fill="none" width="9" height="9"><path d="M2 7l3-4 3 4" stroke="#1CD8B7" stroke-width="1.3" stroke-linecap="round"/></svg>+12%
             </div>
           </div>
           <div class="metric-bottom">
@@ -469,7 +469,7 @@
         <div class="metric-card">
           <div class="metric-top">
             <div class="metric-icon" style="background:var(--blue-bg)">
-              <svg viewBox="0 0 22 22" fill="none"><path d="M11 2l2.4 5 5.3.8-3.85 3.75.9 5.3L11 14.5l-4.75 2.35.9-5.3L3.3 7.8l5.3-.8z" stroke="#2563EB" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              <svg viewBox="0 0 22 22" fill="none"><path d="M11 2l2.4 5 5.3.8-3.85 3.75.9 5.3L11 14.5l-4.75 2.35.9-5.3L3.3 7.8l5.3-.8z" stroke="#1CD8B7" stroke-width="1.4" stroke-linejoin="round"/></svg>
             </div>
             <div class="metric-badge" style="background:var(--blue-bg);color:var(--blue)">历史最优</div>
           </div>
@@ -500,7 +500,7 @@
           </div>
           <div class="chart-legend">
             <div class="legend-item">
-              <div class="legend-dot" style="background:#2563EB"></div>
+              <div class="legend-dot" style="background:#1CD8B7"></div>
               <span id="legendLabel">订单数量</span>
             </div>
             <div class="legend-item" style="margin-left:auto">
@@ -679,8 +679,8 @@
 
     /* fill */
     const grad = ctx.createLinearGradient(0, PT, 0, PT + cH);
-    grad.addColorStop(0, 'rgba(37,99,235,.18)');
-    grad.addColorStop(1, 'rgba(37,99,235,0)');
+    grad.addColorStop(0, 'rgba(15,201,167,.18)');
+    grad.addColorStop(1, 'rgba(15,201,167,0)');
     ctx.beginPath();
     ctx.moveTo(xOf(0), yOf(data[0]));
     for (let i = 1; i < data.length; i++) {
@@ -699,15 +699,15 @@
       const cx = (xOf(i-1) + xOf(i)) / 2;
       ctx.bezierCurveTo(cx, yOf(data[i-1]), cx, yOf(data[i]), xOf(i), yOf(data[i]));
     }
-    ctx.strokeStyle = '#224CD3'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.stroke();
+    ctx.strokeStyle = '#1CD8B7'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.stroke();
 
     /* dots + labels */
     data.forEach((v, i) => {
       const x = xOf(i), y = yOf(v);
       ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(37,99,235,.12)'; ctx.fill();
+      ctx.fillStyle = 'rgba(15,201,167,.12)'; ctx.fill();
       ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2);
-      ctx.fillStyle = '#224CD3'; ctx.fill();
+      ctx.fillStyle = '#1CD8B7'; ctx.fill();
       ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI*2);
       ctx.fillStyle = '#fff'; ctx.fill();
       ctx.fillStyle = '#1A1828'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'center';

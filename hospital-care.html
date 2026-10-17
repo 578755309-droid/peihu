@@ -7,10 +7,10 @@
   <title>住院陪护 · 单页下单</title>
   <style>
     :root {
-      --purple:       #8655C5;
-      --purple-dark:  #6B3FAA;
-      --purple-light: #EDE6F7;
-      --purple-bg:    #F5F3FA;
+      --purple:       #1CD8B7;
+      --purple-dark:  #0FA98C;
+      --purple-light: #DDF7F1;
+      --purple-bg:    #EFFBF8;
       --card:         #FFFFFF;
       --text:         #1A1828;
       --text2:        #6B6880;
@@ -21,8 +21,8 @@
       --r-sm:  10px;
       --r-md:  16px;
       --r-lg:  20px;
-      --sh:    0 2px 16px rgba(100,60,160,.08);
-      --sh-md: 0 6px 24px rgba(100,60,160,.13);
+      --sh:    0 2px 16px rgba(20,160,135,.08);
+      --sh-md: 0 6px 24px rgba(20,160,135,.13);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -34,7 +34,7 @@
     }
 
     /* ── Desktop phone frame ── */
-    .frame { display: flex; justify-content: center; min-height: 100vh; background: #E4DDF0; }
+    .frame { display: flex; justify-content: center; min-height: 100vh; background: #DDF2EE; }
     .phone {
       width: 100%; max-width: 430px;
       display: flex; flex-direction: column;
@@ -46,7 +46,7 @@
       .phone {
         height: 900px; min-height: unset;
         border-radius: 42px;
-        box-shadow: 0 24px 72px rgba(80,40,140,.22), 0 2px 8px rgba(0,0,0,.06);
+        box-shadow: 0 24px 72px rgba(15,110,95,.22), 0 2px 8px rgba(0,0,0,.06);
       }
     }
 
@@ -105,7 +105,7 @@
     }
     .step-dot.active {
       border-color:var(--purple); background:var(--purple);
-      color:#fff; box-shadow:0 3px 10px rgba(134,85,197,.3);
+      color:#fff; box-shadow:0 3px 10px rgba(28,216,183,.3);
     }
     .step-dot.done { border-color:var(--purple); background:var(--purple); color:#fff; }
     .step-lbl { font-size:10px; font-weight:700; color:var(--text3); white-space:nowrap; }
@@ -181,7 +181,7 @@
       font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px;
     }
     .badge-partner { background: #DCFCE7; color: #16A34A; }
-    .badge-3a { background: #EDE6F7; color: var(--purple); }
+    .badge-3a { background: #DDF7F1; color: var(--purple); }
     .hosp-radio {
       width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
       border: 2px solid var(--border);
@@ -219,7 +219,7 @@
       outline: none; font-family: inherit; background: #fff;
       transition: border-color .15s, box-shadow .15s;
     }
-    .f-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(134,85,197,.10); }
+    .f-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(28,216,183,.10); }
     .f-input::placeholder { color: var(--text3); font-size: 14px; }
     .f-input.invalid { border-color: var(--red); box-shadow: 0 0 0 3px rgba(239,68,68,.08); }
     textarea.f-input { resize: none; height: 90px; line-height: 1.5; }
@@ -254,20 +254,20 @@
     }
     .tab.on {
       background: var(--purple); color: #fff;
-      box-shadow: 0 3px 12px rgba(134,85,197,.28);
+      box-shadow: 0 3px 12px rgba(28,216,183,.28);
     }
     .nurse-list { display: flex; flex-direction: column; gap: 12px; }
     .nurse-card {
       background: var(--card); border-radius: 16px;
       padding: 16px; cursor: pointer;
       border: 2px solid var(--border);
-      box-shadow: 0 2px 12px rgba(100,60,160,.06);
+      box-shadow: 0 2px 12px rgba(20,160,135,.06);
       transition: border-color .18s, box-shadow .18s;
       -webkit-tap-highlight-color: transparent;
     }
     .nurse-card.sel {
       border-color: var(--purple);
-      box-shadow: 0 4px 20px rgba(134,85,197,.16);
+      box-shadow: 0 4px 20px rgba(28,216,183,.16);
     }
     /* Header: photo + info */
     .nc-hd {
@@ -277,7 +277,7 @@
       width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0;
       display: grid; place-items: center;
       font-size: 24px; font-weight: 900; color: #fff;
-      box-shadow: 0 4px 14px rgba(100,60,160,.16);
+      box-shadow: 0 4px 14px rgba(20,160,135,.16);
     }
     .nc-right { flex: 1; min-width: 0; }
     .nc-row1 {
@@ -382,8 +382,8 @@
     }
     .dur-card.sel {
       border-color: var(--purple);
-      background: linear-gradient(160deg, #F5F0FD 0%, #EDE6F7 100%);
-      box-shadow: 0 4px 16px rgba(134,85,197,.16);
+      background: linear-gradient(160deg, #F5F0FD 0%, #DDF7F1 100%);
+      box-shadow: 0 4px 16px rgba(28,216,183,.16);
     }
     .dur-check {
       position: absolute; top: 10px; right: 10px;
@@ -400,7 +400,7 @@
       display: grid; place-items: center;
     }
     .dur-icon svg { width: 24px; height: 24px; }
-    .dur-card.sel .dur-icon { background: rgba(134,85,197,.15); }
+    .dur-card.sel .dur-icon { background: rgba(28,216,183,.15); }
     .dur-name { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
     .dur-price { font-size: 22px; font-weight: 900; color: var(--purple); }
     .dur-price span { font-size: 12px; font-weight: 600; color: var(--text3); }
@@ -417,7 +417,7 @@
     }
     .field-input:focus, .address-input:focus { border-color:var(--purple); background:#fff; }
     .hour-option { height:44px; border:1.5px solid transparent; border-radius:12px; background:var(--purple-bg); color:var(--text2); font:700 14px inherit; cursor:pointer; }
-    .hour-option.sel { border-color:var(--purple); background:var(--purple); color:#fff; box-shadow:0 4px 12px rgba(134,85,197,.22); }
+    .hour-option.sel { border-color:var(--purple); background:var(--purple); color:#fff; box-shadow:0 4px 12px rgba(28,216,183,.22); }
     .unit-switch { display:flex; gap:8px; margin-bottom:10px; }
     .unit-pill { flex:1; height:36px; border:1.5px solid var(--border); border-radius:10px; background:var(--purple-bg); color:var(--text2); font:700 13px inherit; cursor:pointer; }
     .unit-pill.sel { border-color:var(--purple); background:var(--purple-light); color:var(--purple); }
@@ -467,7 +467,7 @@
     .address-add { margin-top:10px; width:100%; height:42px; border:1.5px dashed var(--purple); border-radius:12px; background:#fff; color:var(--purple); font:700 13px inherit; cursor:pointer; }
     .selector-trigger { width:100%; min-height:74px; padding:12px 13px; display:flex; align-items:center; gap:11px; border:1.5px solid var(--border); border-radius:15px; background:#FCFBFE; color:var(--text); text-align:left; font-family:inherit; cursor:pointer; transition:border-color .15s, box-shadow .15s, background .15s; }
     .selector-trigger:hover { border-color:#D3BEEB; }
-    .selector-trigger:active { background:var(--purple-bg); border-color:var(--purple); box-shadow:0 0 0 3px rgba(134,85,197,.08); }
+    .selector-trigger:active { background:var(--purple-bg); border-color:var(--purple); box-shadow:0 0 0 3px rgba(28,216,183,.08); }
     .selector-marker { width:38px; height:38px; border-radius:12px; background:var(--purple-light); color:var(--purple); display:grid; place-items:center; flex-shrink:0; font-size:16px; font-weight:900; }
     .selector-copy { min-width:0; flex:1; overflow:hidden; }
     .selector-value { display:block; max-width:100%; font-size:14px; color:var(--text); font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -493,7 +493,7 @@
     .drawer-list .patient-card-sub { overflow-wrap:anywhere; }
     .drawer-form { margin-top:12px; padding-top:14px; border-top:1px solid var(--border); }
     .drawer-form[hidden] { display:none; }
-    .drawer-save { width:100%; height:48px; margin-top:12px; border:0; border-radius:14px; background:var(--purple); color:#fff; font:800 15px inherit; cursor:pointer; box-shadow:0 8px 18px rgba(107,63,170,.22); }
+    .drawer-save { width:100%; height:48px; margin-top:12px; border:0; border-radius:14px; background:var(--purple); color:#fff; font:800 15px inherit; cursor:pointer; box-shadow:0 8px 18px rgba(15,169,140,.22); }
     .patient-list { display:grid; gap:10px; }
     .patient-card { display:flex; align-items:flex-start; gap:10px; border:2px solid var(--border); border-radius:14px; padding:12px; cursor:pointer; }
     .patient-card.sel { border-color:var(--purple); background:#F7F3FD; }
@@ -513,7 +513,7 @@
     .scroll-area > .detail-only{display:block}
 
     /* 大图区 */
-    .hero-img{width:100%;padding-top:82%;position:relative;background:linear-gradient(135deg,#EDE6F7 0%,#D9CFF0 100%)}
+    .hero-img{width:100%;padding-top:82%;position:relative;background:linear-gradient(135deg,#DDF7F1 0%,#D9CFF0 100%)}
     .hero-img svg{position:absolute;inset:0;margin:auto;width:48%;height:48%}
     .hero-dots{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:6px}
     .hero-dots span{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.55)}
@@ -561,7 +561,7 @@
     .review-item{padding-bottom:14px;border-bottom:1px dashed var(--border)}
     .review-item:last-child{border-bottom:none;padding-bottom:0}
     .review-hd{display:flex;align-items:center;gap:10px}
-    .review-avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff;background:linear-gradient(135deg,#9060D0,#6B3FAA)}
+    .review-avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff;background:linear-gradient(135deg,#2BD8BC,#0FA98C)}
     .review-name{font-size:13px;font-weight:800;color:var(--text)}
     .review-stars{color:#F59E0B;font-size:11px;letter-spacing:1px}
     .review-time{margin-left:auto;font-size:10px;color:var(--text3)}
@@ -599,10 +599,10 @@
     .btn-ghost:active { background:var(--purple-light); }
     .btn-primary {
       flex:2; height:52px; border-radius:16px; border:none;
-      background:linear-gradient(135deg,#9060D0 0%,#6B3FAA 100%);
+      background:linear-gradient(135deg,#2BD8BC 0%,#0FA98C 100%);
       color:#fff; font-size:16px; font-weight:800; letter-spacing:.5px;
       font-family:inherit; cursor:pointer;
-      box-shadow:0 8px 22px rgba(107,63,170,.28);
+      box-shadow:0 8px 22px rgba(15,169,140,.28);
       -webkit-tap-highlight-color:transparent;
       transition:transform .12s, filter .12s;
     }
@@ -619,7 +619,7 @@
     .need-label .req { color:#D93025; margin-right:3px; }
     .need-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
     .need-option { min-height:40px; padding:0 8px; border:1.5px solid var(--border); border-radius:11px; background:var(--purple-bg); color:var(--text2); font:700 12px inherit; cursor:pointer; }
-    .need-option.sel { border-color:var(--purple); background:var(--purple-light); color:var(--purple); box-shadow:0 3px 9px rgba(134,85,197,.12); }
+    .need-option.sel { border-color:var(--purple); background:var(--purple-light); color:var(--purple); box-shadow:0 3px 9px rgba(28,216,183,.12); }
     .need-textarea { width:100%; min-height:72px; resize:vertical; padding:10px 11px; border:1.5px solid var(--border); border-radius:12px; background:var(--purple-bg); color:var(--text); font:600 13px/1.5 inherit; outline:none; }
     .need-textarea:focus { border-color:var(--purple); background:#fff; }
     .service-mode-note { padding:11px 12px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:12px; font-weight:800; text-align:center; }
@@ -669,7 +669,7 @@
     .pay-btns { display:flex; gap:12px; padding:14px 16px calc(14px + env(safe-area-inset-bottom)); background:#fff; border-top:1px solid var(--border); }
     .pay-btns button { flex:1; height:46px; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; }
     .pay-btn-ghost { border:1px solid #C5BDD8; background:#fff; color:var(--purple); }
-    .pay-btn-primary { border:0; background:linear-gradient(135deg,#9060D0,#6B3FAA); color:#fff; }
+    .pay-btn-primary { border:0; background:linear-gradient(135deg,#2BD8BC,#0FA98C); color:#fff; }
     .pay-order-num { font-size:12px; color:var(--text3); text-align:center; padding:12px 0 4px; }
   </style>
 </head>
@@ -707,7 +707,7 @@
       <div class="navbar">
         <button class="back-btn" onclick="history.length>1?history.back():location.href='home.html'" aria-label="返回">
           <svg viewBox="0 0 20 20" fill="none">
-            <path d="M13 4.5L7.5 10 13 15.5" stroke="#8655C5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13 4.5L7.5 10 13 15.5" stroke="#1CD8B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
         <span class="nav-title" id="servicePageTitle">住院陪护下单</span>
@@ -718,7 +718,7 @@
       <div class="detail-only">
         <!-- 大图 -->
         <div class="hero-img" id="heroImg">
-          <svg viewBox="0 0 100 100"><rect x="12" y="18" width="76" height="64" rx="6" fill="none" stroke="#8655C5" stroke-width="2"/><path d="M30 55l14-14 8 8 18-22" fill="none" stroke="#8655C5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="42" cy="38" r="5" fill="#8655C5"/></svg>
+          <svg viewBox="0 0 100 100"><rect x="12" y="18" width="76" height="64" rx="6" fill="none" stroke="#1CD8B7" stroke-width="2"/><path d="M30 55l14-14 8 8 18-22" fill="none" stroke="#1CD8B7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="42" cy="38" r="5" fill="#1CD8B7"/></svg>
           <div class="hero-dots"><span class="on"></span><span></span><span></span></div>
         </div>
 
@@ -2197,7 +2197,7 @@
     var pBtn = document.querySelector('#patientInfoModule .selector-trigger');
     if (pBtn) pBtn.onclick = function () { alert('兑换卡仅限首次购买时的服务对象使用'); };
     var banner = document.createElement('div');
-    banner.style.cssText = 'padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,#8655C5,#6B3FAA);color:#fff;font-size:12px;font-weight:700;line-height:1.5;box-shadow:0 4px 14px rgba(107,63,170,.2);text-align:center';
+    banner.style.cssText = 'padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,#1CD8B7,#0FA98C);color:#fff;font-size:12px;font-weight:700;line-height:1.5;box-shadow:0 4px 14px rgba(15,169,140,.2);text-align:center';
     banner.textContent = '正在使用「上门助浴 10 次兑换卡」· 本次 ¥0 · 剩余 ' + (hit.total - hit.used) + ' 次 · 适用对象：' + hit.patient.name + '（锁定）';
     var bannerBox = document.getElementById('redeemBannerBox');
     if (bannerBox) { bannerBox.appendChild(banner); bannerBox.style.display = ''; }

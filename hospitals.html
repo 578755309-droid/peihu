@@ -6,16 +6,16 @@
   <title>覆盖医院</title>
   <style>
     :root {
-      --purple:       #8655C5;
-      --purple-dark:  #6B3FAA;
-      --purple-light: #EDE6F7;
-      --purple-bg:    #F5F3FA;
+      --purple:       #1CD8B7;
+      --purple-dark:  #0FA98C;
+      --purple-light: #DDF7F1;
+      --purple-bg:    #EFFBF8;
       --card:         #FFFFFF;
       --text:         #1A1828;
       --text2:        #6B6880;
       --text3:        #AEACC0;
       --border:       #EDE9F5;
-      --sh: 0 2px 16px rgba(100,60,160,.08);
+      --sh: 0 2px 16px rgba(20,160,135,.08);
       --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,7 +27,7 @@
     }
 
     /* Desktop frame */
-    .frame { display: flex; justify-content: center; min-height: 100vh; background: #E4DDF0; }
+    .frame { display: flex; justify-content: center; min-height: 100vh; background: #DDF2EE; }
     .phone {
       width: 100%; max-width: 430px;
       display: flex; flex-direction: column; background: var(--purple-bg); min-height: 100vh;
@@ -36,7 +36,7 @@
       .frame { align-items: flex-start; padding: 20px 0 40px; }
       .phone {
         height: 900px; min-height: unset; border-radius: 42px; overflow: hidden;
-        box-shadow: 0 24px 72px rgba(80,40,140,.22), 0 2px 8px rgba(0,0,0,.06);
+        box-shadow: 0 24px 72px rgba(15,110,95,.22), 0 2px 8px rgba(0,0,0,.06);
       }
     }
 
@@ -81,7 +81,7 @@
     }
     .search-box:focus-within {
       border-color: var(--purple); background: #fff;
-      box-shadow: 0 0 0 3px rgba(134,85,197,.12);
+      box-shadow: 0 0 0 3px rgba(28,216,183,.12);
     }
     .search-box svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--text3); transition: color .2s; }
     .search-box:focus-within svg { color: var(--purple); }
@@ -114,7 +114,7 @@
     }
     .rtab.on {
       background: var(--purple); border-color: var(--purple);
-      color: #fff; box-shadow: 0 3px 10px rgba(134,85,197,.28);
+      color: #fff; box-shadow: 0 3px 10px rgba(28,216,183,.28);
     }
 
     /* ── List ── */
@@ -132,7 +132,7 @@
       cursor: pointer; -webkit-tap-highlight-color: transparent;
       transition: transform .1s, box-shadow .1s;
     }
-    .hosp-card:active { transform: scale(.99); box-shadow: 0 1px 8px rgba(100,60,160,.06); }
+    .hosp-card:active { transform: scale(.99); box-shadow: 0 1px 8px rgba(20,160,135,.06); }
 
     /* Logo */
     .hlogo {
@@ -218,7 +218,7 @@
       <div class="navbar">
         <button class="back-btn" onclick="location.href='home.html'" aria-label="返回">
           <svg viewBox="0 0 20 20" fill="none">
-            <path d="M13 4.5L7.5 10 13 15.5" stroke="#8655C5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13 4.5L7.5 10 13 15.5" stroke="#1CD8B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
         <span class="nav-title">覆盖医院</span>
@@ -263,9 +263,9 @@
       <div class="empty" id="emptyState">
         <div class="empty-icon">
           <svg viewBox="0 0 38 38" fill="none">
-            <circle cx="17" cy="17" r="12" stroke="#8655C5" stroke-width="2"/>
-            <path d="M26 26l8 8" stroke="#8655C5" stroke-width="2.2" stroke-linecap="round"/>
-            <path d="M12 17h10M17 12v10" stroke="#8655C5" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="17" cy="17" r="12" stroke="#1CD8B7" stroke-width="2"/>
+            <path d="M26 26l8 8" stroke="#1CD8B7" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M12 17h10M17 12v10" stroke="#1CD8B7" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
         </div>
         <div class="empty-title">暂无匹配医院</div>

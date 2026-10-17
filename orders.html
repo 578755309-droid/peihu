@@ -7,10 +7,10 @@
   <title>我的订单</title>
   <style>
     :root {
-      --purple:       #8655C5;
-      --purple-dark:  #6B3FAA;
-      --purple-light: #EDE6F7;
-      --purple-bg:    #F5F3FA;
+      --purple:       #1CD8B7;
+      --purple-dark:  #0FA98C;
+      --purple-light: #DDF7F1;
+      --purple-bg:    #EFFBF8;
       --card:         #FFFFFF;
       --text:         #1A1828;
       --text2:        #6B6880;
@@ -18,7 +18,7 @@
       --border:       #EDE9F5;
       --red:          #EF4444;
       --green:        #22C55E;
-      --sh: 0 2px 16px rgba(100,60,160,.08);
+      --sh: 0 2px 16px rgba(20,160,135,.08);
       --r-lg: 20px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,7 +31,7 @@
     }
 
     /* Desktop frame */
-    .frame { display: flex; justify-content: center; width: 100%; min-width: 0; min-height: 100vh; overflow: hidden; background: #E4DDF0; }
+    .frame { display: flex; justify-content: center; width: 100%; min-width: 0; min-height: 100vh; overflow: hidden; background: #DDF2EE; }
     .phone {
       width: 100%; max-width: 430px;
       display: flex; flex-direction: column; background: var(--purple-bg); min-height: 100vh;
@@ -41,7 +41,7 @@
       .frame { align-items: flex-start; padding: 20px 0 40px; }
       .phone {
         height: 900px; min-height: unset; border-radius: 42px; overflow: hidden;
-        box-shadow: 0 24px 72px rgba(80,40,140,.22), 0 2px 8px rgba(0,0,0,.06);
+        box-shadow: 0 24px 72px rgba(15,110,95,.22), 0 2px 8px rgba(0,0,0,.06);
       }
     }
 
@@ -104,7 +104,7 @@
     .mall-state.shipping { color: #397EED; background: #E8F1FF; }
     .mall-state.receiving { color: #C26C16; background: #FFF1DD; }
     .mall-state.done { color: #16A34A; background: #DCFCE7; }
-    .mall-state.refund { color: #8655C5; background: #EDE6F7; }
+    .mall-state.refund { color: #1CD8B7; background: #DDF7F1; }
     .mall-state.cancel { color: #DC2626; background: #FEE2E2; }
     .mall-product-row { display: flex; align-items: center; gap: 12px; margin-top: 14px; }
     .mall-product-thumb { width: 66px; height: 66px; flex: 0 0 66px; display: grid; place-items: center; border-radius: 14px; background: var(--purple-light); color: var(--purple); }
@@ -172,7 +172,7 @@
     .service-overview { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
     .service-visual { width:72px; height:72px; border-radius:15px; flex:0 0 72px; display:grid; place-items:center; color:#fff; box-shadow:0 6px 16px rgba(72,44,120,.14); }
     .service-visual svg { width:46px; height:46px; }
-    .service-visual.visit { background:linear-gradient(145deg,#6B3FAA,#A77AD6); }
+    .service-visual.visit { background:linear-gradient(145deg,#0FA98C,#A77AD6); }
     .service-visual.care { background:linear-gradient(145deg,#2C8A87,#65C7B4); }
     .service-visual.home { background:linear-gradient(145deg,#D97706,#F4B55C); }
     .service-visual.bath { background:linear-gradient(145deg,#2F78B7,#70B9E8); }
@@ -202,7 +202,7 @@
       width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
       display: grid; place-items: center;
       font-size: 17px; font-weight: 900; color: #fff;
-      box-shadow: 0 3px 10px rgba(100,60,160,.18);
+      box-shadow: 0 3px 10px rgba(20,160,135,.18);
     }
     .nurse-info { flex: 1; }
     .nurse-name { font-size: 14px; font-weight: 800; color: var(--text); }
@@ -260,8 +260,8 @@
     .act-ghost   { background: var(--purple-bg); color: var(--text2); }
     .act-purple  { background: var(--purple-light); color: var(--purple); }
     .act-primary {
-      background: linear-gradient(135deg,#9060D0,#6B3FAA); color: #fff;
-      box-shadow: 0 4px 14px rgba(107,63,170,.25);
+      background: linear-gradient(135deg,#2BD8BC,#0FA98C); color: #fff;
+      box-shadow: 0 4px 14px rgba(15,169,140,.25);
     }
     .act-danger  { background: #FEE2E2; color: #DC2626; }
     .act-full { flex: 2; }
@@ -277,7 +277,7 @@
     .action-actions { display:flex; gap:9px; }
     .action-actions button { flex:1; height:42px; border:0; border-radius:12px; font:800 13px inherit; cursor:pointer; }
     .modal-cancel { background:var(--purple-bg); color:var(--text2); }
-    .modal-confirm { background:linear-gradient(135deg,#9060D0,#6B3FAA); color:#fff; }
+    .modal-confirm { background:linear-gradient(135deg,#2BD8BC,#0FA98C); color:#fff; }
     .refund-form { display:none; margin:0 2px 15px; text-align:left; }
     .refund-form.show { display:block; }
     .refund-form label { display:block; font-size:12px; color:var(--text2); font-weight:800; margin:0 0 6px; }
@@ -344,7 +344,7 @@
       <div class="navbar">
         <button class="back-btn" onclick="history.length>1?history.back():location.href='home.html'" aria-label="返回">
           <svg viewBox="0 0 20 20" fill="none">
-            <path d="M13 4.5L7.5 10 13 15.5" stroke="#8655C5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13 4.5L7.5 10 13 15.5" stroke="#1CD8B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
         <span class="nav-title">我的订单</span>
@@ -462,7 +462,7 @@
               </div>
               <button class="call-btn" onclick="openActionModal('call')" title="联系护理员">
                 <svg viewBox="0 0 20 20" fill="none">
-                  <path d="M4 4.5C4 4 4.5 3 6 3.5c1 .3 2.5 2 2.5 3 0 .7-.5 1-1 1.5s-.5 1 0 2c.5.8 1.5 2 2.5 2.5s1.3.5 2 0 .8-1 1.5-1c1 0 2.7 1.5 3 2.5.5 1.5-.5 2-1 2C13 17 4 12 4 4.5z" stroke="#8655C5" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M4 4.5C4 4 4.5 3 6 3.5c1 .3 2.5 2 2.5 3 0 .7-.5 1-1 1.5s-.5 1 0 2c.5.8 1.5 2 2.5 2.5s1.3.5 2 0 .8-1 1.5-1c1 0 2.7 1.5 3 2.5.5 1.5-.5 2-1 2C13 17 4 12 4 4.5z" stroke="#1CD8B7" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
               </button>
             </div>
@@ -484,12 +484,12 @@
             </div>
 
             <!-- Service notice -->
-            <div style="display:flex;align-items:center;gap:6px;background:#EDE6F7;border-radius:10px;padding:9px 12px;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:6px;background:#DDF7F1;border-radius:10px;padding:9px 12px;margin-bottom:14px;">
               <svg viewBox="0 0 16 16" fill="none" width="15" height="15">
-                <circle cx="8" cy="8" r="6.5" stroke="#8655C5" stroke-width="1.3"/>
-                <path d="M8 5v3l2 1.5" stroke="#8655C5" stroke-width="1.3" stroke-linecap="round"/>
+                <circle cx="8" cy="8" r="6.5" stroke="#1CD8B7" stroke-width="1.3"/>
+                <path d="M8 5v3l2 1.5" stroke="#1CD8B7" stroke-width="1.3" stroke-linecap="round"/>
               </svg>
-              <span style="font-size:12px;font-weight:700;color:#6B3FAA;">护理员已接单，将于 04/10 08:00 开始服务</span>
+              <span style="font-size:12px;font-weight:700;color:#0FA98C;">护理员已接单，将于 04/10 08:00 开始服务</span>
             </div>
 
             <!-- Actions -->
@@ -573,7 +573,7 @@
               </div>
               <button class="call-btn" onclick="openActionModal('call')" title="联系护理员">
                 <svg viewBox="0 0 20 20" fill="none">
-                  <path d="M4 4.5C4 4 4.5 3 6 3.5c1 .3 2.5 2 2.5 3 0 .7-.5 1-1 1.5s-.5 1 0 2c.5.8 1.5 2 2.5 2.5s1.3.5 2 0 .8-1 1.5-1c1 0 2.7 1.5 3 2.5.5 1.5-.5 2-1 2C13 17 4 12 4 4.5z" stroke="#8655C5" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M4 4.5C4 4 4.5 3 6 3.5c1 .3 2.5 2 2.5 3 0 .7-.5 1-1 1.5s-.5 1 0 2c.5.8 1.5 2 2.5 2.5s1.3.5 2 0 .8-1 1.5-1c1 0 2.7 1.5 3 2.5.5 1.5-.5 2-1 2C13 17 4 12 4 4.5z" stroke="#1CD8B7" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
               </button>
             </div>
@@ -724,7 +724,7 @@
             <div class="nurse-row">
               <div class="nurse-av" style="background:linear-gradient(140deg,#D97706,#F4B55C)">赵</div>
               <div class="nurse-info"><div class="nurse-name">赵阿姨</div><div class="nurse-meta"><span class="nurse-rate">98%</span><span class="nurse-spec">居家照护 · 6年</span></div></div>
-              <button class="call-btn" onclick="openActionModal('call')" title="联系护理员"><svg viewBox="0 0 20 20" fill="none"><path d="M4 4.5C4 4 4.5 3 6 3.5c1 .3 2.5 2 2.5 3 0 .7-.5 1-1 1.5s-.5 1 0 2c.5.8 1.5 2 2.5 2.5s1.3.5 2 0 .8-1 1.5-1c1 0 2.7 1.5 3 2.5.5 1.5-.5 2-1 2C13 17 4 12 4 4.5z" stroke="#8655C5" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+              <button class="call-btn" onclick="openActionModal('call')" title="联系护理员"><svg viewBox="0 0 20 20" fill="none"><path d="M4 4.5C4 4 4.5 3 6 3.5c1 .3 2.5 2 2.5 3 0 .7-.5 1-1 1.5s-.5 1 0 2c.5.8 1.5 2 2.5 2.5s1.3.5 2 0 .8-1 1.5-1c1 0 2.7 1.5 3 2.5.5 1.5-.5 2-1 2C13 17 4 12 4 4.5z" stroke="#1CD8B7" stroke-width="1.5" stroke-linecap="round"/></svg></button>
             </div>
             <div class="svc-chips"><div class="chip"><span class="chip-lbl">服务时长</span><span class="chip-val">12小时/天</span></div><div class="chip"><span class="chip-lbl">服务天数</span><span class="chip-val">3 天</span></div><div class="chip"><span class="chip-lbl">实付金额</span><span class="chip-val accent">¥260/天</span></div></div>
             <div class="action-bar"><button class="act-btn act-danger refund-btn" onclick="openActionModal('refund',this)">退款/售后</button><button class="act-btn act-purple" onclick="openActionModal('call')">联系护理员</button></div>

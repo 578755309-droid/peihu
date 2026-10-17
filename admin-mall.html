@@ -81,7 +81,7 @@
           </div>
           <!-- 分类占比 -->
           <div class="mall-panel">
-            <div class="mall-panel-hd"><div class="mall-panel-title"><span class="sec-dot" style="background:#7F55B8"></span>分类销量占比</div></div>
+            <div class="mall-panel-hd"><div class="mall-panel-title"><span class="sec-dot" style="background:#17BFA3"></span>分类销量占比</div></div>
             <div class="mall-panel-bd"><div class="mall-share" id="shareBox"></div></div>
           </div>
         </div>
@@ -110,13 +110,13 @@
   function renderMetrics() {
     var s = M.summarize();
     var cards = [
-      { ico: '<path d="M5 9h16l-1 13H6L5 9zM9 10V7a4 4 0 018 0v3" stroke="#224CD3" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>', bg: '#E7F1FD',
+      { ico: '<path d="M5 9h16l-1 13H6L5 9zM9 10V7a4 4 0 018 0v3" stroke="#1CD8B7" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>', bg: '#DDF7F1',
         val: s.todayCount, lbl: '今日商城订单', foot: '待付款 ' + s.pendingPayCount + ' 单', fcls: s.pendingPayCount ? 'warn' : 'muted', href: 'admin-mall-orders.html' },
       { ico: '<path d="M10 2v2.5M14 2v2.5M5.5 9.5h13l-1.2 9.5a1.5 1.5 0 01-1.5 1.3H8.2a1.5 1.5 0 01-1.5-1.3L5.5 9.5zM8 9.5a4 4 0 018 0" stroke="#16A34A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>', bg: '#DCFCE7',
         val: M.money(s.todayAmount), lbl: '今日交易额', foot: '累计成交 ' + M.money(s.revenue), fcls: 'muted', href: 'admin-mall-orders.html?state=已完成' },
       { ico: '<path d="M3 7h13v9H3zM16 10h3.5l1.5 3v3h-5" stroke="#D97706" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7" cy="18" r="1.6" stroke="#D97706" stroke-width="1.6"/><circle cx="15" cy="18" r="1.6" stroke="#D97706" stroke-width="1.6"/>', bg: '#FEF3C7',
         val: s.pendingShipCount, lbl: '待发货订单', foot: s.pendingShipCount ? '需要尽快安排发货' : '暂无待发货订单', fcls: s.pendingShipCount ? 'danger' : 'muted', href: 'admin-mall-orders.html?state=待发货' },
-      { ico: '<path d="M3 7l6-3.5L15 7l-6 3.5L3 7zM9 10.5V16M15 7v5M21 10.5v5l-6 3v-5" stroke="#7F55B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>', bg: '#F0E9FA',
+      { ico: '<path d="M3 7l6-3.5L15 7l-6 3.5L3 7zM9 10.5V16M15 7v5M21 10.5v5l-6 3v-5" stroke="#17BFA3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>', bg: '#F0E9FA',
         val: s.onSaleCount + '<small style="font-size:13px;color:#8F9BB0"> / ' + s.productCount + '</small>', lbl: '在售商品', foot: '库存预警 ' + s.lowStock.length + ' 款', fcls: s.lowStock.length ? 'warn' : 'muted', href: 'admin-mall-products.html' }
     ];
     document.getElementById('metricCards').innerHTML = cards.map(function (c) {
@@ -187,7 +187,7 @@
   function renderShare() {
     var cats = M.getCategories();
     var products = M.getProducts(true);
-    var colors = { measure: '#224CD3', care: '#16A34A', protection: '#D97706', maternal: '#C34F55' };
+    var colors = { measure: '#1CD8B7', care: '#16A34A', protection: '#D97706', maternal: '#C34F55' };
     var rows = cats.map(function (c) {
       return { id: c.id, name: c.name, sales: products.filter(function (p) { return p.category === c.id; }).reduce(function (s, p) { return s + p.sales; }, 0) };
     }).sort(function (a, b) { return b.sales - a.sales; });
@@ -195,7 +195,7 @@
     document.getElementById('shareBox').innerHTML = rows.map(function (r) {
       var pct = Math.round(r.sales / total * 100);
       return '<div class="mall-share-row"><span class="mall-share-lbl">' + M.esc(r.name) + '</span>' +
-        '<div class="mall-share-track"><div class="mall-share-fill" style="width:' + pct + '%;background:' + (colors[r.id] || '#224CD3') + '"></div></div>' +
+        '<div class="mall-share-track"><div class="mall-share-fill" style="width:' + pct + '%;background:' + (colors[r.id] || '#1CD8B7') + '"></div></div>' +
         '<span class="mall-share-pct">' + pct + '%</span></div>';
     }).join('');
   }

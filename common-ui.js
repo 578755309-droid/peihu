@@ -17,7 +17,7 @@
       '.cui-msg{margin-top:8px;font-size:13px;color:#5d5870;line-height:1.6;text-align:center;white-space:pre-wrap;word-break:break-all}',
       '.cui-btns{display:flex;gap:10px;margin-top:18px}',
       '.cui-btn{flex:1;height:40px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid #E4E0EE;background:#F6F4FA;color:#5d5870}',
-      '.cui-btn.primary{border-color:#8655C5;background:#8655C5;color:#fff}',
+      '.cui-btn.primary{border-color:#1CD8B7;background:#1CD8B7;color:#fff}',
       '.cui-btn.danger{border-color:#EF4444;background:#EF4444;color:#fff}'
     ].join('\n');
     document.head.appendChild(st);

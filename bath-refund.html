@@ -6,10 +6,10 @@
   <title>申请退款 · 佑小邦</title>
   <style>
     :root {
-      --purple: #8655C5; --purple-dark: #6B3FAA; --purple-light: #EDE6F7;
-      --purple-bg: #F5F3FA; --card: #fff; --text: #1A1828; --text2: #6B6880;
+      --purple: #1CD8B7; --purple-dark: #0FA98C; --purple-light: #DDF7F1;
+      --purple-bg: #EFFBF8; --card: #fff; --text: #1A1828; --text2: #6B6880;
       --text3: #AEACC0; --border: #EDE9F5; --red: #EF4444; --green: #22A06B;
-      --orange: #D97706; --sh: 0 2px 16px rgba(100,60,160,.08);
+      --orange: #D97706; --sh: 0 2px 16px rgba(20,160,135,.08);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -18,11 +18,11 @@
       background: var(--purple-bg); color: var(--text);
       -webkit-font-smoothing: antialiased;
     }
-    .frame { display: flex; justify-content: center; min-height: 100vh; background: #E4DDF0; }
+    .frame { display: flex; justify-content: center; min-height: 100vh; background: #DDF2EE; }
     .phone { width: 100%; max-width: 430px; min-height: 100vh; display: flex; flex-direction: column; background: var(--purple-bg); }
     @media (min-width: 520px) {
       .frame { align-items: flex-start; padding: 20px 0 40px; }
-      .phone { height: 900px; min-height: unset; border-radius: 42px; overflow: hidden; box-shadow: 0 24px 72px rgba(80,40,140,.22); }
+      .phone { height: 900px; min-height: unset; border-radius: 42px; overflow: hidden; box-shadow: 0 24px 72px rgba(15,110,95,.22); }
     }
 
     /* Status bar */
@@ -86,7 +86,7 @@
       padding: 0 14px; font-size: 18px; font-weight: 800; color: var(--text);
       outline: none; text-align: right;
     }
-    .amount-input:focus { border-color: var(--purple-dark); box-shadow: 0 0 0 3px rgba(134,85,197,.12); }
+    .amount-input:focus { border-color: var(--purple-dark); box-shadow: 0 0 0 3px rgba(28,216,183,.12); }
 
     /* Quick amounts */
     .quick-amounts { display: flex; gap: 8px; margin-top: 12px; }
@@ -138,7 +138,7 @@
     @media (min-width: 520px) { .submit-bar { position: sticky; left: auto; transform: none; border-radius: 0 0 42px 42px; } }
     .submit-btn {
       width: 100%; height: 46px; border: 0; border-radius: 12px;
-      background: linear-gradient(135deg, #8655C5, #6B3FAA);
+      background: linear-gradient(135deg, #1CD8B7, #0FA98C);
       color: #fff; font-size: 16px; font-weight: 800; cursor: pointer;
       transition: opacity .15s;
     }
@@ -325,7 +325,7 @@
 
   /* 已在退款流程中的订单不允许重复申请 */
   if (order.status === 'refund' || order.state === '退款处理中' || order.refundState === '待审核') {
-    document.getElementById('formView').innerHTML = '<div style="padding:60px 30px;text-align:center;color:#AEACC0;font-size:14px;">该订单已提交退款申请，正在审核中<br><br><button onclick="location.href=\'orders.html\'" style="height:40px;padding:0 24px;border:1px solid #8655C5;border-radius:20px;background:#fff;color:#8655C5;font-size:13px;font-weight:700;cursor:pointer">返回订单列表</button></div>';
+    document.getElementById('formView').innerHTML = '<div style="padding:60px 30px;text-align:center;color:#AEACC0;font-size:14px;">该订单已提交退款申请，正在审核中<br><br><button onclick="location.href=\'orders.html\'" style="height:40px;padding:0 24px;border:1px solid #1CD8B7;border-radius:20px;background:#fff;color:#1CD8B7;font-size:13px;font-weight:700;cursor:pointer">返回订单列表</button></div>';
     document.getElementById('submitBar').style.display = 'none';
     return;
   }
