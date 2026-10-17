@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>申请退款 · 佑小邦</title>
+  <script src="common-ui.js"></script>
+  <style>
+    :root {
+      --purple: #1CD8B7; --purple-dark: #0FA98C; --purple-light: #DDF7F1;
+      --purple-bg: #EFFBF8; --card: #fff; --text: #1A1828; --text2: #6B6880;
+      --text3: #AEACC0; --border: #EDE9F5; --red: #EF4444;
+      --sh: 0 2px 16px rgba(20,160,135,.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+                   "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--purple-bg); color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+    .frame { display: flex; justify-content: center; min-height: 100vh; background: #DDF2EE; }
+    .phone { width: 100%; max-width: 430px; min-height: 100vh; display: flex; flex-direction: column; background: var(--purple-bg); position: relative; }
+    @media (min-width: 520px) {
+      .frame { align-items: flex-start; padding: 20px 0 40px; }
+      .phone { height: 900px; min-height: unset; border-radius: 42px; overflow: hidden; box-shadow: 0 24px 72px rgba(15,110,95,.22); }
+    }
+
+    /* Status bar */
+    .status-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 13px 22px 8px; font-size: 13px; font-weight: 700;
+      background: var(--card);
+    }
+    .status-right { display: flex; align-items: center; gap: 5px; }
+    .status-right svg { width: 17px; height: 17px; }
+
+    /* Nav */
+    .nav {
+      display: flex; align-items: center; justify-content: center;
+      height: 52px; position: relative; background: var(--card);
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .nav h1 { font-size: 17px; font-weight: 800; }
+    .back {
+      position: absolute; left: 16px; width: 34px; height: 34px; border: 0;
+      background: var(--purple-light); border-radius: 11px; color: var(--purple);
+      display: grid; place-items: center; cursor: pointer;
+    }
+    .back svg { width: 18px; height: 18px; }
+
+    /* Content */
+    .scroll { flex: 1; overflow-y: auto; padding-bottom: 100px; }
+    .scroll::-webkit-scrollbar { display: none; }
+
+    /* Product summary */
+    .product-card { background: var(--card); border-radius: 16px; margin: 12px 14px 0; box-shadow: var(--sh); padding: 14px; display: flex; gap: 12px; }
+    .product-thumb { width: 66px; height: 66px; border-radius: 12px; background: var(--purple-light); flex-shrink: 0; overflow: hidden; }
+    .product-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .product-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+    .product-name { font-size: 14px; font-weight: 900; line-height: 1.35; }
+    .product-desc { margin-top: 4px; font-size: 11px; color: var(--text3); line-height: 1.45; }
+    .product-price { align-self: center; font-size: 16px; font-weight: 900; color: var(--text); white-space: nowrap; }
+    .product-price small { font-size: 11px; }
+
+    /* Form card */
+    .form-card { background: var(--card); border-radius: 16px; margin: 12px 14px; box-shadow: var(--sh); overflow: hidden; }
+
+    /* Reason row */
+    .form-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 18px; border-bottom: 1px solid var(--border); cursor: pointer;
+    }
+    .form-row:last-child { border-bottom: 0; }
+    .form-label { font-size: 14px; font-weight: 700; color: var(--text); }
+    .form-label .req { color: var(--red); margin-left: 2px; }
+    .form-value { font-size: 14px; color: var(--text3); display: flex; align-items: center; gap: 4px; }
+    .form-value.selected { color: var(--text); }
+    .form-value .arrow { width: 16px; height: 16px; color: var(--text3); }
+
+    /* Amount section */
+    .amount-section { padding: 16px 18px; border-bottom: 1px solid var(--border); }
+    .amount-row { display: flex; align-items: center; justify-content: space-between; }
+    .amount-display { display: flex; align-items: baseline; gap: 2px; }
+    .amount-currency { font-size: 15px; font-weight: 800; color: var(--text); }
+    .amount-value { font-size: 26px; font-weight: 900; color: var(--text); }
+    .amount-edit {
+      display: flex; align-items: center; gap: 4px; font-size: 13px;
+      color: var(--text3); cursor: pointer; border: 0; background: none; font: inherit;
+    }
+    .amount-edit svg { width: 14px; height: 14px; }
+    .amount-hint { margin-top: 6px; font-size: 12px; color: var(--text3); }
+    .amount-input-wrap { display: none; margin-top: 10px; }
+    .amount-input-wrap.show { display: block; }
+    .amount-input {
+      width: 100%; height: 44px; border: 1.5px solid var(--purple); border-radius: 10px;
+      padding: 0 14px; font-size: 18px; font-weight: 800; color: var(--text);
+      outline: none; text-align: right;
+    }
+    .amount-input:focus { border-color: var(--purple-dark); box-shadow: 0 0 0 3px rgba(28,216,183,.12); }
+
+    /* Quick amounts */
+    .quick-amounts { display: flex; gap: 8px; margin-top: 12px; }
+    .quick-btn {
+      flex: 1; height: 36px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--purple-bg); color: var(--text2); font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: all .15s;
+    }
+    .quick-btn.on { border-color: var(--purple); background: var(--purple-light); color: var(--purple); font-weight: 800; }
+
+    /* Description */
+    .desc-section { padding: 16px 18px; }
+    .desc-textarea {
+      width: 100%; min-height: 100px; border: 0; outline: none; resize: none;
+      font-size: 13px; line-height: 1.6; color: var(--text); font-family: inherit;
+      background: transparent;
+    }
+    .desc-textarea::placeholder { color: var(--text3); }
+    .desc-count { text-align: right; font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+    /* Photo upload */
+    .photo-section { padding: 0 18px 16px; }
+    .photo-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+    .photo-add {
+      width: 72px; height: 72px; border: 1.5px dashed #D0C8E0; border-radius: 10px;
+      background: var(--purple-bg); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 4px; cursor: pointer;
+      color: var(--text3);
+    }
+    .photo-add svg { width: 22px; height: 22px; }
+    .photo-add span { font-size: 11px; }
+    .photo-item {
+      width: 72px; height: 72px; border-radius: 10px; overflow: hidden;
+      position: relative; border: 1px solid var(--border);
+    }
+    .photo-item img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-del {
+      position: absolute; top: 3px; right: 3px; width: 18px; height: 18px;
+      border-radius: 50%; background: rgba(0,0,0,.55); color: #fff; border: 0;
+      font-size: 11px; display: grid; place-items: center; cursor: pointer;
+    }
+
+    /* Notice */
+    .notice { margin: 12px 14px 0; padding: 12px 14px; border-radius: 12px; background: #FFF8E6; color: #D97706; font-size: 12px; line-height: 1.6; }
+
+    /* Submit */
+    .submit-bar {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 430px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: var(--card); border-top: 1px solid var(--border); z-index: 20;
+    }
+    @media (min-width: 520px) { .submit-bar { position: absolute; left: 0; transform: none; border-radius: 0; } }
+    .submit-btn {
+      width: 100%; height: 46px; border: 0; border-radius: 12px;
+      background: linear-gradient(135deg, #1CD8B7, #0FA98C);
+      color: #fff; font-size: 16px; font-weight: 800; cursor: pointer;
+      transition: opacity .15s;
+    }
+    .submit-btn:active { opacity: .85; }
+
+    /* Success view */
+    .success-wrap { display: none; flex-direction: column; align-items: center; padding: 80px 30px; text-align: center; }
+    .success-wrap.show { display: flex; }
+    .success-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, #34D399, #10B981);
+      display: grid; place-items: center; margin-bottom: 20px; color: #fff;
+    }
+    .success-icon svg { width: 36px; height: 36px; }
+    .success-title { font-size: 19px; font-weight: 900; margin-bottom: 10px; }
+    .success-desc { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 28px; }
+    .success-back {
+      height: 44px; padding: 0 32px; border: 0; border-radius: 22px;
+      background: linear-gradient(135deg, #1CD8B7, #0FA98C); color: #fff;
+      font-size: 15px; font-weight: 800; cursor: pointer;
+    }
+
+    /* Reason picker modal */
+    .picker-mask {
+      position: absolute; inset: 0; background: rgba(0,0,0,.4); z-index: 50;
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    .picker-mask.show { display: flex; }
+    .picker-sheet {
+      width: 100%; background: var(--card); border-radius: 20px 20px 0 0;
+      padding: 8px 0 calc(16px + env(safe-area-inset-bottom));
+      animation: slideUp .25s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .picker-title { text-align: center; font-size: 15px; font-weight: 800; padding: 12px 0 8px; }
+    .picker-item {
+      padding: 14px 20px; font-size: 14px; color: var(--text2); cursor: pointer;
+      text-align: center; border-bottom: 1px solid var(--border);
+    }
+    .picker-item:last-child { border-bottom: 0; }
+    .picker-item.on { color: var(--purple); font-weight: 800; }
+    .picker-cancel {
+      margin-top: 8px; padding: 14px; text-align: center; font-size: 14px;
+      font-weight: 700; color: var(--text3); border-top: 6px solid var(--purple-bg); cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="frame">
+<div class="phone">
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div class="status-right">
+      <svg viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="4.5" y="5" width="3" height="7" rx="0.5"/><rect x="9" y="2.5" width="3" height="9.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5"/></svg>
+      <svg viewBox="0 0 16 12" fill="currentColor"><path d="M8 9.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM8 5C6 5 4.2 5.8 3 7.2l1.4 1.4C5.4 7.7 6.6 7.1 8 7.1s2.6.6 3.6 1.5L13 7.2C11.8 5.8 10 5 8 5zM8 .5C5 .5 2.3 1.7.4 3.7l1.4 1.4C3.3 3.6 5.5 2.5 8 2.5s4.7 1.1 6.2 2.6l1.4-1.4C13.7 1.7 11 .5 8 .5z"/></svg>
+      <svg viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="20" height="11" rx="3" stroke="currentColor" opacity=".4"/><rect x="2" y="2" width="16" height="8" rx="1.5" fill="currentColor"/><path d="M23 4v4c1-.3 1.5-1 1.5-2S24 4.3 23 4z" fill="currentColor" opacity=".4"/></svg>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav">
+    <button class="back" onclick="history.length>1?history.back():location.href='orders.html?type=mall'"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12.5 4.5L7 10l5.5 5.5"/></svg></button>
+    <h1>申请退款</h1>
+  </div>
+
+  <div class="scroll" id="scrollArea">
+    <!-- Form view -->
+    <div id="formView">
+      <!-- Product summary -->
+      <div class="product-card" id="productCard"></div>
+
+      <!-- Instant notice -->
+      <div class="notice" id="instantNotice" hidden>该订单尚未发货，提交后系统将自动退款，金额原路退回，预计 1-3 个工作日到账。</div>
+
+      <!-- Reason -->
+      <div class="form-card">
+        <div class="form-row" id="reasonRow" onclick="openReasonPicker()">
+          <span class="form-label">退款原因 <span class="req">*</span></span>
+          <span class="form-value" id="reasonValue">请选择 <svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></span>
+        </div>
+      </div>
+
+      <!-- Amount -->
+      <div class="form-card">
+        <div class="amount-section">
+          <div class="amount-row">
+            <div>
+              <div class="form-label">退款金额 <span class="req">*</span></div>
+              <div class="amount-hint" id="amountHint">可修改，最多 ¥0.00</div>
+            </div>
+            <div style="text-align:right">
+              <div class="amount-display" id="amountDisplay" onclick="toggleAmountEdit()">
+                <span class="amount-currency">¥</span>
+                <span class="amount-value" id="amountValue">0.00</span>
+              </div>
+              <button class="amount-edit" onclick="toggleAmountEdit()">
+                修改 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M11 2l3 3-8.5 8.5H2.5V10.5L11 2z"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="amount-input-wrap" id="amountInputWrap">
+            <input class="amount-input" id="amountInput" type="number" step="0.01" min="0" placeholder="输入退款金额" />
+          </div>
+          <div class="quick-amounts">
+            <button class="quick-btn" onclick="setQuickAmount(1/3, this)">退三分之一</button>
+            <button class="quick-btn" onclick="setQuickAmount(0.5, this)">退一半</button>
+            <button class="quick-btn" onclick="setQuickAmount(1, this)">退全额</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description & Photos -->
+      <div class="form-card">
+        <div class="desc-section">
+          <textarea class="desc-textarea" id="descInput" placeholder="请输入补充描述和凭证" maxlength="200" oninput="updateDescCount()"></textarea>
+          <div class="desc-count"><span id="descCount">0</span>/200</div>
+        </div>
+        <div class="photo-section">
+          <div class="photo-grid" id="photoGrid">
+            <div class="photo-add" onclick="addPhoto()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg>
+              <span>上传</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success view -->
+    <div class="success-wrap" id="successView">
+      <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg></div>
+      <div class="success-title" id="successTitle">退款申请已提交</div>
+      <div class="success-desc" id="successDesc">平台将在 1-3 个工作日内审核您的退款申请<br>审核通过后款项将原路退回</div>
+      <button class="success-back" id="successBack">查看订单详情</button>
+    </div>
+  </div>
+
+  <!-- Submit bar -->
+  <div class="submit-bar" id="submitBar">
+    <button class="submit-btn" id="submitBtn" onclick="submitRefund()">提交</button>
+  </div>
+
+  <!-- Reason picker -->
+  <div class="picker-mask" id="reasonPicker" onclick="if(event.target===this)closeReasonPicker()">
+    <div class="picker-sheet">
+      <div class="picker-title">选择退款原因</div>
+      <div class="picker-item" data-reason="商品质量问题" onclick="selectReason(this)">商品质量问题</div>
+      <div class="picker-item" data-reason="发错货 / 漏发货" onclick="selectReason(this)">发错货 / 漏发货</div>
+      <div class="picker-item" data-reason="少发 / 未收到货" onclick="selectReason(this)">少发 / 未收到货</div>
+      <div class="picker-item" data-reason="不想要了" onclick="selectReason(this)">不想要了</div>
+      <div class="picker-item" data-reason="其他原因" onclick="selectReason(this)">其他原因</div>
+      <div class="picker-cancel" onclick="closeReasonPicker()">取消</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+(function() {
+  /* ── 订单数据查找 ── */
+  var orderId = new URLSearchParams(location.search).get('no') || '';
+  var fallback = {
+    'AKB-M2026-041601':{id:'AKB-M2026-041601',status:'payment',state:'待付款',product:'电子体温计',desc:'快速测温 · 大屏易读',price:'39',quantity:1,amount:'39',date:'2026-04-16',address:'西安市雁塔区 · 王女士',image:'assets/mall/thermometer.png'},
+    'AKB-M2026-041528':{id:'AKB-M2026-041528',status:'shipping',state:'待发货',product:'电子血压计',desc:'上臂式无创血压计',price:'239',quantity:1,amount:'239',date:'2026-04-15',address:'北京市朝阳区 · 张先生',image:'assets/mall/blood-pressure-monitor.png'},
+    'AKB-M2026-041302':{id:'AKB-M2026-041302',status:'receiving',state:'待收货',product:'家用雾化器',desc:'细雾雾化 · 便携易收纳',price:'199',quantity:1,amount:'199',date:'2026-04-13',address:'北京市海淀区 · 李女士',image:'assets/mall/nebulizer.png'},
+    'AKB-M2026-040912':{id:'AKB-M2026-040912',status:'done',state:'已完成',product:'医用无菌口罩',desc:'医用外科 / 一次性使用',price:'29',quantity:2,amount:'58',date:'2026-04-09',address:'西安市高新区 · 刘先生',image:'assets/mall/medical-mask.png'},
+    'AKB-M2026-040533':{id:'AKB-M2026-040533',status:'refund',state:'退款/售后',product:'家用制氧机',desc:'医用级 · 安静运行',price:'1599',quantity:1,amount:'1599',date:'2026-04-05',address:'北京市海淀区 · 陈先生',image:'assets/mall/oxygen-concentrator.png',refundState:'待审核'}
+  };
+  var order = null;
+  try {
+    var saved = JSON.parse(localStorage.getItem('ankebang_mall_orders') || '[]');
+    if (Array.isArray(saved)) order = saved.find(function(o) { return o.id === orderId; });
+  } catch(e) {}
+  var seed = fallback[orderId];
+  if (order && seed) {
+    Object.keys(seed).forEach(function(k) { if (order[k] === undefined) order[k] = seed[k]; });
+  }
+  if (!order) order = seed || null;
+
+  if (!order) {
+    document.getElementById('formView').innerHTML = '<div style="padding:60px 30px;text-align:center;color:#AEACC0;font-size:14px;">未找到该订单</div>';
+    document.getElementById('submitBar').style.display = 'none';
+    return;
+  }
+
+  /* 已在退款流程中的订单不允许重复申请 */
+  if (order.status === 'refund' || order.state === '退款/售后' || order.refundState === '待审核') {
+    document.getElementById('formView').innerHTML = '<div style="padding:60px 30px;text-align:center;color:#AEACC0;font-size:14px;">该订单已提交退款申请，正在审核中<br><br><button onclick="location.href=\'orders.html?type=mall\'" style="height:40px;padding:0 24px;border:1px solid #1CD8B7;border-radius:20px;background:#fff;color:#1CD8B7;font-size:13px;font-weight:700;cursor:pointer">返回订单列表</button></div>';
+    document.getElementById('submitBar').style.display = 'none';
+    return;
+  }
+
+  /* 未发货 = 系统自动退款；已发货/待收货/已完成 = 人工审核 */
+  var isInstant = (order.status === 'shipping' || order.state === '待发货');
+  var maxRefund = parseFloat(String(order.amount || '0').replace(/[^0-9.]/g, '')) || 0;
+  var currentAmount = maxRefund;
+  var selectedReason = '';
+  var photos = [];
+
+  /* 商品摘要卡 */
+  document.getElementById('productCard').innerHTML =
+    '<div class="product-thumb"><img src="' + (order.image || '') + '" alt="" onerror="this.parentElement.style.background=\'var(--purple-light)\';this.remove()"></div>' +
+    '<div class="product-info"><div class="product-name">' + (order.product || '商品') + '</div>' +
+    '<div class="product-desc">' + (order.desc || '') + '<br>数量：' + (order.quantity || 1) + ' 件 · 订单号 ' + order.id + '</div></div>' +
+    '<div class="product-price"><small>¥</small>' + (order.price || order.amount) + '</div>';
+
+  /* 未发货提示 */
+  if (isInstant) document.getElementById('instantNotice').hidden = false;
+
+  /* 初始化金额显示 */
+  document.getElementById('amountValue').textContent = maxRefund.toFixed(2);
+  document.getElementById('amountHint').textContent = '可修改，最多 ¥' + maxRefund.toFixed(2) + '（按实付金额退款）';
+  document.getElementById('amountInput').value = maxRefund.toFixed(2);
+
+  /* 默认选中「退全额」 */
+  var quickBtns = document.querySelectorAll('.quick-btn');
+  quickBtns[2].classList.add('on');
+
+  /* ── 退款原因选择 ── */
+  window.openReasonPicker = function() {
+    document.getElementById('reasonPicker').classList.add('show');
+  };
+  window.closeReasonPicker = function() {
+    document.getElementById('reasonPicker').classList.remove('show');
+  };
+  window.selectReason = function(el) {
+    selectedReason = el.dataset.reason;
+    var val = document.getElementById('reasonValue');
+    val.classList.add('selected');
+    val.innerHTML = selectedReason + ' <svg class="arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg>';
+    closeReasonPicker();
+  };
+
+  /* ── 金额编辑 ── */
+  var editingAmount = false;
+  window.toggleAmountEdit = function() {
+    editingAmount = !editingAmount;
+    var wrap = document.getElementById('amountInputWrap');
+    var display = document.getElementById('amountDisplay');
+    wrap.classList.toggle('show', editingAmount);
+    display.style.display = editingAmount ? 'none' : 'flex';
+    if (editingAmount) {
+      document.getElementById('amountInput').focus();
+    } else {
+      applyAmountInput();
+    }
+  };
+
+  document.getElementById('amountInput').addEventListener('blur', applyAmountInput);
+  document.getElementById('amountInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { applyAmountInput(); }
+  });
+
+  function applyAmountInput() {
+    var v = parseFloat(document.getElementById('amountInput').value);
+    if (isNaN(v) || v < 0) v = 0;
+    if (v > maxRefund) v = maxRefund;
+    currentAmount = Math.round(v * 100) / 100;
+    document.getElementById('amountValue').textContent = currentAmount.toFixed(2);
+    document.getElementById('amountInput').value = currentAmount.toFixed(2);
+    quickBtns.forEach(function(b) { b.classList.remove('on'); });
+  }
+
+  /* ── 快捷金额 ── */
+  window.setQuickAmount = function(ratio, btn) {
+    currentAmount = Math.round(maxRefund * ratio * 100) / 100;
+    document.getElementById('amountValue').textContent = currentAmount.toFixed(2);
+    document.getElementById('amountInput').value = currentAmount.toFixed(2);
+    quickBtns.forEach(function(b) { b.classList.remove('on'); });
+    btn.classList.add('on');
+  };
+
+  /* ── 描述字数 ── */
+  window.updateDescCount = function() {
+    document.getElementById('descCount').textContent = document.getElementById('descInput').value.length;
+  };
+
+  /* ── 照片上传 ── */
+  window.addPhoto = function() {
+    if (photos.length >= 6) return;
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = function() {
+      var f = this.files[0];
+      if (!f) return;
+      var r = new FileReader();
+      r.onload = function(e) { photos.push(e.target.result); renderPhotos(); };
+      r.readAsDataURL(f);
+    };
+    input.click();
+  };
+  window.removePhoto = function(idx) {
+    photos.splice(idx, 1);
+    renderPhotos();
+  };
+  function renderPhotos() {
+    var grid = document.getElementById('photoGrid');
+    var html = photos.map(function(src, i) {
+      return '<div class="photo-item"><img src="' + src + '"><button class="photo-del" onclick="removePhoto(' + i + ')">×</button></div>';
+    }).join('');
+    html += '<div class="photo-add" onclick="addPhoto()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M9 6l1.5-2h3L15 6"/></svg><span>上传</span></div>';
+    grid.innerHTML = html;
+  }
+
+  /* ── 提交退款 ── */
+  window.submitRefund = function() {
+    if (!selectedReason) {
+      showToast('请选择退款原因');
+      return;
+    }
+    if (currentAmount <= 0) {
+      showToast('退款金额必须大于0');
+      return;
+    }
+    if (currentAmount > maxRefund) {
+      showToast('退款金额不能超过最大可退金额');
+      return;
+    }
+
+    var desc = document.getElementById('descInput').value.trim();
+    var now = new Date();
+    var appliedAt = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+
+    try {
+      var saved = JSON.parse(localStorage.getItem('ankebang_mall_orders') || '[]');
+      if (!Array.isArray(saved) ) saved = [];
+      var idx = saved.findIndex(function(o) { return o.id === orderId; });
+      var refundData;
+      if (isInstant) {
+        refundData = {
+          status: 'cancel',
+          state: '已退款',
+          refundState: '已退款',
+          refundType: 'instant',
+          refundReason: selectedReason,
+          refundAmount: currentAmount.toFixed(2),
+          refundRemark: desc,
+          refundPhotos: photos,
+          refundAt: appliedAt,
+          note: '未发货，用户申请退款，系统自动退款完成'
+        };
+      } else {
+        refundData = {
+          status: 'refund',
+          state: '退款/售后',
+          refundState: '待审核',
+          refundType: 'manual',
+          refundReason: selectedReason,
+          refundAmount: currentAmount.toFixed(2),
+          refundMaxAmount: maxRefund.toFixed(2),
+          refundRemark: desc,
+          refundPhotos: photos,
+          refundAppliedAt: appliedAt,
+          note: '已发货，用户申请退货退款：' + selectedReason + (desc ? '（' + desc + '）' : '')
+        };
+      }
+      if (idx >= 0) {
+        saved[idx] = Object.assign({}, saved[idx], refundData);
+      } else {
+        saved.unshift(Object.assign({}, order, refundData));
+      }
+      localStorage.setItem('ankebang_mall_orders', JSON.stringify(saved));
+    } catch(e) {}
+
+    /* 显示成功页 */
+    document.getElementById('formView').style.display = 'none';
+    document.getElementById('submitBar').style.display = 'none';
+    if (isInstant) {
+      document.getElementById('successTitle').textContent = '退款成功';
+      document.getElementById('successDesc').innerHTML = '退款金额 ¥' + currentAmount.toFixed(2) + ' 将原路退回<br>预计 1-3 个工作日到账';
+    }
+    document.getElementById('successBack').onclick = function() {
+      location.href = 'mall-order-detail.html?no=' + encodeURIComponent(orderId);
+    };
+    document.getElementById('successView').classList.add('show');
+  };
+
+  /* ── Toast ── */
+  function showToast(msg) {
+    var existing = document.getElementById('refundToast');
+    if (existing) existing.remove();
+    var toast = document.createElement('div');
+    toast.id = 'refundToast';
+    toast.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.72);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;z-index:999;pointer-events:none;white-space:nowrap;';
+    toast.textContent = msg;
+    document.querySelector('.phone').appendChild(toast);
+    setTimeout(function() { toast.remove(); }, 2000);
+  }
+})();
+</script>
+</body>
+</html>
