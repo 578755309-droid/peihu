@@ -12,7 +12,8 @@
   window.toggleCompanyField=function(){var et=document.getElementById('cgEmployment').value;var field=document.getElementById('cgCompanyField');field.style.display=et==='enterprise'?'':'none';if(et!=='enterprise')document.getElementById('cgCompany').value='';};
   var cgCerts=[
 	    {type:'护士证',certNo:'',image:'',imageName:'',fileName:'',fileSize:0},
-	    {type:'毕业证',certNo:'',image:'',imageName:'',fileName:'',fileSize:0}
+	    {type:'毕业证',certNo:'',image:'',imageName:'',fileName:'',fileSize:0},
+	    {type:'健康证',certNo:'',image:'',imageName:'',fileName:'',fileSize:0}
 	  ],cgCertPending=-1,cgCertKind='file';
 	  window.setCgCertNo=function(i,v){if(cgCerts[i])cgCerts[i].certNo=v;};
 	  window.pickCgCertFile=function(i,kind){cgCertPending=i;cgCertKind=kind||'file';var input=document.getElementById('cgCertFile');input.accept=kind==='image'?'image/*':'image/*,.pdf,.doc,.docx';input.click();};
