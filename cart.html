@@ -57,6 +57,72 @@
     .checkout-btn{padding:11px 28px;border:0;border-radius:22px;background:var(--purple);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
     .checkout-btn:disabled{background:var(--text3);cursor:not-allowed}
 
+    /* ── 结算支付弹窗（与商城单品一致） ── */
+    .overlay{position:absolute;inset:0;z-index:30;background:rgba(25,15,45,.48);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+    .overlay.show{opacity:1;pointer-events:auto}
+    .sheet{width:min(430px,100%);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:24px 24px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom));transform:translateY(18px);transition:transform .24s}
+    .overlay.show .sheet{transform:none}
+    .sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-shrink:0}
+    .sheet-title{font-size:18px;font-weight:900}
+    .close{width:32px;height:32px;border:0;border-radius:10px;background:var(--purple-light);color:var(--text2);font-size:20px;cursor:pointer}
+    .pay-sheet{padding:0;display:flex;flex-direction:column;transform:none !important;transition:none}
+    .pay-scroll{flex:1;overflow-y:auto;padding:0 16px;-webkit-overflow-scrolling:touch;min-height:0}
+    .pay-scroll::-webkit-scrollbar{display:none}
+    .pay-product{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--border)}
+    .pay-thumb{position:relative;width:82px;height:82px;border-radius:12px;background:var(--purple-bg);display:grid;place-items:center;flex-shrink:0;overflow:hidden}
+    .pay-thumb svg{width:48px;height:48px}
+    .pay-thumb img{width:100%;height:100%;object-fit:cover;padding:0}
+    .pay-info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:5px}
+    .pay-name{font-size:14px;font-weight:800;color:var(--text);line-height:1.35}
+    .pay-sub{font-size:12px;color:var(--text3);margin-top:2px}
+    .pay-price-row{display:flex;align-items:baseline;gap:5px;justify-content:space-between}
+    .pay-price{font-size:17px;font-weight:900;color:#E94E4E}
+    .pay-price small{font-size:12px}
+    .pay-qty-txt{font-size:12px;color:var(--text3)}
+    .pay-sec{padding:13px 0;border-bottom:1px solid var(--border)}
+    .pay-sec-label{font-size:12px;color:var(--text2);font-weight:700;margin-bottom:8px}
+    .pay-addr{font-size:13px;color:var(--text);font-weight:700;line-height:1.5;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}
+    .pay-addr svg{width:14px;height:14px;color:var(--text3);flex-shrink:0}
+    .addr-list{display:flex;flex-direction:column;gap:10px;max-height:46vh;overflow:auto}
+    .addr-item{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--border);border-radius:12px;cursor:pointer}
+    .addr-item.sel{border-color:var(--purple);background:var(--purple-light)}
+    .addr-radio{width:16px;height:16px;border:2px solid #D5CFE0;border-radius:50%;flex-shrink:0;margin-top:2px}
+    .addr-item.sel .addr-radio{border-color:var(--purple);background:radial-gradient(circle,var(--purple) 0 5px,transparent 6px)}
+    .addr-detail{font-size:13px;font-weight:700;color:var(--text);line-height:1.5}
+    .addr-sub{font-size:12px;color:var(--text3);margin-top:4px}
+    .addr-add{width:100%;height:42px;margin-top:12px;border:1px dashed #9FEDE0;border-radius:12px;background:var(--purple-bg);color:var(--purple);font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0}
+    .pay-dlv-row{display:flex;gap:8px}
+    .pay-dlv{flex:1;height:38px;border:1px solid var(--border);border-radius:9px;background:#fff;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;font-family:inherit;position:relative;transition:all .15s}
+    .pay-dlv.on{border-color:#F59E0B;color:#D97706;background:#FFFBEB}
+    .pay-dlv.on:after{content:'✓';position:absolute;right:6px;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;background:#F59E0B;color:#fff;font-size:9px;display:grid;place-items:center}
+    .pay-points-row{display:flex;align-items:center;justify-content:space-between}
+    .pay-points-txt{font-size:12px;color:#E94E4E;font-weight:700}
+    .pay-toggle{width:40px;height:22px;border-radius:11px;background:#E5E0EF;border:0;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+    .pay-toggle:after{content:'';position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);transition:left .2s}
+    .pay-toggle.on{background:#F59E0B}
+    .pay-toggle.on:after{left:20px}
+    .pay-confirm{width:calc(100% - 32px);height:46px;margin:10px 16px calc(14px + env(safe-area-inset-bottom));flex-shrink:0;border:0;border-radius:12px;background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+    .pay-confirm:active{opacity:.88}
+
+    /* ── 支付成功全页 ── */
+    .pay-success-page{background:#EFFBF8;min-height:100%;width:min(430px,100%);display:flex;flex-direction:column}
+    .pay-success-top{flex:1;display:flex;flex-direction:column;align-items:center;padding:42px 20px 20px;text-align:center}
+    .pay-success-icon{width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,#34D399,#10B981);display:grid;place-items:center;margin-bottom:16px}
+    .pay-success-icon svg{width:32px;height:32px;color:#fff}
+    .pay-success-title{font-size:20px;font-weight:900;margin-bottom:8px}
+    .pay-success-desc{font-size:13px;color:var(--text2);line-height:1.65;max-width:280px}
+    .pay-success-card{background:#fff;border-radius:16px;padding:4px 18px;margin:20px 16px 0;box-shadow:var(--sh)}
+    .pay-success-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border);font-size:13px}
+    .pay-success-row:last-child{border-bottom:0}
+    .pay-success-row .k{color:var(--text3);font-weight:600}
+    .pay-success-row .v{color:var(--text);font-weight:700;max-width:210px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pay-success-row .v.highlight{color:#D97706}
+    .pay-success-row .v.deduct{color:#EF4444}
+    .pay-success-btns{display:flex;gap:12px;padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--border)}
+    .pay-success-btns button{flex:1;height:46px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+    .pay-success-btns .btn-ghost{border:1px solid #C5BDD8;background:#fff;color:var(--purple)}
+    .pay-success-btns .btn-primary{border:0;background:linear-gradient(135deg,#34D399,#10B981);color:#fff}
+
     /* 底部 Tab */
     .bottom-nav{flex-shrink:0;display:flex;background:#fff;border-top:1px solid var(--border);padding:8px 0 calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(15,120,100,.06)}
     .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;text-decoration:none;min-width:0}
@@ -258,85 +324,158 @@
     updateTotal();
   }
 
-  /* 结算下单 */
+  function esc(value){return String(value||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+
+  /* 收货地址（与服务订单同一数据源） */
+  var ADDR_KEY='ankebang_saved_addresses';
+  var fallbackAddrs=[
+    {id:1,detail:'北京市朝阳区望京街道 88 号 2 单元 1602',contact:'张女士',phone:'138****2468',addressType:'home'},
+    {id:2,detail:'北京市朝阳区建国路 66 号 北京协和医院东院区',contact:'张女士',phone:'138****2468',addressType:'hospital'}
+  ];
+  var payAddrId='';
+  var payDelivery='instant';
+  var pendingItems=[];
+  function getMallAddresses(){try{const v=JSON.parse(localStorage.getItem(ADDR_KEY));if(!Array.isArray(v))return fallbackAddrs.slice();const list=v.map(function(a){return Object.assign({addressType:'home'},a)});if(!list.some(function(a){return a.addressType==='hospital'}))list.push(fallbackAddrs[1]);return list}catch(e){return fallbackAddrs.slice()}}
+  function renderPayAddr(){var list=getMallAddresses();var sel=list.find(function(a){return String(a.id)===String(payAddrId)});if(!sel&&list.length){sel=list[0];payAddrId=sel.id}var el=document.getElementById('payAddr');if(el)el.textContent=sel?sel.detail:'请选择收货地址';return sel}
+  function openAddrDrawer(){renderAddrList();document.getElementById('addrOverlay').classList.add('show')}
+  function renderAddrList(){var list=getMallAddresses();document.getElementById('addrList').innerHTML=list.length?list.map(function(a){return '<div class="addr-item'+(String(a.id)===String(payAddrId)?' sel':'')+'" onclick="selectPayAddr(\''+a.id+'\')"><div class="addr-radio"></div><div><div class="addr-detail">'+esc(a.detail)+'</div><div class="addr-sub">'+(a.contact||'')+(a.phone?' · '+esc(a.phone):'')+'</div></div></div>'}).join(''):'<div style="text-align:center;color:var(--text3);font-size:12px;padding:10px 0">暂无收货地址，请新增</div>'}
+  function selectPayAddr(id){payAddrId=id;renderPayAddr();renderAddrList();closeOverlay('addrOverlay')}
+
+  /* 结算 → 打开支付确认弹窗 */
   function checkout(){
-    var items = getSelectedItems();
-    if(!items.length) return;
-    var total = items.reduce(function(sum,it){ return sum + it.price*it.qty; }, 0);
-    var discount = getPointsDiscount(total);
-    var finalPrice = total - discount;
+    pendingItems=getSelectedItems();
+    if(!pendingItems.length) return;
+    payDelivery='instant'; usePoints=false;
+    renderPayBody();
+    renderPayAddr();
+    document.getElementById('payOverlay').classList.add('show');
+  }
 
-    /* 扣减积分 */
-    if(discount > 0 && window.AKBPoints){
-      window.AKBPoints.spend(discount, '购物车订单');
-    }
+  function renderPayBody(){
+    var total=pendingItems.reduce(function(s,it){return s+it.price*it.qty;},0);
+    var discount=getPointsDiscount(total);
+    var finalPrice=total-discount;
+    var productHtml=pendingItems.map(function(it){
+      return '<div class="pay-product"><div class="pay-thumb">'+(it.image?'<img src="'+esc(it.image)+'" alt="'+esc(it.name)+'">':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg>')+'</div><div class="pay-info"><div class="pay-name">'+esc(it.name)+'</div><div class="pay-sub">'+esc(it.sub)+'</div><div class="pay-price-row"><div class="pay-price"><small>¥</small>'+it.price+'</div><div class="pay-qty-txt">x'+it.qty+'</div></div></div></div>';
+    }).join('');
+    var addrSec='<div class="pay-sec"><div class="pay-sec-label">收货地址</div><div class="pay-addr" onclick="openAddrDrawer()"><span id="payAddr">请选择收货地址</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></div></div>';
+    var dlvSec='<div class="pay-sec"><div class="pay-sec-label">配送方式</div><div class="pay-dlv-row"><button class="pay-dlv on" data-dlv="instant" onclick="paySetDelivery(\'instant\',this)">立即送达</button><button class="pay-dlv" data-dlv="runner" onclick="paySetDelivery(\'runner\',this)">跑腿送达</button><button class="pay-dlv" data-dlv="express" onclick="paySetDelivery(\'express\',this)">快递送达</button></div></div>';
+    var ptsSec='<div class="pay-sec" style="border-bottom:0"><div class="pay-points-row"><span class="pay-points-txt">可抵 ¥'+discount+'（'+discount+' 积分）</span><button class="pay-toggle '+(usePoints?'on':'')+'" id="payToggle" onclick="payTogglePoints()"></button></div></div>';
+    document.getElementById('payBody').innerHTML=productHtml+addrSec+dlvSec+ptsSec;
+    document.getElementById('payConfirmBtn').textContent='立即支付 ¥'+finalPrice.toFixed(2);
+  }
 
-    var now = new Date();
-    var dateStr = now.toISOString().slice(0,10);
-    var timeStr = now.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(/\//g,'-');
+  function paySetDelivery(v,btn){
+    payDelivery=v;
+    document.querySelectorAll('.pay-dlv').forEach(function(b){b.classList.toggle('on',b===btn)});
+  }
+  function payTogglePoints(){
+    usePoints=!usePoints;
+    var tgl=document.getElementById('payToggle');if(tgl)tgl.classList.toggle('on',usePoints);
+    var total=pendingItems.reduce(function(s,it){return s+it.price*it.qty;},0);
+    var discount=getPointsDiscount(total);
+    var finalPrice=total-discount;
+    document.getElementById('payConfirmBtn').textContent='立即支付 ¥'+finalPrice.toFixed(2);
+  }
 
-    /* 商城商品订单 */
-    var orderNo = 'AKB-M'+now.getFullYear()+String(Math.floor(Math.random()*999999)).padStart(6,'0');
-    var code = String(Math.floor(1000+Math.random()*9000));
-    var first = items[0];
-    var order = {
-      id: orderNo, status:'shipping', state:'待发货',
-      product: first.name, desc: first.sub,
-      price: String(first.price),
-      quantity: items.reduce(function(s,i){return s+i.qty;},0),
-      amount: String(items.reduce(function(s,i){return s+i.price*i.qty;},0)),
-      pointsDiscount: discount,
-      finalAmount: String(finalPrice),
-      date: dateStr, address:'默认收货地址',
-      image: first.image||'', tone: first.tone||'purple',
-      deliveryMethod:'instant', deliveryLabel:'立即送达', receiptCode: code,
-      deliveryStatus:'processing',
-      items: items.map(function(i){return {product:i.name,desc:i.sub,price:String(i.price),quantity:i.qty,image:i.image,tone:i.tone};})
+  /* 立即支付 */
+  function payConfirm(){
+    if(!pendingItems.length) return;
+    var selAddr=renderPayAddr();
+    if(!selAddr){alert('请先选择收货地址'); return;}
+    var total=pendingItems.reduce(function(s,it){return s+it.price*it.qty;},0);
+    var discount=getPointsDiscount(total);
+    var finalPrice=total-discount;
+    if(discount>0 && window.AKBPoints){window.AKBPoints.spend(discount,'购物车订单');}
+    var now=new Date();
+    var dateStr=now.toISOString().slice(0,10);
+    var orderNo='AKB-M'+now.getFullYear()+String(Math.floor(Math.random()*999999)).padStart(6,'0');
+    var code=String(Math.floor(1000+Math.random()*9000));
+    var deliveryLabels={instant:'立即送达',runner:'跑腿送达',express:'快递送达'};
+    var first=pendingItems[0];
+    var addrText=selAddr?(selAddr.detail+(selAddr.contact?' · '+selAddr.contact:'')):'默认收货地址';
+    var order={
+      id:orderNo, status:'shipping', state:'待发货',
+      product:first.name, desc:first.sub,
+      price:String(first.price),
+      quantity:pendingItems.reduce(function(s,i){return s+i.qty;},0),
+      amount:String(total),
+      pointsDiscount:discount,
+      finalAmount:String(finalPrice),
+      date:dateStr, address:addrText,
+      image:first.image||'', tone:first.tone||'purple',
+      deliveryMethod:payDelivery, deliveryLabel:deliveryLabels[payDelivery],
+      receiptCode:code, deliveryStatus:'processing',
+      items:pendingItems.map(function(i){return {product:i.name,desc:i.sub,price:String(i.price),quantity:i.qty,image:i.image,tone:i.tone};})
     };
     try{
-      var saved = JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');
-      if(!Array.isArray(saved)) saved = [];
+      var saved=JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');
+      if(!Array.isArray(saved)) saved=[];
       saved.unshift(order);
-      localStorage.setItem('ankebang_mall_orders', JSON.stringify(saved));
+      localStorage.setItem('ankebang_mall_orders',JSON.stringify(saved));
     }catch(e){}
-
-    /* 从购物车移除已结算商品 */
-    items.forEach(function(it){
-      mallCart = mallCart.filter(function(c){return c.id!==it.id;});
+    pendingItems.forEach(function(it){
+      mallCart=mallCart.filter(function(c){return c.id!==it.id;});
       selected.delete('mall:'+it.id);
     });
-    saveCart();
-    usePoints = false;
-    showSuccess(total, discount, finalPrice);
-  }
-
-  function showSuccess(total, discount, finalPrice){
-    var overlay = document.getElementById('successOverlay');
-    document.getElementById('successTotal').textContent = '商品合计：¥'+total;
-    document.getElementById('successDiscount').style.display = discount>0 ? '' : 'none';
-    document.getElementById('successDiscount').textContent = '积分抵扣：-¥'+discount;
-    document.getElementById('successAmt').textContent = '实付：¥'+finalPrice;
-    overlay.style.display = 'flex';
+    saveCart(); usePoints=false; pendingItems=[];
+    closeOverlay('payOverlay');
+    document.getElementById('okProduct').textContent=first.name+' 等'+order.quantity+'件';
+    document.getElementById('okAddr').textContent=addrText;
+    document.getElementById('okCode').textContent=code;
+    document.getElementById('okTotal').textContent='¥'+total;
+    document.getElementById('okDeduct').textContent=discount>0?'-¥'+discount:'—';
+    document.getElementById('okPaid').textContent='¥'+finalPrice;
+    document.getElementById('successOverlay').classList.add('show');
     render();
   }
-  function closeSuccess(){ document.getElementById('successOverlay').style.display='none'; }
+
+  function closeOverlay(id){document.getElementById(id).classList.remove('show')}
+  function closeBackdrop(event,id){if(event.target===document.getElementById(id))closeOverlay(id)}
 
   render();
 </script>
 
-<!-- 下单成功弹窗 -->
-<div id="successOverlay" onclick="if(event.target===this)closeSuccess()" style="position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:999">
-  <div style="background:#fff;border-radius:18px;padding:28px 24px;width:300px;text-align:center">
-    <div style="width:56px;height:56px;border-radius:50%;background:#DCFCE7;display:grid;place-items:center;margin:0 auto 14px">
-      <svg viewBox="0 0 28 28" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 14l5 5 11-11"/></svg>
-    </div>
-    <div style="font-size:18px;font-weight:900;margin-bottom:6px">下单成功</div>
-    <div style="font-size:13px;color:#6B6880;margin-bottom:16px">护理员将尽快为您处理</div>
-    <div id="successTotal" style="font-size:13px;color:#6B6880;margin-bottom:4px"></div>
-    <div id="successDiscount" style="font-size:13px;color:#16A34A;margin-bottom:4px;display:none"></div>
-    <div id="successAmt" style="font-size:16px;font-weight:900;color:#E94E4E;margin-bottom:18px"></div>
-    <button onclick="closeSuccess();location.href='orders.html'" style="width:100%;height:42px;border:0;border-radius:12px;background:var(--purple);color:#fff;font-weight:800;cursor:pointer">查看订单</button>
+<!-- 结算支付弹窗 -->
+  <div class="overlay" id="payOverlay" onclick="closeBackdrop(event,'payOverlay')">
+    <section class="sheet pay-sheet">
+      <div class="sheet-head" style="padding:18px 16px 0"><div class="sheet-title">确认订单</div><button class="close" onclick="closeOverlay('payOverlay')" aria-label="关闭">×</button></div>
+      <div class="pay-scroll" id="payBody"></div>
+      <button class="pay-confirm" id="payConfirmBtn" onclick="payConfirm()">立即支付 ¥0</button>
+    </section>
   </div>
-</div>
-</body>
+
+  <!-- 收货地址选择抽屉 -->
+  <div class="overlay" id="addrOverlay" onclick="closeBackdrop(event,'addrOverlay')">
+    <section class="sheet">
+      <div class="sheet-head"><div class="sheet-title">选择收货地址</div><button class="close" onclick="closeOverlay('addrOverlay')" aria-label="关闭">×</button></div>
+      <div class="addr-list" id="addrList"></div>
+      <button class="addr-add" onclick="location.href='address-edit.html?return=cart'">＋ 新增收货地址</button>
+    </section>
+  </div>
+
+  <!-- 支付成功全页 -->
+  <div class="overlay" id="successOverlay" style="align-items:stretch">
+    <div class="pay-success-page">
+      <div class="pay-success-top">
+        <div class="pay-success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 12.5l5 5L20 6.5"/></svg></div>
+        <div class="pay-success-title">支付成功</div>
+        <div class="pay-success-desc">商品会按你选择的方式配送，送达后请向配送员提供收货码完成签收。</div>
+      </div>
+      <div class="pay-success-card">
+        <div class="pay-success-row"><span class="k">商品名称</span><span class="v" id="okProduct">—</span></div>
+        <div class="pay-success-row"><span class="k">收货地址</span><span class="v" id="okAddr">—</span></div>
+        <div class="pay-success-row"><span class="k">收货码</span><span class="v" id="okCode">—</span></div>
+        <div class="pay-success-row"><span class="k">支付方式</span><span class="v">微信支付</span></div>
+        <div class="pay-success-row"><span class="k">应付金额</span><span class="v" id="okTotal">—</span></div>
+        <div class="pay-success-row"><span class="k">积分抵扣</span><span class="v deduct" id="okDeduct">—</span></div>
+        <div class="pay-success-row"><span class="k">实付金额</span><span class="v highlight" id="okPaid">—</span></div>
+      </div>
+      <div class="pay-success-btns">
+        <button class="btn-ghost" onclick="closeOverlay('successOverlay')">返回首页</button>
+        <button class="btn-primary" onclick="location.href='orders.html'">查看订单</button>
+      </div>
+    </div>
+  </div>
+</div></div>
 </html>
