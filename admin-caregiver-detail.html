@@ -487,11 +487,11 @@
                 </div>
               </div>
               <div class="side-actions">
-                <button class="btn" onclick="alert('编辑陪护员档案')">
+                <button class="btn" onclick="openCaregiverEdit('N1001')">
                   编辑档案</button
-                ><button class="btn" onclick="alert('调整在岗状态')">
+                ><button class="btn" onclick="toggleCaregiverState()">
                   调整在岗状态</button
-                ><button class="btn primary" onclick="alert('安排订单')">
+                ><button class="btn primary" onclick="showToast('安排订单功能即将上线')">
                   安排订单
                 </button>
               </div>
@@ -614,6 +614,91 @@
       </main>
     </div>
     <script>
+      /* 演示数据：与当前页面硬编码内容保持一致 */
+      /* 非新建场景清除 draft，避免 draft.js 用新建档案格式覆盖本页 */
+      if (!new URLSearchParams(location.search).get('new')) {
+        try { sessionStorage.removeItem('akbCaregiverDraft'); } catch (e) {}
+      }
+      window.DATA = [{
+        id: 'N1001',
+        name: '张阿姨',
+        phone: '13812342468',
+        gender: '女',
+        age: '46',
+        workYears: '8年',
+        certification: '审核通过',
+        state: 'on',
+        employmentType: 'self',
+        companyName: '',
+        area: '西安市雁塔区',
+        idNo: '610112345678904321',
+        skills: ['住院陪护', '居家陪护'],
+        certs: [
+          {type:'护士证', certNo:'YL20250812001', imageName:'护士证扫描件.jpg', image:'', fileName:'', fileSize:0},
+          {type:'毕业证', certNo:'JQ20250319018', imageName:'毕业证扫描件.jpg', image:'', fileName:'', fileSize:0},
+          {type:'健康证', certNo:'JK20260106025', imageName:'', image:'', fileName:'健康证电子版.pdf', fileSize:0}
+        ]
+      }];
+
+      /* 根据 DATA 刷新页面显示 */
+      window.render = function() {
+        var rec = DATA.find(function(x){return x.id === 'N1001';});
+        if (!rec) return;
+        /* 左侧档案卡 */
+        var nameEl = document.querySelector('.identity .name');
+        if (nameEl) nameEl.textContent = rec.name;
+        var avatarEl = document.querySelector('.identity .avatar');
+        if (avatarEl) avatarEl.textContent = rec.name.slice(0, 1);
+        var stateEl = document.querySelector('.identity .state');
+        if (stateEl) {
+          var stateMap = {on:'在岗', leave:'休息', off:'停用'};
+          stateEl.textContent = stateMap[rec.state] || '在岗';
+          stateEl.style.background = rec.state === 'on' ? '#DCFCE7' : rec.state === 'leave' ? '#FEF3C7' : '#FEE2E2';
+          stateEl.style.color = rec.state === 'on' ? '#16A34A' : rec.state === 'leave' ? '#D97706' : '#DC2626';
+        }
+        /* 技能标签 */
+        var skillBox = document.getElementById('cgSkillTags');
+        if (skillBox) skillBox.innerHTML = rec.skills.map(function(s){
+          return '<span class="skill-tag">' + s + '</span>';
+        }).join('');
+        /* 基本信息面板 */
+        var etLabel = {self:'自营', personal:'个人', enterprise:'企业'}[rec.employmentType] || '自营';
+        var basePanel = document.getElementById('base');
+        if (basePanel) basePanel.innerHTML = '<div class="section-title">人员基本信息</div><div class="grid">' +
+          '<div class="kv"><div class="k">姓名</div><div class="v">' + rec.name + '</div></div>' +
+          '<div class="kv"><div class="k">性别 / 年龄</div><div class="v">' + rec.gender + ' / ' + rec.age + ' 岁</div></div>' +
+          '<div class="kv"><div class="k">人员类型</div><div class="v">' + etLabel + '</div></div>' +
+          '<div class="kv"><div class="k">身份证号</div><div class="v">' + (rec.idNo || '').replace(/^(.{6}).+(.{4})$/, '$1**********$2') + '</div></div>' +
+          '<div class="kv"><div class="k">紧急联系人</div><div class="v">李女士 139****8572</div></div>' +
+          '<div class="kv"><div class="k">入驻企业单位</div><div class="v">' + (rec.companyName || '—') + '</div></div>' +
+          '<div class="kv"><div class="k">服务区域</div><div class="v">' + rec.area + '</div></div>' +
+          '<div class="kv"><div class="k">在岗状态</div><div class="v">' + ({on:'正常在岗', leave:'休息中', off:'已停用'}[rec.state] || '正常在岗') + '</div></div>' +
+          '<div class="kv"><div class="k">工龄</div><div class="v">' + rec.workYears + '</div></div>' +
+          '</div>';
+        /* 证书面板 */
+        var certHtml = '<div class="section-title">资质证书</div><table class="table"><tr><th>证书名称</th><th>证书编号</th><th>有效期</th><th>证书图片/文件</th><th>审核状态</th></tr>';
+        certHtml += rec.certs.map(function(c){
+          var att = '';
+          if (c.imageName) att = '<span class="cert-att img">图</span><span class="cert-att-name" title="' + c.imageName + '">' + c.imageName + '</span>';
+          else if (c.fileName) att = '<span class="cert-att file">文</span><span class="cert-att-name" title="' + c.fileName + '">' + c.fileName + '</span>';
+          else att = '<span class="cert-att-name">未上传</span>';
+          return '<tr><td>' + c.type + (c.certNo ? '<div class="cert-no-sub">编号：' + c.certNo + '</div>' : '') + '</td><td>' + (c.certNo || '—') + '</td><td>—</td><td>' + att + '</td><td><span class="tag">已审核</span></td></tr>';
+        }).join('');
+        certHtml += '</table>';
+        var certPanel = document.getElementById('cert');
+        if (certPanel) certPanel.innerHTML = certHtml;
+      };
+
+      /* 切换在岗状态：在岗 → 休息 → 停用 循环 */
+      window.toggleCaregiverState = function() {
+        var rec = DATA.find(function(x){return x.id === 'N1001';});
+        if (!rec) return;
+        var states = ['on', 'leave', 'off'];
+        rec.state = states[(states.indexOf(rec.state) + 1) % 3];
+        render();
+        showToast('状态已更新为：' + {on:'在岗', leave:'休息', off:'停用'}[rec.state]);
+      };
+
       document.querySelectorAll(".tab").forEach(
         (t) =>
           (t.onclick = () => {
@@ -628,6 +713,7 @@
           }),
       );
     </script>
+    <script src="admin-caregiver-create.js"></script>
     <script defer src="admin-caregiver-draft.js"></script>
   </body>
 </html>
