@@ -43,13 +43,14 @@
       <div class="mall-metrics" id="metricCards"></div>
 
       <div class="mall-filter">
-        <select id="statusFilter">
+        <label>状态</label>
+        <select class="select" id="statusFilter">
           <option value="all">全部状态</option>
           <option value="on">推广中</option>
           <option value="off">已停用</option>
         </select>
-        <input id="kwInput" placeholder="搜索姓名 / 手机号 / 编号…" />
-        <span id="resultCount" style="margin-left:auto;font-size:12px;color:#9AA7BA;font-weight:700"></span>
+        <input class="search" id="kwInput" placeholder="搜索姓名 / 手机号 / 编号…" />
+        <span class="result">共 <strong id="resultCount">0</strong> 人</span>
       </div>
 
       <div class="table-wrap">
@@ -172,7 +173,7 @@
     M.distStats().forEach(function (s) { stats[s.dist.id] = s; });
     renderMetrics();
     var list = filtered();
-    document.getElementById('resultCount').textContent = '共 ' + list.length + ' 人';
+    document.getElementById('resultCount').textContent = list.length;
     document.getElementById('emptyState').style.display = list.length ? 'none' : 'block';
     document.getElementById('distTbody').innerHTML = list.map(function (d) {
       var s = stats[d.id] || { orderCount: 0, sales: 0, commission: 0 };
