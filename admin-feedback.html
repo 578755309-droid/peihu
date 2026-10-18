@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<link rel="stylesheet" href="admin-shell.css">
+<meta charset="utf-8">
+<script src="common-ui.js"></script>
+<meta name="viewport" content="width=1280">
+<title>意见反馈 · 佑小邦运营后台</title>
+<style>
+body{margin:0;background:#F5F5F5;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;min-width:1100px}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:220px;background:#002141}
+.main{margin-left:220px;flex:1;min-width:0}
+.topbar{height:60px;background:#fff;border-bottom:1px solid #CFF5ED;display:flex;align-items:center;padding:0 28px;gap:16px;box-shadow:0 1px 8px rgba(0,0,0,0.1)}
+.crumb{display:flex;gap:7px;color:#9AA7BA;font-size:13px;font-weight:700}
+.crumb .current{color:#172033}
+.top-actions{margin-left:auto;display:flex;gap:12px;align-items:center}
+.top-date{font-size:12px;color:#9AA7BA;font-weight:700}
+.top-av{width:36px;height:36px;border-radius:10px;background:#1CD8B7;display:grid;place-items:center;font-weight:900;color:#fff}
+.page{padding:24px 28px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.page-title{font-size:22px;font-weight:900}
+.page-sub{font-size:13px;color:#9AA7BA;margin-top:4px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.metric{background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:16px 18px;box-shadow:0 2px 16px rgba(0,0,0,0.1)}
+.metric-label{font-size:12px;color:#9AA7BA;font-weight:700}
+.metric-value{font-size:26px;font-weight:900;margin-top:6px}
+.metric-value.warn{color:#D97706}
+.metric-value.ok{color:#16A34A}
+.filter{background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:12px;margin-bottom:16px;box-shadow:0 2px 16px rgba(0,0,0,0.1)}
+.filter label{font-size:12px;color:#9AA7BA;font-weight:800}
+.select,.search{height:36px;border:1px solid #CFF5ED;border-radius:8px;padding:0 11px;color:#657087;background:#fff;font:600 12px inherit}
+.search{width:220px}
+.result{margin-left:auto;color:#9AA7BA;font-size:12px;font-weight:700}
+.result strong{color:#1CD8B7;font-size:16px}
+.table-wrap{background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,0.1);overflow-x:auto}
+.table{width:100%;border-collapse:collapse;min-width:1180px}
+.table th{height:44px;background:#F3FDFA;color:#9AA7BA;font-size:11px;text-align:left;padding:0 18px;white-space:nowrap}
+.table td{height:64px;padding:10px 18px;border-top:1px solid #E4FAF4;font-size:12px;color:#657087;font-weight:600;vertical-align:middle}
+.fbid{font-weight:800;color:#172033;white-space:nowrap}
+.sub{font-size:11px;color:#9AA7BA;margin-top:3px}
+.desc-cell{max-width:300px}
+.desc-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px}
+.tag{display:inline-flex;padding:5px 9px;border-radius:18px;font-size:11px;font-weight:800;white-space:nowrap}
+.tag.biz{background:#DBEAFE;color:#2563EB}
+.tag.sys{background:#FEF3C7;color:#D97706}
+.tag.wait{background:#FEF3C7;color:#D97706}
+.tag.done{background:#DCFCE7;color:#16A34A}
+.op{display:flex;gap:10px}
+.op button{border:0;background:none;color:#1CD8B7;font:700 12px inherit;cursor:pointer;white-space:nowrap}
+.empty{padding:40px;text-align:center;color:#9AA7BA;font-size:13px}
+.fb-mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:999}
+.fb-dialog{width:560px;max-height:84vh;overflow-y:auto;background:#fff;border-radius:16px;padding:22px}
+.fb-dialog::-webkit-scrollbar{width:6px}
+.fb-dlg-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.fb-dlg-title{font-size:16px;font-weight:900}
+.fb-close{border:0;background:none;font-size:20px;cursor:pointer;color:#9AA7BA}
+.fb-info{background:#F8FAFC;border-radius:12px;padding:14px;margin-bottom:14px}
+.fb-info-row{display:flex;gap:10px;font-size:12px;padding:5px 0}
+.fb-info-row label{color:#9AA7BA;font-weight:700;flex:0 0 76px}
+.fb-info-row span{color:#172033;font-weight:700;line-height:1.6;word-break:break-all}
+.fb-photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.fb-photos img{width:72px;height:72px;border-radius:10px;object-fit:cover;border:1px solid #E4FAF4}
+.fb-reply-box{width:100%;min-height:88px;border:1.5px solid #CFF5ED;border-radius:12px;padding:11px 12px;font:600 13px inherit;resize:vertical;outline:none}
+.fb-reply-box:focus{border-color:#1CD8B7}
+.fb-dlg-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.btn{height:36px;border:1px solid #CFF5ED;border-radius:9px;padding:0 16px;background:#fff;color:#41536d;font:700 12px inherit;cursor:pointer}
+.btn.primary{border-color:#1CD8B7;background:#1CD8B7;color:#fff}
+.fb-history{margin-top:10px;padding:10px 12px;border-radius:10px;background:#DDF7F1;font-size:12px;color:#0FA98C;line-height:1.6}
+</style>
+<script defer src="admin-sidebar.js"></script>
+<link rel="stylesheet" href="modal-scroll.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>其他</span><span>›</span><span class="current">意见反馈</span></div>
+      <div class="top-actions"><span class="top-date">2026年4月12日 星期日</span><div class="top-av">管</div></div>
+    </header>
+    <section class="page">
+      <div class="page-head">
+        <div><h1 class="page-title">意见反馈</h1><p class="page-sub">处理用户端提交的业务问题与系统问题，支持站内消息回复</p></div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-label">反馈总数</div><div class="metric-value" id="mTotal">0</div></div>
+        <div class="metric"><div class="metric-label">待处理</div><div class="metric-value warn" id="mWait">0</div></div>
+        <div class="metric"><div class="metric-label">已回复</div><div class="metric-value ok" id="mDone">0</div></div>
+      </div>
+      <div class="filter">
+        <label>筛选</label>
+        <select class="select" id="fCat"><option value="all">全部类型</option><option>业务问题</option><option>系统问题</option></select>
+        <select class="select" id="fState"><option value="all">全部状态</option><option>待处理</option><option>已回复</option></select>
+        <input class="search" id="fSearch" placeholder="搜索反馈编号 / 联系方式 / 内容">
+        <span class="result">共 <strong id="count">0</strong> 条</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>反馈编号</th><th>类型</th><th>问题类型</th><th>联系方式</th><th>反馈内容</th><th>提交时间</th><th>状态</th><th>操作</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 回复弹窗 -->
+<div class="fb-mask" id="fbMask" onclick="if(event.target===this)closeDlg()">
+  <div class="fb-dialog">
+    <div class="fb-dlg-head"><div class="fb-dlg-title">反馈详情与回复</div><button class="fb-close" onclick="closeDlg()">×</button></div>
+    <div class="fb-info" id="fbInfo"></div>
+    <div id="fbHistory"></div>
+    <div style="font-size:13px;font-weight:800;margin-bottom:8px">发送消息回复用户</div>
+    <textarea class="fb-reply-box" id="fbReply" placeholder="请输入回复内容，提交后用户端「我的反馈记录」中可见"></textarea>
+    <div class="fb-dlg-foot">
+      <button class="btn" onclick="closeDlg()">取消</button>
+      <button class="btn primary" onclick="sendReply()">发送消息</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY='ankebang_feedbacks';
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function load(){
+    try{var list=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(list)?list:[];}catch(e){return[];}
+  }
+  function save(list){localStorage.setItem(KEY,JSON.stringify(list));}
+  /* 首次访问写入演示数据 */
+  if(!localStorage.getItem(KEY)){
+    save([
+      {id:'FB20260410-0182',category:'业务问题',type:'服务态度',orderNo:'AKB-20260410-007',page:'',desc:'助浴人员比约定时间晚到 40 分钟，希望平台加强履约管理并给出补偿方案。',photos:[],contact:'133****6420',createdAt:'2026-04-10 16:40',status:'已回复',reply:'非常抱歉给您带来不便，已核实当次服务情况并对护理员进行再培训，补偿积分已发放至您的账户。',repliedAt:'2026-04-10 18:22'},
+      {id:'FB20260411-0931',category:'系统问题',type:'支付失败',orderNo:'',page:'商城确认订单页',desc:'微信支付弹窗拉起后提示支付失败，但银行卡已扣款，麻烦核实订单状态。',photos:[],contact:'138****2468',createdAt:'2026-04-11 09:15',status:'待处理',reply:'',repliedAt:''},
+      {id:'FB20260412-0476',category:'业务问题',type:'退款问题',orderNo:'AKB-20260409-031',page:'',desc:'陪诊订单取消后退款一直未到账，已等待 3 天，请尽快处理。',photos:[],contact:'177****9183',createdAt:'2026-04-12 10:03',status:'待处理',reply:'',repliedAt:''}
+    ]);
+  }
+
+  function render(){
+    var cat=document.getElementById('fCat').value;
+    var st=document.getElementById('fState').value;
+    var q=document.getElementById('fSearch').value.trim();
+    var all=load();
+    var list=all.filter(function(f){
+      return (cat==='all'||f.category===cat)
+        &&(st==='all'||f.status===st)
+        &&(!q||(f.id+' '+f.contact+' '+f.desc+' '+(f.orderNo||'')).indexOf(q)>-1);
+    });
+    document.getElementById('mTotal').textContent=all.length;
+    document.getElementById('mWait').textContent=all.filter(function(f){return f.status==='待处理';}).length;
+    document.getElementById('mDone').textContent=all.filter(function(f){return f.status!=='待处理';}).length;
+    document.getElementById('count').textContent=list.length;
+    document.getElementById('rows').innerHTML=list.length?list.map(function(f){
+      return '<tr><td><div class="fbid">'+esc(f.id)+'</div>'+(f.orderNo?'<div class="sub">关联 '+esc(f.orderNo)+'</div>':'')+'</td>'
+        +'<td><span class="tag '+(f.category==='业务问题'?'biz':'sys')+'">'+esc(f.category)+'</span></td>'
+        +'<td>'+esc(f.type)+'</td>'
+        +'<td>'+esc(f.contact)+'</td>'
+        +'<td class="desc-cell"><div class="desc-text" title="'+esc(f.desc)+'">'+esc(f.desc)+'</div>'+(f.page?'<div class="sub">页面：'+esc(f.page)+'</div>':'')+'</td>'
+        +'<td style="white-space:nowrap">'+esc(f.createdAt)+'</td>'
+        +'<td><span class="tag '+(f.status==='待处理'?'wait':'done')+'">'+esc(f.status)+'</span></td>'
+        +'<td><div class="op"><button onclick="openDlg(\''+esc(f.id)+'\')">'+(f.status==='待处理'?'回复':'查看')+'</button></div></td></tr>';
+    }).join(''):'<tr><td colspan="8"><div class="empty">暂无符合条件的反馈</div></td></tr>';
+  }
+  document.getElementById('fCat').onchange=render;
+  document.getElementById('fState').onchange=render;
+  document.getElementById('fSearch').oninput=render;
+
+  var currentId='';
+  window.openDlg=function(id){
+    currentId=id;
+    var f=load().find(function(x){return x.id===id;});
+    if(!f)return;
+    document.getElementById('fbInfo').innerHTML=
+      '<div class="fb-info-row"><label>反馈编号</label><span>'+esc(f.id)+'</span></div>'
+      +'<div class="fb-info-row"><label>反馈类型</label><span>'+esc(f.category)+' · '+esc(f.type)+'</span></div>'
+      +(f.orderNo?'<div class="fb-info-row"><label>关联订单</label><span>'+esc(f.orderNo)+'</span></div>':'')
+      +(f.page?'<div class="fb-info-row"><label>发生页面</label><span>'+esc(f.page)+'</span></div>':'')
+      +'<div class="fb-info-row"><label>联系方式</label><span>'+esc(f.contact)+'</span></div>'
+      +'<div class="fb-info-row"><label>提交时间</label><span>'+esc(f.createdAt)+'</span></div>'
+      +'<div class="fb-info-row"><label>问题描述</label><span>'+esc(f.desc)+'</span></div>'
+      +(f.photos&&f.photos.length?'<div class="fb-photos">'+f.photos.map(function(p){return '<img src="'+p+'">';}).join('')+'</div>':'');
+    document.getElementById('fbHistory').innerHTML=f.reply
+      ?'<div class="fb-history"><b>已回复'+(f.repliedAt?' · '+esc(f.repliedAt):'')+'：</b>'+esc(f.reply)+'</div>'
+      :'';
+    document.getElementById('fbReply').value='';
+    document.getElementById('fbMask').style.display='flex';
+  };
+  window.closeDlg=function(){document.getElementById('fbMask').style.display='none';};
+  window.sendReply=function(){
+    var text=document.getElementById('fbReply').value.trim();
+    if(!text){showToast('请输入回复内容');return;}
+    var list=load();
+    var f=list.find(function(x){return x.id===currentId;});
+    if(!f)return;
+    var now=new Date();
+    f.reply=text;
+    f.status='已回复';
+    f.repliedAt=now.getFullYear()+'-'+('0'+(now.getMonth()+1)).slice(-2)+'-'+('0'+now.getDate()).slice(-2)+' '+('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
+    save(list);
+    closeDlg();
+    render();
+    showToast('回复已发送，用户端可查看');
+  };
+  render();
+})();
+</script>
+</body>
+</html>
