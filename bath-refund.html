@@ -469,6 +469,7 @@
         refundRemark: desc,
         refundPhotos: photos.length,
         refundAppliedAt: appliedAt,
+        refundLog: [{title:'提交退款申请',at:appliedAt,desc:'退款原因：'+selectedReason+' · 申请金额 ¥'+currentAmount.toFixed(2),operator:'用户',done:true}],
         actions: []
       };
       if (isTenPack) refundData.refundUnusedSessions = unusedSessions;

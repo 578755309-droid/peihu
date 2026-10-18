@@ -77,7 +77,7 @@
           var savedOrders=JSON.parse(localStorage.getItem('ankebang_service_orders')||'[]');
           if(Array.isArray(savedOrders))savedOrders.forEach(function(o){
             var amt=String(o.amount).indexOf('¥')>-1?String(o.amount):'¥'+o.amount;
-            var mapped={no:o.id,type:o.type,item:o.quantity?o.project+' · '+o.quantity:o.project,user:o.contact||'用户',userPhone:o.phone||'—',nurse:o.nurse||'待分配',nursePhone:o.nursePhone||'—',time:o.time,amount:amt,state:o.state,orderedAt:o.createdAt?new Date(o.createdAt).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'—',sessions:o.sessions,pay:o.pay,refundState:o.refundState,refundReason:o.refundReason,refundAmount:o.refundAmount,refundMaxAmount:o.refundMaxAmount,refundRemark:o.refundRemark,refundAppliedAt:o.refundAppliedAt,refundUnusedSessions:o.refundUnusedSessions,patient:o.person,patientPhone:o.phone,address:o.address,addressType:o.addressKind};
+            var mapped={no:o.id,type:o.type,item:o.quantity?o.project+' · '+o.quantity:o.project,user:o.contact||'用户',userPhone:o.phone||'—',nurse:o.nurse||'待分配',nursePhone:o.nursePhone||'—',time:o.time,amount:amt,state:o.state,orderedAt:o.createdAt?new Date(o.createdAt).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'—',sessions:o.sessions,pay:o.pay,refundState:o.refundState,refundReason:o.refundReason,refundAmount:o.refundAmount,refundMaxAmount:o.refundMaxAmount,refundRemark:o.refundRemark,refundAppliedAt:o.refundAppliedAt,refundResolvedAt:o.refundResolvedAt,refundLog:o.refundLog,refundUnusedSessions:o.refundUnusedSessions,patient:o.person,patientPhone:o.phone,address:o.address,addressType:o.addressKind};
             var exist=baseOrders.find(function(x){return x.no===o.id;});
             if(exist)Object.assign(exist,mapped);else baseOrders.unshift(mapped);
           });
@@ -115,13 +115,13 @@
         renderRefund(data);
         renderContract(no);
       }
-      /* 退款申请卡片：展示用户端 bath-refund 提交的数据（原因/金额/描述/凭证/时间），支持审核 */
+      /* 退款申请卡片：展示用户端 bath-refund 提交的数据（原因/金额/描述/凭证/时间）+ 处理记录时间线，支持审核 */
       function renderRefund(data){
         var card=document.getElementById('refundCard');
         if(!card)return;
         var ra=null;
-        if(data.refundApp)ra={reason:data.refundApp.reason,amount:data.refundApp.amount,maxAmount:'',desc:data.refundApp.description,photos:data.refundApp.photos||[],appliedAt:data.refundApp.appliedAt,state:data.refundState||'待审核'};
-        else if(data.refundState||data.refundReason)ra={reason:data.refundReason,amount:data.refundAmount,maxAmount:data.refundMaxAmount,desc:data.refundRemark,photos:[],appliedAt:data.refundAppliedAt,state:data.refundState||'待审核'};
+        if(data.refundApp)ra={reason:data.refundApp.reason,amount:data.refundApp.amount,maxAmount:'',desc:data.refundApp.description,photos:data.refundApp.photos||[],appliedAt:data.refundApp.appliedAt,state:data.refundState||'待审核',resolvedAt:data.refundResolvedAt||''};
+        else if(data.refundState||data.refundReason)ra={reason:data.refundReason,amount:data.refundAmount,maxAmount:data.refundMaxAmount,desc:data.refundRemark,photos:[],appliedAt:data.refundAppliedAt,state:data.refundState||'待审核',resolvedAt:data.refundResolvedAt||''};
         if(!ra){card.style.display='none';return;}
         card.style.display='';
         var html='<div class="info-grid">'
@@ -130,9 +130,32 @@
           +(ra.maxAmount?info('最大可退金额','¥'+ra.maxAmount):'')
           +info('申请时间',ra.appliedAt||'—')
           +info('审核状态',ra.state)
+          +(ra.resolvedAt?info('处理时间',ra.resolvedAt):'')
           +'</div>'
           +(ra.desc?'<div style="margin-top:12px;padding:12px 14px;border-radius:10px;background:#F8FAFC;font-size:12px;color:#53647b;line-height:1.7">'+esc(ra.desc)+'</div>':'')
           +(ra.photos.length?'<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">'+ra.photos.map(function(p){return '<img src="'+p+'" style="width:72px;height:72px;border-radius:10px;object-fit:cover;border:1px solid #E4FAF4">';}).join('')+'</div>':'');
+        /* 处理记录：优先取订单 refundLog（用户提交→平台审核→退款完成），否则由申请/处理时间合成 */
+        var logs=[];
+        if(data.refundLog&&data.refundLog.length){
+          logs=data.refundLog.slice();
+          /* 兼容更新前提交的订单：refundLog 缺首条时按申请时间补全 */
+          if(ra.appliedAt&&!logs.some(function(l){return l.title==='提交退款申请';})){
+            logs.unshift({title:'提交退款申请',at:ra.appliedAt,desc:'退款原因：'+(ra.reason||'—')+' · 申请金额 ¥'+(ra.amount||'—'),operator:'用户',done:true});
+          }
+        }else{
+          if(ra.appliedAt)logs.push({title:'提交退款申请',at:ra.appliedAt,desc:'退款原因：'+(ra.reason||'—')+' · 申请金额 ¥'+(ra.amount||'—'),operator:'用户',done:true});
+          if(ra.state==='已退款'&&ra.resolvedAt){
+            logs.push({title:'审核通过 · 同意退款',at:ra.resolvedAt,desc:'退款金额 ¥'+(ra.amount||'—')+' 原路退回',operator:'平台客服',done:true});
+            logs.push({title:'退款完成',at:ra.resolvedAt,desc:'款项已原路退回支付账户',operator:'系统',done:true});
+          }
+          if(ra.state==='已拒绝'&&ra.resolvedAt)logs.push({title:'审核拒绝',at:ra.resolvedAt,desc:'退款申请未通过，订单恢复待服务',operator:'平台客服',done:true});
+        }
+        if(ra.state==='待审核')logs.push({title:'平台审核中',at:'',desc:'预计 1-3 个工作日内完成审核',operator:'平台客服',done:false});
+        if(logs.length){
+          html+='<div style="margin-top:16px;padding-top:14px;border-top:1px solid #E6FAF5"><div style="font-size:13px;font-weight:900;margin-bottom:12px">处理记录</div><div class="timeline">'
+            +logs.map(function(log){return '<div class="timeline-item '+(log.done?'done':'')+'"><div class="timeline-time">'+esc(log.at||'待处理')+(log.operator?' · '+esc(log.operator):'')+'</div><div class="timeline-title">'+esc(log.title)+'</div>'+(log.desc?'<div class="timeline-desc">'+esc(log.desc)+'</div>':'')+'</div>';}).join('')
+            +'</div></div>';
+        }
         document.getElementById('refundInfo').innerHTML=html;
         document.getElementById('refundActions').innerHTML=ra.state==='待审核'
           ?'<button class="btn primary" onclick="resolveRefund(\''+esc(data.no)+'\',true)">同意退款</button><button class="btn" style="color:#DC2626;border-color:#FECACA" onclick="resolveRefund(\''+esc(data.no)+'\',false)">拒绝退款</button>'
@@ -146,9 +169,17 @@
           var now=new Date();
           var at=now.getFullYear()+'-'+('0'+(now.getMonth()+1)).slice(-2)+'-'+('0'+now.getDate()).slice(-2)+' '+('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
           if(idx<0){saved.unshift({id:no});idx=0;}
-          saved[idx].refundState=approve?'已退款':'已拒绝';
-          saved[idx].state=approve?'已取消':'待服务';
-          saved[idx].refundResolvedAt=at;
+          var rec=saved[idx];
+          rec.refundState=approve?'已退款':'已拒绝';
+          rec.state=approve?'已取消':'待服务';
+          rec.refundResolvedAt=at;
+          var amount=rec.refundAmount||(rec.refundApp&&rec.refundApp.amount)||'—';
+          rec.refundLog=(rec.refundLog||[]).concat(approve?[
+            {title:'审核通过 · 同意退款',at:at,desc:'退款金额 ¥'+amount+' 原路退回',operator:'平台客服',done:true},
+            {title:'退款完成',at:at,desc:'款项已原路退回支付账户',operator:'系统',done:true}
+          ]:[
+            {title:'审核拒绝',at:at,desc:'退款申请未通过，订单恢复待服务',operator:'平台客服',done:true}
+          ]);
           localStorage.setItem('ankebang_service_orders',JSON.stringify(saved));
         }catch(e){}
         showToast(approve?'已同意退款，金额将原路退回':'已拒绝退款申请');
