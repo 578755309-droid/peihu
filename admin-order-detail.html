@@ -172,7 +172,7 @@
           if(idx<0){saved.unshift({id:no});idx=0;}
           var rec=saved[idx];
           rec.refundState=approve?'已退款':'已拒绝';
-          rec.state=approve?'已取消':'待服务';
+          rec.state=approve?'退款/售后':'待服务';
           rec.refundResolvedAt=at;
           var amount=rec.refundAmount||(rec.refundApp&&rec.refundApp.amount)||'—';
           rec.refundLog=(rec.refundLog||[]).concat(approve?[
