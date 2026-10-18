@@ -377,6 +377,51 @@
         font: 700 12px inherit;
         cursor: pointer;
       }
+      /* 批量导入弹窗 */
+      .import-mask {
+        position: fixed; inset: 0; z-index: 1000;
+        display: none; align-items: center; justify-content: center;
+        background: rgba(12,33,65,.45); padding: 24px;
+      }
+      .import-mask.show { display: flex; }
+      .import-dialog {
+        width: min(560px, calc(100vw - 48px));
+        display: flex; flex-direction: column;
+        overflow: hidden; border-radius: 16px;
+        background: #fff; box-shadow: 0 26px 64px rgba(10,30,63,.25);
+      }
+      .import-head {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 21px 24px 17px; border-bottom: 1px solid #D9F6EE;
+      }
+      .import-head h2 { margin: 0; color: #172033; font-size: 20px; font-weight: 900; }
+      .import-close {
+        display: grid; place-items: center;
+        width: 32px; height: 32px; border: 0; border-radius: 9px;
+        background: #F1F6FC; color: #62738C; font-size: 24px; cursor: pointer;
+      }
+      .import-body { padding: 24px; }
+      .import-drop {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 12px; min-height: 180px;
+        border: 1.5px dashed #BFD4F5; border-radius: 12px;
+        background: #F3FDFA; cursor: pointer; transition: border-color .2s, background .2s;
+      }
+      .import-drop.dragover { border-color: var(--b); background: #E8FBF6; }
+      .import-icon { width: 48px; height: 48px; }
+      .import-tip { color: #71819A; font-size: 13px; text-align: center; margin: 0; }
+      .import-link { color: var(--b); font-weight: 700; cursor: pointer; }
+      .import-link:hover { text-decoration: underline; }
+      .import-file { color: #172033; font-size: 13px; font-weight: 700; margin: 0; }
+      .import-template {
+        display: inline-block; margin-top: 14px;
+        color: var(--b); font-size: 13px; font-weight: 700; text-decoration: none;
+      }
+      .import-template:hover { text-decoration: underline; }
+      .import-foot {
+        display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+        padding: 14px 24px; border-top: 1px solid #D9F6EE;
+      }
     </style>
     <script defer src="admin-sidebar.js"></script>
   </head>
@@ -427,7 +472,7 @@
             <div class="actions">
               <button class="btn" onclick="alert('导出陪护员档案')">
                 导出档案</button
-              ><button class="btn" onclick="alert('批量导入陪护员')">
+              ><button class="btn" onclick="openImport()">
                 批量导入</button
               ><button class="btn primary" onclick="openCaregiverCreate()">
                 + 新增陪护员
@@ -499,6 +544,30 @@
         </section>
       </main>
     </div>
+
+    <!-- 批量导入弹窗 -->
+    <div class="import-mask" id="importMask" aria-hidden="true">
+      <div class="import-dialog">
+        <div class="import-head">
+          <h2>批量导入陪护员</h2>
+          <button class="import-close" onclick="closeImport()" aria-label="关闭">&times;</button>
+        </div>
+        <div class="import-body">
+          <div class="import-drop" id="importDrop">
+            <svg class="import-icon" viewBox="0 0 48 48" fill="none"><path d="M24 4v28M14 14l10-10 10 10" stroke="#1CD8B7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 32v8a4 4 0 004 4h24a4 4 0 004-4v-8" stroke="#1CD8B7" stroke-width="2.5" stroke-linecap="round"/></svg>
+            <p class="import-tip">将文件拖拽至此处，或点击<span class="import-link" onclick="document.getElementById('importFile').click()">添加文件</span>，仅支持1个文件</p>
+            <p class="import-file" id="importFileName"></p>
+          </div>
+          <input type="file" id="importFile" accept=".csv" style="display:none" onchange="onImportFile(this)">
+          <a class="import-template" href="javascript:downloadTemplate()">下载模版</a>
+        </div>
+        <div class="import-foot">
+          <button class="btn" onclick="closeImport()">取消</button>
+          <button class="btn primary" onclick="doImport()">上传</button>
+        </div>
+      </div>
+    </div>
+
     <script>
       const DATA = [
         {
@@ -593,6 +662,81 @@
       state.onchange = render;
       skill.onchange = render;
       render();
+
+      /* ── 批量导入 ── */
+      var importFile = null;
+      function openImport() {
+        importFile = null;
+        document.getElementById('importFileName').textContent = '';
+        document.getElementById('importFile').value = '';
+        document.getElementById('importMask').classList.add('show');
+        document.getElementById('importMask').setAttribute('aria-hidden', 'false');
+      }
+      function closeImport() {
+        document.getElementById('importMask').classList.remove('show');
+        document.getElementById('importMask').setAttribute('aria-hidden', 'true');
+      }
+      document.getElementById('importMask').addEventListener('click', function(e) {
+        if (e.target === this) closeImport();
+      });
+      var importDrop = document.getElementById('importDrop');
+      importDrop.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('dragover'); });
+      importDrop.addEventListener('dragleave', function() { this.classList.remove('dragover'); });
+      importDrop.addEventListener('drop', function(e) {
+        e.preventDefault(); this.classList.remove('dragover');
+        var f = e.dataTransfer.files[0];
+        if (f) { importFile = f; document.getElementById('importFileName').textContent = f.name; }
+      });
+      function onImportFile(input) {
+        var f = input.files[0];
+        if (f) { importFile = f; document.getElementById('importFileName').textContent = f.name; }
+      }
+      function downloadTemplate() {
+        var csv = '\ufeff姓名,手机号,性别,身份证号,年龄,工龄,认证状态,在岗状态,人员类型,入驻企业,服务区域,服务技能\n'
+          + '张阿姨,13812342468,女,610112345678904321,46,8,审核通过,在岗,自营,,西安市雁塔区,住院陪护、居家陪护\n'
+          + '李师傅,13912348572,男,610112345678904322,40,4,审核通过,在岗,企业,西安康护家政服务有限公司,西安市雁塔区,陪诊服务';
+        var blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = '陪护员导入模版.csv';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }
+      function doImport() {
+        if (!importFile) { showToast('请先选择要导入的文件'); return; }
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          var text = e.target.result.replace(/^\ufeff/, '');
+          var lines = text.split(/\r?\n/).filter(function(l) { return l.trim(); });
+          if (lines.length < 2) { showToast('文件内容为空或格式不正确'); return; }
+          var added = 0;
+          for (var i = 1; i < lines.length; i++) {
+            var cols = lines[i].split(',').map(function(c) { return c.trim(); });
+            if (!cols[0] || !cols[1]) continue;
+            var newId = 'N' + (1000 + DATA.length + 1);
+            DATA.push({
+              id: newId,
+              name: cols[0],
+              phone: cols[1],
+              skills: cols[11] ? cols[11].split(/[、,，]/).filter(Boolean) : ['住院陪护'],
+              rating: '5.0',
+              orders: 0,
+              state: cols[7] === '在岗' ? 'on' : (cols[7] === '休息' ? 'leave' : 'off'),
+              employmentType: cols[8] === '企业' ? 'enterprise' : 'self',
+              companyName: cols[9] || '',
+            });
+            added++;
+          }
+          if (added > 0) {
+            showToast('成功导入 ' + added + ' 条陪护员档案');
+            render();
+            closeImport();
+          } else {
+            showToast('未解析到有效数据，请检查文件格式');
+          }
+        };
+        reader.readAsText(importFile, 'UTF-8');
+      }
     </script>
     <script src="admin-caregiver-create.js"></script>
     <script>
