@@ -116,6 +116,7 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
     function esc(value) { return String(value == null ? '—' : value).replace(/[&<>"']/g, function (char) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]; }); }
     cls['支付中'] = 'pay';
     cls['已支付'] = 'accepted';
+    cls['退款处理中'] = 'refund';
     /* 支付信息：支付方式（微信支付 / 卡兑换）、实付金额、积分抵扣、实收金额、支付完成时间 */
     function bumpTime(t) { var m = /(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(String(t || '')); if (!m) return t || '—'; var mins = (+m[1]) * 60 + (+m[2]) + 2; var hh = ('0' + (Math.floor(mins / 60) % 24)).slice(-2); var mm = ('0' + (mins % 60)).slice(-2); var sec = m[3] ? '30' : '00'; return String(t).slice(0, m.index) + hh + ':' + mm + ':' + sec; }
     function payOf(order) {
@@ -134,9 +135,22 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
       var nos = {};
       ORDERS.forEach(function (o) { nos[o.no] = true; });
       saved.forEach(function (o) {
-        if (nos[o.id]) return;
+        /* 透传套餐与退款字段，供列表状态与详情页使用 */
+        var extra = {
+          sessions: o.sessions, pay: o.pay, source: o.source,
+          refundState: o.refundState, refundReason: o.refundReason, refundAmount: o.refundAmount,
+          refundMaxAmount: o.refundMaxAmount, refundRemark: o.refundRemark, refundAppliedAt: o.refundAppliedAt,
+          refundUnusedSessions: o.refundUnusedSessions, patient: o.person, patientPhone: o.phone,
+          address: o.address, addressType: o.addressKind || '家'
+        };
+        if (nos[o.id]) {
+          /* 已存在订单：同步用户端最新状态与退款信息（如 退款处理中） */
+          var exist = ORDERS.find(function (x) { return x.no === o.id; });
+          if (exist && (o.refundState || o.state)) Object.assign(exist, { state: o.state || exist.state }, extra);
+          return;
+        }
         nos[o.id] = true;
-        ORDERS.push({
+        ORDERS.push(Object.assign({
           no: o.id,
           orderedAt: new Date(o.createdAt || Date.now()).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(/\//g, '-'),
           type: o.type,
@@ -146,13 +160,9 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
           nurse: o.nurse || '待分配',
           nursePhone: o.nursePhone || '—',
           time: o.time,
-          amount: '¥' + o.amount,
-          state: o.state,
-          patient: o.person,
-          patientPhone: o.phone || '—',
-          address: o.address,
-          addressType: o.addressKind || '家'
-        });
+          amount: String(o.amount).indexOf('¥') > -1 ? String(o.amount) : '¥' + o.amount,
+          state: o.state
+        }, extra));
       });
     }
     mergeUserOrders();

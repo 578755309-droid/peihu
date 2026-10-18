@@ -31,6 +31,7 @@
             <section class="card section" id="contractCard" style="display:none"><div class="section-title">电子合同</div><div id="contractInfo"></div></section>
           </div>
           <div class="stack">
+            <section class="card section" id="refundCard" style="display:none"><div class="section-title">退款申请</div><div id="refundInfo"></div><div id="refundActions" style="margin-top:14px;display:flex;gap:10px"></div></section>
             <section class="card section"><div class="section-title">支付信息</div><div id="paymentInfo"></div></section>
             <section class="card section"><div class="section-title">订单动态</div><div class="timeline" id="timeline"></div></section>
           </div>
@@ -55,7 +56,7 @@
         'AKB-20260415-005':{patient:'刘爷爷',patientMeta:'男 · 73岁 · 协助助浴',patientPhone:'133****6420',address:'北京市朝阳区双井街道 12 号 1 单元 301',addressType:'家',contact:'刘先生 · 133****6420',unit:'¥168/次',pricing:'按次收费',days:'1 次',payment:'微信支付',paymentState:'已支付',reports:[]},
         'AKB-20260415-006':{patient:'张爷爷',patientMeta:'男 · 73岁 · 上门助浴',patientPhone:'138****2468',address:'西安市雁塔区雁南一路 88号 2单元 1602',addressType:'家',contact:'张爷爷 · 138****2468',unit:'¥399.2/次',pricing:'按次收费 · 10次套餐',days:'10 次',payment:'微信支付',paymentState:'已支付',reports:[]}
       };
-      var statusClass={'服务中':'serving','待服务':'pending','已完成':'done','退款/售后':'after','待支付':'pending','支付中':'pending','已支付':'serving','已取消':'after'};
+      var statusClass={'服务中':'serving','待服务':'pending','已完成':'done','退款/售后':'after','退款处理中':'after','待支付':'pending','支付中':'pending','已支付':'serving','已取消':'after'};
       /* 支付信息：与订单管理列表的支付列保持一致（微信支付 / 卡兑换，含积分抵扣与实收金额） */
       function bumpTime(t){var m=/(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(String(t||''));if(!m)return t||'—';var mins=(+m[1])*60+(+m[2])+2;var hh=('0'+(Math.floor(mins/60)%24)).slice(-2);var mm=('0'+(mins%60)).slice(-2);var sec=m[3]?'30':'00';return String(t).slice(0,m.index)+hh+':'+mm+':'+sec;}
       function payOf(order){
@@ -70,10 +71,22 @@
       function esc(value){return String(value||'—').replace(/[&<>"']/g,function(char){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char];});}
       function render(){
         var no=new URLSearchParams(location.search).get('no')||'AKB-20260412-001';
-        var data=(window.AKBAdminOverviewData&&window.AKBAdminOverviewData.orders||[]).find(function(item){return item.no===no;})||{no:no,type:'住院陪护',item:'12小时/天 · 3天',user:'王女士',userPhone:'138****2468',nurse:'张阿姨',nursePhone:'138****2468',time:'04/12 08时 - 04/14 20时',orderedAt:'04/11 16:24:36',amount:'¥1,080',state:'服务中'};
-        var profile=profiles[no]||profiles['AKB-20260412-001']; var stateClass=statusClass[data.state]||'pending';
+        /* 合并用户端 localStorage 服务订单：携带套餐 sessions 与退款申请字段 */
+        var baseOrders=(window.AKBAdminOverviewData&&window.AKBAdminOverviewData.orders||[]).map(function(o){return Object.assign({},o);});
+        try{
+          var savedOrders=JSON.parse(localStorage.getItem('ankebang_service_orders')||'[]');
+          if(Array.isArray(savedOrders))savedOrders.forEach(function(o){
+            var amt=String(o.amount).indexOf('¥')>-1?String(o.amount):'¥'+o.amount;
+            var mapped={no:o.id,type:o.type,item:o.quantity?o.project+' · '+o.quantity:o.project,user:o.contact||'用户',userPhone:o.phone||'—',nurse:o.nurse||'待分配',nursePhone:o.nursePhone||'—',time:o.time,amount:amt,state:o.state,orderedAt:o.createdAt?new Date(o.createdAt).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'—',sessions:o.sessions,pay:o.pay,refundState:o.refundState,refundReason:o.refundReason,refundAmount:o.refundAmount,refundMaxAmount:o.refundMaxAmount,refundRemark:o.refundRemark,refundAppliedAt:o.refundAppliedAt,refundUnusedSessions:o.refundUnusedSessions,patient:o.person,patientPhone:o.phone,address:o.address,addressType:o.addressKind};
+            var exist=baseOrders.find(function(x){return x.no===o.id;});
+            if(exist)Object.assign(exist,mapped);else baseOrders.unshift(mapped);
+          });
+        }catch(e){}
+        var data=baseOrders.find(function(item){return item.no===no;})||{no:no,type:'住院陪护',item:'12小时/天 · 3天',user:'王女士',userPhone:'138****2468',nurse:'张阿姨',nursePhone:'138****2468',time:'04/12 08时 - 04/14 20时',orderedAt:'04/11 16:24:36',amount:'¥1,080',state:'服务中'};
+        var profile=profiles[no]||{patient:data.patient||data.user||'—',patientMeta:'服务对象',patientPhone:data.patientPhone||data.userPhone||'—',address:data.address||'服务地址待确认',addressType:data.addressType||'家',contact:(data.user||'—')+' · '+(data.userPhone||'—'),unit:data.sessions?'¥399.2/次':'—',pricing:data.sessions?'按次收费 · 10次套餐':'按次收费',days:data.sessions?'10 次':'—',payment:'微信支付',paymentState:'已支付',reports:[]}; var stateClass=statusClass[data.state]||'pending';
         document.getElementById('orderHero').innerHTML='<div class="order-top"><div class="order-no">订单号 '+esc(data.no)+'</div><span class="state '+stateClass+'">'+esc(data.state)+'</span></div><div class="hero-grid"><div class="hero-main"><div class="service-icon">服</div><div><div class="eyebrow">'+esc(data.type)+'</div><div class="project">'+esc(data.item)+'</div><div class="service-note">移动端下单 · '+esc(data.orderedAt)+'</div></div></div><div class="metric"><div class="metric-label">服务时间</div><div class="metric-value">'+esc(data.time)+'</div></div><div class="metric"><div class="metric-label">计价方式</div><div class="metric-value">'+esc(profile.pricing)+'</div></div><div class="metric"><div class="metric-label">应付金额</div><div class="metric-value blue">'+esc(data.amount)+'</div></div></div>';
         document.getElementById('serviceInfo').innerHTML=info('服务类型',data.type)+info('服务项目',data.item)+info('服务时间',data.time)+info('下单时间',data.orderedAt)+info('计价方式',profile.pricing)+info('单价',profile.unit)+info('服务数量',profile.days)+info('订单状态',data.state);
+        var pay=payOf(data);
         var packageEl=document.getElementById('packageCard');
         var isTenPack=(data.sessions&&data.sessions.length>0)||(data.item&&data.item.indexOf('10次套餐')>-1);
         if(isTenPack&&packageEl){
@@ -95,13 +108,52 @@
         var nurseSub='联系电话：'+esc(data.nursePhone)+' · 已分配';
         if(data.nurse2){nurseText=esc(data.nurse)+' / '+esc(data.nurse2);nurseSub='联系电话：'+esc(data.nursePhone)+' / '+esc(data.nursePhone2||'')+' · 已分配';}
         document.getElementById('peopleInfo').innerHTML=person('就诊人 / 服务对象',profile.patient,profile.patientMeta+' · '+profile.patientPhone,'人')+person('陪护员',nurseText,nurseSub,'护');
-        var pay=payOf(data);
         document.getElementById('paymentInfo').innerHTML='<div class="payment-row"><span>支付方式</span><span>'+esc(pay.method)+'</span></div><div class="payment-row"><span>应付金额</span><span>'+esc(data.amount)+'</span></div><div class="payment-row"><span>积分抵扣</span><span>'+esc(pay.deduct)+'</span></div><div class="payment-row"><span>实付金额</span><span>'+esc(pay.actual)+'</span></div><div class="payment-row"><span>支付完成时间</span><span>'+esc(pay.at)+'</span></div><div class="payment-row total"><span>实收金额</span><strong>'+esc(pay.received)+'</strong></div>';
         document.getElementById('timeline').innerHTML=timeline(data.orderedAt,'用户提交订单','已从移动端完成下单')+timeline('04/12 07:45','平台分配陪护员','已分配 '+data.nurse,data.state!=='待支付')+timeline(data.time.split(' - ')[0],'服务开始','服务地址：'+profile.address,data.state==='服务中'||data.state==='已完成')+(data.state==='已完成'?timeline('服务完成','服务完成','已完成服务并提交日报',true):'');
         var reports=profile.reports||[];
         document.getElementById('reportContent').innerHTML=reports.length?'<div class="report-summary"><b>'+reports.length+'</b><span>条日报已同步，记录来自陪护员移动端提交。</span></div><div class="report-list">'+reports.map(function(report){return '<article class="report"><div class="report-date">'+report.date+'<span>'+report.time+' 提交</span></div><div class="report-body"><div class="report-title">'+esc(report.title)+'</div><div class="report-desc">'+esc(report.desc)+'</div><div class="report-tags">'+report.tags.map(function(tag){return '<span class="report-tag">'+esc(tag)+'</span>';}).join('')+'</div></div><button class="report-action" onclick="location.href=\'daily-report.html?order='+encodeURIComponent(data.no)+'\'">查看日报</button></article>';}).join('')+'</div>':'<div class="empty"><strong>暂无已提交日报</strong>服务开始后，陪护员将从移动端提交当日服务记录。</div>';
+        renderRefund(data);
         renderContract(no);
       }
+      /* 退款申请卡片：展示用户端 bath-refund 提交的数据（原因/金额/描述/凭证/时间），支持审核 */
+      function renderRefund(data){
+        var card=document.getElementById('refundCard');
+        if(!card)return;
+        var ra=null;
+        if(data.refundApp)ra={reason:data.refundApp.reason,amount:data.refundApp.amount,maxAmount:'',desc:data.refundApp.description,photos:data.refundApp.photos||[],appliedAt:data.refundApp.appliedAt,state:data.refundState||'待审核'};
+        else if(data.refundState||data.refundReason)ra={reason:data.refundReason,amount:data.refundAmount,maxAmount:data.refundMaxAmount,desc:data.refundRemark,photos:[],appliedAt:data.refundAppliedAt,state:data.refundState||'待审核'};
+        if(!ra){card.style.display='none';return;}
+        card.style.display='';
+        var html='<div class="info-grid">'
+          +info('退款原因',ra.reason||'—')
+          +info('申请退款金额',ra.amount?('¥'+ra.amount):'—')
+          +(ra.maxAmount?info('最大可退金额','¥'+ra.maxAmount):'')
+          +info('申请时间',ra.appliedAt||'—')
+          +info('审核状态',ra.state)
+          +'</div>'
+          +(ra.desc?'<div style="margin-top:12px;padding:12px 14px;border-radius:10px;background:#F8FAFC;font-size:12px;color:#53647b;line-height:1.7">'+esc(ra.desc)+'</div>':'')
+          +(ra.photos.length?'<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">'+ra.photos.map(function(p){return '<img src="'+p+'" style="width:72px;height:72px;border-radius:10px;object-fit:cover;border:1px solid #E4FAF4">';}).join('')+'</div>':'');
+        document.getElementById('refundInfo').innerHTML=html;
+        document.getElementById('refundActions').innerHTML=ra.state==='待审核'
+          ?'<button class="btn primary" onclick="resolveRefund(\''+esc(data.no)+'\',true)">同意退款</button><button class="btn" style="color:#DC2626;border-color:#FECACA" onclick="resolveRefund(\''+esc(data.no)+'\',false)">拒绝退款</button>'
+          :'';
+      }
+      window.resolveRefund=function(no,approve){
+        try{
+          var saved=JSON.parse(localStorage.getItem('ankebang_service_orders')||'[]');
+          if(!Array.isArray(saved))saved=[];
+          var idx=saved.findIndex(function(o){return o.id===no;});
+          var now=new Date();
+          var at=now.getFullYear()+'-'+('0'+(now.getMonth()+1)).slice(-2)+'-'+('0'+now.getDate()).slice(-2)+' '+('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
+          if(idx<0){saved.unshift({id:no});idx=0;}
+          saved[idx].refundState=approve?'已退款':'已拒绝';
+          saved[idx].state=approve?'已取消':'待服务';
+          saved[idx].refundResolvedAt=at;
+          localStorage.setItem('ankebang_service_orders',JSON.stringify(saved));
+        }catch(e){}
+        showToast(approve?'已同意退款，金额将原路退回':'已拒绝退款申请');
+        render();
+      };
       function renderContract(no){
         var card=document.getElementById('contractCard');
         if(!card||!window.AKBContract)return;
