@@ -18,6 +18,12 @@
           ],
           appliedAt: '04/10 16:38'
         } },
+      { no: 'AKB-20260415-006', orderedAt: '04/15 16:30:22', type: '上门助浴', item: '上门助浴服务 · 10次套餐', user: '张爷爷', userPhone: '138****2468', nurse: '陈护理师', nursePhone: '138****2468', time: '共10次 · 首次 04/16 09时', amount: '¥3,992', state: '待服务', pay: { method: '微信支付', deduct: '¥0', actual: '¥3,992', received: '¥3,992', at: '04/15 16:32:10' },
+        sessions: [
+          { seq: 1, date: '04/16', time: '09:00-11:00', addressDetail: '西安市雁塔区雁南一路 88号 2单元 1602', contact: '张爷爷', phone: '138****2468' },
+          { seq: 2, date: '04/18', time: '09:00-11:00', addressDetail: '西安市雁塔区雁南一路 88号 2单元 1602', contact: '张爷爷', phone: '138****2468' },
+          { seq: 3, date: '04/20', time: '14:00-16:00', addressDetail: '西安市雁塔区雁南一路 88号 2单元 1602', contact: '张爷爷', phone: '138****2468' }
+        ] },
       { no: 'AKB-20260409-031', orderedAt: '04/08 17:05:51', type: '陪诊服务', item: '代取报告 · 1次', user: '刘女士', userPhone: '177****9183', nurse: '赵姐', nursePhone: '133****6420', time: '04/09 10时', amount: '¥89', state: '待支付' },
       { no: 'AKB-20260408-023', orderedAt: '04/07 10:48:27', type: '居家陪护', item: '12小时/天 · 1天', user: '孙大爷', userPhone: '158****5509', nurse: '陈阿姨', nursePhone: '177****9183', time: '04/08 08时 - 04/08 20时', amount: '¥520', state: '已取消' },
       { no: 'AKB-M20260416-001', orderedAt: '04/16 10:18:42', type: '商城订单', item: '电子体温计 · 1件', product: '电子体温计', quantity: 1, user: '王女士', userPhone: '138****2468', receiver: '王女士', receiverPhone: '138****2468', deliveryType: '立即送达', deliveryFee: '已含在商品售价内', receiveCode: '4286', receiptStatus: '待用户确认', deliveredAt: '—', confirmedBy: '—', nurse: '安科邦商城', nursePhone: '—', time: '待配送', amount: '¥39', state: '待支付', address: '西安市雁塔区 · 王女士', addressType: '收货地址', logisticsCompany: '—', logisticsNo: '—' },
