@@ -250,10 +250,57 @@
     </div>
     <div class="modal-foot">
       <button class="btn" onclick="closeProductModal()">取消</button>
+      <button class="btn" onclick="previewProduct()">预览</button>
       <button class="btn btn-primary" onclick="saveProduct()">保存</button>
     </div>
   </div>
 </div>
+
+<!-- 商品预览弹窗 -->
+<div class="modal-mask" id="previewModal" onclick="if(event.target===this)closePreview()">
+  <div class="modal" style="width:800px;max-width:92vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden">
+    <div class="modal-head">
+      <div class="modal-title">预览效果</div>
+      <button class="modal-close" onclick="closePreview()">&times;</button>
+    </div>
+    <div style="display:flex;border-bottom:1px solid #CFF5ED;flex-shrink:0">
+      <button class="preview-tab active" id="tabList" onclick="switchPreviewTab('list')">列表页样式</button>
+      <button class="preview-tab" id="tabDetail" onclick="switchPreviewTab('detail')">详情页样式</button>
+    </div>
+    <div id="previewContent" style="flex:1;overflow:auto;padding:24px;background:#EFFBF8">
+      <!-- 预览内容渲染在这里 -->
+    </div>
+  </div>
+</div>
+
+<style>
+  .preview-tab{flex:1;padding:14px 0;border:0;background:none;font-size:14px;font-weight:700;color:#8f9bb0;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+  .preview-tab.active{color:#1CD8B7;border-bottom-color:#1CD8B7}
+  .preview-phone{width:375px;margin:0 auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.12);border:1px solid #CFF5ED}
+  .preview-status{height:28px;background:linear-gradient(135deg,#1CD8B7,#0FA98C);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+  .preview-nav{height:44px;display:flex;align-items:center;justify-content:center;background:#fff;border-bottom:1px solid #EDE9F5;position:relative;font-size:15px;font-weight:800;color:#172033}
+  .preview-nav .back{position:absolute;left:12px;width:28px;height:28px;border-radius:8px;background:#DDF7F1;color:#1CD8B7;display:grid;place-items:center;font-size:18px;font-weight:800}
+  .preview-body{padding:12px}
+  .preview-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(20,160,135,.06);border:1px solid rgba(237,233,245,.6);margin-bottom:12px}
+  .preview-card-img{width:100%;height:130px;background:#F0E9FA;display:grid;place-items:center;position:relative;overflow:hidden}
+  .preview-card-img img{width:100%;height:100%;object-fit:cover}
+  .preview-card-img .placeholder{color:#17BFA3;font-size:11px;font-weight:700}
+  .preview-card-info{padding:10px 12px}
+  .preview-card-name{font-size:14px;font-weight:900;color:#172033;line-height:1.3}
+  .preview-card-sub{font-size:11px;color:#AEACC0;line-height:1.4;margin-top:4px}
+  .preview-card-foot{display:flex;align-items:center;gap:6px;margin-top:8px}
+  .preview-card-price{font-size:16px;font-weight:900;color:#E94E4E}
+  .preview-card-sales{font-size:10px;color:#AEACC0}
+  .preview-detail-hero{padding:16px;border-radius:0 0 20px 20px;background:linear-gradient(135deg,#1CD8B7,#0FA98C);color:#fff}
+  .preview-detail-title{font-size:20px;font-weight:900;margin-top:8px}
+  .preview-detail-desc{font-size:12px;opacity:.85;margin-top:4px}
+  .preview-detail-price{margin-top:12px;display:flex;align-items:baseline;gap:6px}
+  .preview-detail-price .p{font-size:24px;font-weight:900}
+  .preview-detail-price .s{font-size:12px;opacity:.8}
+  .preview-section{margin-top:12px;padding:14px;border-radius:12px;background:#fff}
+  .preview-section-title{font-size:13px;font-weight:900;color:#172033;margin-bottom:8px}
+  .preview-section-content{font-size:12px;color:#6B6880;line-height:1.6}
+</style>
 
 <script>
 (function () {
@@ -642,6 +689,71 @@
   renderMetrics();
   render();
   if (new URLSearchParams(location.search).get('new') === '1') window.openProductModal();
+
+  /* ── 预览功能 ── */
+  window.previewProduct = function() {
+    var name = document.getElementById('pName').value.trim() || '商品名称';
+    var sub = document.getElementById('pSub').value.trim() || '商品副标题描述';
+    var price = document.getElementById('pPrice').value || '0';
+    var sales = document.getElementById('pManualSales').value || '0';
+    var detail = document.getElementById('pDetailArea').innerHTML.trim() || '商品详情图文内容...';
+    var cover = coverList && coverList[0] ? coverList[0] : '';
+    switchPreviewTab('list');
+    document.getElementById('previewModal').classList.add('show');
+    renderPreview(name, sub, price, sales, detail, cover);
+  };
+
+  window.closePreview = function() {
+    document.getElementById('previewModal').classList.remove('show');
+  };
+
+  window.switchPreviewTab = function(tab) {
+    document.getElementById('tabList').classList.toggle('active', tab === 'list');
+    document.getElementById('tabDetail').classList.toggle('active', tab === 'detail');
+    var name = document.getElementById('pName').value.trim() || '商品名称';
+    var sub = document.getElementById('pSub').value.trim() || '商品副标题描述';
+    var price = document.getElementById('pPrice').value || '0';
+    var sales = document.getElementById('pManualSales').value || '0';
+    var detail = document.getElementById('pDetailArea').innerHTML.trim() || '商品详情图文内容...';
+    var cover = coverList && coverList[0] ? coverList[0] : '';
+    renderPreview(name, sub, price, sales, detail, cover);
+  };
+
+  function renderPreview(name, sub, price, sales, detail, cover) {
+    var isList = document.getElementById('tabList').classList.contains('active');
+    var html = '<div class="preview-phone">';
+    html += '<div class="preview-status">9:41</div>';
+    if (isList) {
+      html += '<div class="preview-nav">商城</div>';
+      html += '<div class="preview-body">';
+      html += '<div class="preview-card">';
+      html += '<div class="preview-card-img">';
+      if (cover) { html += '<img src="' + cover + '" alt="">'; } else { html += '<span class="placeholder">封面图</span>'; }
+      html += '</div>';
+      html += '<div class="preview-card-info">';
+      html += '<div class="preview-card-name">' + name.replace(/</g,'&lt;') + '</div>';
+      html += '<div class="preview-card-sub">' + sub.replace(/</g,'&lt;') + '</div>';
+      html += '<div class="preview-card-foot">';
+      html += '<span class="preview-card-price">¥' + price + '</span>';
+      html += '<span class="preview-card-sales">已售 ' + sales + '</span>';
+      html += '</div></div></div></div>';
+    } else {
+      html += '<div class="preview-nav"><span class="back">‹</span>商品详情</div>';
+      html += '<div class="preview-detail-hero">';
+      html += '<div style="font-size:11px;opacity:.8">商品详情</div>';
+      html += '<div class="preview-detail-title">' + name.replace(/</g,'&lt;') + '</div>';
+      html += '<div class="preview-detail-desc">' + sub.replace(/</g,'&lt;') + '</div>';
+      html += '<div class="preview-detail-price"><span class="p">¥' + price + '</span><span class="s">已售 ' + sales + '</span></div>';
+      html += '</div>';
+      html += '<div class="preview-body">';
+      html += '<div class="preview-section">';
+      html += '<div class="preview-section-title">商品详情</div>';
+      html += '<div class="preview-section-content">' + (detail || '暂无详情').replace(/<script[\s\S]*?<\/script>/gi,'') + '</div>';
+      html += '</div></div>';
+    }
+    html += '</div>';
+    document.getElementById('previewContent').innerHTML = html;
+  }
 })();
 </script>
 <script src="admin-batch-points.js"></script>
