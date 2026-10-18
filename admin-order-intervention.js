@@ -12,6 +12,7 @@
     '待服务': ['指派/更换陪护员', '调整服务时间', '修改服务地址', '修改就诊人', '取消订单'],
     '服务中': ['更换陪护员', '补录日报', '取消订单'],
     '退款/售后': ['审核通过', '审核驳回'],
+    '退款处理中': ['审核通过', '审核驳回'],
     '已取消': ['查看取消原因', '复制订单重新创建']
   };
   var activeOrder = null;
@@ -41,6 +42,27 @@
   }
   function field(label, control, full) { return '<div class="intervention-field ' + (full || '') + '"><label class="intervention-label">' + label + '</label>' + control + '</div>'; }
 
+  /* MM-DD HH:mm 时间戳（与列表退款时间列格式一致） */
+  function nowStamp() { return new Date().toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(/\//g, '-'); }
+
+  /* 服务订单审核结果持久化：同步用户端与订单详情页（ankebang_service_orders） */
+  function persistServiceOrder(order) {
+    try {
+      var saved = JSON.parse(localStorage.getItem('ankebang_service_orders') || '[]');
+      if (!Array.isArray(saved)) saved = [];
+      var idx = saved.findIndex(function (o) { return o.id === order.no; });
+      var rec;
+      if (idx >= 0) rec = saved[idx];
+      else { rec = { id: order.no }; saved.unshift(rec); }
+      rec.state = order.state;
+      rec.refundState = order.refundState;
+      rec.refundAmount = order.refundAmount;
+      rec.refundResolvedAt = order.refundResolvedAt;
+      rec.refundLog = order.refundLog;
+      localStorage.setItem('ankebang_service_orders', JSON.stringify(saved));
+    } catch (error) {}
+  }
+
   function esc(value) { return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
   /* 用户提交的退款申请信息（服务订单 / 商城订单） */
@@ -55,6 +77,16 @@
       };
     }
     if (order && order.refundApp) return order.refundApp;
+    /* 用户端 bath-refund 提交的 refund* 字段（无 refundApp 静态数据时） */
+    if (order && (order.refundReason || order.refundState)) {
+      return {
+        reason: order.refundReason || '用户未填写退款原因',
+        amount: String(order.refundAmount || '').replace(/[^0-9.]/g, ''),
+        description: order.refundRemark || '用户未填写补充描述。',
+        photos: [],
+        appliedAt: order.refundAppliedAt || (order && order.orderedAt) || '—'
+      };
+    }
     return {
       reason: '服务内容不符合预期',
       amount: String((order && order.amount) || '').replace(/[^0-9.]/g, ''),
@@ -67,7 +99,7 @@
 
   function renderRefundInfo() {
     var box = document.getElementById('interventionRefund');
-    if (!activeOrder || activeOrder.state !== '退款/售后') {
+    if (!activeOrder || (activeOrder.state !== '退款/售后' && activeOrder.state !== '退款处理中')) {
       box.style.display = 'none';
       box.innerHTML = '';
       return;
@@ -260,22 +292,35 @@
       var methodInput = document.getElementById('manualRefundMethod');
       var refundValue = refundInput ? refundInput.value.trim() : '';
       if (!refundValue || Number(refundValue) <= 0) { showToast('请填写有效的退款金额'); return; }
+      var approveAt = nowStamp();
       activeOrder.refundAmount = refundValue;
       activeOrder.refundMethod = methodInput ? methodInput.value : '原路退回';
-      activeOrder.refundState = '审核通过 · 退款中';
+      activeOrder.refundState = '已退款';
       activeOrder.refundReviewNote = document.getElementById('interventionRemark').value.trim() || '审核通过';
-      activeOrder.refundReviewedAt = '刚刚';
-      activeOrder.state = '已取消';
+      activeOrder.refundResolvedAt = approveAt;
+      activeOrder.refundLog = (activeOrder.refundLog || []).concat([
+        { title: '审核通过 · 同意退款', at: approveAt, desc: '退款金额 ¥' + refundValue + ' · ' + activeOrder.refundMethod + (activeOrder.refundReviewNote ? ' · ' + activeOrder.refundReviewNote : ''), operator: '平台客服', done: true },
+        { title: '退款完成', at: approveAt, desc: '款项已原路退回支付账户', operator: '系统', done: true }
+      ]);
+      /* 退款为终态分类，不落入已取消；同步用户端/详情页 localStorage */
+      activeOrder.state = '退款/售后';
+      persistServiceOrder(activeOrder);
       message = '退款申请已审核通过：¥' + refundValue + ' · ' + activeOrder.refundMethod;
     }
     if (activeAction === '审核驳回') {
       var rejectNote = document.getElementById('interventionRemark').value.trim();
       if (!rejectNote) { showToast('请填写驳回处理说明'); return; }
-      activeOrder.refundState = '审核驳回';
+      var rejectAt = nowStamp();
+      activeOrder.refundState = '已拒绝';
       activeOrder.refundReviewNote = rejectNote;
-      activeOrder.refundReviewedAt = '刚刚';
-      activeOrder.state = '已完成';
-      message = '退款申请已驳回';
+      activeOrder.refundResolvedAt = rejectAt;
+      activeOrder.refundLog = (activeOrder.refundLog || []).concat([
+        { title: '审核拒绝', at: rejectAt, desc: rejectNote, operator: '平台客服', done: true }
+      ]);
+      /* 驳回后订单恢复待服务，继续履约 */
+      activeOrder.state = '待服务';
+      persistServiceOrder(activeOrder);
+      message = '退款申请已驳回，订单恢复待服务';
     }
     if (activeAction === '复制订单重新创建') { message = '已复制订单信息，可据此创建新订单'; }
     if (activeAction === '指派/更换陪护员' || activeAction === '更换陪护员') {
