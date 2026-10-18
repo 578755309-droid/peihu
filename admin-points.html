@@ -28,25 +28,31 @@
         </div>
         <div class="rules-body">
           <div class="rules-grid">
-            <div class="rule-item">
-              <div class="k">邀请好友奖励</div>
-              <div class="rule-row">每邀请 1 位好友注册 <input id="rInvite" type="number" min="0"> <span class="unit">积分</span></div>
+            <div class="rules-row">
+              <div class="rule-item">
+                <div class="k">邀请好友奖励</div>
+                <div class="rule-row">每邀请 1 位好友注册 <input id="rInvite" type="number" min="0"> <span class="unit">积分</span></div>
+              </div>
             </div>
-            <div class="rule-item">
-              <div class="k">商城消费返积分</div>
-              <div class="rule-row">每消费 <input id="rMallConsume" type="number" min="0"> <span class="unit">元返 1 积分</span></div>
+            <div class="rules-row">
+              <div class="rule-item">
+                <div class="k">商城消费返积分</div>
+                <div class="rule-row">每消费 <input id="rMallConsume" type="number" min="0"> <span class="unit">元返 1 积分</span></div>
+              </div>
+              <div class="rule-item">
+                <div class="k">商城订单积分抵扣</div>
+                <div class="rule-row"><select id="rMallEnabled"><option value="on">开启</option><option value="off">关闭</option></select> 抵扣上限 <input id="rMallCap" type="number" min="1" max="100"> <span class="unit">%</span></div>
+              </div>
             </div>
-            <div class="rule-item">
-              <div class="k">服务消费返积分</div>
-              <div class="rule-row">每消费 <input id="rServiceConsume" type="number" min="0"> <span class="unit">元返 1 积分</span></div>
-            </div>
-            <div class="rule-item">
-              <div class="k">商城订单积分抵扣</div>
-              <div class="rule-row"><select id="rMallEnabled"><option value="on">开启</option><option value="off">关闭</option></select> 抵扣上限 <input id="rMallCap" type="number" min="1" max="100"> <span class="unit">%</span></div>
-            </div>
-            <div class="rule-item">
-              <div class="k">服务订单积分抵扣</div>
-              <div class="rule-row"><select id="rServiceEnabled"><option value="on">开启</option><option value="off">关闭</option></select> 抵扣上限 <input id="rServiceCap" type="number" min="1" max="100"> <span class="unit">%</span></div>
+            <div class="rules-row">
+              <div class="rule-item">
+                <div class="k">服务消费返积分</div>
+                <div class="rule-row">每消费 <input id="rServiceConsume" type="number" min="0"> <span class="unit">元返 1 积分</span></div>
+              </div>
+              <div class="rule-item">
+                <div class="k">服务订单积分抵扣</div>
+                <div class="rule-row"><select id="rServiceEnabled"><option value="on">开启</option><option value="off">关闭</option></select> 抵扣上限 <input id="rServiceCap" type="number" min="1" max="100"> <span class="unit">%</span></div>
+              </div>
             </div>
           </div>
           <div class="rules-foot">

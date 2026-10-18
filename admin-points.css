@@ -30,7 +30,9 @@ body{margin:0;background:#E8FBF6;color:#172033;font-family:-apple-system,BlinkMa
 .rules-title::before{content:'';width:3px;height:15px;background:#1CD8B7;border-radius:2px}
 .rules-note{font-size:11px;color:#9AA7BA;font-weight:700}
 .rules-body{padding:16px 20px}
-.rules-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.rules-grid{display:flex;flex-direction:column;gap:14px}
+.rules-row{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.rules-row:has(.rule-item:only-child){grid-template-columns:1fr}
 .rule-item{background:#F3FDFA;border:1px solid #E4FAF4;border-radius:12px;padding:12px 14px}
 .rule-item .k{font-size:11px;color:#9AA7BA;font-weight:800;margin-bottom:8px}
 .rule-row{display:flex;align-items:center;gap:8px;font-size:12px;color:#536882;font-weight:700;flex-wrap:wrap}
