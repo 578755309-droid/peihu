@@ -201,6 +201,57 @@
     .order-type-option.on { color:var(--purple); border-bottom-color:var(--purple); }
     .order-shortcuts-list { display:grid; grid-template-columns:repeat(5,1fr); padding:2px 7px 15px; }
     .order-shortcuts-list[hidden] { display:none; }
+
+    /* 专属护理员卡片 */
+    .cg-count { font-size:12px; font-weight:800; color:var(--text3); }
+    .cg-scroll {
+      display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory;
+      padding:2px 16px 16px; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+    }
+    .cg-scroll::-webkit-scrollbar { display:none; }
+    .cg-card {
+      flex:0 0 calc(100% - 46px); scroll-snap-align:center;
+      background:linear-gradient(150deg,#EDFBF7,#FFFFFF 55%);
+      border:1px solid #CFF5ED; border-radius:16px; padding:14px;
+    }
+    .cg-top { display:flex; align-items:center; gap:12px; }
+    .cg-av {
+      width:52px; height:52px; border-radius:50%; flex:0 0 52px;
+      background:linear-gradient(140deg,#1CD8B7,#0FA98C); color:#fff;
+      display:grid; place-items:center; font-size:19px; font-weight:900;
+      border:2px solid #fff; box-shadow:0 2px 7px rgba(15,169,140,.2);
+    }
+    .cg-info { min-width:0; flex:1; }
+    .cg-name { font-size:15px; font-weight:900; color:var(--text); }
+    .cg-role { margin-left:5px; font-size:11px; font-weight:700; color:var(--text3); }
+    .cg-badges { display:flex; gap:5px; margin-top:6px; flex-wrap:wrap; }
+    .cg-badge { padding:3px 7px; border-radius:5px; background:#DCFCE7; color:#16A34A; font-size:10px; font-weight:800; }
+    .cg-badge.exp { background:#DDF7F1; color:#0FA98C; }
+    .cg-status { flex:0 0 auto; padding:4px 9px; border-radius:14px; background:#DCFCE7; color:#16A34A; font-size:11px; font-weight:800; display:inline-flex; align-items:center; gap:4px; }
+    .cg-status::before { content:""; width:6px; height:6px; border-radius:50%; background:#22C55E; animation:cgPulse 1.6s ease-in-out infinite; }
+    @keyframes cgPulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .cg-order {
+      margin-top:12px; background:#fff; border:1px solid #EFF3F6; border-radius:12px;
+      padding:11px 13px; cursor:pointer; transition:background .12s;
+    }
+    .cg-order:active { background:#F6FBF9; }
+    .cg-order-title { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .cg-order-name { font-size:13px; font-weight:900; color:var(--text); min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .cg-order-no { font-size:10px; color:var(--text3); font-weight:700; flex:0 0 auto; }
+    .cg-rows { margin-top:7px; display:grid; gap:4px; }
+    .cg-row { display:flex; gap:8px; font-size:11px; line-height:1.5; color:var(--text2); }
+    .cg-row b { flex:0 0 auto; font-weight:800; color:var(--text3); }
+    .cg-row span { min-width:0; }
+    .cg-foot { display:flex; gap:9px; margin-top:12px; }
+    .cg-btn {
+      flex:1; height:36px; border-radius:18px; border:1px solid #A9EEE0;
+      background:#fff; color:var(--purple); font:800 13px inherit; cursor:pointer;
+      display:inline-flex; align-items:center; justify-content:center; gap:5px;
+    }
+    .cg-btn svg { width:15px; height:15px; }
+    .cg-btn.primary { border-color:var(--purple); background:var(--purple); color:#fff; }
+    .cg-btn:active { transform:scale(.98); }
+    .cg-hint { text-align:center; font-size:10px; color:var(--text3); font-weight:700; padding:0 0 4px; }
     .order-shortcut { min-width:0; display:flex; flex-direction:column; align-items:center; gap:5px; padding:4px 0; border:0; background:none; color:var(--text2); font:700 10px inherit; cursor:pointer; }
     .shortcut-ico { width:28px; height:28px; color:var(--purple); }
     .shortcut-ico svg { width:100%; height:100%; }
@@ -315,6 +366,18 @@
         </div>
       </div>
 
+      <!-- 专属护理员 -->
+      <div class="section" id="nurseSection" hidden>
+        <div class="order-shortcuts">
+          <div class="order-shortcuts-head">
+            <span class="order-shortcuts-title">专属护理员</span>
+            <span class="cg-count" id="cgCount"></span>
+          </div>
+          <div class="cg-scroll" id="cgScroll"></div>
+          <div class="cg-hint" id="cgHint" hidden>左右滑动查看更多</div>
+        </div>
+      </div>
+
       <!-- 邀请好友横幅 -->
       <div class="invite-banner" onclick="location.href='invite-friends.html'">
         <div class="invite-text">
@@ -421,6 +484,47 @@
       var left = cards.reduce(function (sum, c) { return sum + Math.max(0, (c.total || 10) - (c.used || 0)); }, 0);
       document.getElementById('cardCountSub').textContent = total + '张卡包 · ' + left + '次服务';
     } catch (e) {}
+  })();
+
+  /* 专属护理员：展示服务中订单的护理员与订单信息，多单可左右滑动 */
+  (function () {
+    var DEMO = [{ id:'AKB-2026-031085', state:'服务中', type:'住院陪护', project:'重症陪护服务', person:'王奶奶｜76岁｜女｜术后重症观察', address:'北京协和医院｜外科 8楼 · 12床', time:'2026-04-08 08:00 至 2026-04-11 08:00', nurse:'王美玲', role:'高级护理师｜重症陪护', cert:'持证上岗', years:'8年经验', avatar:'王' }];
+    var actives = [];
+    try {
+      var saved = JSON.parse(localStorage.getItem('ankebang_service_orders') || '[]');
+      if (Array.isArray(saved)) {
+        saved.forEach(function (o) { if (o && o.state === '服务中' && o.nurse) actives.push(o); });
+      }
+    } catch (e) {}
+    if (!actives.length) actives = DEMO;
+    var phoneSvg = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.4c.5-.4 1.1-.4 1.6 0l1.6 1.6c.4.4.5 1 .2 1.5l-.8 1.2c.8 1.8 2.2 3.2 4 4l1.2-.8c.5-.3 1.1-.2 1.5.2l1.6 1.6c.4.5.4 1.1 0 1.6l-.7.7c-.7.7-1.7 1-2.6.7C8.5 15 5 11.5 4.3 7.6c-.3-.9 0-1.9.7-2.6z"/></svg>';
+    var html = actives.map(function (o) {
+      var surname = o.avatar || (o.nurse || '').charAt(0);
+      return '<div class="cg-card">' +
+        '<div class="cg-top">' +
+          '<div class="cg-av">' + surname + '</div>' +
+          '<div class="cg-info"><div><span class="cg-name">' + o.nurse + '</span><span class="cg-role">' + (o.role || '') + '</span></div>' +
+          '<div class="cg-badges"><span class="cg-badge">' + (o.cert || '持证上岗') + '</span><span class="cg-badge exp">' + (o.years || '') + '</span></div></div>' +
+          '<span class="cg-status">服务中</span>' +
+        '</div>' +
+        '<div class="cg-order" onclick="location.href=\'order-detail.html?no=' + encodeURIComponent(o.id) + '\'">' +
+          '<div class="cg-order-title"><span class="cg-order-name">' + (o.project || '') + '</span><span class="cg-order-no">' + o.id + '</span></div>' +
+          '<div class="cg-rows">' +
+            '<div class="cg-row"><b>对象</b><span>' + (o.person || '—') + '</span></div>' +
+            '<div class="cg-row"><b>时间</b><span>' + (o.time || '—') + '</span></div>' +
+            '<div class="cg-row"><b>地点</b><span>' + (o.address || '—') + '</span></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="cg-foot">' +
+          '<button class="cg-btn" onclick="showToast(\'正在为您接通护理员电话，请稍候…\')">' + phoneSvg + '联系护理员</button>' +
+          '<button class="cg-btn primary" onclick="location.href=\'order-detail.html?no=' + encodeURIComponent(o.id) + '\'">查看订单</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    document.getElementById('cgScroll').innerHTML = html;
+    document.getElementById('cgCount').textContent = actives.length > 1 ? actives.length + ' 位护理员服务中' : '1 位护理员服务中';
+    document.getElementById('cgHint').hidden = actives.length < 2;
+    document.getElementById('nurseSection').hidden = false;
   })();
 </script>
 </body>
