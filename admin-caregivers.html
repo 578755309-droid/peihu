@@ -586,7 +586,7 @@
         rows.innerHTML = d
           .map(
             (x) =>
-              `<tr><td><div class="profile"><div class="avatar">${x.name.slice(0, 1)}</div><div><div class="name">${x.name}</div><div class="small">档案编号 ${x.id}</div></div></div></td><td>${x.phone}</td><td>${x.skills.join("、")}</td><td><span class="state ${etClass(x.employmentType)}">${etLabel(x.employmentType)}</span></td><td>${x.companyName || '<span style="color:var(--muted)">—</span>'}</td><td class="rating">★ ${x.rating}</td><td>${x.orders} 单</td><td><span class="state ${st[x.state][1]}">${st[x.state][0]}</span></td><td><div class="ops"><button onclick="location.href='admin-caregiver-detail.html?id=${x.id}'">查看档案</button><button onclick="openCaregiverEdit('${x.id}')">编辑</button></div></td></tr>`,
+              `<tr><td><div class="profile"><div><div class="name">${x.name}</div><div class="small">档案编号 ${x.id}</div></div></div></td><td>${x.phone}</td><td>${x.skills.join("、")}</td><td><span class="state ${etClass(x.employmentType)}">${etLabel(x.employmentType)}</span></td><td>${x.companyName || '<span style="color:var(--muted)">—</span>'}</td><td class="rating">★ ${x.rating}</td><td>${x.orders} 单</td><td><span class="state ${st[x.state][1]}">${st[x.state][0]}</span></td><td><div class="ops"><button onclick="location.href='admin-caregiver-detail.html?id=${x.id}'">查看档案</button><button onclick="openCaregiverEdit('${x.id}')">编辑</button></div></td></tr>`,
           )
           .join("");
       }
