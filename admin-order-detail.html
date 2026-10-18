@@ -54,7 +54,8 @@
         'AKB-20260416-003':{patient:'王女士',patientMeta:'女 · 34岁 · 门诊陪诊',patientPhone:'138****2468',address:'北京市朝阳区建国路 66 号 北京协和医院东院区',addressType:'医院',contact:'本人 · 138****2468',unit:'¥298/次',pricing:'按次收费',days:'1 次',payment:'微信支付',paymentState:'支付中',reports:[]},
         'AKB-20260416-004':{patient:'王女士',patientMeta:'女 · 34岁 · 上门助浴',patientPhone:'138****2468',address:'北京市朝阳区光华路 12 号 2 单元 601',addressType:'家',contact:'本人 · 138****2468',unit:'¥168/次',pricing:'按次收费',days:'1 次',payment:'微信支付',paymentState:'已支付',reports:[]},
         'AKB-20260415-005':{patient:'刘爷爷',patientMeta:'男 · 73岁 · 协助助浴',patientPhone:'133****6420',address:'北京市朝阳区双井街道 12 号 1 单元 301',addressType:'家',contact:'刘先生 · 133****6420',unit:'¥168/次',pricing:'按次收费',days:'1 次',payment:'微信支付',paymentState:'已支付',reports:[]},
-        'AKB-20260415-006':{patient:'张爷爷',patientMeta:'男 · 73岁 · 上门助浴',patientPhone:'138****2468',address:'西安市雁塔区雁南一路 88号 2单元 1602',addressType:'家',contact:'张爷爷 · 138****2468',unit:'¥399.2/次',pricing:'按次收费 · 10次套餐',days:'10 次',payment:'微信支付',paymentState:'已支付',reports:[]}
+        'AKB-20260415-006':{patient:'张爷爷',patientMeta:'男 · 73岁 · 上门助浴',patientPhone:'138****2468',address:'西安市雁塔区雁南一路 88号 2单元 1602',addressType:'家',contact:'张爷爷 · 138****2468',unit:'¥399.2/次',pricing:'按次收费 · 10次套餐',days:'10 次',payment:'微信支付',paymentState:'已支付',reports:[]},
+        'AKB-2026-660033':{patient:'王大爷',patientMeta:'男 · 76岁 · 脑梗后遗症行动不便',patientPhone:'139****6677',address:'西安市未央区凤城八路 66号 1单元 801',addressType:'家',contact:'王先生 · 139****6677',unit:'¥399.2/次',pricing:'按次收费 · 10次套餐',days:'10 次',payment:'微信支付',paymentState:'已支付',reports:[]}
       };
       var statusClass={'服务中':'serving','待服务':'pending','已完成':'done','退款/售后':'after','退款处理中':'after','待支付':'pending','支付中':'pending','已支付':'serving','已取消':'after'};
       /* 支付信息：与订单管理列表的支付列保持一致（微信支付 / 卡兑换，含积分抵扣与实收金额） */
@@ -79,7 +80,7 @@
             var amt=String(o.amount).indexOf('¥')>-1?String(o.amount):'¥'+o.amount;
             var mapped={no:o.id,type:o.type,item:o.quantity?o.project+' · '+o.quantity:o.project,user:o.contact||'用户',userPhone:o.phone||'—',nurse:o.nurse||'待分配',nursePhone:o.nursePhone||'—',time:o.time,amount:amt,state:o.state,orderedAt:o.createdAt?new Date(o.createdAt).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'—',sessions:o.sessions,pay:o.pay,refundState:o.refundState,refundReason:o.refundReason,refundAmount:o.refundAmount,refundMaxAmount:o.refundMaxAmount,refundRemark:o.refundRemark,refundAppliedAt:o.refundAppliedAt,refundResolvedAt:o.refundResolvedAt,refundLog:o.refundLog,refundUnusedSessions:o.refundUnusedSessions,patient:o.person,patientPhone:o.phone,address:o.address,addressType:o.addressKind};
             var exist=baseOrders.find(function(x){return x.no===o.id;});
-            if(exist)Object.assign(exist,mapped);else baseOrders.unshift(mapped);
+            if(exist){Object.keys(mapped).forEach(function(k){if(mapped[k]!==undefined&&mapped[k]!==null)exist[k]=mapped[k];});data=exist;}else{baseOrders.unshift(mapped);}
           });
         }catch(e){}
         var data=baseOrders.find(function(item){return item.no===no;})||{no:no,type:'住院陪护',item:'12小时/天 · 3天',user:'王女士',userPhone:'138****2468',nurse:'张阿姨',nursePhone:'138****2468',time:'04/12 08时 - 04/14 20时',orderedAt:'04/11 16:24:36',amount:'¥1,080',state:'服务中'};
@@ -120,7 +121,7 @@
         var card=document.getElementById('refundCard');
         if(!card)return;
         var ra=null;
-        if(data.refundApp)ra={reason:data.refundApp.reason,amount:data.refundApp.amount,maxAmount:'',desc:data.refundApp.description,photos:data.refundApp.photos||[],appliedAt:data.refundApp.appliedAt,state:data.refundState||'待审核',resolvedAt:data.refundResolvedAt||''};
+        if(data.refundApp)ra={reason:data.refundApp.reason,amount:data.refundApp.amount,maxAmount:data.refundApp.maxAmount||'',desc:data.refundApp.description,photos:data.refundApp.photos||[],appliedAt:data.refundApp.appliedAt,state:data.refundState||'待审核',resolvedAt:data.refundResolvedAt||''};
         else if(data.refundState||data.refundReason)ra={reason:data.refundReason,amount:data.refundAmount,maxAmount:data.refundMaxAmount,desc:data.refundRemark,photos:[],appliedAt:data.refundAppliedAt,state:data.refundState||'待审核',resolvedAt:data.refundResolvedAt||''};
         if(!ra){card.style.display='none';return;}
         card.style.display='';

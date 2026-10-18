@@ -24,6 +24,25 @@
           { seq: 2, date: '04/18', time: '09:00-11:00', addressDetail: '西安市雁塔区雁南一路 88号 2单元 1602', contact: '张爷爷', phone: '138****2468' },
           { seq: 3, date: '04/20', time: '14:00-16:00', addressDetail: '西安市雁塔区雁南一路 88号 2单元 1602', contact: '张爷爷', phone: '138****2468' }
         ] },
+      { no: 'AKB-2026-660033', orderedAt: '10/15 10:22:36', type: '上门助浴', item: '上门助浴服务 · 10次套餐', user: '王大爷', userPhone: '139****6677', nurse: '陈护理师', nursePhone: '138****2468', time: '共10次 · 首次 10/16 09时', amount: '¥3,992', state: '退款处理中', pay: { method: '微信支付', deduct: '¥0', actual: '¥3,992', received: '¥3,992', at: '10/15 10:24:02' },
+        sessions: [
+          { seq: 1, date: '10/16', time: '09:00-11:00', addressDetail: '西安市未央区凤城八路 66号 1单元 801', contact: '王大爷', phone: '139****6677' }
+        ],
+        refundState: '待审核',
+        refundApp: {
+          reason: '行程或服务计划变更',
+          amount: '3,592.80',
+          maxAmount: '3,592.80',
+          description: '家人临时决定接老人去外地休养，后续9次助浴服务无法继续在原地址进行，申请按未使用次数退款。',
+          photos: [
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=photo%20of%20a%20family%20gathering%20in%20living%20room%20discussing%20travel%20plans%2C%20warm%20light%2C%20phone%20snapshot&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=close-up%20photo%20of%20a%20handwritten%20note%20on%20a%20table%20about%20canceling%20service%2C%20natural%20indoor%20light&image_size=landscape_4_3'
+          ],
+          appliedAt: '10/18 09:26'
+        },
+        refundLog: [
+          { title: '提交退款申请', at: '10/18 09:26', desc: '退款原因：行程或服务计划变更 · 申请金额 ¥3,592.80', operator: '用户', done: true }
+        ] },
       { no: 'AKB-20260409-031', orderedAt: '04/08 17:05:51', type: '陪诊服务', item: '代取报告 · 1次', user: '刘女士', userPhone: '177****9183', nurse: '赵姐', nursePhone: '133****6420', time: '04/09 10时', amount: '¥89', state: '待支付' },
       { no: 'AKB-20260408-023', orderedAt: '04/07 10:48:27', type: '居家陪护', item: '12小时/天 · 1天', user: '孙大爷', userPhone: '158****5509', nurse: '陈阿姨', nursePhone: '177****9183', time: '04/08 08时 - 04/08 20时', amount: '¥520', state: '已取消' },
       { no: 'AKB-M20260416-001', orderedAt: '04/16 10:18:42', type: '商城订单', item: '电子体温计 · 1件', product: '电子体温计', quantity: 1, user: '王女士', userPhone: '138****2468', receiver: '王女士', receiverPhone: '138****2468', deliveryType: '立即送达', deliveryFee: '已含在商品售价内', receiveCode: '4286', receiptStatus: '待用户确认', deliveredAt: '—', confirmedBy: '—', nurse: '安科邦商城', nursePhone: '—', time: '待配送', amount: '¥39', state: '待支付', address: '西安市雁塔区 · 王女士', addressType: '收货地址', logisticsCompany: '—', logisticsNo: '—' },

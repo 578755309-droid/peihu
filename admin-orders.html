@@ -65,7 +65,8 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
       'AKB-20260411-018': { patient:'赵阿姨 · 女 · 61岁', patientPhone:'186****3016', address:'北京市东城区帅府园 1 号 北京协和医院西院区', addressType:'医院' },
       'AKB-20260410-007': { patient:'陈先生 · 男 · 65岁', patientPhone:'133****6420', address:'北京市朝阳区安慧北里 12 号 3 单元 502', addressType:'家' },
       'AKB-20260409-031': { patient:'刘女士 · 女 · 57岁', patientPhone:'177****9183', address:'北京市西城区复兴门内大街 55 号 北京儿童医院', addressType:'医院' },
-      'AKB-20260408-023': { patient:'孙大爷 · 男 · 76岁', patientPhone:'158****5509', address:'北京市海淀区中关村南大街 18 号 1 单元 903', addressType:'家' }
+      'AKB-20260408-023': { patient:'孙大爷 · 男 · 76岁', patientPhone:'158****5509', address:'北京市海淀区中关村南大街 18 号 1 单元 903', addressType:'家' },
+      'AKB-2026-660033': { patient:'王大爷 · 男 · 76岁', patientPhone:'139****6677', address:'西安市未央区凤城八路 66号 1单元 801', addressType:'家' }
     };
     var fallback = { patient:'服务对象待确认', patientPhone:'—', address:'服务地址待确认', addressType:'—' };
     var style = document.createElement('style');
@@ -147,7 +148,7 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
         if (nos[o.id]) {
           /* 已存在订单：同步用户端最新状态与退款信息（如 退款处理中） */
           var exist = ORDERS.find(function (x) { return x.no === o.id; });
-          if (exist && (o.refundState || o.state)) Object.assign(exist, { state: o.state || exist.state }, extra);
+          if (exist && (o.refundState || o.state)) { Object.keys(extra).forEach(function (k) { if (extra[k] !== undefined && extra[k] !== null) exist[k] = extra[k]; }); exist.state = o.state || exist.state; }
           return;
         }
         nos[o.id] = true;
@@ -220,7 +221,7 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
       var selected = serviceSelect.value;
       var days = document.getElementById('date').value;
       var list = ORDERS.map(function (order) { return Object.assign({ patient:'—', patientPhone:'—', address:'—', addressType:'—' }, serviceProfiles[order.no] || {}, order); }).filter(function (order) {
-        var matchesStatus = status === 'all' || order.state === status;
+        var matchesStatus = status === 'all' || order.state === status || (status === '退款/售后' && (order.state === '退款处理中' || order.refundState));
         var matchesSelect = selected === 'all' || order.type === selected;
         var matchesSearch = !q || Object.keys(order).some(function (key) { return String(order[key]).includes(q); });
         var matchesDate = days === 'all' || withinDays(order, Number(days));
