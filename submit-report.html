@@ -9,7 +9,7 @@
       --purple:       #1CD8B7;
       --purple-dark:  #0FA98C;
       --purple-light: #DDF7F1;
-      --purple-bg:    #EFFBF8;
+      --purple-bg: #F5F5F5;
       --card:         #FFFFFF;
       --text:         #1A1828;
       --text2:        #6B6880;
@@ -19,7 +19,7 @@
       --green-light:  #DCFCE7;
       --red:          #DC2626;
       --red-light:    #FEE2E2;
-      --sh: 0 2px 16px rgba(20,160,135,.08);
+      --sh: 0 2px 16px rgba(0,0,0,0.1);
       --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,7 +30,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    .frame { display: flex; justify-content: center; min-height: 100vh; background: #DDF2EE; }
+    .frame { display: flex; justify-content: center; min-height: 100vh; background: #F5F5F5; }
     .phone {
       width: 100%; max-width: 430px;
       display: flex; flex-direction: column; background: var(--purple-bg); min-height: 100vh;
@@ -39,7 +39,7 @@
       .frame { align-items: flex-start; padding: 20px 0 40px; }
       .phone {
         height: 900px; min-height: unset; border-radius: 42px; overflow: hidden;
-        box-shadow: 0 24px 72px rgba(15,110,95,.22), 0 2px 8px rgba(0,0,0,.06);
+        box-shadow: 0 24px 72px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,.06);
       }
     }
 
@@ -166,7 +166,7 @@
     }
     .f-textarea:focus {
       border-color: var(--purple); background: #fff;
-      box-shadow: 0 0 0 3px rgba(28,216,183,.1);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
     }
     .f-textarea::placeholder { color: var(--text3); }
     .char-count { text-align: right; font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 6px; }
@@ -266,7 +266,7 @@
       width: 100%; height: 52px; border-radius: 16px; border: none; cursor: pointer;
       font-family: inherit; font-size: 16px; font-weight: 800; letter-spacing: .4px;
       background: linear-gradient(135deg,#2BD8BC,#0FA98C); color: #fff;
-      box-shadow: 0 8px 22px rgba(15,169,140,.28);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.1);
       display: flex; align-items: center; justify-content: center; gap: 8px;
       -webkit-tap-highlight-color: transparent; transition: transform .12s, filter .12s;
     }

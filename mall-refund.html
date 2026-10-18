@@ -8,9 +8,9 @@
   <style>
     :root {
       --purple: #1CD8B7; --purple-dark: #0FA98C; --purple-light: #DDF7F1;
-      --purple-bg: #EFFBF8; --card: #fff; --text: #1A1828; --text2: #6B6880;
+      --purple-bg: #F5F5F5; --card: #fff; --text: #1A1828; --text2: #6B6880;
       --text3: #AEACC0; --border: #EDE9F5; --red: #EF4444;
-      --sh: 0 2px 16px rgba(20,160,135,.08);
+      --sh: 0 2px 16px rgba(0,0,0,0.1);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -19,11 +19,11 @@
       background: var(--purple-bg); color: var(--text);
       -webkit-font-smoothing: antialiased;
     }
-    .frame { display: flex; justify-content: center; min-height: 100vh; background: #DDF2EE; }
+    .frame { display: flex; justify-content: center; min-height: 100vh; background: #F5F5F5; }
     .phone { width: 100%; max-width: 430px; min-height: 100vh; display: flex; flex-direction: column; background: var(--purple-bg); position: relative; }
     @media (min-width: 520px) {
       .frame { align-items: flex-start; padding: 20px 0 40px; }
-      .phone { height: 900px; min-height: unset; border-radius: 42px; overflow: hidden; box-shadow: 0 24px 72px rgba(15,110,95,.22); }
+      .phone { height: 900px; min-height: unset; border-radius: 42px; overflow: hidden; box-shadow: 0 24px 72px rgba(0,0,0,0.1); }
     }
 
     /* Status bar */
@@ -97,7 +97,7 @@
       padding: 0 14px; font-size: 18px; font-weight: 800; color: var(--text);
       outline: none; text-align: right;
     }
-    .amount-input:focus { border-color: var(--purple-dark); box-shadow: 0 0 0 3px rgba(28,216,183,.12); }
+    .amount-input:focus { border-color: var(--purple-dark); box-shadow: 0 0 0 3px rgba(0,0,0,0.1); }
 
     /* Quick amounts */
     .quick-amounts { display: flex; gap: 8px; margin-top: 12px; }

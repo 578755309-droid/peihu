@@ -6,12 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>健康商城 · 佑小邦</title>
   <style>
-    :root{--purple:#1CD8B7;--purple-dark:#0FA98C;--purple-light:#DDF7F1;--purple-bg:#EFFBF8;--card:#fff;--text:#1A1828;--text2:#6B6880;--text3:#AEACC0;--border:#EDE9F5;--red:#EF4444;--green:#16965A;--sh:0 2px 16px rgba(20,160,135,.08)}
+    :root{--purple:#1CD8B7;--purple-dark:#0FA98C;--purple-light:#DDF7F1;--purple-bg: #F5F5F5;--card:#fff;--text:#1A1828;--text2:#6B6880;--text3:#AEACC0;--border:#EDE9F5;--red:#EF4444;--green:#16965A;--sh:0 2px 16px rgba(0,0,0,0.1)}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;background:var(--purple-bg);color:var(--text);-webkit-font-smoothing:antialiased}
-    .frame{display:flex;justify-content:center;min-height:100vh;background:#DDF2EE}
+    .frame{display:flex;justify-content:center;min-height:100vh;background: #F5F5F5}
     .phone{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;background:var(--purple-bg);position:relative}
-    @media(min-width:520px){.frame{align-items:flex-start;padding:20px 0 40px}.phone{height:900px;min-height:unset;border-radius:42px;overflow:hidden;box-shadow:0 24px 72px rgba(15,110,95,.22)}}
+    @media(min-width:520px){.frame{align-items:flex-start;padding:20px 0 40px}.phone{height:900px;min-height:unset;border-radius:42px;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,0.1)}}
     .scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
     .scroll-area::-webkit-scrollbar{display:none}
 
@@ -39,12 +39,12 @@
     .category-row{display:flex;gap:10px;overflow-x:auto;padding:12px 14px 0;background:#fff}
     .category-row::-webkit-scrollbar{display:none}
     .category{white-space:nowrap;border:0;background:transparent;color:var(--text2);border-radius:20px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
-    .category.active{background:var(--purple);color:#fff;font-weight:800;box-shadow:0 3px 10px rgba(28,216,183,.3)}
+    .category.active{background:var(--purple);color:#fff;font-weight:800;box-shadow:0 3px 10px rgba(0,0,0,0.1)}
 
     /* ── 产品卡片（上图下文，2×2 网格） ── */
     .product-section{padding:14px 14px 0;background:#fff;margin-top:8px}
     .product-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .product-card{position:relative;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(20,160,135,.06);cursor:pointer;-webkit-tap-highlight-color:transparent;border:1px solid rgba(237,233,245,.6)}
+    .product-card{position:relative;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.1);cursor:pointer;-webkit-tap-highlight-color:transparent;border:1px solid rgba(237,233,245,.6)}
     .product-card:active{transform:scale(.98)}
     .product-inner{display:flex;flex-direction:column}
     .product-art{width:100%;height:130px;border-radius:0;display:grid;place-items:center;position:relative;overflow:hidden}
@@ -66,13 +66,13 @@
     .price{font-size:16px;font-weight:900;color:#E94E4E}
     .price small{font-size:10px;font-weight:700}
     .sales{font-size:10px;color:var(--text3);white-space:nowrap}
-    .product-add{position:absolute;right:10px;bottom:10px;width:28px;height:28px;border:0;border-radius:50%;background:var(--purple);color:#fff;font-size:18px;font-weight:900;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(28,216,183,.4);z-index:2}
+    .product-add{position:absolute;right:10px;bottom:10px;width:28px;height:28px;border:0;border-radius:50%;background:var(--purple);color:#fff;font-size:18px;font-weight:900;display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:2}
     .product-add:active{transform:scale(.9)}
     .product-badge{position:absolute;left:9px;top:8px;z-index:2;background:rgba(255,255,255,.95);border-radius:6px;padding:2px 6px;color:var(--purple);font-size:10px;font-weight:800}
     .empty{text-align:center;color:var(--text3);font-size:13px;padding:58px 0}
 
     /* ── 底部 Tab（与 home.html 一致） ── */
-    .bottom-nav{flex-shrink:0;display:flex;background:#fff;border-top:1px solid var(--border);padding:8px 0 calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(15,120,100,.06)}
+    .bottom-nav{flex-shrink:0;display:flex;background:#fff;border-top:1px solid var(--border);padding:8px 0 calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(0,0,0,0.1)}
     .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;text-decoration:none;padding:2px 0}
     .nav-ico{width:24px;height:24px;stroke:#AEACC0;fill:none}
     .nav-lbl{font-size:11px;font-weight:700;color:var(--text3)}
@@ -218,7 +218,7 @@
     .checkout-confirm{width:100%;height:45px;margin-top:17px;border:0;border-radius:12px;background:linear-gradient(135deg,#3FE0C3,#0FA98C);color:#fff;font-weight:800;cursor:pointer;font-family:inherit}
     .success-delivery{margin-top:9px;color:var(--purple);font-size:12px;font-weight:800}
     /* ── 支付成功全页 ── */
-    .pay-success-page{background:#EFFBF8;min-height:100%;width:min(430px,100%);display:flex;flex-direction:column}
+    .pay-success-page{background: #F5F5F5;min-height:100%;width:min(430px,100%);display:flex;flex-direction:column}
     .pay-success-top{flex:1;display:flex;flex-direction:column;align-items:center;padding:42px 20px 20px;text-align:center}
     .pay-success-icon{width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,#34D399,#10B981);display:grid;place-items:center;margin-bottom:16px}
     .pay-success-icon svg{width:32px;height:32px;color:#fff}

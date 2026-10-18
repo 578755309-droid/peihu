@@ -1,8 +1,8 @@
 /* 积分管理模块共享样式（积分概览 / 用户积分 / 获取明细 / 使用明细 / 邀请明细） */
-body{margin:0;background:#E8FBF6;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;min-width:1100px;overflow-x:hidden}
+body{margin:0;background: #F5F5F5;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;min-width:1100px;overflow-x:hidden}
 .layout{display:flex;min-height:100vh;min-width:0}
 .main{margin-left:220px;flex:1;min-width:0;max-width:calc(100vw - 220px);overflow:hidden}
-.topbar{height:60px;background:#fff;border-bottom:1px solid #CFF5ED;display:flex;align-items:center;padding:0 28px;gap:16px;box-shadow:0 1px 8px rgba(15,201,167,.08)}
+.topbar{height:60px;background:#fff;border-bottom:1px solid #CFF5ED;display:flex;align-items:center;padding:0 28px;gap:16px;box-shadow:0 1px 8px rgba(0,0,0,0.1)}
 .crumb{display:flex;gap:7px;color:#9AA7BA;font-size:13px;font-weight:700}
 .crumb .current{color:#172033}
 .top-actions{margin-left:auto;display:flex;gap:12px;align-items:center}
@@ -14,7 +14,7 @@ body{margin:0;background:#E8FBF6;color:#172033;font-family:-apple-system,BlinkMa
 
 /* stat cards */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
-.stat{background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:16px 18px;box-shadow:0 2px 16px rgba(15,201,167,.06)}
+.stat{background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:16px 18px;box-shadow:0 2px 16px rgba(0,0,0,0.1)}
 .stat-label{font-size:11px;color:#9AA7BA;font-weight:800;margin-bottom:6px;letter-spacing:.3px}
 .stat-value{font-size:28px;font-weight:900;color:#172033;font-family:-apple-system,"SF Mono",Consolas,monospace}
 .stat-sub{font-size:11px;color:#9AA7BA;margin-top:4px;font-weight:700}
@@ -24,7 +24,7 @@ body{margin:0;background:#E8FBF6;color:#172033;font-family:-apple-system,BlinkMa
 .stat.balance .stat-value{color:#17BFA3}
 
 /* rules card */
-.rules-card{background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 2px 16px rgba(15,201,167,.06);margin-bottom:16px;overflow:hidden}
+.rules-card{background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,0.1);margin-bottom:16px;overflow:hidden}
 .rules-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #E4FAF4}
 .rules-title{font-size:14px;font-weight:900;display:flex;align-items:center;gap:8px}
 .rules-title::before{content:'';width:3px;height:15px;background:#1CD8B7;border-radius:2px}
@@ -38,7 +38,7 @@ body{margin:0;background:#E8FBF6;color:#172033;font-family:-apple-system,BlinkMa
 .rule-row{display:flex;align-items:center;gap:8px;font-size:12px;color:#536882;font-weight:700;flex-wrap:wrap}
 .rule-row input,.rule-row select{height:32px;border:1px solid #CBF1E8;border-radius:8px;padding:0 9px;background:#fff;color:#172033;font:800 13px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;outline:none;width:74px}
 .rule-row select{width:84px}
-.rule-row input:focus,.rule-row select:focus{border-color:#1CD8B7;box-shadow:0 0 0 3px rgba(28,216,183,.08)}
+.rule-row input:focus,.rule-row select:focus{border-color:#1CD8B7;box-shadow:0 0 0 3px rgba(0,0,0,0.1)}
 .rule-row .unit{color:#9AA7BA;font-size:11px}
 .rules-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px}
 .rules-tip{font-size:11px;color:#8A9AB0;font-weight:700;line-height:1.7;max-width:760px}
@@ -46,7 +46,7 @@ body{margin:0;background:#E8FBF6;color:#172033;font-family:-apple-system,BlinkMa
 
 /* quick links card（概览页入口卡片） */
 .pt-links{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.pt-link{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:16px 18px;box-shadow:0 2px 16px rgba(15,201,167,.06);text-decoration:none;color:inherit;cursor:pointer}
+.pt-link{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:16px 18px;box-shadow:0 2px 16px rgba(0,0,0,0.1);text-decoration:none;color:inherit;cursor:pointer}
 .pt-link:hover{border-color:#1CD8B7}
 .pt-link-ico{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;flex-shrink:0}
 .pt-link-ico svg{width:20px;height:20px}
@@ -54,7 +54,7 @@ body{margin:0;background:#E8FBF6;color:#172033;font-family:-apple-system,BlinkMa
 .pt-link-sub{font-size:11px;color:#9AA7BA;font-weight:700;margin-top:3px}
 
 /* filter */
-.filter{background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:16px;box-shadow:0 2px 16px rgba(15,201,167,.06)}
+.filter{background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:16px;box-shadow:0 2px 16px rgba(0,0,0,0.1)}
 .filter label{font-size:12px;color:#9AA7BA;font-weight:800}
 .select,.search{height:36px;border:1px solid #CFF5ED;border-radius:8px;padding:0 11px;color:#657087;background:#fff;font:600 12px inherit}
 .search{width:220px}
@@ -62,7 +62,7 @@ body{margin:0;background:#E8FBF6;color:#172033;font-family:-apple-system,BlinkMa
 .filter .result strong{color:#1CD8B7;font-size:16px}
 
 /* table */
-.table-wrap{width:100%;max-width:100%;background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 2px 16px rgba(15,201,167,.06);overflow-x:auto;overflow-y:hidden}
+.table-wrap{width:100%;max-width:100%;background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,0.1);overflow-x:auto;overflow-y:hidden}
 .table{width:100%;border-collapse:collapse}
 .table th{height:44px;background:#F3FDFA;color:#9AA7BA;font-size:11px;text-align:left;padding:0 18px;font-weight:800;letter-spacing:.3px;white-space:nowrap}
 .table td{height:66px;padding:0 18px;border-top:1px solid #E4FAF4;font-size:12px;color:#657087;font-weight:600;vertical-align:middle}

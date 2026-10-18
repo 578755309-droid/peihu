@@ -9,7 +9,7 @@
       --purple:       #1CD8B7;
       --purple-dark:  #0FA98C;
       --purple-light: #DDF7F1;
-      --purple-bg:    #EFFBF8;
+      --purple-bg: #F5F5F5;
       --card:         #FFFFFF;
       --text:         #1A1828;
       --text2:        #6B6880;
@@ -17,7 +17,7 @@
       --border:       #EDE9F5;
       --green:        #16A34A;
       --green-bg:     #DCFCE7;
-      --sh: 0 2px 16px rgba(20,160,135,.08);
+      --sh: 0 2px 16px rgba(0,0,0,0.1);
       --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -29,7 +29,7 @@
     }
 
     /* Desktop frame */
-    .frame { display: flex; justify-content: center; min-height: 100vh; background: #DDF2EE; }
+    .frame { display: flex; justify-content: center; min-height: 100vh; background: #F5F5F5; }
     .phone {
       width: 100%; max-width: 430px;
       display: flex; flex-direction: column; background: var(--purple-bg); min-height: 100vh;
@@ -38,7 +38,7 @@
       .frame { align-items: flex-start; padding: 20px 0 40px; }
       .phone {
         height: 900px; min-height: unset; border-radius: 42px; overflow: hidden;
-        box-shadow: 0 24px 72px rgba(15,110,95,.22), 0 2px 8px rgba(0,0,0,.06);
+        box-shadow: 0 24px 72px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,.06);
       }
     }
 
@@ -102,7 +102,7 @@
     }
     .search-box:focus-within {
       border-color: var(--purple); background: #fff;
-      box-shadow: 0 0 0 3px rgba(28,216,183,.12);
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.1);
     }
     .search-box svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--text3); transition: color .2s; }
     .search-box:focus-within svg { color: var(--purple); }
@@ -137,7 +137,7 @@
     .fchip svg { width: 13px; height: 13px; }
     .fchip.on {
       background: var(--purple); border-color: var(--purple); color: #fff;
-      box-shadow: 0 3px 10px rgba(28,216,183,.28);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
     .fchip.on svg { stroke: #fff; }
     .sep { width: 1px; background: var(--border); height: 22px; align-self: center; flex-shrink: 0; }
@@ -179,7 +179,7 @@
       width: 62px; height: 62px; border-radius: 50%;
       display: grid; place-items: center;
       font-size: 22px; font-weight: 900; color: #fff;
-      box-shadow: 0 4px 14px rgba(20,160,135,.2);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
     .avail-dot {
       position: absolute; bottom: 2px; right: 2px;
@@ -233,7 +233,7 @@
       background: linear-gradient(135deg,#2BD8BC,#0FA98C); color: #fff;
       font-size: 14px; font-weight: 800; font-family: inherit;
       display: flex; align-items: center; gap: 5px;
-      box-shadow: 0 4px 14px rgba(15,169,140,.28);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
       -webkit-tap-highlight-color: transparent; transition: transform .1s, filter .1s;
     }
     .select-btn:active { transform: scale(.97); filter: brightness(.93); }

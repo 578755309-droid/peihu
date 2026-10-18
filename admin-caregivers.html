@@ -14,7 +14,7 @@
         --text: #172033;
         --muted: #8f9bb0;
         --line: #CFF5ED;
-        --sh: 0 2px 16px rgba(15,201,167, 0.1);
+        --sh: 0 2px 16px rgba(0,0,0,0.1);
       }
       * {
         box-sizing: border-box;
@@ -138,7 +138,7 @@
         align-items: center;
         padding: 0 28px;
         gap: 16px;
-        box-shadow: 0 1px 8px rgba(15,201,167, 0.08);
+        box-shadow: 0 1px 8px rgba(0,0,0,0.1);
       }
       .crumb {
         display: flex;
@@ -381,14 +381,14 @@
       .import-mask {
         position: fixed; inset: 0; z-index: 1000;
         display: none; align-items: center; justify-content: center;
-        background: rgba(12,33,65,.45); padding: 24px;
+        background: rgba(0,0,0,0.1); padding: 24px;
       }
       .import-mask.show { display: flex; }
       .import-dialog {
         width: min(560px, calc(100vw - 48px));
         display: flex; flex-direction: column;
         overflow: hidden; border-radius: 16px;
-        background: #fff; box-shadow: 0 26px 64px rgba(10,30,63,.25);
+        background: #fff; box-shadow: 0 26px 64px rgba(0,0,0,0.1);
       }
       .import-head {
         display: flex; align-items: center; justify-content: space-between;
@@ -407,7 +407,7 @@
         border: 1.5px dashed #BFD4F5; border-radius: 12px;
         background: #F3FDFA; cursor: pointer; transition: border-color .2s, background .2s;
       }
-      .import-drop.dragover { border-color: var(--b); background: #E8FBF6; }
+      .import-drop.dragover { border-color: var(--b); background: #F5F5F5; }
       .import-icon { width: 48px; height: 48px; }
       .import-tip { color: #71819A; font-size: 13px; text-align: center; margin: 0; }
       .import-link { color: var(--b); font-weight: 700; cursor: pointer; }

@@ -3,7 +3,7 @@
 body{margin:0;background:#F5F5F5;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;min-width:1100px;overflow-x:hidden}
 .layout{display:flex;min-height:100vh;min-width:0}
 .main{margin-left:220px;flex:1;min-width:0;max-width:calc(100vw - 220px);overflow:hidden}
-.topbar{height:60px;background:#fff;border-bottom:1px solid #CFF5ED;display:flex;align-items:center;padding:0 28px;gap:16px;box-shadow:0 1px 8px rgba(15,201,167,.08)}
+.topbar{height:60px;background:#fff;border-bottom:1px solid #CFF5ED;display:flex;align-items:center;padding:0 28px;gap:16px;box-shadow:0 1px 8px rgba(0,0,0,0.1)}
 .crumb{display:flex;gap:7px;color:#9AA7BA;font-size:13px;font-weight:700}
 .crumb .current{color:#172033}
 .top-actions{margin-left:auto;display:flex;gap:12px;align-items:center}
@@ -15,7 +15,7 @@ body{margin:0;background:#F5F5F5;color:#172033;font-family:-apple-system,BlinkMa
 
 /* stat cards — consistent with admin-order-stats.css */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
-.stat{background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:16px 18px;box-shadow:0 2px 16px rgba(15,201,167,.06)}
+.stat{background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:16px 18px;box-shadow:0 2px 16px rgba(0,0,0,0.1)}
 .stat-label{font-size:11px;color:#9AA7BA;font-weight:800;margin-bottom:6px;letter-spacing:.3px}
 .stat-value{font-size:28px;font-weight:900;color:#172033;font-family:-apple-system,"SF Mono",Consolas,monospace}
 .stat-sub{font-size:11px;color:#9AA7BA;margin-top:4px;font-weight:700}
@@ -27,12 +27,12 @@ body{margin:0;background:#F5F5F5;color:#172033;font-family:-apple-system,BlinkMa
 /* tabs for status filter — same as orders */
 .tabs{display:flex;gap:8px;margin-bottom:14px}
 .tab{height:34px;padding:0 14px;border:1px solid #CFF5ED;border-radius:9px;background:#fff;color:#657087;font:700 12px inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.tab .num{background:rgba(28,216,183,.08);color:#1CD8B7;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:800}
+.tab .num{background:rgba(0,0,0,0.1);color:#1CD8B7;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:800}
 .tab.active{background:#1CD8B7;border-color:#1CD8B7;color:#fff}
 .tab.active .num{background:rgba(255,255,255,.25);color:#fff}
 
 /* filter bar — same as orders */
-.filter{background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:16px;box-shadow:0 2px 16px rgba(15,201,167,.06)}
+.filter{background:#fff;border:1px solid #CFF5ED;border-radius:14px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:16px;box-shadow:0 2px 16px rgba(0,0,0,0.1)}
 .filter label{font-size:12px;color:#9AA7BA;font-weight:800}
 .select,.search{height:36px;border:1px solid #CFF5ED;border-radius:8px;padding:0 11px;color:#657087;background:#fff;font:600 12px inherit}
 .search{width:220px}
@@ -40,7 +40,7 @@ body{margin:0;background:#F5F5F5;color:#172033;font-family:-apple-system,BlinkMa
 .filter .result strong{color:#1CD8B7;font-size:16px}
 
 /* table — same as orders */
-.table-wrap{width:100%;max-width:100%;background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 2px 16px rgba(15,201,167,.06);overflow-x:auto;overflow-y:hidden}
+.table-wrap{width:100%;max-width:100%;background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,0.1);overflow-x:auto;overflow-y:hidden}
 .table{width:100%;border-collapse:collapse}
 .table th{height:44px;background:#F3FDFA;color:#9AA7BA;font-size:11px;text-align:left;padding:0 18px;font-weight:800;letter-spacing:.3px}
 .table td{height:72px;padding:14px 18px;border-top:1px solid #E4FAF4;font-size:12px;color:#657087;font-weight:600;vertical-align:top}
@@ -109,7 +109,7 @@ body{margin:0;background:#F5F5F5;color:#172033;font-family:-apple-system,BlinkMa
 .sms-receiver .del:hover{background:#FEE2E2}
 .sms-add{display:flex;gap:8px;margin-top:10px}
 .sms-add input{flex:1;height:38px;border:1px solid #CFF5ED;border-radius:8px;padding:0 12px;font-size:13px;color:#172033;outline:none;font-family:inherit}
-.sms-add input:focus{border-color:#1CD8B7;box-shadow:0 0 0 3px rgba(28,216,183,.1)}
+.sms-add input:focus{border-color:#1CD8B7;box-shadow:0 0 0 3px rgba(0,0,0,0.1)}
 .sms-add .btn{white-space:nowrap}
 
 /* custom confirm / toast */
@@ -146,7 +146,7 @@ body{margin:0;background:#F5F5F5;color:#172033;font-family:-apple-system,BlinkMa
 .form-row{margin-bottom:14px}
 .form-row label{display:block;font-size:12px;color:#657087;font-weight:800;margin-bottom:6px}
 .form-row select,.form-row textarea{width:100%;border:1px solid #CFF5ED;border-radius:8px;padding:10px 12px;font-size:13px;color:#172033;outline:none;background:#fff;font-family:inherit;box-sizing:border-box}
-.form-row select:focus,.form-row textarea:focus{border-color:#1CD8B7;box-shadow:0 0 0 3px rgba(28,216,183,.1)}
+.form-row select:focus,.form-row textarea:focus{border-color:#1CD8B7;box-shadow:0 0 0 3px rgba(0,0,0,0.1)}
 .form-row textarea{resize:vertical;min-height:90px;line-height:1.6}
 </style><script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css"></head>
 <body><div class="layout">

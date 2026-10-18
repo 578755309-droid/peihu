@@ -10,7 +10,7 @@
       --purple:       #1CD8B7;
       --purple-dark:  #1CD8B7;
       --purple-light: #DDF7F1;
-      --purple-bg:    #EFFBF8;
+      --purple-bg: #F5F5F5;
       --sidebar-w:    220px;
       --topbar-h:     60px;
       --card:         #FFFFFF;
@@ -26,7 +26,7 @@
       --red-bg:       #FEE2E2;
       --blue:         #1CD8B7;
       --blue-bg:      #DDF7F1;
-      --sh: 0 2px 16px rgba(15,201,167,.10);
+      --sh: 0 2px 16px rgba(0,0,0,0.1);
       --r-lg: 14px; --r-md: 10px; --r-sm: 8px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -107,7 +107,7 @@
       border-bottom: 1px solid var(--border);
       display: flex; align-items: center; padding: 0 28px; gap: 16px;
       position: sticky; top: 0; z-index: 50;
-      box-shadow: 0 1px 8px rgba(15,201,167,.08);
+      box-shadow: 0 1px 8px rgba(0,0,0,0.1);
     }
     .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--text3); flex: 1; }
     .breadcrumb .cur { color: var(--text); }
@@ -171,7 +171,7 @@
       background: #1CD8B7; color: #fff;
       font-size: 13px; font-weight: 800; font-family: inherit;
       display: flex; align-items: center; gap: 6px;
-      box-shadow: 0 4px 12px rgba(15,201,167,.25); transition: filter .15s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: filter .15s;
     }
     .btn-primary:hover { filter: brightness(1.08); }
     .btn-primary svg { width: 14px; height: 14px; }
@@ -290,7 +290,7 @@
       padding: 7px 16px; border-radius: 8px; border: none; cursor: pointer;
       background: #1CD8B7; color: #fff;
       font-size: 12px; font-weight: 800; font-family: inherit;
-      box-shadow: 0 3px 10px rgba(15,201,167,.22); transition: filter .15s;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: filter .15s;
     }
     .bill-link:hover { filter: brightness(1.08); }
     .bill-link svg { width: 13px; height: 13px; }
@@ -679,8 +679,8 @@
 
     /* fill */
     const grad = ctx.createLinearGradient(0, PT, 0, PT + cH);
-    grad.addColorStop(0, 'rgba(15,201,167,.18)');
-    grad.addColorStop(1, 'rgba(15,201,167,0)');
+    grad.addColorStop(0, 'rgba(0,0,0,0.1)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.1)');
     ctx.beginPath();
     ctx.moveTo(xOf(0), yOf(data[0]));
     for (let i = 1; i < data.length; i++) {
@@ -705,7 +705,7 @@
     data.forEach((v, i) => {
       const x = xOf(i), y = yOf(v);
       ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(15,201,167,.12)'; ctx.fill();
+      ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fill();
       ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2);
       ctx.fillStyle = '#1CD8B7'; ctx.fill();
       ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI*2);
