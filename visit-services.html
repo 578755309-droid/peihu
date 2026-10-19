@@ -22,6 +22,7 @@
     .svc-tile{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.1);cursor:pointer;-webkit-tap-highlight-color:transparent}
     .svc-tile:active{transform:scale(.985)}
     .svc-tile .svc-img{position:relative;width:100%;padding-top:62%;overflow:hidden;background:var(--purple-light)}
+    .svc-tile .svc-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
     .svc-tile .svc-img svg{position:absolute;inset:0;margin:auto;width:58%;height:58%}
     .svc-tile .svc-body{padding:10px 12px 12px}
     .svc-tile .svc-name{font-size:14px;font-weight:900;color:var(--text);line-height:1.35}
@@ -92,6 +93,21 @@
     report:'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><path d="M18 16h12l4 4v12H18z" fill="none" stroke="#1CD8B7" stroke-width="2"/><path d="M21 24h6M21 28h4" stroke="#1CD8B7" stroke-width="1.8" stroke-linecap="round"/></svg>',
     station:'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><rect x="13" y="20" width="22" height="10" rx="1" fill="none" stroke="#1CD8B7" stroke-width="2"/><circle cx="17" cy="32" r="2" fill="#1CD8B7"/><circle cx="31" cy="32" r="2" fill="#1CD8B7"/><path d="M20 20v-4h8v4" fill="none" stroke="#1CD8B7" stroke-width="2" stroke-linecap="round"/></svg>'
   };
+  /* 生成配图（加载失败时回退 SVG 图标） */
+  var IMG_API='https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?image_size=landscape_4_3&prompt=';
+  var SVC_IMGS={
+    vip:IMG_API+'premium%20medical%20escort%20service%2C%20professional%20assistant%20with%20elderly%20patient%20at%20hospital%20lobby%2C%20photorealistic',
+    premium:IMG_API+'professional%20medical%20companion%20helping%20patient%20at%20hospital%20registration%20desk%2C%20photorealistic',
+    medicine:IMG_API+'pharmacist%20handing%20medicine%20bag%20at%20modern%20pharmacy%20counter%2C%20photorealistic',
+    'exam-booking':IMG_API+'doctor%20scheduling%20medical%20examination%20appointment%20for%20senior%20patient%2C%20modern%20hospital%2C%20photorealistic',
+    result:IMG_API+'doctor%20reviewing%20medical%20test%20report%20with%20patient%2C%20modern%20clinic%2C%20photorealistic',
+    admission:IMG_API+'hospital%20admission%20desk%2C%20staff%20helping%20patient%20family%20with%20paperwork%2C%20photorealistic',
+    discharge:IMG_API+'smiling%20senior%20patient%20leaving%20hospital%20ward%20with%20discharge%20documents%2C%20photorealistic',
+    'ring-pickup':IMG_API+'comfortable%20business%20car%20picking%20up%20elderly%20passenger%20in%20city%2C%20photorealistic',
+    airport:IMG_API+'airport%20pickup%20service%2C%20driver%20welcoming%20elderly%20traveler%20at%20arrival%20hall%2C%20photorealistic',
+    report:IMG_API+'courier%20delivering%20medical%20report%20documents%20with%20express%20envelope%2C%20photorealistic',
+    station:IMG_API+'railway%20station%20pickup%20service%2C%20driver%20helping%20elderly%20passenger%20with%20luggage%2C%20photorealistic'
+  };
   function fmtSales(n){return n>=1000?(n/1000).toFixed(1)+'k':n}
   function renderServices(list){
     document.getElementById('serviceList').innerHTML=list.map(function(s){
@@ -102,7 +118,7 @@
       else{sales=DEFAULT_SALES[s.id]||0;}
       var price=s.price!=null?s.price:0;
       return '<div class="svc-tile-wrap" onclick="selectService(\''+s.id+'\')"><article class="svc-tile">'+
-        '<div class="svc-img">'+(ICONS[s.id]||'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><text x="24" y="28" text-anchor="middle" fill="#1CD8B7" font-size="14" font-weight="800">服务</text></svg>')+'</div>'+
+        '<div class="svc-img">'+(SVC_IMGS[s.id]?'<img src="'+SVC_IMGS[s.id]+'" alt="'+(s.name||'服务')+'" onerror="this.remove()">':'')+(ICONS[s.id]||'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><text x="24" y="28" text-anchor="middle" fill="#1CD8B7" font-size="14" font-weight="800">服务</text></svg>')+'</div>'+
         '<div class="svc-body">'+
           '<div class="svc-name">'+(s.name||'')+'</div>'+
           '<div class="svc-sub">'+(s.summary||'')+'</div>'+

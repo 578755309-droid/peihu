@@ -514,6 +514,7 @@
 
     /* 大图区 */
     .hero-img{width:100%;padding-top:82%;position:relative;background:linear-gradient(135deg,#DDF7F1 0%,#D9CFF0 100%)}
+    .hero-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
     .hero-img svg{position:absolute;inset:0;margin:auto;width:48%;height:48%}
     .hero-dots{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:6px}
     .hero-dots span{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.55)}
@@ -1234,6 +1235,12 @@
   };
 
   /* ── 详情态种子数据（按服务类型） ── */
+  const SVC_HERO_IMGS = {
+    hospital: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=caring%20nurse%20beside%20hospital%20bed%20caring%20for%20senior%20patient%2C%20bright%20modern%20ward%2C%20warm%20atmosphere%2C%20photorealistic&image_size=landscape_4_3',
+    home: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=caregiver%20helping%20senior%20woman%20in%20cozy%20home%20living%20room%2C%20warm%20sunlight%2C%20photorealistic&image_size=landscape_4_3',
+    bath: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20home%20bathing%20care%20service%2C%20caregiver%20assisting%20elderly%20with%20portable%20bath%20equipment%2C%20clean%20bright%20bathroom%2C%20photorealistic&image_size=landscape_4_3',
+    visit: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20caregiver%20accompanying%20elderly%20patient%20in%20modern%20hospital%20corridor%2C%20warm%20teal%20tones%2C%20photorealistic%2C%20soft%20daylight&image_size=landscape_4_3'
+  };
   const SERVICE_DETAIL = {
     hospital: {
       sub: '专业护理员 24 小时陪伴 · 术后康复指导 · 管道护理 · 压疮预防',
@@ -1842,6 +1849,17 @@
     document.getElementById('svcTitle').textContent = service.name;
     const detailKey = (serviceKey === 'visit') ? 'visit' : serviceKey;
     const detailCfg = SERVICE_DETAIL[detailKey] || SERVICE_DETAIL.hospital;
+    /* 顶部大图：生成图，加载失败时保留原 SVG 占位 */
+    (function(){
+      var heroEl = document.getElementById('heroImg');
+      if (!heroEl) return;
+      var old = heroEl.querySelector('img'); if (old) old.remove();
+      var src = SVC_HERO_IMGS[detailKey] || SVC_HERO_IMGS.hospital;
+      var hi = document.createElement('img');
+      hi.src = src; hi.alt = '';
+      hi.onerror = function(){ this.remove(); };
+      heroEl.insertBefore(hi, heroEl.firstChild);
+    })();
     document.getElementById('svcSub').textContent = detailCfg.sub;
     /* 已售数量：优先使用后台配置的手动/实际已售，否则用种子数据 */
     var svcSalesVal = detailCfg.sales;
