@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <script src="common-ui.js"></script>
+  <meta name="viewport" content="width=1280" />
+  <title>消息模板 · 佑小邦运营后台</title>
+  <link rel="stylesheet" href="admin-shell.css" />
+  <link rel="stylesheet" href="admin-catalog.css" />
+  <style>
+    body{min-width:1100px}
+    .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+    .stat-card{background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 3px 16px rgba(0,0,0,.06);padding:16px 18px}
+    .stat-val{font-size:24px;font-weight:900;color:#172033}
+    .stat-lbl{font-size:12px;font-weight:700;color:#9AA7BA;margin-top:3px}
+    .filter-bar{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 3px 16px rgba(0,0,0,.06);padding:13px 16px;margin-bottom:16px;flex-wrap:wrap}
+    .filter-bar label{font-size:12px;font-weight:800;color:#657087}
+    .filter-bar select,.filter-bar input{height:34px;border:1px solid #CFF5ED;border-radius:8px;padding:0 10px;font:600 13px inherit;outline:0;background:#fff;color:#172033}
+    .filter-bar .search{min-width:240px;flex:1}
+    .filter-bar .result{margin-left:auto;font-size:12px;color:#9AA7BA;font-weight:700}
+    .filter-bar .result strong{color:#1CD8B7}
+    .table-wrap{background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 3px 16px rgba(0,0,0,.06);overflow:hidden}
+    .table{width:100%;border-collapse:collapse}
+    .table th{height:44px;background:#F3FDFA;color:#9AA7BA;font-size:11px;font-weight:800;text-align:left;padding:0 16px;border-bottom:1px solid #CFF5ED;white-space:nowrap}
+    .table td{height:64px;padding:0 16px;border-bottom:1px solid #E4FAF4;font-size:13px;color:#657087;font-weight:600;vertical-align:middle}
+    .table tr:last-child td{border-bottom:0}
+    .op{display:flex;gap:6px;white-space:nowrap}
+    .op button{border:0;background:none;color:#1CD8B7;font:700 12px inherit;cursor:pointer;padding:4px}
+    .op button.danger{color:#DC2626}
+    .tp-name{font-weight:800;color:#172033;font-size:13px}
+    .tp-id{font-size:10px;color:#9AA7BA;margin-top:2px;font-weight:600}
+    .node-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:14px;font-size:11px;font-weight:800;white-space:nowrap}
+    .node-key{font-size:10px;font-weight:700;color:#9AA7BA;margin-top:2px}
+    .aud-chip{display:inline-block;padding:4px 10px;border-radius:14px;font-size:11px;font-weight:800;background:#EAF3FF;color:#397EBA;white-space:nowrap}
+    .tp-title{font-weight:800;color:#172033;font-size:12px}
+    .tp-content{font-size:11px;color:#9AA7BA;margin-top:3px;max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .st-btn{border:0;border-radius:14px;padding:5px 12px;font:800 11px inherit;cursor:pointer}
+    .st-btn.on{background:#DCFCE7;color:#16A34A}
+    .st-btn.off{background:#FEE2E2;color:#DC2626}
+    .upd{font-size:11px;color:#9AA7BA;font-weight:600;white-space:nowrap}
+    .empty-state{padding:44px 0;text-align:center;color:#9AA7BA;font-size:13px;font-weight:700;display:none}
+    /* 弹窗 */
+    .modal-mask{position:fixed;inset:0;background:rgba(18,43,76,.38);display:none;align-items:flex-start;justify-content:center;z-index:20;overflow-y:auto;padding:40px 24px}
+    .modal-mask.show{display:flex}
+    .modal{width:min(680px,100%);background:#fff;border-radius:16px;box-shadow:0 18px 60px rgba(24,61,105,.22);padding:22px}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .modal-title{font-size:18px;font-weight:900}
+    .modal-close{border:0;background:#F5F5F5;color:#657087;width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:17px}
+    .form-grid{display:grid;gap:13px}
+    .form-2col{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    .field{display:grid;gap:6px}
+    .field label{font-size:12px;font-weight:800;color:#657087}
+    .field input,.field select,.field textarea{border:1px solid #CFF5ED;border-radius:8px;padding:9px 10px;font:600 13px inherit;outline:0;width:100%;box-sizing:border-box}
+    .field textarea{min-height:110px;resize:vertical;line-height:1.7}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#1CD8B7}
+    .var-tip{font-size:11px;color:#94A3B8;line-height:1.6;font-weight:600}
+    .var-chips{display:flex;flex-wrap:wrap;gap:6px}
+    .var-chip{border:1px solid #CFF5ED;background:#F2FCF9;color:#0FAE92;border-radius:12px;padding:3px 10px;font:700 11px inherit;cursor:pointer}
+    .var-chip:hover{background:#DDF7F1}
+    .modal-foot{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}
+    .btn{height:36px;padding:0 15px;border-radius:9px;border:1px solid #CFF5ED;background:#fff;color:#657087;font:700 13px inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+    .btn-primary{background:#1CD8B7;border-color:#1CD8B7;color:#fff}
+    /* 预览 */
+    .pv-phone{width:320px;margin:0 auto;background:#F5F5F5;border-radius:18px;padding:14px;border:1px solid #E4FAF4}
+    .pv-msg{background:#fff;border-radius:12px;padding:13px 14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+    .pv-title{font-size:13px;font-weight:800;color:#172033}
+    .pv-body{font-size:12px;color:#657087;line-height:1.8;margin-top:6px;word-break:break-all}
+    .pv-meta{font-size:10px;color:#B0BACC;margin-top:8px}
+    .pv-unchanged{margin:10px 0 0;font-size:11px;color:#D97706;background:#FEF3C7;border-radius:8px;padding:8px 10px;font-weight:700}
+  </style>
+  <script defer src="admin-sidebar.js"></script>
+  <link rel="stylesheet" href="modal-scroll.css">
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>其他</span><span>›</span><span class="current">消息模板</span></div>
+      <div class="top-actions"><span class="top-date" id="topDate"></span><div class="top-av">管</div></div>
+    </header>
+
+    <section class="page" style="padding:24px 28px">
+      <div class="page-head" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px">
+        <div>
+          <h1 class="page-title" style="font-size:22px;font-weight:900;margin:0">消息模板</h1>
+          <p class="page-sub" style="font-size:13px;color:#9AA7BA;margin-top:5px">维护各业务节点的通知模板（站内消息 / 短信），启用后节点触发时按模板自动发送给对应用户</p>
+        </div>
+        <div class="actions" style="display:flex;gap:10px">
+          <button class="btn" onclick="resetTemplates()" style="display:none" id="btnReset">恢复默认模板</button>
+          <button class="btn btn-primary" onclick="openTplModal()">+ 新增模板</button>
+        </div>
+      </div>
+
+      <div class="stat-row" id="statRow"></div>
+
+      <div class="filter-bar">
+        <label>业务分组</label>
+        <select id="fGroup" onchange="render()"><option value="all">全部分组</option></select>
+        <label>接收对象</label>
+        <select id="fAud" onchange="render()">
+          <option value="all">全部对象</option><option value="用户">用户</option><option value="护理员">护理员</option><option value="管理员">管理员</option><option value="用户+护理员">用户+护理员</option><option value="用户+管理员">用户+管理员</option>
+        </select>
+        <label>状态</label>
+        <select id="fStatus" onchange="render()"><option value="all">全部状态</option><option value="on">启用</option><option value="off">停用</option></select>
+        <input class="search" id="fSearch" placeholder="搜索模板名称 / 消息标题 / 内容" oninput="render()" />
+        <span class="result">共 <strong id="count">0</strong> 套模板</span>
+      </div>
+
+      <div class="table-wrap" style="overflow-x:auto">
+        <table class="table" style="min-width:1150px">
+          <thead><tr><th>模板名称</th><th>触发节点</th><th>接收对象</th><th>发送渠道</th><th>消息内容</th><th>状态</th><th>最近修改</th><th>操作</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState">没有符合条件的模板</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 新增/编辑模板弹窗 -->
+<div class="modal-mask" id="tplModal" onclick="if(event.target===this)closeTplModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modalTitle">新增模板</div>
+      <button class="modal-close" onclick="closeTplModal()">×</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-2col">
+        <div class="field"><label>模板名称 *</label><input id="tName" placeholder="例如：护理员分配通知" /></div>
+        <div class="field"><label>触发节点 *</label><select id="tNode"></select></div>
+      </div>
+      <div class="form-2col">
+        <div class="field"><label>接收对象 *</label><select id="tAud"><option>用户</option><option>护理员</option><option>管理员</option><option>用户+护理员</option><option>用户+管理员</option></select></div>
+        <div class="field"><label>发送渠道</label><select id="tChannel"><option>站内消息</option><option>站内消息 + 短信</option><option>短信</option></select></div>
+      </div>
+      <div class="field"><label>消息标题 *</label><input id="tTitle" placeholder="例如：护理员已分配" /></div>
+      <div class="field">
+        <label>消息内容 *（支持变量占位符，触发时自动替换为真实数据）</label>
+        <textarea id="tContent" placeholder="例如：订单{{订单号}}已分配护理员{{护理员}}，将于{{服务时间}}开始服务。"></textarea>
+      </div>
+      <div class="field">
+        <label>插入变量（点击追加到内容末尾）</label>
+        <div class="var-chips" id="varChips"></div>
+        <div class="var-tip">常用变量：{{用户姓名}} {{订单号}} {{服务项目}} {{护理员}} {{联系电话}} {{服务时间}} {{医院}} {{金额}} {{积分}}。未识别的变量在预览时原样保留。</div>
+      </div>
+      <div class="form-2col">
+        <div class="field"><label>状态</label><select id="tStatus"><option value="on">启用</option><option value="off">停用</option></select></div>
+        <div class="field"><label>节点说明（只读）</label><input id="tNodeTip" readonly style="background:#F2FCF9" /></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="previewCurrent()">预览效果</button>
+      <button class="btn" onclick="closeTplModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveTpl()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 预览弹窗 -->
+<div class="modal-mask" id="pvModal" onclick="if(event.target===this)closePvModal()">
+  <div class="modal" style="width:min(420px,100%)">
+    <div class="modal-head">
+      <div class="modal-title">消息预览</div>
+      <button class="modal-close" onclick="closePvModal()">×</button>
+    </div>
+    <div class="pv-phone">
+      <div class="pv-msg">
+        <div class="pv-title" id="pvTitle"></div>
+        <div class="pv-body" id="pvBody"></div>
+        <div class="pv-meta" id="pvMeta"></div>
+      </div>
+    </div>
+    <div class="pv-unchanged" id="pvWarn" style="display:none"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var STORE_KEY = 'akb_msg_templates';
+
+  /* ── 触发节点定义：分组 / key / 说明 ── */
+  var NODES = [
+    { g: 'order',    gl: '订单服务', key: 'order.submit',        tip: '用户提交陪护服务订单（orders 下单页 · hospital-care/bath-booking/visit-services 提交动作）' },
+    { g: 'order',    gl: '订单服务', key: 'order.paid',          tip: '订单支付成功（order-detail.html 支付回调模拟处）' },
+    { g: 'order',    gl: '订单服务', key: 'order.assigned',      tip: '管理员为订单分配护理员（admin-order-intervention.js 分配动作）' },
+    { g: 'order',    gl: '订单服务', key: 'order.start',         tip: '服务开始（服务时间到达 / 护理员打卡 nurse-home.html）' },
+    { g: 'order',    gl: '订单服务', key: 'order.report',        tip: '护理员提交护理日报（submit-report.html 提交动作）' },
+    { g: 'order',    gl: '订单服务', key: 'order.done',          tip: '订单服务完成（admin-orders / order-detail 状态流转）' },
+    { g: 'order',    gl: '订单服务', key: 'order.cancel',        tip: '订单取消（order-detail.html / 后台取消）' },
+    { g: 'order',    gl: '订单服务', key: 'order.refund',        tip: '退款审核通过、退款完成（admin-order-detail.html 退款审核）' },
+    { g: 'order',    gl: '订单服务', key: 'order.refund_reject', tip: '退款审核被拒绝（admin-order-detail.html 退款审核）' },
+    { g: 'mall',     gl: '商城订单', key: 'mall.submit',         tip: '商城订单提交成功（cart.html 结算动作）' },
+    { g: 'mall',     gl: '商城订单', key: 'mall.paid',           tip: '商城订单支付成功（mall-order-detail.html 支付模拟）' },
+    { g: 'mall',     gl: '商城订单', key: 'mall.shipped',        tip: '商家发货（admin-mall-ship.js 发货动作）' },
+    { g: 'mall',     gl: '商城订单', key: 'mall.done',           tip: '商城订单签收完成（mall-order-detail.html）' },
+    { g: 'mall',     gl: '商城订单', key: 'mall.refund',         tip: '售后/退款进度更新（mall-refund.html · admin-mall-order-detail.html）' },
+    { g: 'booking',  gl: '预约管理', key: 'booking.submit',      tip: '用户提交预约（bath-booking.html / visit-services.html 预约表单）' },
+    { g: 'booking',  gl: '预约管理', key: 'booking.confirm',     tip: '后台确认预约（admin-bookings.html 跟进动作）' },
+    { g: 'contract', gl: '合同服务', key: 'contract.pending',    tip: '服务合同生成待签署（contract.html 生成 / admin-contracts 推送）' },
+    { g: 'contract', gl: '合同服务', key: 'contract.signed',     tip: '合同签署完成（contract.html 签署动作）' },
+    { g: 'points',   gl: '积分体系', key: 'points.earn',         tip: '积分获取（points-store.js / admin-points-earn 手动发放）' },
+    { g: 'points',   gl: '积分体系', key: 'points.spend',        tip: '积分抵扣使用（订单结算页积分抵扣动作）' },
+    { g: 'points',   gl: '积分体系', key: 'points.invite',       tip: '邀请好友奖励到账（invite-friends.html 注册成功回调）' },
+    { g: 'nurse',    gl: '护理员端', key: 'nurse.assign',        tip: '护理员被指派新订单（admin-order-intervention.js 指派动作）' },
+    { g: 'nurse',    gl: '护理员端', key: 'nurse.cert',          tip: '护理员认证审核结果（admin-caregivers 认证审核动作）' },
+    { g: 'nurse',    gl: '护理员端', key: 'nurse.review',        tip: '护理员收到新服务评价（service-review.html 提交动作）' },
+    { g: 'system',   gl: '系统',     key: 'system.notice',       tip: '系统公告，面向全体用户/护理员（后台手动群发）' },
+    { g: 'system',   gl: '系统',     key: 'system.feedback_reply', tip: '反馈回复通知（admin-feedback.html sendReply 回复动作）' }
+  ];
+  var GROUPS = [
+    { id: 'order', name: '订单服务', color: '#DCFCE7', fg: '#16A34A' },
+    { id: 'mall', name: '商城订单', color: '#F0E9FA', fg: '#8B5CF6' },
+    { id: 'booking', name: '预约管理', color: '#EAF3FF', fg: '#397EBA' },
+    { id: 'contract', name: '合同服务', color: '#FFF3E1', fg: '#C17A24' },
+    { id: 'points', name: '积分体系', color: '#DDF7F1', fg: '#0FAE92' },
+    { id: 'nurse', name: '护理员端', color: '#FEE2E2', fg: '#DC2626' },
+    { id: 'system', name: '系统', color: '#F3F4F6', fg: '#657087' }
+  ];
+  var VARS = ['用户姓名','订单号','服务项目','护理员','联系电话','患者','医院','服务时间','金额','积分','可用积分','日期','原因','状态','快递公司','快递单号','预约时间','好友昵称','星级','反馈编号','回复内容','结果','说明','公告内容'];
+  var SAMPLE = { '用户姓名':'王奶奶','订单号':'AKB-2026-031085','服务项目':'重症陪护服务','护理员':'王美玲','联系电话':'138****2468','患者':'王奶奶 · 76岁 · 女','医院':'北京协和医院 · 外科8楼','服务时间':'2026-04-08 08:00','金额':'¥1,080','积分':'50','可用积分':'1,280','日期':'2026-04-08','原因':'用户主动取消','状态':'审核通过','快递公司':'顺丰速运','快递单号':'SF1234567890','预约时间':'2026-04-10 09:00','好友昵称':'李阿姨','星级':'5','反馈编号':'FB-2026-018','回复内容':'感谢您的宝贵建议，我们已优化护理日报的展示。','结果':'审核通过','说明':'邀请好友注册成功','公告内容':'系统将于今晚 23:00 - 24:00 升级维护，期间可能短暂无法访问。' };
+
+  function groupOf(key) { return GROUPS.filter(function (g) { return g.id === key; })[0] || GROUPS[0]; }
+  function nodeOf(key) { return NODES.filter(function (n) { return n.key === key; })[0] || NODES[0]; }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function nowStr() { var d = new Date(); function p(n) { return n < 10 ? '0' + n : n; } return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); }
+
+  /* ── 种子模板：全量业务节点 ── */
+  function seed() {
+    var t = '2026-04-12 10:00';
+    return [
+      { id: 'tpl-001', group: 'order', name: '订单提交成功', node: 'order.submit', aud: '用户', ch: '站内消息', title: '订单提交成功', content: '您的{{服务项目}}订单{{订单号}}已提交，订单金额{{金额}}，请尽快完成支付，以免影响服务安排。', status: 'on', updatedAt: t },
+      { id: 'tpl-002', group: 'order', name: '支付成功通知', node: 'order.paid', aud: '用户', ch: '站内消息', title: '支付成功，等待安排护理员', content: '您的订单{{订单号}}已支付成功（{{金额}}），我们将尽快为您安排护理员，安排完成后将第一时间通知您。', status: 'on', updatedAt: t },
+      { id: 'tpl-003', group: 'order', name: '护理员已分配（用户）', node: 'order.assigned', aud: '用户', ch: '站内消息 + 短信', title: '护理员已分配', content: '订单{{订单号}}已为您分配护理员{{护理员}}（{{联系电话}}），将于{{服务时间}}在{{医院}}开始服务，请保持电话畅通。', status: 'on', updatedAt: t },
+      { id: 'tpl-004', group: 'order', name: '服务开始提醒', node: 'order.start', aud: '用户+护理员', ch: '站内消息 + 短信', title: '服务即将开始', content: '订单{{订单号}}将于{{服务时间}}开始服务，护理员{{护理员}}将按时到岗{{医院}}，请提前做好入住准备。', status: 'on', updatedAt: t },
+      { id: 'tpl-005', group: 'order', name: '护理日报提醒', node: 'order.report', aud: '用户', ch: '站内消息', title: '新护理日报已提交', content: '{{护理员}}已提交{{日期}}的护理日报，涵盖患者当日体征、饮食与照护情况，点击查看详情。', status: 'on', updatedAt: t },
+      { id: 'tpl-006', group: 'order', name: '服务完成通知', node: 'order.done', aud: '用户', ch: '站内消息', title: '服务已完成，快来评价吧', content: '订单{{订单号}}服务已全部完成。本次服务还满意吗？前往评价可获得{{积分}}积分奖励。', status: 'on', updatedAt: t },
+      { id: 'tpl-007', group: 'order', name: '订单取消通知', node: 'order.cancel', aud: '用户+管理员', ch: '站内消息', title: '订单已取消', content: '订单{{订单号}}已取消，取消原因：{{原因}}。如对订单有疑问，请联系客服 400-800-1234。', status: 'on', updatedAt: t },
+      { id: 'tpl-008', group: 'order', name: '退款进度-已通过', node: 'order.refund', aud: '用户', ch: '站内消息 + 短信', title: '退款已通过', content: '订单{{订单号}}退款申请已通过，{{金额}}将按原支付路径退回，预计 1-3 个工作日内到账，请注意查收。', status: 'on', updatedAt: t },
+      { id: 'tpl-009', group: 'order', name: '退款进度-未通过', node: 'order.refund_reject', aud: '用户', ch: '站内消息', title: '退款申请未通过', content: '很抱歉，订单{{订单号}}的退款申请未通过审核，原因：{{原因}}。如需申诉请联系客服 400-800-1234。', status: 'on', updatedAt: t },
+      { id: 'tpl-010', group: 'mall', name: '商城下单成功', node: 'mall.submit', aud: '用户', ch: '站内消息', title: '商城订单提交成功', content: '您的商城订单{{订单号}}已提交，应付{{金额}}，请尽快完成支付，我们将在付款后 24 小时内发货。', status: 'on', updatedAt: t },
+      { id: 'tpl-011', group: 'mall', name: '商城支付成功', node: 'mall.paid', aud: '用户', ch: '站内消息', title: '商城订单支付成功', content: '您的商城订单{{订单号}}已支付成功（{{金额}}），商家将尽快为您安排发货。', status: 'on', updatedAt: t },
+      { id: 'tpl-012', group: 'mall', name: '商城发货通知', node: 'mall.shipped', aud: '用户', ch: '站内消息 + 短信', title: '商城订单已发货', content: '订单{{订单号}}已发货，承运快递：{{快递公司}} {{快递单号}}，请注意查收物流信息。', status: 'on', updatedAt: t },
+      { id: 'tpl-013', group: 'mall', name: '商城签收提醒', node: 'mall.done', aud: '用户', ch: '站内消息', title: '订单已签收', content: '订单{{订单号}}已确认签收。如商品存在质量问题，可在签收后 7 天内申请售后。', status: 'on', updatedAt: t },
+      { id: 'tpl-014', group: 'mall', name: '商城售后进度', node: 'mall.refund', aud: '用户', ch: '站内消息', title: '售后进度更新', content: '订单{{订单号}}的售后申请状态已更新：{{状态}}。详情可在订单页查看。', status: 'on', updatedAt: t },
+      { id: 'tpl-015', group: 'booking', name: '预约提交回执', node: 'booking.submit', aud: '用户', ch: '站内消息', title: '预约提交成功', content: '您已成功预约{{服务项目}}（{{预约时间}}），工作人员将尽快与您电话确认，请保持手机畅通。', status: 'on', updatedAt: t },
+      { id: 'tpl-016', group: 'booking', name: '预约确认通知', node: 'booking.confirm', aud: '用户', ch: '站内消息 + 短信', title: '预约已确认', content: '您预约的{{服务项目}}已确认，时间：{{预约时间}}，地点：{{医院}}，请准时到达。变更请提前联系客服。', status: 'on', updatedAt: t },
+      { id: 'tpl-017', group: 'contract', name: '合同待签署', node: 'contract.pending', aud: '用户+护理员', ch: '站内消息', title: '服务合同待签署', content: '订单{{订单号}}的服务合同已生成，请及时查看合同条款并完成签署，签署后方可正式生效。', status: 'on', updatedAt: t },
+      { id: 'tpl-018', group: 'contract', name: '合同签署完成', node: 'contract.signed', aud: '用户+管理员', ch: '站内消息', title: '合同签署完成', content: '订单{{订单号}}的服务合同已完成签署，电子合同可在订单详情中随时查看与下载。', status: 'on', updatedAt: t },
+      { id: 'tpl-019', group: 'points', name: '积分获取通知', node: 'points.earn', aud: '用户', ch: '站内消息', title: '积分到账通知', content: '您获得{{积分}}积分（{{说明}}），当前可用积分{{可用积分}}，可在积分商城兑换好物。', status: 'on', updatedAt: t },
+      { id: 'tpl-020', group: 'points', name: '积分使用通知', node: 'points.spend', aud: '用户', ch: '站内消息', title: '积分使用通知', content: '订单{{订单号}}已成功使用{{积分}}积分抵扣{{金额}}，本次消费为您省心又省钱。', status: 'on', updatedAt: t },
+      { id: 'tpl-021', group: 'points', name: '邀请奖励到账', node: 'points.invite', aud: '用户', ch: '站内消息', title: '邀请奖励到账', content: '您邀请的好友{{好友昵称}}已注册成功，{{积分}}积分奖励已发放至您的账户，快去邀请更多好友吧！', status: 'on', updatedAt: t },
+      { id: 'tpl-022', group: 'nurse', name: '新订单指派（护理员）', node: 'nurse.assign', aud: '护理员', ch: '站内消息 + 短信', title: '新订单指派提醒', content: '您有新的服务订单：{{服务项目}}（订单号{{订单号}}），{{服务时间}}在{{医院}}上岗，请及时确认排班。', status: 'on', updatedAt: t },
+      { id: 'tpl-023', group: 'nurse', name: '认证审核结果', node: 'nurse.cert', aud: '护理员', ch: '站内消息', title: '认证审核结果通知', content: '您提交的护理员认证审核{{结果}}。{{说明}}如有疑问请联系运营人员。', status: 'on', updatedAt: t },
+      { id: 'tpl-024', group: 'nurse', name: '收到新评价', node: 'nurse.review', aud: '护理员', ch: '站内消息', title: '收到新的服务评价', content: '订单{{订单号}}收到{{用户姓名}}的{{星级}}星评价，您的优质服务是用户信任的来源，继续加油！', status: 'on', updatedAt: t },
+      { id: 'tpl-025', group: 'system', name: '系统公告', node: 'system.notice', aud: '用户+护理员', ch: '站内消息', title: '系统公告', content: '{{公告内容}}', status: 'on', updatedAt: t },
+      { id: 'tpl-026', group: 'system', name: '反馈回复通知', node: 'system.feedback_reply', aud: '用户', ch: '站内消息', title: '您的反馈有新回复', content: '您提交的反馈（{{反馈编号}}）已有官方回复：{{回复内容}}', status: 'on', updatedAt: t }
+    ];
+  }
+
+  function load() {
+    try {
+      var list = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+      if (Array.isArray(list) && list.length) return list;
+    } catch (e) {}
+    var s = seed();
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {}
+    return s;
+  }
+  var templates = load();
+  function persist() { try { localStorage.setItem(STORE_KEY, JSON.stringify(templates)); } catch (e) {} }
+
+  var editingId = '';
+  document.getElementById('topDate').textContent = (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
+
+  /* ── 统计 ── */
+  function renderStats() {
+    var on = templates.filter(function (t) { return t.status === 'on'; }).length;
+    var groups = {};
+    templates.forEach(function (t) { groups[t.node] = 1; });
+    var auds = {};
+    templates.forEach(function (t) { String(t.aud).split('+').forEach(function (a) { auds[a] = 1; }); });
+    var cards = [
+      { v: templates.length, l: '模板总数' },
+      { v: on, l: '启用中' },
+      { v: Object.keys(groups).length, l: '覆盖业务节点' },
+      { v: Object.keys(auds).length, l: '触达对象类型' }
+    ];
+    document.getElementById('statRow').innerHTML = cards.map(function (c) {
+      return '<div class="stat-card"><div class="stat-val">' + c.v + '</div><div class="stat-lbl">' + c.l + '</div></div>';
+    }).join('');
+  }
+
+  /* ── 筛选下拉 ── */
+  function fillGroupSelect() {
+    document.getElementById('fGroup').innerHTML = '<option value="all">全部分组</option>' + GROUPS.map(function (g) {
+      return '<option value="' + g.id + '">' + g.name + '</option>';
+    }).join('');
+  }
+
+  /* ── 列表 ── */
+  function render() {
+    var g = document.getElementById('fGroup').value;
+    var aud = document.getElementById('fAud').value;
+    var st = document.getElementById('fStatus').value;
+    var kw = document.getElementById('fSearch').value.trim().toLowerCase();
+    var list = templates.filter(function (t) {
+      if (g !== 'all' && t.group !== g) return false;
+      if (aud !== 'all' && String(t.aud).indexOf(aud) === -1) return false;
+      if (st !== 'all' && t.status !== st) return false;
+      if (kw && (t.name + t.title + t.content + t.node).toLowerCase().indexOf(kw) === -1) return false;
+      return true;
+    });
+    document.getElementById('count').textContent = list.length;
+    document.getElementById('emptyState').style.display = list.length ? 'none' : 'block';
+    document.getElementById('rows').innerHTML = list.map(function (t) {
+      var grp = groupOf(t.group);
+      return '<tr>' +
+        '<td><div class="tp-name">' + esc(t.name) + '</div><div class="tp-id">' + esc(t.id) + '</div></td>' +
+        '<td><span class="node-chip" style="background:' + grp.color + ';color:' + grp.fg + '">' + grp.name + '</span><div class="node-key">' + esc(t.node) + '</div></td>' +
+        '<td><span class="aud-chip">' + esc(t.aud) + '</span></td>' +
+        '<td style="white-space:nowrap">' + esc(t.ch) + '</td>' +
+        '<td><div class="tp-title">' + esc(t.title) + '</div><div class="tp-content">' + esc(t.content) + '</div></td>' +
+        '<td><button class="st-btn ' + t.status + '" onclick="toggleTpl(\'' + esc(t.id) + '\')">' + (t.status === 'on' ? '启用中' : '已停用') + '</button></td>' +
+        '<td class="upd">' + esc(t.updatedAt || '—') + '</td>' +
+        '<td><div class="op"><button onclick="previewTpl(\'' + esc(t.id) + '\')">预览</button>' +
+          '<button onclick="openTplModal(\'' + esc(t.id) + '\')">编辑</button>' +
+          '<button class="danger" onclick="removeTpl(\'' + esc(t.id) + '\')">删除</button></div></td>' +
+      '</tr>';
+    }).join('');
+    renderStats();
+  }
+
+  window.toggleTpl = function (id) {
+    var t = templates.filter(function (x) { return x.id === id; })[0];
+    if (!t) return;
+    t.status = t.status === 'on' ? 'off' : 'on';
+    t.updatedAt = nowStr();
+    persist(); render();
+  };
+  window.removeTpl = async function (id) {
+    var t = templates.filter(function (x) { return x.id === id; })[0];
+    if (!t) return;
+    if (!await showConfirm('确认删除模板「' + t.name + '」？删除后该节点通知将不再发送。', { danger: true, okText: '删除' })) return;
+    templates = templates.filter(function (x) { return x.id !== id; });
+    persist(); render();
+  };
+  window.resetTemplates = async function () {
+    if (!await showConfirm('确认恢复默认模板？当前新增/修改的模板将被重置。')) return;
+    localStorage.removeItem(STORE_KEY);
+    templates = load();
+    render();
+  };
+
+  /* ── 编辑弹窗 ── */
+  function fillNodeSelect(sel) {
+    sel.innerHTML = GROUPS.map(function (g) {
+      var opts = NODES.filter(function (n) { return n.g === g.id; }).map(function (n) {
+        return '<option value="' + n.key + '">' + g.name + ' / ' + n.tip.split('（')[0] + '</option>';
+      }).join('');
+      return '<optgroup label="' + g.name + '">' + opts + '</optgroup>';
+    }).join('');
+  }
+  window.openTplModal = function (id) {
+    editingId = id || '';
+    var t = id ? templates.filter(function (x) { return x.id === id; })[0] : null;
+    document.getElementById('modalTitle').textContent = t ? '编辑模板 · ' + t.name : '新增模板';
+    fillNodeSelect(document.getElementById('tNode'));
+    document.getElementById('tName').value = t ? t.name : '';
+    document.getElementById('tNode').value = t ? t.node : NODES[0].key;
+    document.getElementById('tAud').value = t ? t.aud : '用户';
+    document.getElementById('tChannel').value = t ? t.ch : '站内消息';
+    document.getElementById('tTitle').value = t ? t.title : '';
+    document.getElementById('tContent').value = t ? t.content : '';
+    document.getElementById('tStatus').value = t ? t.status : 'on';
+    syncNodeTip();
+    renderVarChips();
+    document.getElementById('tplModal').classList.add('show');
+  };
+  window.closeTplModal = function () { document.getElementById('tplModal').classList.remove('show'); };
+  function syncNodeTip() {
+    var n = nodeOf(document.getElementById('tNode').value);
+    document.getElementById('tNodeTip').value = n.tip;
+  }
+  document.getElementById('tNode').addEventListener('change', syncNodeTip);
+
+  function renderVarChips() {
+    document.getElementById('varChips').innerHTML = VARS.map(function (v) {
+      return '<button type="button" class="var-chip" onclick="insertVar(\'' + v + '\')">{{' + v + '}}</button>';
+    }).join('');
+  }
+  window.insertVar = function (v) {
+    var ta = document.getElementById('tContent');
+    var pos = ta.selectionStart != null ? ta.selectionStart : ta.value.length;
+    var token = '{{' + v + '}}';
+    ta.value = ta.value.slice(0, pos) + token + ta.value.slice(ta.selectionEnd || pos);
+    ta.focus();
+    ta.selectionStart = ta.selectionEnd = pos + token.length;
+  };
+
+  window.saveTpl = function () {
+    var name = document.getElementById('tName').value.trim();
+    var title = document.getElementById('tTitle').value.trim();
+    var content = document.getElementById('tContent').value.trim();
+    if (!name) { alert('请填写模板名称'); return; }
+    if (!title) { alert('请填写消息标题'); return; }
+    if (!content) { alert('请填写消息内容'); return; }
+    var node = document.getElementById('tNode').value;
+    var data = {
+      name: name, node: node, group: nodeOf(node).g,
+      aud: document.getElementById('tAud').value,
+      ch: document.getElementById('tChannel').value,
+      title: title, content: content,
+      status: document.getElementById('tStatus').value,
+      updatedAt: nowStr()
+    };
+    if (editingId) {
+      var t = templates.filter(function (x) { return x.id === editingId; })[0];
+      if (t) Object.assign(t, data);
+    } else {
+      data.id = 'tpl-' + String(templates.length + 1).padStart(3, '0') + '-' + Date.now().toString().slice(-4);
+      templates.push(data);
+    }
+    persist(); closeTplModal(); render();
+  };
+
+  /* ── 预览 ── */
+  function fillPreview(t) {
+    var used = [];
+    var body = String(t.content || '').replace(/\{\{([^}]+)\}\}/g, function (m, k) {
+      k = k.trim();
+      if (SAMPLE[k] != null) { used.push(k); return SAMPLE[k]; }
+      return '{{' + k + '}}';
+    });
+    document.getElementById('pvTitle').textContent = t.title || '（无标题）';
+    document.getElementById('pvBody').textContent = body || '（无内容）';
+    document.getElementById('pvMeta').textContent = t.ch + ' · 接收：' + t.aud + ' · ' + nowStr();
+    var miss = (String(t.content || '').match(/\{\{[^}]+\}\}/g) || []).filter(function (x) {
+      var k = x.slice(2, -2).trim();
+      return SAMPLE[k] == null;
+    });
+    var warn = document.getElementById('pvWarn');
+    if (miss.length) {
+      warn.style.display = 'block';
+      warn.textContent = '以下变量无示例数据，预览中保留占位：' + Array.from(new Set(miss)).join('、');
+    } else warn.style.display = 'none';
+  }
+  window.previewTpl = function (id) {
+    var t = templates.filter(function (x) { return x.id === id; })[0];
+    if (!t) return;
+    fillPreview(t);
+    document.getElementById('pvModal').classList.add('show');
+  };
+  window.previewCurrent = function () {
+    var node = document.getElementById('tNode').value;
+    fillPreview({
+      title: document.getElementById('tTitle').value.trim() || '（未填写标题）',
+      content: document.getElementById('tContent').value,
+      aud: document.getElementById('tAud').value,
+      ch: document.getElementById('tChannel').value,
+      node: node
+    });
+    document.getElementById('pvModal').classList.add('show');
+  };
+  window.closePvModal = function () { document.getElementById('pvModal').classList.remove('show'); };
+
+  /* ── 初始化 ── */
+  fillGroupSelect();
+  render();
+})();
+</script>
+<script src="admin-batch-points.js"></script>
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<link rel="stylesheet" href="admin-shell.css">
+<meta charset="utf-8">
+<script src="common-ui.js"></script>
+<meta name="viewport" content="width=1280">
+<title>用户体验监测 · 佑小邦运营后台</title>
+<style>
+  :root{
+    --purple:#1CD8B7;--purple-light:#DDF7F1;--purple-bg:#F5F5F5;
+    --card:#FFFFFF;--text:#1A1828;--text2:#6B6880;--text3:#AEACC0;--border:#CFF5ED;
+    --green:#16A34A;--green-bg:#DCFCE7;--amber:#D97706;--amber-bg:#FEF3C7;
+    --red:#DC2626;--red-bg:#FEE2E2;--blue:#60A5FA;
+    --sh:0 2px 16px rgba(0,0,0,0.1);--r-lg:14px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#F5F5F5;color:var(--text);min-width:1100px}
+  .layout{display:flex;min-height:100vh}
+  .main{flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+  .topbar{background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;position:sticky;top:0;z-index:50}
+  .crumb{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text3);flex:1}
+  .crumb .current{color:var(--text)}
+  .top-actions{display:flex;align-items:center;gap:10px}
+  .top-date{font-size:12px;font-weight:700;color:var(--text3);white-space:nowrap}
+  .top-av{width:36px;height:36px;border-radius:10px;background:#1CD8B7;color:#fff;display:grid;place-items:center;font-size:14px;font-weight:900}
+  .page{flex:1;padding:24px 28px;min-width:0}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+  .page-title{font-size:22px;font-weight:900}
+  .page-sub{font-size:13px;color:var(--text3);font-weight:600;margin-top:4px}
+  .btn-primary{height:36px;padding:0 18px;border-radius:9px;border:none;cursor:pointer;background:#1CD8B7;color:#fff;font-size:13px;font-weight:800;font-family:inherit;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(0,0,0,0.1);transition:filter .15s}
+  .btn-primary:hover{filter:brightness(1.08)}
+  .btn-primary svg{width:14px;height:14px}
+  .btn-outline{height:36px;padding:0 16px;border-radius:9px;border:1.5px solid var(--border);background:var(--card);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;color:var(--text2);display:flex;align-items:center;gap:6px;transition:all .15s}
+  .btn-outline:hover{border-color:var(--purple);color:var(--purple)}
+
+  /* 指标卡 */
+  .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+  .metric-card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh);padding:22px 20px}
+  .metric-val{font-size:28px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+  .metric-lbl{font-size:13px;color:var(--text3);font-weight:700;margin-top:10px}
+  .metric-note{font-size:11px;color:var(--text3);font-weight:600;margin-top:6px}
+  .mv-red{color:var(--red)}.mv-amber{color:var(--amber)}.mv-purple{color:var(--purple)}
+
+  /* Tab */
+  .tabs{display:flex;gap:8px;margin-bottom:16px}
+  .tab{height:34px;padding:0 14px;border:1px solid var(--border);border-radius:9px;background:#fff;color:#657087;font:700 12px inherit;cursor:pointer}
+  .tab.active{background:#1CD8B7;border-color:#1CD8B7;color:#fff}
+
+  /* 筛选 */
+  .filter{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:12px;margin-bottom:16px;box-shadow:var(--sh)}
+  .filter label{font-size:12px;color:var(--text3);font-weight:800}
+  .select,.search{height:36px;border:1px solid var(--border);border-radius:8px;padding:0 11px;color:#657087;background:#fff;font:600 12px inherit}
+  .search{width:240px}
+  .result{margin-left:auto;color:var(--text3);font-size:12px;font-weight:700}
+  .result strong{color:var(--purple);font-size:16px}
+
+  /* 表格 */
+  .table-wrap{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh);overflow-x:auto;overflow-y:hidden}
+  .table{width:100%;border-collapse:collapse}
+  .table th{height:44px;background:#F3FDFA;color:var(--text3);font-size:11px;text-align:left;padding:0 16px;white-space:nowrap;font-weight:800}
+  .table td{padding:14px 16px;border-top:1px solid #E4FAF4;font-size:12px;color:#657087;font-weight:600;vertical-align:middle}
+  .idx-cell{color:var(--text3);font-weight:800}
+  mark{background:#FFF1B8;color:#8A5A00;border-radius:3px;padding:0 2px}
+  .snippet{max-width:430px;line-height:1.6}
+  .ref-no{font-family:'SF Mono','Courier New',monospace;font-size:11px;color:var(--text3);font-weight:700;margin-top:3px}
+  .cust-name{color:var(--text);font-weight:800}
+  .cust-sub{font-size:11px;color:var(--text3);margin-top:2px}
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:800;white-space:nowrap}
+  .pill::before{content:'';width:6px;height:6px;border-radius:50%}
+  .src-ai{background:#DDF7F1;color:#0FA98C}.src-ai::before{background:#0FA98C}
+  .src-log{background:#E4E9FF;color:#4F63D2}.src-log::before{background:#4F63D2}
+  .src-mall{background:#FEF3C7;color:#D97706}.src-mall::before{background:#D97706}
+  .src-service{background:#DCFCE7;color:#16A34A}.src-service::before{background:#16A34A}
+  .lv-high{background:var(--red-bg);color:var(--red)}.lv-high::before{background:var(--red)}
+  .lv-mid{background:var(--amber-bg);color:var(--amber)}.lv-mid::before{background:var(--amber)}
+  .lv-low{background:#F1F5F9;color:#64748B}.lv-low::before{background:#94A3B8}
+  .st-pending{background:var(--amber-bg);color:var(--amber)}.st-pending::before{background:var(--amber)}
+  .st-done{background:var(--green-bg);color:var(--green)}.st-done::before{background:var(--green)}
+  .st-ignore{background:#F1F5F9;color:#64748B}.st-ignore::before{background:#94A3B8}
+  .op{display:flex;gap:10px;white-space:nowrap}
+  .op button{border:0;background:none;color:var(--purple);font:700 12px inherit;cursor:pointer;padding:0}
+  .op button:hover{text-decoration:underline}
+  .kw-word{color:var(--text);font-weight:800}
+
+  /* 关键词库 */
+  .kw-form{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--sh);padding:18px 20px;margin-bottom:16px}
+  .kw-form-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .kw-form input.kw-input{height:36px;width:220px;border:1px solid var(--border);border-radius:8px;padding:0 11px;font:600 12px inherit;color:var(--text);outline:none}
+  .kw-form input.kw-input:focus{border-color:var(--purple)}
+  .kw-tip{font-size:12px;color:var(--text3);font-weight:600;margin-top:12px;line-height:1.6}
+  .kw-msg{font-size:12px;font-weight:800;color:var(--red);margin-left:4px}
+  .switch{display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;font-weight:800}
+  .switch .dot{width:32px;height:18px;border-radius:9px;background:#CBD5E1;position:relative;transition:background .15s}
+  .switch .dot::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .15s}
+  .switch.on .dot{background:var(--purple)}
+  .switch.on .dot::after{left:16px}
+  .empty{padding:40px 0;text-align:center;color:var(--text3);font-size:13px;font-weight:700}
+
+  /* 弹窗 */
+  .modal-mask{position:fixed;inset:0;background:rgba(20,33,65,.45);display:none;align-items:flex-start;justify-content:center;z-index:200;overflow-y:auto;padding:40px 12px}
+  .modal-mask.show{display:flex}
+  .modal{width:600px;max-width:100%;background:#fff;border-radius:16px;box-shadow:0 24px 60px rgba(0,0,0,.25);overflow:hidden}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 0}
+  .modal-title{font-size:16px;font-weight:900}
+  .modal-close{border:0;background:var(--purple-bg);color:var(--text3);width:28px;height:28px;border-radius:8px;font-size:16px;cursor:pointer;line-height:1}
+  .modal-body{padding:18px 24px;max-height:60vh;overflow-y:auto}
+  .modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:16px 24px;border-top:1px solid #E4FAF4;background:#FAFCFF}
+  .btn{height:36px;padding:0 16px;border-radius:9px;border:1.5px solid var(--border);background:#fff;color:var(--text2);font:700 13px inherit;cursor:pointer}
+  .btn:hover{border-color:var(--purple);color:var(--purple)}
+  .cust-hd{display:flex;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+  .cust-av{width:48px;height:48px;border-radius:14px;background:var(--purple-light);color:var(--purple);display:grid;place-items:center;font-size:19px;font-weight:900;flex-shrink:0}
+  .cust-meta{font-size:12px;color:var(--text3);font-weight:700;margin-top:4px}
+  .cust-stat{display:flex;gap:24px;padding:14px 0;border-bottom:1px solid var(--border)}
+  .cust-stat div{font-size:12px;color:var(--text3);font-weight:700}
+  .cust-stat b{display:block;font-size:18px;color:var(--text);font-weight:900;margin-bottom:4px;font-variant-numeric:tabular-nums}
+  .hit-list{margin-top:14px}
+  .hit-item{border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;background:#FBFFFE}
+  .hit-item-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+  .hit-item-text{font-size:12px;color:#657087;font-weight:600;line-height:1.65}
+  .note-box{margin-top:16px}
+  .note-box label{font-size:12px;color:var(--text3);font-weight:800;display:block;margin-bottom:6px}
+  .note-box textarea{width:100%;height:70px;border:1px solid var(--border);border-radius:8px;padding:9px 11px;font:600 12px inherit;color:var(--text);resize:vertical;outline:none}
+  .note-box textarea:focus{border-color:var(--purple)}
+</style>
+<script defer src="admin-sidebar.js"></script>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>其他</span><span>›</span><span class="current">用户体验监测</span></div>
+      <div class="top-actions">
+        <span class="top-date" id="topDate"></span>
+        <div class="top-av">管</div>
+      </div>
+    </header>
+    <section class="page">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">用户体验监测</h1>
+          <p class="page-sub">关键词全局扫描 AI聊天 / 日志评论 / 商城评论 / 服务评论，命中后汇总客户信息供跟进</p>
+        </div>
+        <button class="btn-primary" onclick="exportHits()">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3" stroke="#fff" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10v1.5A1.5 1.5 0 002.5 13h9a1.5 1.5 0 001.5-1.5V10" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></svg>
+          导出监测记录
+        </button>
+      </div>
+
+      <!-- 指标卡 -->
+      <div class="metrics-grid">
+        <div class="metric-card"><div class="metric-val mv-purple" id="mTotal">0</div><div class="metric-lbl">累计命中记录</div><div class="metric-note" id="mTotalNote">—</div></div>
+        <div class="metric-card"><div class="metric-val mv-amber" id="mPending">0</div><div class="metric-lbl">待跟进</div><div class="metric-note">需后台人员介入处理</div></div>
+        <div class="metric-card"><div class="metric-val mv-red" id="mHigh">0</div><div class="metric-lbl">高危预警</div><div class="metric-note">命中高等级风险关键词</div></div>
+        <div class="metric-card"><div class="metric-val" id="mToday">0</div><div class="metric-lbl">最新一批新增</div><div class="metric-note" id="mTodayNote">—</div></div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-panel="monitor">监测记录</button>
+        <button class="tab" data-panel="keywords">关键词库</button>
+      </div>
+
+      <!-- 监测记录 -->
+      <div id="panel-monitor">
+        <div class="filter">
+          <label>筛选</label>
+          <select class="select" id="fSource">
+            <option value="all">全部来源</option>
+            <option value="ai">AI聊天</option>
+            <option value="log">日志评论</option>
+            <option value="mall">商城评论</option>
+            <option value="service">服务评论</option>
+          </select>
+          <select class="select" id="fLevel">
+            <option value="all">全部风险等级</option>
+            <option value="高">高</option>
+            <option value="中">中</option>
+            <option value="低">低</option>
+          </select>
+          <select class="select" id="fStatus">
+            <option value="all">全部状态</option>
+            <option value="待跟进">待跟进</option>
+            <option value="已跟进">已跟进</option>
+            <option value="已忽略">已忽略</option>
+          </select>
+          <input class="search" id="fQ" placeholder="搜索内容 / 客户 / 关键词">
+          <span class="result">共 <strong id="hitCount">0</strong> 条命中</span>
+        </div>
+        <div class="table-wrap">
+          <table class="table" data-sticky-left="2" data-sticky-min="1320">
+            <thead><tr><th>序号</th><th>来源</th><th>命中关键词</th><th>命中内容</th><th>客户</th><th>时间</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody id="hitRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 关键词库 -->
+      <div id="panel-keywords" style="display:none">
+        <div class="kw-form">
+          <div class="kw-form-row">
+            <input class="kw-input" id="kwWord" placeholder="输入关键词，如：摔伤" maxlength="20">
+            <select class="select" id="kwCat"></select>
+            <select class="select" id="kwLevel"></select>
+            <button class="btn-primary" onclick="addKeyword()">添加关键词</button>
+            <span class="kw-msg" id="kwMsg"></span>
+          </div>
+          <div class="kw-tip">命中规则：对四类内容源做「包含匹配」（不区分大小写）。仅<strong>启用中</strong>的关键词参与扫描，命中记录会实时反映到「监测记录」列表。</div>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>关键词</th><th>分类</th><th>风险等级</th><th>命中次数</th><th>状态</th><th>操作</th></tr></thead>
+            <tbody id="kwRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 客户详情弹窗 -->
+<div class="modal-mask" id="custModal" onclick="if(event.target===this)closeCustModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">客户跟踪档案</div>
+      <button class="modal-close" onclick="closeCustModal()">×</button>
+    </div>
+    <div class="modal-body" id="custBody"></div>
+    <div class="modal-foot">
+      <button class="btn" onclick="closeCustModal()">关闭</button>
+      <button class="btn" id="btnIgnore" onclick="markCustomer('已忽略')">标记已忽略</button>
+      <button class="btn-primary" id="btnFollow" onclick="markCustomer('已跟进')">标记已跟进</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin-ux-monitor-data.js"></script>
+<script>
+  var U = window.AKBUXMonitor;
+  var now = new Date();
+  document.getElementById('topDate').textContent = now.getFullYear() + '年' + (now.getMonth() + 1) + '月' + now.getDate() + '日';
+
+  var LEVEL_CLASS = { '高': 'lv-high', '中': 'lv-mid', '低': 'lv-low' };
+  var SOURCE_CLASS = { ai: 'src-ai', log: 'src-log', mall: 'src-mall', service: 'src-service' };
+  var STATUS_CLASS = { '待跟进': 'st-pending', '已跟进': 'st-done', '已忽略': 'st-ignore' };
+  var curCustomer = null;
+
+  /* ── 指标卡 ── */
+  function renderStats() {
+    var s = U.summarize();
+    document.getElementById('mTotal').textContent = s.total;
+    document.getElementById('mTotalNote').textContent = '扫描内容源 ' + s.sourceCount + ' 条';
+    document.getElementById('mPending').textContent = s.pending;
+    document.getElementById('mHigh').textContent = s.high;
+    document.getElementById('mToday').textContent = s.today;
+    document.getElementById('mTodayNote').textContent = s.todayDate ? ('数据日期 ' + s.todayDate) : '暂无记录';
+  }
+
+  /* ── 监测记录列表 ── */
+  function currentFilter() {
+    return {
+      source: document.getElementById('fSource').value,
+      level: document.getElementById('fLevel').value,
+      status: document.getElementById('fStatus').value,
+      q: document.getElementById('fQ').value
+    };
+  }
+
+  function renderHits() {
+    var hits = U.getHits(currentFilter());
+    document.getElementById('hitCount').textContent = hits.length;
+    var rows = document.getElementById('hitRows');
+    if (!hits.length) {
+      rows.innerHTML = '<tr><td colspan="8"><div class="empty">没有命中记录，试试调整筛选条件或关键词库</div></td></tr>';
+      return;
+    }
+    rows.innerHTML = hits.map(function (h, i) {
+      return '<tr>' +
+        '<td class="idx-cell">' + (i + 1) + '</td>' +
+        '<td><span class="pill ' + (SOURCE_CLASS[h.source] || '') + '">' + U.esc(h.sourceLabel) + '</span></td>' +
+        '<td><span class="kw-word">' + U.esc(h.keyword) + '</span><div class="ref-no">' + U.esc(h.cat) + ' · <span class="pill ' + (LEVEL_CLASS[h.level] || 'lv-low') + '">' + U.esc(h.level) + '</span></div></td>' +
+        '<td><div class="snippet">' + U.highlight(h.text, h.keyword) + '</div><div class="ref-no">' + U.esc(h.refNo) + '</div></td>' +
+        '<td><div class="cust-name">' + U.esc(h.userName) + '</div><div class="cust-sub">' + U.esc(h.userPhone) + ' · ' + U.esc(h.userLevel) + '</div></td>' +
+        '<td style="white-space:nowrap">' + U.esc(h.createdAt) + '</td>' +
+        '<td><span class="pill ' + (STATUS_CLASS[h.status] || 'st-pending') + '">' + U.esc(h.status) + '</span></td>' +
+        '<td><div class="op">' +
+          '<button onclick="openCustModal(\'' + h.userId + '\')">查看客户</button>' +
+          (h.status === '待跟进' ? '<button onclick="markHit(\'' + h.id + '\')">标记已跟进</button>' : '') +
+        '</div></td>' +
+        '</tr>';
+    }).join('');
+  }
+
+  /* ── 关键词库 ── */
+  function renderKeywordOptions() {
+    document.getElementById('kwCat').innerHTML = U.CATS.map(function (c) { return '<option>' + c + '</option>'; }).join('');
+    document.getElementById('kwLevel').innerHTML = U.LEVELS.map(function (l) { return '<option' + (l === '中' ? ' selected' : '') + '>' + l + '</option>'; }).join('');
+  }
+
+  function renderKeywords() {
+    var kws = U.getKeywords();
+    var hits = U.scan();
+    document.getElementById('kwRows').innerHTML = kws.map(function (k) {
+      var n = hits.filter(function (h) { return h.keyword === k.word; }).length;
+      return '<tr>' +
+        '<td><div class="kw-word">' + U.esc(k.word) + '</div></td>' +
+        '<td>' + U.esc(k.cat) + '</td>' +
+        '<td><span class="pill ' + (LEVEL_CLASS[k.level] || 'lv-low') + '">' + U.esc(k.level) + '</span></td>' +
+        '<td><strong style="color:#172033;font-size:14px">' + n + '</strong> 条</td>' +
+        '<td><span class="switch' + (k.on ? ' on' : '') + '" onclick="toggleKw(\'' + k.id + '\')"><span class="dot"></span>' + (k.on ? '启用中' : '已停用') + '</span></td>' +
+        '<td><div class="op"><button onclick="removeKw(\'' + k.id + '\')" style="color:#DC2626">删除</button></div></td>' +
+        '</tr>';
+    }).join('');
+    if (!kws.length) document.getElementById('kwRows').innerHTML = '<tr><td colspan="6"><div class="empty">暂无关键词，请在上方添加</div></td></tr>';
+  }
+
+  function flashMsg(text, isRed) {
+    var el = document.getElementById('kwMsg');
+    el.textContent = text;
+    el.style.color = isRed ? '#DC2626' : '#16A34A';
+    setTimeout(function () { el.textContent = ''; }, 2600);
+  }
+
+  function addKeyword() {
+    var word = document.getElementById('kwWord').value;
+    var res = U.addKeyword(word, document.getElementById('kwCat').value, document.getElementById('kwLevel').value);
+    if (!res.ok) { flashMsg(res.msg, true); return; }
+    document.getElementById('kwWord').value = '';
+    flashMsg('已添加「' + res.keyword.word + '」，监测记录已更新');
+    renderKeywords();
+    renderStats();
+    renderHits();
+  }
+
+  function removeKw(id) {
+    if (!confirm('确认删除该关键词？删除后仅启用中的关键词参与扫描。')) return;
+    U.removeKeyword(id);
+    renderKeywords();
+    renderStats();
+    renderHits();
+  }
+
+  function toggleKw(id) {
+    U.toggleKeyword(id);
+    renderKeywords();
+    renderStats();
+    renderHits();
+  }
+
+  /* ── 跟进 ── */
+  function markHit(hitId) {
+    U.setFollowup(hitId, { status: '已跟进' });
+    renderStats();
+    renderHits();
+    renderKeywords();
+  }
+
+  function markCustomer(status) {
+    if (!curCustomer) return;
+    var note = document.getElementById('custNote') ? document.getElementById('custNote').value : '';
+    U.customerProfile(curCustomer).hits.forEach(function (h) {
+      U.setFollowup(h.id, { status: status, note: note });
+    });
+    closeCustModal();
+    renderStats();
+    renderHits();
+    renderKeywords();
+    if (window.showToast) showToast('已标记为「' + status + '」');
+  }
+
+  /* ── 客户弹窗 ── */
+  function openCustModal(userId) {
+    var p = U.customerProfile(userId);
+    if (!p) return;
+    curCustomer = userId;
+    var hitsHtml = p.hits.length ? p.hits.map(function (h) {
+      return '<div class="hit-item">' +
+        '<div class="hit-item-top">' +
+          '<span class="pill ' + (SOURCE_CLASS[h.source] || '') + '">' + U.esc(h.sourceLabel) + '</span>' +
+          '<span class="pill ' + (LEVEL_CLASS[h.level] || 'lv-low') + '">' + U.esc(h.level) + '</span>' +
+          '<span class="pill ' + (STATUS_CLASS[h.status] || 'st-pending') + '">' + U.esc(h.status) + '</span>' +
+          '<span style="font-size:11px;color:#AEACC0;font-weight:700;margin-left:auto">' + U.esc(h.createdAt) + '</span>' +
+        '</div>' +
+        '<div class="hit-item-text">' + U.highlight(h.text, h.keyword) + '</div>' +
+        '<div class="ref-no">命中关键词：' + U.esc(h.keyword) + ' · 关联单号 ' + U.esc(h.refNo) + '</div>' +
+      '</div>';
+    }).join('') : '<div class="empty">该客户暂无命中记录</div>';
+
+    document.getElementById('custBody').innerHTML =
+      '<div class="cust-hd">' +
+        '<div class="cust-av">' + U.esc(String(p.userName).slice(0, 1)) + '</div>' +
+        '<div><div style="font-size:16px;font-weight:900">' + U.esc(p.userName) + '</div>' +
+        '<div class="cust-meta">客户编号 ' + U.esc(p.userId) + ' · ' + U.esc(p.userPhone) + ' · ' + U.esc(p.userLevel) + '</div></div>' +
+      '</div>' +
+      '<div class="cust-stat">' +
+        '<div><b>' + p.hits.length + '</b>命中记录</div>' +
+        '<div><b>' + p.refCount + '</b>参与内容</div>' +
+        '<div><b>' + p.sources.length + '</b>涉及来源</div>' +
+      '</div>' +
+      '<div class="hit-list">' + hitsHtml + '</div>' +
+      '<div class="note-box"><label>跟进备注</label><textarea id="custNote" maxlength="200" placeholder="记录沟通情况、处理结果等">' + U.esc(p.hits[0] && p.hits[0].note || '') + '</textarea></div>';
+
+    document.getElementById('custModal').classList.add('show');
+  }
+
+  function closeCustModal() {
+    document.getElementById('custModal').classList.remove('show');
+    curCustomer = null;
+  }
+
+  /* ── 导出 ── */
+  function exportHits() {
+    var hits = U.getHits(currentFilter());
+    var rows = hits.map(function (h) {
+      return [h.sourceLabel, h.keyword, h.level, h.text, h.userName, h.userPhone, h.userLevel, h.refNo, h.createdAt, h.status];
+    });
+    U.exportCsv('用户体验监测_' + U.today() + '.csv',
+      ['来源', '命中关键词', '风险等级', '命中内容', '客户姓名', '联系电话', '会员等级', '关联单号', '时间', '跟进状态'], rows);
+  }
+
+  /* ── Tab ── */
+  document.querySelectorAll('.tab[data-panel]').forEach(function (t) {
+    t.onclick = function () {
+      document.querySelectorAll('.tab[data-panel]').forEach(function (x) { x.classList.remove('active'); });
+      t.classList.add('active');
+      document.getElementById('panel-monitor').style.display = t.dataset.panel === 'monitor' ? '' : 'none';
+      document.getElementById('panel-keywords').style.display = t.dataset.panel === 'keywords' ? '' : 'none';
+      if (t.dataset.panel === 'keywords') renderKeywords();
+    };
+  });
+
+  ['fSource', 'fLevel', 'fStatus'].forEach(function (id) {
+    document.getElementById(id).onchange = renderHits;
+  });
+  document.getElementById('fQ').oninput = renderHits;
+
+  renderKeywordOptions();
+  renderStats();
+  renderHits();
+</script>
+</body>
+</html>

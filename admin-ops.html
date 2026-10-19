@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<link rel="stylesheet" href="admin-shell.css">
+<meta charset="utf-8">
+<script src="common-ui.js"></script>
+<meta name="viewport" content="width=1280">
+<title>运营看板 · 佑小邦运营后台</title>
+<style>
+  :root{
+    --purple:#1CD8B7;--purple-light:#DDF7F1;--purple-bg:#F5F5F5;
+    --card:#FFFFFF;--text:#1A1828;--text2:#6B6880;--text3:#AEACC0;--border:#CFF5ED;
+    --green:#16A34A;--green-bg:#DCFCE7;--amber:#D97706;--amber-bg:#FEF3C7;
+    --red:#DC2626;--red-bg:#FEE2E2;--blue:#1CD8B7;--blue-bg:#DDF7F1;
+    --sh:0 2px 16px rgba(0,0,0,0.1);--r-lg:14px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#F5F5F5;color:var(--text);min-width:1100px}
+  .layout{display:flex;min-height:100vh}
+  .main{flex:1;display:flex;flex-direction:column;min-height:100vh;min-width:0}
+  .topbar{background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;position:sticky;top:0;z-index:50}
+  .crumb{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--text3);flex:1}
+  .crumb .current{color:var(--text)}
+  .top-actions{display:flex;align-items:center;gap:10px}
+  .top-date{font-size:12px;font-weight:700;color:var(--text3);white-space:nowrap}
+  .top-av{display:grid;place-items:center;font-size:14px;font-weight:900;cursor:pointer}
+  .page{flex:1;padding:24px 28px;min-width:0}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+  .page-title{font-size:22px;font-weight:900}
+  .page-sub{font-size:13px;color:var(--text3);font-weight:600;margin-top:4px}
+  .btn-outline{height:36px;padding:0 16px;border-radius:9px;border:1.5px solid var(--border);background:var(--card);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;color:var(--text2);display:flex;align-items:center;gap:6px;transition:all .15s}
+  .btn-outline:hover{border-color:var(--purple);color:var(--purple)}
+  .btn-outline svg{width:14px;height:14px}
+
+  /* 指标卡 */
+  .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+  .metric-card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh);padding:20px;display:flex;flex-direction:column;gap:14px}
+  .metric-top{display:flex;align-items:center;justify-content:space-between}
+  .metric-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center}
+  .metric-icon svg{width:22px;height:22px}
+  .metric-badge{font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px}
+  .metric-val{font-size:28px;font-weight:900;line-height:1}
+  .metric-lbl{font-size:13px;color:var(--text3);font-weight:600;margin-top:4px}
+  .metric-trend{font-size:12px;font-weight:700;margin-top:6px}
+  .trend-up{color:var(--green)}.trend-flat{color:var(--text3)}
+
+  /* 中部：图表 + 侧栏统计 */
+  .mid-row{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:20px}
+  .chart-card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden}
+  .card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 14px;border-bottom:1px solid var(--border)}
+  .card-hd-left{display:flex;align-items:center;gap:9px}
+  .sec-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0}
+  .sec-title{font-size:14px;font-weight:800}
+  .chart-tabs{display:flex;gap:4px}
+  .ctab{padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;background:transparent;color:var(--text3);transition:all .15s}
+  .ctab.on{background:var(--purple-light);color:var(--purple)}
+  .chart-body{padding:16px 20px 12px}
+  canvas#lineChart{width:100%;height:360px;display:block}
+  .chart-legend{display:flex;align-items:center;gap:16px;padding:0 20px 16px}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--text2)}
+  .legend-dot{width:8px;height:8px;border-radius:50%}
+
+  .side-stats{display:flex;flex-direction:column;gap:16px}
+  .stat-card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh);padding:18px 20px}
+  .stat-card-title{font-size:13px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .progress-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:12px}
+  .progress-row:last-child{margin-bottom:0}
+  .progress-lbl{width:64px;color:var(--text2);font-weight:700;flex-shrink:0}
+  .progress-track{flex:1;height:6px;background:#E4FAF4;border-radius:3px;overflow:hidden}
+  .progress-fill{height:100%;border-radius:3px}
+  .progress-pct{width:44px;text-align:right;color:var(--text);font-weight:800;flex-shrink:0}
+
+  /* 第二行 */
+  .row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  .stat-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+  .stat-row:last-child{border-bottom:none;padding-bottom:0}
+  .stat-row-lbl{font-size:12px;color:var(--text2);font-weight:600;display:flex;align-items:center;gap:7px}
+  .stat-row-val{font-size:13px;font-weight:800}
+  .mini-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .mall-link{display:inline-flex;align-items:center;margin-top:12px;font-size:12px;font-weight:800;color:var(--purple);text-decoration:none}
+  .mall-link:hover{text-decoration:underline}
+
+  /* 订单表 */
+  .order-card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden}
+  .order-table{width:100%;border-collapse:collapse}
+  .order-table th{padding:10px 16px;font-size:11px;font-weight:800;color:var(--text3);background:var(--purple-bg);text-align:left;white-space:nowrap;letter-spacing:.3px}
+  .order-table td{padding:13px 16px;font-size:13px;font-weight:600;color:var(--text2);border-top:1px solid var(--border);vertical-align:middle}
+  .order-no{font-family:'SF Mono','Courier New',monospace;font-size:12px;color:var(--text3);font-weight:700}
+  .cell-name{font-size:13px;font-weight:800;color:var(--text)}
+  .cell-sub{font-size:11px;color:var(--text3);margin-top:1px}
+  .amt-cell{font-size:14px;font-weight:900;color:var(--purple)}
+  .st-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;white-space:nowrap}
+  .st-pill::before{content:'';width:6px;height:6px;border-radius:50%}
+  .st-pending{background:var(--amber-bg);color:var(--amber)}.st-pending::before{background:var(--amber)}
+  .st-active{background:var(--green-bg);color:var(--green)}.st-active::before{background:var(--green)}
+  .st-done{background:#F1F5F9;color:#64748B}.st-done::before{background:#94A3B8}
+  .st-cancel{background:var(--red-bg);color:var(--red)}.st-cancel::before{background:var(--red)}
+</style>
+<script defer src="admin-sidebar.js"></script>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar"></aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="crumb"><span>概览</span><span>›</span><span class="current">运营看板</span></div>
+      <div class="top-actions">
+        <span class="top-date" id="topDate"></span>
+        <div class="top-av">管</div>
+      </div>
+    </header>
+    <section class="page">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">运营看板</h1>
+          <p class="page-sub">订单、服务、陪护员与商城核心运营指标 · 实时汇总</p>
+        </div>
+        <button class="btn-outline" onclick="location.reload()">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M2 7A5 5 0 0111 4M11.5 1.5v2.5h-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 7A5 5 0 013 10M2.5 12.5V10H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          刷新数据
+        </button>
+      </div>
+
+      <!-- 核心指标 -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon" style="background:#C9F4EA">
+              <svg viewBox="0 0 22 22" fill="none"><rect x="3" y="2.5" width="16" height="17" rx="3" stroke="#1CD8B7" stroke-width="1.5"/><path d="M7 8h8M7 12h8M7 16h5" stroke="#1CD8B7" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </div>
+            <div class="metric-badge" style="background:#C9F4EA;color:#1CD8B7">今日</div>
+          </div>
+          <div><div class="metric-val" id="mTodayOrders">—</div><div class="metric-lbl">今日新增订单（服务+商城）</div><div class="metric-trend trend-flat" id="mTodayOrdersSub">—</div></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon" style="background:var(--amber-bg)">
+              <svg viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8.5" stroke="#D97706" stroke-width="1.5"/><path d="M11 6.5v1.5M11 14v1.5M8.5 9.5c0-1 1.1-1.5 2.5-1.5s2.5.8 2.5 2c0 1.5-2.5 2-2.5 3s1.1 2 2.5 2" stroke="#D97706" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </div>
+            <div class="metric-badge" style="background:var(--amber-bg);color:var(--amber)">今日</div>
+          </div>
+          <div><div class="metric-val" id="mTodayAmount" style="font-size:24px">—</div><div class="metric-lbl">今日交易额</div><div class="metric-trend trend-flat">含待支付订单金额</div></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon" style="background:var(--green-bg)">
+              <svg viewBox="0 0 22 22" fill="none"><circle cx="11" cy="7.5" r="4" stroke="#16A34A" stroke-width="1.5"/><path d="M3 19.5c0-4 3.6-7 8-7s8 3 8 7" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="metric-badge" style="background:var(--green-bg);color:var(--green)">进行中</div>
+          </div>
+          <div><div class="metric-val" id="mServing">—</div><div class="metric-lbl">服务中订单</div><div class="metric-trend trend-up" id="mServingSub">—</div></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-top">
+            <div class="metric-icon" style="background:var(--blue-bg)">
+              <svg viewBox="0 0 22 22" fill="none"><circle cx="8" cy="7" r="3.5" stroke="#1CD8B7" stroke-width="1.4"/><circle cx="15.5" cy="8" r="2.6" stroke="#1CD8B7" stroke-width="1.4"/><path d="M2 18.5c.5-3.5 2.6-5.5 6-5.5s5.5 2 6 5.5M13.4 13.3c3.2-.2 5.4 1.3 6.1 4.7" stroke="#1CD8B7" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </div>
+            <div class="metric-badge" style="background:var(--blue-bg);color:var(--blue)">陪护员</div>
+          </div>
+          <div><div class="metric-val" id="mCaregiver">—</div><div class="metric-lbl">在岗陪护员</div><div class="metric-trend trend-flat" id="mCaregiverSub">—</div></div>
+        </div>
+      </div>
+
+      <!-- 趋势 + 状态 -->
+      <div class="mid-row">
+        <div class="chart-card">
+          <div class="card-hd">
+            <div class="card-hd-left"><div class="sec-dot"></div><span class="sec-title">近7天运营趋势</span></div>
+            <div class="chart-tabs">
+              <button class="ctab on" onclick="switchChart(this,'orders')">订单量</button>
+              <button class="ctab" onclick="switchChart(this,'income')">交易额</button>
+            </div>
+          </div>
+          <div class="chart-body"><canvas id="lineChart" width="1000" height="340"></canvas></div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#1CD8B7"></div><span id="legendLabel">订单数量</span></div>
+            <div class="legend-item" style="margin-left:auto"><span style="color:var(--green);font-weight:800;font-size:13px">↑ 周均增长 9.3%</span></div>
+          </div>
+        </div>
+        <div class="side-stats">
+          <div class="stat-card">
+            <div class="stat-card-title"><div class="sec-dot"></div>订单状态分布（全部 <span id="stateTotal">0</span> 单）</div>
+            <div id="stateBars"></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-title"><div class="sec-dot"></div>陪护员状态</div>
+            <div class="progress-row"><span class="progress-lbl">在岗</span><div class="progress-track"><div id="cgOnBar" class="progress-fill" style="width:0%;background:var(--green)"></div></div><span id="cgOnCount" class="progress-pct">0人</span></div>
+            <div class="progress-row"><span class="progress-lbl">休息</span><div class="progress-track"><div id="cgLeaveBar" class="progress-fill" style="width:0%;background:var(--amber)"></div></div><span id="cgLeaveCount" class="progress-pct">0人</span></div>
+            <div class="progress-row"><span class="progress-lbl">停用</span><div class="progress-track"><div id="cgOffBar" class="progress-fill" style="width:0%;background:var(--red)"></div></div><span id="cgOffCount" class="progress-pct">0人</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 服务类型 + 商城快照 -->
+      <div class="row-2">
+        <div class="stat-card">
+          <div class="stat-card-title"><div class="sec-dot"></div>服务类型占比（按订单量）</div>
+          <div id="typeBars"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-title"><div class="sec-dot"></div>商城运营快照</div>
+          <div class="stat-row"><div class="stat-row-lbl"><div class="mini-dot" style="background:#1CD8B7"></div>今日商城订单</div><div class="stat-row-val" id="mallToday">—</div></div>
+          <div class="stat-row"><div class="stat-row-lbl"><div class="mini-dot" style="background:#D97706"></div>今日商城交易额</div><div class="stat-row-val" id="mallAmount">—</div></div>
+          <div class="stat-row"><div class="stat-row-lbl"><div class="mini-dot" style="background:#60A5FA"></div>待发货订单</div><div class="stat-row-val" id="mallPending">—</div></div>
+          <div class="stat-row"><div class="stat-row-lbl"><div class="mini-dot" style="background:#16A34A"></div>在售商品</div><div class="stat-row-val" id="mallOnSale">—</div></div>
+          <div class="stat-row"><div class="stat-row-lbl"><div class="mini-dot" style="background:#94A3B8"></div>商城累计营收</div><div class="stat-row-val" id="mallRevenue">—</div></div>
+          <a class="mall-link" href="admin-mall.html">进入商城概览 ›</a>
+        </div>
+      </div>
+
+      <!-- 今日订单 -->
+      <div class="order-card">
+        <div class="card-hd">
+          <div class="card-hd-left"><div class="sec-dot"></div><span class="sec-title">今日新增订单</span></div>
+          <span id="todayCount" style="font-size:12px;color:var(--text3);font-weight:600">—</span>
+        </div>
+        <table class="order-table">
+          <thead><tr><th>订单号</th><th>项目</th><th>用户</th><th>陪护员/商户</th><th>下单时间</th><th>金额</th><th>状态</th></tr></thead>
+          <tbody id="todayTbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="admin-mall-data.js"></script>
+<script src="admin-overview-data.js"></script>
+<script>
+  /* ── 顶栏日期 ── */
+  var now = new Date();
+  document.getElementById('topDate').textContent = now.getFullYear() + '年' + (now.getMonth()+1) + '月' + now.getDate() + '日';
+
+  var ORDERS = window.AKBAdminOverviewData.orders;
+  var CAREGIVERS = window.AKBAdminOverviewData.caregivers;
+  /* 数据集中的「今天」（种子数据日期） */
+  var TODAY = '04/16';
+  function amt(o){ return Number(String(o.amount).replace(/[¥,]/g,'')) || 0; }
+
+  /* ── 核心指标 ── */
+  var todayOrders = ORDERS.filter(function(o){ return o.orderedAt.indexOf(TODAY) === 0; });
+  var todaySvc = todayOrders.filter(function(o){ return o.type !== '商城订单'; }).length;
+  document.getElementById('mTodayOrders').textContent = todayOrders.length;
+  document.getElementById('mTodayOrdersSub').textContent = '服务 ' + todaySvc + ' 单 · 商城 ' + (todayOrders.length - todaySvc) + ' 单';
+  var todayAmt = todayOrders.reduce(function(s,o){ return s + amt(o); }, 0);
+  document.getElementById('mTodayAmount').textContent = '¥' + todayAmt.toLocaleString('zh-CN');
+  var serving = ORDERS.filter(function(o){ return o.state === '服务中'; });
+  document.getElementById('mServing').textContent = serving.length;
+  document.getElementById('mServingSub').textContent = '待服务 ' + ORDERS.filter(function(o){ return o.state === '待服务'; }).length + ' 单待启动';
+  var cgOn = CAREGIVERS.filter(function(c){ return c.state === 'on'; }).length;
+  document.getElementById('mCaregiver').textContent = cgOn + '/' + CAREGIVERS.length;
+  document.getElementById('mCaregiverSub').textContent = '休息 ' + CAREGIVERS.filter(function(c){ return c.state==='leave'; }).length + ' · 停用 ' + CAREGIVERS.filter(function(c){ return c.state==='off'; }).length;
+
+  /* ── 近7天趋势（运营节奏与 admin.html 保持一致） ── */
+  var DAYS   = ['4/11','4/12','4/13','4/14','4/15','4/16','4/17'];
+  var T_ORDERS = [98, 112, 105, 134, 118, 142, 128];
+  var T_INCOME = [27440, 31360, 29400, 37520, 33040, 39760, 35680];
+  var chartMode = 'orders';
+  function switchChart(el, mode){
+    document.querySelectorAll('.ctab').forEach(function(t){ t.classList.remove('on'); });
+    el.classList.add('on');
+    chartMode = mode;
+    document.getElementById('legendLabel').textContent = mode === 'orders' ? '订单数量' : '交易额(元)';
+    drawChart(mode === 'orders' ? T_ORDERS : T_INCOME);
+  }
+  function drawChart(data){
+    var canvas = document.getElementById('lineChart');
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+    var PL = 60, PR = 24, PT = 28, PB = 52;
+    var cW = W - PL - PR, cH = H - PT - PB;
+    ctx.clearRect(0, 0, W, H);
+    var mn = Math.min.apply(null, data), mx = Math.max.apply(null, data);
+    var range = mx - mn || 1;
+    var vMin = mn - range * .12, vMax = mx + range * .18;
+    function xOf(i){ return PL + i / (data.length - 1) * cW; }
+    function yOf(v){ return PT + cH - (v - vMin) / (vMax - vMin) * cH; }
+    ctx.strokeStyle = '#EDE9F5'; ctx.lineWidth = 1;
+    for (var i = 0; i <= 4; i++){
+      var y = PT + i / 4 * cH;
+      ctx.beginPath(); ctx.moveTo(PL, y); ctx.lineTo(W - PR, y); ctx.stroke();
+      var val = vMax - i / 4 * (vMax - vMin);
+      ctx.fillStyle = '#AEACC0'; ctx.font = '20px system-ui'; ctx.textAlign = 'right';
+      ctx.fillText(chartMode === 'orders' ? Math.round(val) : (val/1000).toFixed(0) + 'K', PL - 8, y + 7);
+    }
+    var grad = ctx.createLinearGradient(0, PT, 0, PT + cH);
+    grad.addColorStop(0, 'rgba(0,0,0,0.1)'); grad.addColorStop(1, 'rgba(0,0,0,0.1)');
+    ctx.beginPath(); ctx.moveTo(xOf(0), yOf(data[0]));
+    for (var j = 1; j < data.length; j++){
+      var cx = (xOf(j-1) + xOf(j)) / 2;
+      ctx.bezierCurveTo(cx, yOf(data[j-1]), cx, yOf(data[j]), xOf(j), yOf(data[j]));
+    }
+    ctx.lineTo(xOf(data.length-1), PT + cH); ctx.lineTo(xOf(0), PT + cH); ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(xOf(0), yOf(data[0]));
+    for (var k = 1; k < data.length; k++){
+      var cx2 = (xOf(k-1) + xOf(k)) / 2;
+      ctx.bezierCurveTo(cx2, yOf(data[k-1]), cx2, yOf(data[k]), xOf(k), yOf(data[k]));
+    }
+    ctx.strokeStyle = '#1CD8B7'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.stroke();
+    data.forEach(function(v, i){
+      var x = xOf(i), y2 = yOf(v);
+      ctx.beginPath(); ctx.arc(x, y2, 8, 0, Math.PI*2); ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y2, 5, 0, Math.PI*2); ctx.fillStyle = '#1CD8B7'; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y2, 2.5, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill();
+      ctx.fillStyle = '#1A1828'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText(chartMode === 'orders' ? v : '¥' + (v/1000).toFixed(1) + 'K', x, y2 - 15);
+      ctx.fillStyle = '#AEACC0'; ctx.font = '19px system-ui';
+      ctx.fillText(DAYS[i], x, H - 12);
+    });
+  }
+  drawChart(T_ORDERS);
+
+  /* ── 订单状态分布 ── */
+  var STATE_GROUPS = [
+    { label: '待支付',   color: '#D97706', match: ['待支付', '支付中'] },
+    { label: '待服务',   color: '#60A5FA', match: ['待服务', '已支付', '待配送', '待收货确认'] },
+    { label: '服务中',   color: '#16A34A', match: ['服务中'] },
+    { label: '已完成',   color: '#94A3B8', match: ['已完成'] },
+    { label: '退款/售后', color: '#DC2626', match: ['退款/售后', '退款处理中'] },
+    { label: '已取消',   color: '#CBD5E1', match: ['已取消'] }
+  ];
+  document.getElementById('stateTotal').textContent = ORDERS.length;
+  document.getElementById('stateBars').innerHTML = STATE_GROUPS.map(function(g){
+    var n = ORDERS.filter(function(o){ return g.match.indexOf(o.state) > -1; }).length;
+    var pct = Math.round(n / ORDERS.length * 100);
+    return '<div class="progress-row"><span class="progress-lbl">' + g.label + '</span>' +
+      '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%;background:' + g.color + '"></div></div>' +
+      '<span class="progress-pct">' + n + '单</span></div>';
+  }).join('');
+
+  /* ── 陪护员状态 ── */
+  var cgCounts = { on: 0, leave: 0, off: 0 };
+  CAREGIVERS.forEach(function(c){ cgCounts[c.state]++; });
+  var cgTotal = CAREGIVERS.length || 1;
+  [['on','On'],['leave','Leave'],['off','Off']].forEach(function(p){
+    document.getElementById('cg' + p[1] + 'Count').textContent = cgCounts[p[0]] + '人';
+    document.getElementById('cg' + p[1] + 'Bar').style.width = (cgCounts[p[0]] / cgTotal * 100) + '%';
+  });
+
+  /* ── 服务类型占比 ── */
+  var TYPE_COLORS = { '住院陪护': '#1CD8B7', '居家陪护': '#16A34A', '陪诊服务': '#60A5FA', '上门助浴': '#D97706', '商城订单': '#94A3B8' };
+  var typeMap = {};
+  ORDERS.forEach(function(o){ typeMap[o.type] = (typeMap[o.type] || 0) + 1; });
+  var typeList = Object.keys(typeMap).map(function(k){ return { type: k, n: typeMap[k] }; }).sort(function(a,b){ return b.n - a.n; });
+  document.getElementById('typeBars').innerHTML = typeList.map(function(t){
+    var pct = Math.round(t.n / ORDERS.length * 100);
+    return '<div class="progress-row"><span class="progress-lbl">' + t.type + '</span>' +
+      '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%;background:' + (TYPE_COLORS[t.type] || '#1CD8B7') + '"></div></div>' +
+      '<span class="progress-pct">' + pct + '%</span></div>';
+  }).join('');
+
+  /* ── 商城运营快照 ── */
+  if (window.AKBMallAdmin){
+    var MS = window.AKBMallAdmin.summarize();
+    document.getElementById('mallToday').textContent = MS.todayCount + ' 单';
+    document.getElementById('mallAmount').textContent = '¥' + MS.todayAmount.toLocaleString('zh-CN');
+    document.getElementById('mallPending').textContent = MS.pendingShipCount + ' 单';
+    document.getElementById('mallOnSale').textContent = MS.onSaleCount + ' 款';
+    document.getElementById('mallRevenue').textContent = '¥' + MS.revenue.toLocaleString('zh-CN');
+  }
+
+  /* ── 今日订单表 ── */
+  var STATUS_MAP = {
+    '支付中': ['支付中', 'st-pending'], '待支付': ['待支付', 'st-pending'],
+    '已支付': ['已支付', 'st-pending'], '待服务': ['待服务', 'st-pending'],
+    '待配送': ['待配送', 'st-pending'], '待收货确认': ['待收货确认', 'st-pending'],
+    '服务中': ['服务中', 'st-active'], '已完成': ['已完成', 'st-done'],
+    '退款/售后': ['退款/售后', 'st-cancel'], '退款处理中': ['退款处理中', 'st-cancel'],
+    '已取消': ['已取消', 'st-cancel']
+  };
+  document.getElementById('todayCount').textContent = '共 ' + todayOrders.length + ' 条';
+  document.getElementById('todayTbody').innerHTML = todayOrders.map(function(o){
+    var st = STATUS_MAP[o.state] || [o.state, 'st-pending'];
+    return '<tr>' +
+      '<td><div class="order-no">' + o.no + '</div></td>' +
+      '<td><div class="cell-name">' + o.type + '</div><div class="cell-sub">' + o.item + '</div></td>' +
+      '<td><div class="cell-name">' + o.user + '</div><div class="cell-sub">' + o.userPhone + '</div></td>' +
+      '<td><div class="cell-name">' + o.nurse + '</div><div class="cell-sub">' + o.nursePhone + '</div></td>' +
+      '<td style="font-size:12px;font-weight:700;white-space:nowrap">' + o.orderedAt + '</td>' +
+      '<td class="amt-cell">' + o.amount + '</td>' +
+      '<td><span class="st-pill ' + st[1] + '">' + st[0] + '</span></td></tr>';
+  }).join('');
+</script>
+</body>
+</html>

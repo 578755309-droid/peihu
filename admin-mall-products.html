@@ -14,6 +14,15 @@
     .pt-badge.off{background:#FEE2E2;color:#DC2626}
     .pt-sub{font-size:11px;color:#9AA7BA;margin-top:3px;font-weight:700}
     .ck{width:15px;height:15px;accent-color:#1CD8B7;cursor:pointer}
+    /* 序号/勾选/商品信息 左侧固定，操作 右侧固定 */
+    .mall-table .stk-l1,.mall-table .stk-l2,.mall-table .stk-l3,.mall-table .stk-r{position:sticky;z-index:2}
+    .mall-table .stk-l1{left:0;width:48px;padding:0 6px;text-align:center}
+    .mall-table .stk-l2{left:48px;width:36px;padding:0 10px;text-align:center}
+    .mall-table .stk-l3{left:84px;box-shadow:8px 0 12px -10px rgba(23,32,51,.16)}
+    .mall-table .stk-r{right:0;box-shadow:-8px 0 12px -10px rgba(23,32,51,.16)}
+    .mall-table thead .stk-l1,.mall-table thead .stk-l2,.mall-table thead .stk-l3,.mall-table thead .stk-r{z-index:3}
+    .mall-table tbody .stk-l1,.mall-table tbody .stk-l2,.mall-table tbody .stk-l3,.mall-table tbody .stk-r{background:#fff}
+    .mall-table tbody .stk-idx{color:#9AA7BA;font-weight:800}
     .sel-chip{display:none;align-items:center;gap:8px;padding:5px 12px;border-radius:14px;background:#DDF7F1;color:#1CD8B7;font-size:12px;font-weight:800}
     .sel-chip.show{display:inline-flex}
     .sel-chip button{border:0;background:none;color:#1CD8B7;font:700 12px inherit;cursor:pointer;text-decoration:underline}
@@ -98,8 +107,8 @@
 
       <!-- 表格 -->
       <div class="table-wrap mall-table-wrap">
-        <table class="table mall-table" style="min-width:1240px">
-          <thead><tr><th style="width:36px"><input type="checkbox" class="ck" id="ckAll" onchange="toggleAll(this)"></th><th>商品信息</th><th>分类</th><th>售价</th><th>库存</th><th>已售</th><th>积分抵扣</th><th>排序</th><th>状态</th><th>操作</th></tr></thead>
+        <table class="table mall-table" style="min-width:1240px" data-sticky="done">
+          <thead><tr><th class="stk-l1">序号</th><th class="stk-l2"><input type="checkbox" class="ck" id="ckAll" onchange="toggleAll(this)"></th><th class="stk-l3">商品信息</th><th>分类</th><th>售价</th><th>库存</th><th>已售</th><th>积分抵扣</th><th>排序</th><th>状态</th><th class="stk-r">操作</th></tr></thead>
           <tbody id="rows"></tbody>
         </table>
         <div class="empty-state" id="emptyState" style="display:none">没有符合条件的商品</div>
@@ -218,6 +227,18 @@
 
   function persist() { M.saveProducts(products); }
 
+  /* ── 商品编号：SP + 三位数字，全局唯一且稳定 ── */
+  function codeNum(c) { var m = /^SP(\d+)$/.exec(c || ''); return m ? Number(m[1]) : 0; }
+  function nextCode() {
+    var max = products.reduce(function (m, p) { return Math.max(m, codeNum(p.code)); }, 0);
+    return 'SP' + String(max + 1).padStart(3, '0');
+  }
+  function ensureCodes() {
+    var dirty = false;
+    products.forEach(function (p) { if (!p.code) { p.code = nextCode(); dirty = true; } });
+    if (dirty) persist();
+  }
+
   function thumb(p) {
     var fallback = (p.name || '商').slice(0, 1);
     var src = p.cover || p.image;
@@ -334,12 +355,13 @@
     viewIds = list.map(function (p) { return p.id; });
     document.getElementById('count').textContent = list.length;
     document.getElementById('emptyState').style.display = list.length ? 'none' : 'block';
-    document.getElementById('rows').innerHTML = list.map(function (p) {
+    document.getElementById('rows').innerHTML = list.map(function (p, i) {
       return '<tr>' +
-        '<td><input type="checkbox" class="ck" ' + (selected[p.id] ? 'checked' : '') + ' onchange="toggleSel(\'' + M.esc(p.id) + '\', this.checked)"></td>' +
-        '<td><div class="pdt-cell">' + thumb(p) +
+        '<td class="stk-l1 stk-idx">' + (i + 1) + '</td>' +
+        '<td class="stk-l2"><input type="checkbox" class="ck" ' + (selected[p.id] ? 'checked' : '') + ' onchange="toggleSel(\'' + M.esc(p.id) + '\', this.checked)"></td>' +
+        '<td class="stk-l3"><div class="pdt-cell">' + thumb(p) +
           '<div style="min-width:0"><div class="pdt-name">' + M.esc(p.name) + (p.badge ? '<span class="pdt-badge">' + M.esc(p.badge) + '</span>' : '') + '</div>' +
-          '<div class="pdt-sub">' + M.esc(p.sub || '—') + '</div></div></div></td>' +
+          '<div class="pdt-sub">编号 ' + M.esc(p.code || '—') + '</div></div></div></td>' +
         '<td><span class="cat-chip">' + M.esc(M.categoryName(p.category)) + '</span></td>' +
         '<td class="price-cell">' + M.money(p.price) + '</td>' +
         '<td>' + stockCell(p) + '</td>' +
@@ -347,7 +369,7 @@
         '<td>' + pointsCell(p) + '</td>' +
         '<td style="color:#657087;font-weight:700">' + p.sort + '</td>' +
         '<td><button class="status-btn ' + p.status + '" onclick="toggleStatus(\'' + M.esc(p.id) + '\')">' + (p.status === 'on' ? '已上架' : '已下架') + '</button></td>' +
-        '<td><div class="op"><button onclick="openProductModal(\'' + M.esc(p.id) + '\')">编辑</button>' +
+        '<td class="stk-r"><div class="op"><button onclick="openProductModal(\'' + M.esc(p.id) + '\')">编辑</button>' +
           '<button onclick="toggleStatus(\'' + M.esc(p.id) + '\')">' + (p.status === 'on' ? '下架' : '上架') + '</button>' +
           '<button class="danger" style="color:#DC2626" onclick="removeProduct(\'' + M.esc(p.id) + '\')">删除</button></div></td>' +
       '</tr>';
@@ -376,6 +398,7 @@
     localStorage.removeItem('akb_admin_mall_products');
     selected = {};
     products = M.getProducts(true);
+    ensureCodes();
     fillCategorySelects(); renderMetrics(); render();
   };
 
@@ -506,6 +529,7 @@ window.clearCover=function(){setCovers([]);};
       if (p) { data.id = p.id; data.icon = p.icon || 'generic'; Object.assign(p, data); }
     } else {
       data.id = 'p-' + Date.now();
+      data.code = nextCode();
       products.push(data);
     }
     persist(); closeProductModal(); renderMetrics(); render();
@@ -516,6 +540,7 @@ window.clearCover=function(){setCovers([]);};
   document.getElementById('fSearch').oninput = render;
 
   /* 初始化 */
+  ensureCodes();
   fillCategorySelects();
   renderMetrics();
   render();
