@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <script src="common-ui.js"></script>
+  <meta name="viewport" content="width=1280">
+  <title>协议管理 · 佑小邦运营后台</title>
+  <link rel="stylesheet" href="admin-shell.css">
+  <script defer src="admin-sidebar.js"></script>
+  <style>
+    :root{--blue:#1CD8B7;--ink:#172033;--muted:#71809a;--line:#D2F5EB;--bg:#F5F5F5;--panel:#fff;--green:#16a34a;--amber:#d97706}
+    body{margin:0;min-width:1100px;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+    .layout{display:flex;min-height:100vh}.sidebar{width:220px;background:#002141}.main{margin-left:220px;flex:1;min-width:0}
+    .topbar{height:60px;display:flex;align-items:center;padding:0 28px;background:#fff;border-bottom:1px solid var(--line)}
+    .crumb{display:flex;gap:8px;font-size:13px;font-weight:700;color:#94a3b8}.crumb strong{color:var(--ink)}
+    .top-date{margin-left:auto;color:#8fa0b5;font-size:12px;font-weight:700}.top-av{display:grid;place-items:center;width:34px;height:34px;margin-left:14px;border-radius:10px;color:#fff;background:var(--blue);font-size:14px;font-weight:900}
+    .page{padding:24px 28px 44px;max-width:1740px}
+    .head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+    .title{font-size:24px;font-weight:900}.sub{margin-top:6px;color:#91a0b6;font-size:13px}
+    .actions{display:flex;gap:9px;padding-top:4px}
+    .btn{height:36px;border:1px solid var(--line);border-radius:9px;padding:0 13px;background:#fff;color:#41536d;font:700 12px inherit;cursor:pointer}
+    .btn.primary{border-color:var(--blue);background:var(--blue);color:#fff}.btn.danger{color:#dc2626;border-color:#f3caca}
+    .card{border:1px solid var(--line);border-radius:15px;background:var(--panel);box-shadow:0 3px 14px rgba(0,0,0,0.1)}
+    .table-wrap{overflow-x:auto}
+    .table{width:100%;border-collapse:collapse;min-width:900px}
+    .table th{text-align:left;font-size:11px;color:#8b99ad;font-weight:800;padding:10px 12px;border-bottom:1px solid #e7eef8;white-space:nowrap;background:#F3FDFA}
+    .table td{font-size:12px;color:#41536d;font-weight:600;padding:13px 12px;border-bottom:1px solid #E6FAF5;vertical-align:middle}
+    .table tr:last-child td{border-bottom:0}
+    .agreement-name{color:var(--ink);font-weight:800;font-size:13px}
+    .agreement-key{display:block;margin-top:3px;color:#94a3b8;font-size:10px;font-weight:600}
+    .agreement-sub{display:block;margin-top:3px;color:#94a3b8;font-size:10px;font-weight:600;max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .tag{display:inline-flex;align-items:center;padding:5px 10px;border-radius:14px;font-size:11px;font-weight:800}
+    .tag.on{color:var(--green);background:#dcfce7}.tag.off{color:#657087;background:#eef2f7}
+    .link-btn{border:0;background:none;color:var(--blue);font:800 12px inherit;cursor:pointer;padding:0}
+    .link-btn:hover{text-decoration:underline}.link-btn.danger{color:#dc2626}
+    .ops{display:flex;gap:12px}
+    .empty{padding:38px 0;text-align:center;color:#9aa8ba;font-size:13px}
+
+    /* 弹窗 */
+    .modal-mask{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(15,30,60,.45)}
+    .modal-mask.show{display:flex}
+    .modal{width:820px;max-width:94vw;max-height:92vh;overflow:auto;background:#fff;border-radius:16px;padding:24px 26px;box-shadow:0 24px 70px rgba(10,25,70,.3)}
+    .modal::-webkit-scrollbar{width:6px}.modal::-webkit-scrollbar-thumb{background:#d5e2f3;border-radius:3px}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    .modal-title{font-size:17px;font-weight:900}
+    .modal-close{width:32px;height:32px;border:0;border-radius:9px;background:#E6FAF5;color:#5b6b83;font-size:18px;cursor:pointer}
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:12px;color:#5f6f88;font-weight:800;margin-bottom:6px}
+    .field input[type=text]{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font:inherit;font-size:13px;color:var(--ink);background:#fbfdff;outline:none}
+    .field input:focus{border-color:var(--blue)}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field-tip{font-size:11px;color:#94a3b8;margin-top:5px;line-height:1.5}
+
+    /* 富文本编辑器 */
+    .editor{border:1px solid var(--line);border-radius:11px;overflow:hidden}
+    .editor:focus-within{border-color:var(--blue)}
+    .toolbar{display:flex;flex-wrap:wrap;gap:4px;padding:8px 10px;border-bottom:1px solid #e7eef8;background:#F2FCF9}
+    .toolbar button{min-width:30px;height:30px;padding:0 8px;border:1px solid transparent;border-radius:7px;background:none;color:#41536d;font:800 12px inherit;cursor:pointer}
+    .toolbar button:hover{background:#DDF7F1;border-color:#cfe1f6}
+    .toolbar .sep{width:1px;background:#D2F5EB;margin:4px 3px}
+    .editor-area{min-height:280px;max-height:480px;overflow:auto;padding:14px 16px;font-size:13px;line-height:1.8;color:var(--ink);outline:none;background:#fff}
+.editor-area img{max-width:100%;height:auto}
+.pv-agree-body img{max-width:100%;height:auto}
+    .editor-area:empty:before{content:attr(data-ph);color:#a3b0c2}
+    .editor-area h2{font-size:17px;margin:12px 0 6px}
+    .editor-area h3{font-size:15px;margin:10px 0 5px}
+    .editor-area ul,.editor-area ol{padding-left:22px;margin:6px 0}
+    .editor-area blockquote{border-left:3px solid var(--blue);margin:8px 0;padding:4px 12px;background:#F2FCF9;color:#5b6b83}
+    .editor-area p{margin:4px 0}
+
+    .modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid #E6FAF5}
+    .status-toggle{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:#5f6f88;cursor:pointer;user-select:none}
+    .status-toggle .track{width:38px;height:21px;border-radius:12px;background:#d5deeb;position:relative;transition:background .15s}
+    .status-toggle .track:after{content:"";position:absolute;top:2.5px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+    .status-toggle.on .track{background:var(--green)}.status-toggle.on .track:after{left:19px}
+
+    /* 查看预览弹窗（只读） */
+    /* 手机端预览框 */
+    .phone-frame{width:320px;margin:0 auto;border:10px solid #172033;border-radius:40px;overflow:hidden;background:#fff;box-shadow:0 24px 70px rgba(10,25,70,.25);flex-shrink:0}
+    .phone-notch{width:120px;height:20px;margin:0 auto;background:#172033;border-radius:0 0 14px 14px}
+    .phone-screen{height:580px;overflow-y:auto;background:#f7f8fc;padding:14px 16px}
+    .phone-screen::-webkit-scrollbar{width:0}
+    .pv-agree-head{padding:14px 0 10px;border-bottom:1px solid #E4FAF4;margin-bottom:12px;text-align:center}
+    .pv-agree-title{font-size:17px;font-weight:900;color:#172033}
+    .pv-agree-meta{font-size:11px;color:#94a3b8;margin-top:6px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+    .pv-agree-body{font-size:13px;line-height:1.8;color:#41536d}
+    .pv-agree-body h2{font-size:15px;font-weight:900;color:#172033;margin:14px 0 6px;padding-left:10px;border-left:3px solid #1CD8B7}
+    .pv-agree-body h3{font-size:14px;font-weight:900;color:#172033;margin:12px 0 4px}
+    .pv-agree-body p{margin:6px 0;text-indent:2em}
+    .pv-agree-body ul,.pv-agree-body ol{padding-left:22px;margin:6px 0}
+    .pv-agree-body li{margin:2px 0}
+    .pv-agree-body blockquote{border-left:3px solid #1CD8B7;margin:8px 0;padding:4px 12px;background:#F2FCF9;color:#5b6b83;border-radius:0 6px 6px 0}
+    .pv-agree-body b,.pv-agree-body strong{color:#1CD8B7}
+    .agreement-preview{border:1px solid #e3ecf7;border-radius:12px;padding:22px;background:linear-gradient(180deg,#fdfeff,#F3FDFA);font-size:13px;line-height:1.8;color:#41536d;max-height:60vh;overflow:auto}
+    .agreement-preview h1{font-size:20px;font-weight:900;color:var(--ink);margin-bottom:10px;text-align:center}
+    .agreement-preview h2{font-size:16px;font-weight:900;color:var(--ink);margin:14px 0 6px}
+    .agreement-preview p{margin:6px 0;text-indent:2em}
+    .agreement-preview ul,.agreement-preview ol{padding-left:22px;margin:6px 0}
+    .agreement-meta{display:flex;gap:18px;color:#94a3b8;font-size:11px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px dashed #dfe8f4;justify-content:center}
+  </style>
+  <link rel="stylesheet" href="modal-scroll.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar"></aside>
+    <main class="main">
+      <header class="topbar"><div class="crumb"><span>其他</span><span>›</span><strong>协议管理</strong></div><span class="top-date" id="topDate">2026年4月12日 星期日</span><div class="top-av">管</div></header>
+      <section class="page">
+        <div class="head">
+          <div>
+            <h1 class="title">协议管理</h1>
+            <div class="sub">维护平台对外展示的各类协议文档：政策协议、隐私协议、服务协议、免责声明等，内容变更即时同步小程序端</div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" onclick="openEditor('')">+ 新建协议</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="width:36px"><input type="checkbox" class="ck" id="ckAll" onchange="toggleAll(this)"></th>
+                  <th>协议名称</th>
+                  <th>协议标识</th>
+                  <th>协议说明</th>
+                  <th>版本</th>
+                  <th>更新时间</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+            <div class="empty" id="empty" style="display:none">暂无协议，点击「+ 新建协议」创建</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 编辑弹窗 -->
+  <div class="modal-mask" id="editMask" onclick="if(event.target===this)closeEditor()">
+    <div class="modal">
+      <div class="modal-head"><div class="modal-title" id="editTitle">新建协议</div><button class="modal-close" onclick="closeEditor()">×</button></div>
+      <div class="field-row">
+        <div class="field">
+          <label>协议名称 *</label>
+          <input type="text" id="fName" placeholder="如 隐私政策" />
+        </div>
+        <div class="field">
+          <label>协议标识 Key *</label>
+          <input type="text" id="fKey" placeholder="如 privacy / service / policy" />
+          <div class="field-tip">小程序端按此 Key 读取内容，一经发布请勿随意修改</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>协议说明</label>
+        <input type="text" id="fDesc" placeholder="一句话说明该协议的用途（选填）" />
+      </div>
+      <div class="field">
+        <label>协议正文 *</label>
+        <div class="editor">
+          <div class="toolbar">
+            <button type="button" onclick="execCmd('bold')" title="加粗"><b>B</b></button>
+            <button type="button" onclick="execCmd('italic')" title="斜体"><i>I</i></button>
+            <button type="button" onclick="execCmd('underline')" title="下划线"><u>U</u></button>
+            <span class="sep"></span>
+            <button type="button" onclick="execCmd('formatBlock','H2')">标题</button>
+            <button type="button" onclick="execCmd('formatBlock','P')">正文</button>
+            <span class="sep"></span>
+            <button type="button" onclick="execCmd('insertUnorderedList')">• 列表</button>
+            <button type="button" onclick="execCmd('insertOrderedList')">1. 列表</button>
+            <button type="button" onclick="execCmd('formatBlock','BLOCKQUOTE')">引用</button>
+          </div>
+          <div class="editor-area" id="editorArea" contenteditable="true" data-ph="请输入协议正文... 支持标题、列表、引用等富文本排版"></div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>版本号</label>
+          <input type="text" id="fVersion" placeholder="如 v1.0.0" />
+        </div>
+        <div class="field">
+          <label>发布状态</label>
+          <div style="height:40px;display:flex;align-items:center">
+            <div class="status-toggle" id="statusToggle" onclick="this.classList.toggle('on');refreshStatusText()">
+              <div class="track"></div><span id="statusText">草稿</span>
+            </div>
+            <div class="field-tip" style="margin-left:12px">发布后小程序端立即可见该版本</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" onclick="closeEditor()">取消</button>
+        <button class="btn" onclick="previewCurrent()">预览</button>
+        <button class="btn primary" onclick="saveAgreement()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 预览弹窗 -->
+  <div class="modal-mask" id="previewMask" onclick="if(event.target===this)this.classList.remove('show')">
+    <div class="modal" style="display:flex;flex-direction:column;align-items:center;gap:14px;padding-top:18px">
+      <div class="modal-head" style="width:100%"><div class="modal-title" id="previewTitle">协议预览 · 手机端效果</div><button class="modal-close" onclick="document.getElementById('previewMask').classList.remove('show')">×</button></div>
+      <div class="phone-frame"><div class="phone-notch"></div><div class="phone-screen" id="previewContent"></div></div>
+      <div class="modal-foot" style="width:100%;border-top:0;padding-top:6px"><button class="btn" onclick="document.getElementById('previewMask').classList.remove('show')">关闭</button></div>
+    </div>
+  </div>
+
+  <script>
+    /* 简易数据持久层：localStorage + 种子数据 */
+    (function () {
+      var KEY = 'akb_agreements_v1';
+      var SEED = [
+        { id: 'agr_privacy', key: 'privacy', name: '隐私政策', desc: '平台如何收集、使用、存储用户个人信息', version: 'v2.1.0', status: 'on', updatedAt: '2026-03-18 14:22', content: '<h1>佑小邦隐私政策</h1><div class="agreement-meta">更新日期：2026年3月18日 · 生效日期：2026年3月25日</div><p>佑小邦（以下简称"本平台"）深知个人信息对您的重要性，我们将按照相关法律法规，采取相应的安全保护措施，致力于保护您的个人信息安全可控。</p><h2>一、我们如何收集和使用您的个人信息</h2><p>在您使用佑小邦陪护服务的过程中，我们将收集以下必要信息：</p><ul><li>基本身份信息：姓名、性别、年龄、身份证号</li><li>联系方式：手机号码、收货地址</li><li>健康相关信息：就诊史、过敏史、传染病史</li><li>订单与支付信息：服务项目、交易金额、支付方式</li></ul><h2>二、我们如何使用 Cookie 和同类技术</h2><p>为确保平台正常运转、提供更好的服务体验，我们会在您的设备上存储名为 Cookie 的小数据文件。</p><h2>三、我们如何共享、转让、公开披露您的个人信息</h2><p>我们不会与佑小邦关联公司以外的任何公司、组织和个人共享您的个人信息，但以下情况除外：</p><blockquote>在获取您明确同意的情况下共享；根据法律法规或政府主管部门的强制性要求。</blockquote>' },
+        { id: 'agr_service', key: 'service', name: '服务协议', desc: '用户使用佑小邦陪护服务的权利与义务', version: 'v1.8.0', status: 'on', updatedAt: '2026-03-12 09:15', content: '<h1>佑小邦用户服务协议</h1><div class="agreement-meta">更新日期：2026年3月12日 · 生效日期：2026年3月20日</div><p>欢迎使用佑小邦陪护服务平台。本协议是您（以下简称"用户"）与佑小邦运营方之间就使用本平台服务所订立的协议。</p><h2>第一条 服务内容</h2><p>佑小邦为用户提供住院陪护、居家陪护、陪诊服务、上门助浴等专业陪护服务的线上预约与管理服务。</p><h2>第二条 用户账号</h2><p>用户需通过实名验证后方可下单。用户应妥善保管账号信息，因账号泄露造成的损失由用户自行承担。</p><h2>第三条 费用与支付</h2><p>服务费用以用户下单时显示的金额为准。支付方式支持微信支付、积分抵扣。服务开始前 24 小时取消订单可全额退款。</p><h2>第四条 服务质量保证</h2><p>佑小邦对所有陪护员进行身份认证、健康体检与岗前培训。如用户对服务不满意，可在服务结束后 7 天内申请退款。</p>' },
+        { id: 'agr_policy', key: 'policy', name: '政策协议', desc: '平台运营相关政策、保障条款', version: 'v1.3.0', status: 'on', updatedAt: '2026-02-28 16:40', content: '<h1>佑小邦政策协议</h1><div class="agreement-meta">更新日期：2026年2月28日</div><h2>一、平台保障</h2><ul><li>实名认证：所有陪护员与用户均需完成实名认证</li><li>保险保障：每笔服务订单自动投保意外险</li><li>先行赔付：服务中发生意外，平台先行垫付医疗费用</li><li>24 小时客服：服务全程可联系客服介入</li></ul><h2>二、违规处理</h2><p>对于恶意差评、刷单、虚假申请退款等行为，平台有权冻结账号并追究法律责任。</p>' },
+        { id: 'agr_disclaimer', key: 'disclaimer', name: '免责声明', desc: '服务使用中的责任边界说明', version: 'v1.0.0', status: 'off', updatedAt: '2025-12-20 11:00', content: '<h1>佑小邦免责声明</h1><p>佑小邦仅作为陪护服务的信息撮合平台，实际服务由入驻陪护员提供。用户与陪护员之间形成雇佣关系，平台不承担服务过程中产生的人身伤害、财产损失等赔偿责任。</p>' },
+        { id: 'agr_refund', key: 'refund', name: '退款政策', desc: '订单退款、售后处理规则', version: 'v1.2.0', status: 'on', updatedAt: '2026-03-05 10:30', content: '<h1>佑小邦退款政策</h1><h2>一、退款时效</h2><ul><li>服务开始前 24 小时以上：全额退款</li><li>服务开始前 2-24 小时：退款 80%</li><li>服务开始后已完成：按实际服务时长比例退款</li></ul><h2>二、退款到账</h2><p>退款申请通过后，原路退回至支付账户，微信支付 3 个工作日内到账，其他支付方式 7 个工作日内到账。</p>' }
+      ];
+      function load() {
+        try {
+          var raw = localStorage.getItem(KEY);
+          if (raw) return JSON.parse(raw);
+        } catch (e) {}
+        localStorage.setItem(KEY, JSON.stringify(SEED));
+        return SEED.slice();
+      }
+      function save(list) {
+        localStorage.setItem(KEY, JSON.stringify(list));
+      }
+      window.AGREEMENTS = {
+        load: load,
+        save: save,
+        list: function () { return load(); },
+        get: function (id) { return load().find(function (a) { return a.id === id; }); },
+        upsert: function (obj) {
+          var all = load();
+          var i = all.findIndex(function (a) { return a.id === obj.id; });
+          obj.updatedAt = (new Date()).toISOString().slice(0, 16).replace('T', ' ');
+          if (i >= 0) all[i] = obj; else all.unshift(obj);
+          save(all);
+          return obj;
+        },
+        remove: function (id) {
+          var all = load().filter(function (a) { return a.id !== id; });
+          save(all);
+        },
+        esc: function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); }
+      };
+    })();
+
+    /* 页面渲染 */
+    function render() {
+      var list = AGREEMENTS.list();
+      var rows = document.getElementById('rows');
+      document.getElementById('empty').style.display = list.length ? 'none' : 'block';
+      rows.innerHTML = list.map(function (a) {
+        return '<tr>' +
+          '<td><input type="checkbox" class="ck"></td>' +
+          '<td><div class="agreement-name">' + AGREEMENTS.esc(a.name) + '</div>' +
+            '<span class="agreement-sub">' + AGREEMENTS.esc(a.desc || '—') + '</span></td>' +
+          '<td><span class="agreement-key">' + AGREEMENTS.esc(a.key) + '</span></td>' +
+          '<td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + AGREEMENTS.esc((a.content || '').replace(/<[^>]+>/g, '').slice(0, 40) || '—') + '</td>' +
+          '<td style="font-weight:800">' + AGREEMENTS.esc(a.version || '—') + '</td>' +
+          '<td>' + AGREEMENTS.esc(a.updatedAt || '—') + '</td>' +
+          '<td><span class="tag ' + (a.status === 'on' ? 'on' : 'off') + '">' + (a.status === 'on' ? '已发布' : '草稿') + '</span></td>' +
+          '<td class="ops">' +
+            '<button class="link-btn" onclick="previewAgreement(\'' + AGREEMENTS.esc(a.id) + '\')">预览</button>' +
+            '<button class="link-btn" onclick="openEditor(\'' + AGREEMENTS.esc(a.id) + '\')">编辑</button>' +
+            '<button class="link-btn danger" onclick="toggleStatus(\'' + AGREEMENTS.esc(a.id) + '\')">' + (a.status === 'on' ? '下架' : '发布') + '</button>' +
+            '<button class="link-btn danger" onclick="deleteAgreement(\'' + AGREEMENTS.esc(a.id) + '\')">删除</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    /* 批量选择 */
+    function toggleAll(cb) {
+      document.querySelectorAll('#rows .ck').forEach(function (c) { c.checked = cb.checked; });
+    }
+
+    /* 富文本工具 */
+    function execCmd(cmd, val) {
+      document.execCommand(cmd, false, val || null);
+      document.getElementById('editorArea').focus();
+    }
+
+    /* 编辑器 */
+    var editingId = null;
+    function openEditor(id) {
+      editingId = id || null;
+      var title = id ? '编辑协议' : '新建协议';
+      document.getElementById('editTitle').textContent = title;
+      if (id) {
+        var a = AGREEMENTS.get(id);
+        if (!a) return;
+        document.getElementById('fName').value = a.name;
+        document.getElementById('fKey').value = a.key;
+        document.getElementById('fDesc').value = a.desc || '';
+        document.getElementById('fVersion').value = a.version || '';
+        document.getElementById('editorArea').innerHTML = a.content || '';
+        document.getElementById('statusToggle').classList.toggle('on', a.status === 'on');
+      } else {
+        document.getElementById('fName').value = '';
+        document.getElementById('fKey').value = '';
+        document.getElementById('fDesc').value = '';
+        document.getElementById('fVersion').value = 'v1.0.0';
+        document.getElementById('editorArea').innerHTML = '';
+        document.getElementById('statusToggle').classList.remove('on');
+      }
+      refreshStatusText();
+      document.getElementById('editMask').classList.add('show');
+      setTimeout(function () { document.getElementById('fName').focus(); }, 50);
+    }
+    function closeEditor() {
+      document.getElementById('editMask').classList.remove('show');
+      editingId = null;
+    }
+    function refreshStatusText() {
+      var on = document.getElementById('statusToggle').classList.contains('on');
+      document.getElementById('statusText').textContent = on ? '已发布' : '草稿';
+    }
+    function saveAgreement() {
+      var name = document.getElementById('fName').value.trim();
+      var key = document.getElementById('fKey').value.trim();
+      var desc = document.getElementById('fDesc').value.trim();
+      var version = document.getElementById('fVersion').value.trim();
+      var content = document.getElementById('editorArea').innerHTML.trim();
+      var status = document.getElementById('statusToggle').classList.contains('on') ? 'on' : 'off';
+      if (!name) { alert('请填写协议名称'); return; }
+      if (!key) { alert('请填写协议标识 Key'); return; }
+      if (!content || content === '<br>') { alert('请填写协议正文'); return; }
+      AGREEMENTS.upsert({
+        id: editingId || ('agr_' + key.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()),
+        name: name, key: key, desc: desc, version: version || 'v1.0.0',
+        content: content, status: status
+      });
+      closeEditor();
+      render();
+      toast('保存成功');
+    }
+
+    /* 预览：手机端样式渲染 */
+    function phonePreviewHtml(name, version, status, updatedAt, content) {
+      return '<div class="pv-agree-head">' +
+        '<div class="pv-agree-title">' + AGREEMENTS.esc(name || '未命名协议') + '</div>' +
+        '<div class="pv-agree-meta">' +
+          (version ? '<span>版本 ' + AGREEMENTS.esc(version) + '</span>' : '') +
+          (updatedAt ? '<span>更新 ' + AGREEMENTS.esc(updatedAt) + '</span>' : '') +
+          '<span style="color:' + (status === 'on' ? '#16A34A' : '#94a3b8') + '">● ' + (status === 'on' ? '已发布' : '草稿') + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="pv-agree-body">' + (content || '<p style="color:#a3b0c2;text-align:center;text-indent:0">（暂无内容）</p>') + '</div>';
+    }
+    function previewAgreement(id) {
+      var a = AGREEMENTS.get(id);
+      if (!a) return;
+      document.getElementById('previewTitle').textContent = a.name + ' — 手机端预览';
+      document.getElementById('previewContent').innerHTML =
+        phonePreviewHtml(a.name, a.version, a.status, a.updatedAt, a.content);
+      document.getElementById('previewMask').classList.add('show');
+    }
+    function previewCurrent() {
+      var content = document.getElementById('editorArea').innerHTML.trim();
+      if (!content) { alert('请先填写正文内容'); return; }
+      document.getElementById('previewTitle').textContent = (document.getElementById('fName').value || '未命名协议') + ' — 手机端预览';
+      document.getElementById('previewContent').innerHTML =
+        phonePreviewHtml(
+          document.getElementById('fName').value,
+          document.getElementById('fVersion').value,
+          document.getElementById('statusToggle').classList.contains('on') ? 'on' : 'off',
+          '',
+          content
+        );
+      document.getElementById('previewMask').classList.add('show');
+    }
+
+    /* 操作 */
+    function toggleStatus(id) {
+      var a = AGREEMENTS.get(id);
+      if (!a) return;
+      a.status = a.status === 'on' ? 'off' : 'on';
+      AGREEMENTS.upsert(a);
+      render();
+      toast(a.status === 'on' ? '已发布' : '已下架');
+    }
+    function deleteAgreement(id) {
+      var a = AGREEMENTS.get(id);
+      if (!a) return;
+      showConfirm({ title: '删除协议', message: '确认删除协议「' + a.name + '」？删除后不可恢复', okText: '确认删除', danger: true }).then(function (ok) {
+        if (!ok) return;
+        AGREEMENTS.remove(id);
+        render();
+        toast('已删除');
+      });
+    }
+
+    function toast(msg) {
+      var t = document.createElement('div');
+      t.style.cssText = 'position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:100;background:#172033;color:#fff;font-size:13px;font-weight:700;padding:11px 20px;border-radius:10px;opacity:0;transition:opacity .2s;pointer-events:none';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(function () { t.style.opacity = '1'; }, 10);
+      setTimeout(function () { t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 220); }, 1600);
+    }
+
+    (function init() {
+      var d = new Date();
+      document.getElementById('topDate').textContent = d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
+      render();
+    })();
+  </script>
+</body>
+</html>

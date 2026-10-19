@@ -240,11 +240,11 @@
       { id: 'tpl-008', group: 'order', name: '退款进度-已通过', node: 'order.refund', aud: '用户', ch: '站内消息 + 短信', title: '退款已通过', content: '订单{{订单号}}退款申请已通过，{{金额}}将按原支付路径退回，预计 1-3 个工作日内到账，请注意查收。', status: 'on', updatedAt: t },
       { id: 'tpl-009', group: 'order', name: '退款进度-未通过', node: 'order.refund_reject', aud: '用户', ch: '站内消息', title: '退款申请未通过', content: '很抱歉，订单{{订单号}}的退款申请未通过审核，原因：{{原因}}。如需申诉请联系客服 400-800-1234。', status: 'on', updatedAt: t },
       { id: 'tpl-010', group: 'mall', name: '商城下单成功', node: 'mall.submit', aud: '用户', ch: '站内消息', title: '商城订单提交成功', content: '您的商城订单{{订单号}}已提交，应付{{金额}}，请尽快完成支付，我们将在付款后 24 小时内发货。', status: 'on', updatedAt: t },
-      { id: 'tpl-011', group: 'mall', name: '商城支付成功', node: 'mall.paid', aud: '用户', ch: '站内消息', title: '商城订单支付成功', content: '您的商城订单{{订单号}}已支付成功（{{金额}}），商家将尽快为您安排发货。', status: 'on', updatedAt: t },
+      { id: 'tpl-011', group: 'mall', name: '商城支付成功', node: 'mall.paid', aud: '用户', ch: '站内消息', title: '商城订单支付成功', content: '您的商城订单{{订单号}}已支付成功（{{金额}}），佑小邦将尽快为您安排发货。', status: 'on', updatedAt: t },
       { id: 'tpl-012', group: 'mall', name: '商城发货通知', node: 'mall.shipped', aud: '用户', ch: '站内消息 + 短信', title: '商城订单已发货', content: '订单{{订单号}}已发货，承运快递：{{快递公司}} {{快递单号}}，请注意查收物流信息。', status: 'on', updatedAt: t },
       { id: 'tpl-013', group: 'mall', name: '商城签收提醒', node: 'mall.done', aud: '用户', ch: '站内消息', title: '订单已签收', content: '订单{{订单号}}已确认签收。如商品存在质量问题，可在签收后 7 天内申请售后。', status: 'on', updatedAt: t },
       { id: 'tpl-014', group: 'mall', name: '商城售后进度', node: 'mall.refund', aud: '用户', ch: '站内消息', title: '售后进度更新', content: '订单{{订单号}}的售后申请状态已更新：{{状态}}。详情可在订单页查看。', status: 'on', updatedAt: t },
-      { id: 'tpl-015', group: 'booking', name: '预约提交回执', node: 'booking.submit', aud: '用户', ch: '站内消息', title: '预约提交成功', content: '您已成功预约{{服务项目}}（{{预约时间}}），工作人员将尽快与您电话确认，请保持手机畅通。', status: 'on', updatedAt: t },
+      { id: 'tpl-015', group: 'booking', name: '预约提交回执', node: 'booking.submit', aud: '用户', ch: '站内消息', title: '预约提交成功', content: '您已成功预约（{{预约时间}}），工作人员30分钟内与您电话联系，请保持手机畅通。', status: 'on', updatedAt: t },
       { id: 'tpl-016', group: 'booking', name: '预约确认通知', node: 'booking.confirm', aud: '用户', ch: '站内消息 + 短信', title: '预约已确认', content: '您预约的{{服务项目}}已确认，时间：{{预约时间}}，地点：{{医院}}，请准时到达。变更请提前联系客服。', status: 'on', updatedAt: t },
       { id: 'tpl-017', group: 'contract', name: '合同待签署', node: 'contract.pending', aud: '用户+护理员', ch: '站内消息', title: '服务合同待签署', content: '订单{{订单号}}的服务合同已生成，请及时查看合同条款并完成签署，签署后方可正式生效。', status: 'on', updatedAt: t },
       { id: 'tpl-018', group: 'contract', name: '合同签署完成', node: 'contract.signed', aud: '用户+管理员', ch: '站内消息', title: '合同签署完成', content: '订单{{订单号}}的服务合同已完成签署，电子合同可在订单详情中随时查看与下载。', status: 'on', updatedAt: t },
@@ -262,13 +262,21 @@
   function load() {
     try {
       var list = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
-      if (Array.isArray(list) && list.length) return list;
+      if (Array.isArray(list) && list.length) {
+        /* 文案迁移：商家 → 佑小邦 */
+        list.forEach(function (t) {
+          if (t.content && t.content.indexOf('商家将尽快') > -1) t.content = t.content.replace(/商家将尽快/g, '佑小邦将尽快');
+          /* 预约提交回执：去掉服务项目，改为30分钟内电话联系 */
+          if (t.id === 'tpl-015' && t.content && t.content.indexOf('工作人员将尽快与您电话确认') > -1) t.content = '您已成功预约（{{预约时间}}），工作人员30分钟内与您电话联系，请保持手机畅通。';
+        });
+        return list;
+      }
     } catch (e) {}
     var s = seed();
     try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {}
     return s;
   }
-  var templates = load();
+  var templates = load().filter(function (t) { return ['tpl-016', 'tpl-023', 'tpl-024'].indexOf(t.id) === -1; }); /* 隐藏：预约确认通知 / 认证审核结果 / 收到新评价 */
   function persist() { try { localStorage.setItem(STORE_KEY, JSON.stringify(templates)); } catch (e) {} }
 
   var editingId = '';

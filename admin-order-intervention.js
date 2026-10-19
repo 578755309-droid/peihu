@@ -1,6 +1,8 @@
 (function () {
   var style = document.createElement('style');
   style.textContent = '.order-full-table .manual-op{display:inline-flex!important;align-items:center;height:26px;padding:0 8px!important;border:1px solid #BFD4F5!important;border-radius:6px!important;background:#F5F9FF!important;color:#1CD8B7!important}.intervention-mask{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(12,32,65,.42)}.intervention-mask.show{display:flex}.intervention-dialog{width:min(760px,calc(100vw - 48px));max-height:calc(100vh - 48px);display:flex;flex-direction:column;overflow:hidden;border-radius:16px;background:#fff;box-shadow:0 24px 60px rgba(12,33,73,.24)}.intervention-head{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid #D9F6EE}.intervention-eyebrow{margin-bottom:4px;color:#7290BA;font-size:12px;font-weight:800}.intervention-head h2{margin:0;color:#172033;font-size:20px;font-weight:900}.intervention-close{display:grid;place-items:center;width:32px;height:32px;border:0;border-radius:9px;background:#F2F6FC;color:#62738C;font-size:24px;line-height:1;cursor:pointer}.intervention-body{overflow-y:auto;padding:18px 24px 22px}.intervention-order{padding:12px 14px;border-radius:10px;background:#F5F9FF;color:#536882;font-size:12px;font-weight:700}.intervention-order b{color:#172033;font-size:13px}.intervention-options{display:flex;flex-wrap:wrap;gap:8px;padding:18px 0 12px}.intervention-option{height:34px;padding:0 12px;border:1px solid #CBF1E8;border-radius:8px;background:#fff;color:#53647B;font:700 12px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;cursor:pointer}.intervention-option.active{border-color:#1CD8B7;background:#EDF3FF;color:#1CD8B7;box-shadow:inset 0 0 0 1px #1CD8B7}.intervention-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:2px 0 16px}.intervention-field{display:flex;flex-direction:column;gap:7px}.intervention-field.full{grid-column:1/-1}.intervention-label{color:#64758D;font-size:12px;font-weight:800}.intervention-field input,.intervention-field select,.intervention-field textarea,#interventionRemark{width:100%;min-height:36px;border:1px solid #CBF1E8;border-radius:8px;padding:0 10px;background:#fff;color:#25364D;font:600 12px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;outline:none}.intervention-field textarea,#interventionRemark{height:72px;padding:9px 10px;resize:vertical}.intervention-field input:focus,.intervention-field select:focus,#interventionRemark:focus{border-color:#1CD8B7;box-shadow:0 0 0 3px rgba(28,216,183,.08)}#interventionRemark{margin-top:7px}.intervention-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;border-top:1px solid #D9F6EE}.intervention-tip{color:#8A9AB0;font-size:11px;font-weight:700}.intervention-cancel,.intervention-confirm{height:34px;padding:0 14px;border-radius:8px;font:800 12px -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;cursor:pointer}.intervention-cancel{margin-right:8px;border:1px solid #CBF1E8;background:#fff;color:#617188}.intervention-confirm{border:1px solid #1CD8B7;background:#1CD8B7;color:#fff}.intervention-toast{position:fixed;z-index:1010;left:50%;bottom:30px;display:none;transform:translateX(-50%);padding:10px 15px;border-radius:9px;background:#172033;color:#fff;font-size:12px;font-weight:700;box-shadow:0 8px 25px rgba(0,0,0,.2)}.intervention-toast.show{display:block}.intervention-refund{display:grid;gap:12px;margin-top:12px;padding:14px 16px;border:1px solid #D9F6EE;border-radius:12px;background:#FBFDFF}.intervention-refund-head{display:flex;align-items:center;gap:8px;color:#172033;font-size:13px;font-weight:900}.intervention-refund-head .badge{padding:2px 8px;border-radius:99px;background:#FEE2E2;color:#DC2626;font-size:11px;font-weight:800}.intervention-refund-head .time{margin-left:auto;color:#8A9AB0;font-size:11px;font-weight:700}.intervention-refund-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.intervention-refund-item{display:flex;flex-direction:column;gap:6px}.intervention-refund-item.full{grid-column:1/-1}.intervention-refund-item .k{color:#8A9AB0;font-size:11px;font-weight:800}.intervention-refund-item .v{color:#25364D;font-size:12px;font-weight:700;line-height:1.65;white-space:pre-wrap;word-break:break-word}.intervention-refund-item .v.amount{color:#DC2626;font-size:17px;font-weight:900}.intervention-photos{display:flex;flex-wrap:wrap;gap:8px}.intervention-photo{position:relative;width:86px;height:86px;border:1px solid #CBF1E8;border-radius:10px;overflow:hidden;background:#F2F6FC;cursor:zoom-in}.intervention-photo img{display:block;width:100%;height:100%;object-fit:cover}.intervention-photo span{position:absolute;left:0;right:0;bottom:0;padding:2px 0;background:rgba(12,32,65,.62);color:#fff;font-size:10px;font-weight:700;text-align:center}.intervention-photo-empty{padding:10px 12px;border:1px dashed #CBF1E8;border-radius:10px;background:#FBFDFF;color:#8A9AB0;font-size:12px;font-weight:700}.intervention-photo-tip{margin-top:6px;color:#8A9AB0;font-size:11px;font-weight:700}.intervention-lightbox{position:fixed;inset:0;z-index:1020;display:none;align-items:center;justify-content:center;padding:32px;background:rgba(8,22,48,.74)}.intervention-lightbox.show{display:flex}.intervention-lightbox img{max-width:min(760px,92vw);max-height:88vh;border-radius:12px;background:#fff;box-shadow:0 24px 60px rgba(0,0,0,.42)}';
+  /* 金额对比卡（4 列 grid） */
+  style.textContent += '.intervention-refund-compare{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 4px;padding:12px;border-radius:10px;background:#F7FBFE;border:1px dashed #D9F6EE}.intervention-refund-compare-item{text-align:center;padding:6px 2px;border-radius:8px;background:#fff;border:1px solid #E4FAF4}.intervention-refund-compare-item .k{font-size:11px;font-weight:800;color:#8A9AB0;margin-bottom:4px}.intervention-refund-compare-item .v{font-size:15px;font-weight:900;color:#172033;font-variant-numeric:tabular-nums}.intervention-refund-compare-item.primary{border-color:#1CD8B7;background:#EDFDF8}.intervention-refund-compare-item.primary .v{color:#1CD8B7;font-size:16px}.intervention-refund-compare-item.danger{border-color:#FEE2E2;background:#FEF2F2}.intervention-refund-compare-item.danger .v{color:#DC2626}';
   document.head.appendChild(style);
 
   document.body.insertAdjacentHTML('beforeend', '<div class="intervention-mask" id="interventionMask" aria-hidden="true"><section class="intervention-dialog" role="dialog" aria-modal="true" aria-labelledby="interventionTitle"><header class="intervention-head"><div><div class="intervention-eyebrow" id="interventionOrderNo">订单人工介入</div><h2 id="interventionTitle">选择处理操作</h2></div><button class="intervention-close" type="button" onclick="closeOrderIntervention()" aria-label="关闭">×</button></header><div class="intervention-body"><div class="intervention-order" id="interventionOrder"></div><div class="intervention-refund" id="interventionRefund" style="display:none"></div><div class="intervention-options" id="interventionOptions"></div><div class="intervention-form" id="interventionForm"></div><label class="intervention-label" id="interventionRemarkLabel" for="interventionRemark">处理说明</label><textarea id="interventionRemark" placeholder="请填写本次人工介入的原因或处理说明"></textarea></div><footer class="intervention-foot"><span class="intervention-tip">操作将记录管理员、处理时间与说明</span><div><button class="intervention-cancel" type="button" onclick="closeOrderIntervention()">取消</button><button class="intervention-confirm" type="button" onclick="submitOrderIntervention()">确认处理</button></div></footer></section></div><div class="intervention-toast" id="interventionToast"></div><div class="intervention-lightbox" id="interventionLightbox" onclick="this.classList.remove(\'show\')"><img id="interventionLightboxImg" alt="退款凭证预览"></div>');
@@ -97,6 +99,28 @@
   }
   function refundAmountValue() { return String(refundAppOf(activeOrder).amount || '').replace(/[^0-9.]/g, ''); }
 
+  /* 统一金额对比：付费 / 已使用 / 已退款 / 可退款 / 用户申请 */
+  function amountsOf(order) {
+    var paid = Number(String((order && order.amount) || '').replace(/[^0-9.]/g, '')) || 0;
+    var applied = Number(refundAmountValue()) || 0;
+    var used = 0;
+    var refunded = Number(String((order && (order.refundAmount || '')) || '').replace(/[^0-9.]/g, '')) || 0;
+    if (order) {
+      var st = order.state || '';
+      // 计次套餐订单（10 次等）已使用金额按次折算
+      var sessions = order.sessions && order.sessions.length ? order.sessions.length : 0;
+      var isPackage = sessions || (order.item && String(order.item).indexOf('套餐') > -1);
+      if (isPackage && sessions && paid) {
+        used = Number(((paid / 10) * sessions).toFixed(2));
+      } else if (st === '已完成' || st === '服务完成' || st === '已收货') {
+        used = paid;
+      }
+    }
+    var refundable = Math.max(0, Number((paid - used - refunded).toFixed(2)));
+    return { paid: paid, used: used, refunded: refunded, refundable: refundable, applied: applied };
+  }
+  function money(n) { return '¥' + Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
   function renderRefundInfo() {
     var box = document.getElementById('interventionRefund');
     if (!activeOrder || (activeOrder.state !== '退款/售后' && activeOrder.state !== '退款处理中')) {
@@ -105,13 +129,27 @@
       return;
     }
     var app = refundAppOf(activeOrder);
+    var amounts = amountsOf(activeOrder);
     var photos = app.photos || [];
     var photosHTML = photos.length
       ? '<div class="intervention-photos">' + photos.map(function (src, index) {
           return '<div class="intervention-photo" onclick="openRefundPhoto(\'' + esc(src) + '\')"><img src="' + esc(src) + '" alt="退款凭证 ' + (index + 1) + '"><span>凭证 ' + (index + 1) + '</span></div>';
         }).join('') + '</div><div class="intervention-photo-tip">点击缩略图可查看大图</div>'
       : '<div class="intervention-photo-empty">用户未上传凭证照片</div>';
+
+    /* 金额对比区（4 项） */
+    var compareItems = [
+      { k: '付费金额', v: money(amounts.paid), cls: '' },
+      { k: '已使用金额', v: money(amounts.used), cls: '' },
+      { k: '可退款金额', v: money(amounts.refundable), cls: 'primary' },
+      { k: '用户申请金额', v: money(amounts.applied), cls: amounts.applied > amounts.refundable ? 'danger' : '' }
+    ];
+    var compareHTML = '<div class="intervention-refund-compare">' + compareItems.map(function (it) {
+      return '<div class="intervention-refund-compare-item ' + it.cls + '"><div class="k">' + it.k + '</div><div class="v">' + it.v + '</div></div>';
+    }).join('') + '</div>';
+
     box.innerHTML = '<div class="intervention-refund-head">用户退款申请信息<span class="badge">待审核</span><span class="time">提交于 ' + esc(app.appliedAt) + '</span></div>' +
+      compareHTML +
       '<div class="intervention-refund-grid">' +
         '<div class="intervention-refund-item"><div class="k">退款原因</div><div class="v">' + esc(app.reason) + '</div></div>' +
         '<div class="intervention-refund-item"><div class="k">申请退款金额</div><div class="v amount">¥' + esc(app.amount) + '</div></div>' +

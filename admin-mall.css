@@ -3,6 +3,9 @@
 /* ── 指标卡 ── */
 .mall-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
 .mall-metric{background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 3px 16px rgba(0,0,0,0.1);padding:18px 20px;display:flex;align-items:center;gap:15px;cursor:default;transition:transform .15s,box-shadow .15s}
+.mall-metric.clickable{cursor:pointer}
+.mall-metric.clickable:hover{border-color:#1CD8B7;box-shadow:0 6px 20px rgba(28,216,183,.15);transform:translateY(-1px)}
+.mall-metric.active{border-color:#1CD8B7;background:#F2FCF9;box-shadow:inset 3px 0 0 #1CD8B7,0 4px 14px rgba(28,216,183,.18)}
 a.mall-metric{text-decoration:none;color:inherit}
 a.mall-metric:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,0.1)}
 .mm-ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex-shrink:0}

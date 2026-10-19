@@ -125,9 +125,23 @@
         else if(data.refundState||data.refundReason)ra={reason:data.refundReason,amount:data.refundAmount,maxAmount:data.refundMaxAmount,desc:data.refundRemark,photos:[],appliedAt:data.refundAppliedAt,state:data.refundState||'待审核',resolvedAt:data.refundResolvedAt||''};
         if(!ra){card.style.display='none';return;}
         card.style.display='';
+        /* 金额对比 */
+        var _paid=Number(String(data.amount||'').replace(/[^0-9.]/g,''))||0;
+        var _applied=Number(String(ra.amount||'').replace(/[^0-9.]/g,''))||0;
+        var _refunded=Number(String(data.refundAmount||'').replace(/[^0-9.]/g,''))||0;
+        var _used=0;
+        var _sessions=data.sessions&&data.sessions.length?data.sessions.length:0;
+        var _isPkg=_sessions||(data.item&&String(data.item).indexOf('套餐')>-1);
+        if(_isPkg&&_sessions&&_paid){_used=Number(((_paid/10)*_sessions).toFixed(2));}
+        else if(data.state==='已完成'||data.state==='服务完成'){_used=_paid;}
+        var _refundable=Math.max(0,Number((_paid-_used-_refunded).toFixed(2)));
+        function _fm(n){return '¥'+Number(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
         var html='<div class="info-grid">'
+          +info('付费金额',_fm(_paid))
+          +info('已使用金额',_fm(_used))
+          +info('可退款金额','<b style="color:#1CD8B7;font-weight:900">'+_fm(_refundable)+'</b>')
+          +info('用户申请金额',_fm(_applied)+(_applied>_refundable?' <span style="color:#DC2626;font-weight:800">⚠ 超可退</span>':''))
           +info('退款原因',ra.reason||'—')
-          +info('申请退款金额',ra.amount?('¥'+ra.amount):'—')
           +(ra.maxAmount?info('最大可退金额','¥'+ra.maxAmount):'')
           +info('申请时间',ra.appliedAt||'—')
           +info('审核状态',ra.state)

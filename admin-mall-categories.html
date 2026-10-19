@@ -12,7 +12,21 @@
   <script src="admin-mall-data.js"></script>
   <script defer src="admin-sidebar.js"></script>
   <style>
-    .catalog-layout{display:grid;grid-template-columns:300px 1fr;gap:18px}
+    .catalog-layout{position:relative;display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;transition:grid-template-columns .25s ease}
+    .catalog-layout.collapsed{grid-template-columns:0 minmax(0,1fr)}
+    .catalog-layout>.panel{min-width:0;min-height:0;display:flex;flex-direction:column}
+    .page{display:flex;flex-direction:column;overflow:hidden}
+    .page>.page-head,.page>.mall-metrics,.page>.mall-filter{flex-shrink:0}
+    .catalog-layout{flex:1;min-height:0}
+    .catalog-layout{align-items:start}
+    .catalog-layout .category-list{overflow:visible}
+    .catalog-layout .table-wrap{flex:1;min-height:0;height:calc(100vh - 380px)}
+    .catalog-layout.collapsed>.panel:first-child{border:0;padding:0;box-shadow:none;background:transparent;overflow:hidden;min-height:0}
+    .panel-collapse{position:fixed;z-index:30;top:180px;transform:none;width:28px;height:56px;border:1px solid var(--border);border-radius:0 8px 8px 0;background:#fff;color:var(--text2);cursor:pointer;display:grid;place-items:center;font-size:14px;line-height:1;box-shadow:2px 0 8px rgba(0,0,0,.06);left:calc(220px + 300px - 28px)}
+.panel-collapse:hover{color:#1CD8B7;border-color:#1CD8B7;box-shadow:2px 0 12px rgba(28,216,183,.2)}
+.panel-collapse .arrow{display:inline-block;transition:transform .25s ease}
+.catalog-layout.collapsed .panel-collapse{left:220px}
+.catalog-layout.collapsed .panel-collapse .arrow{transform:rotate(180deg)}
     .category-list{padding:10px;max-height:560px;overflow-y:auto}
     .category-item{padding:14px;border-radius:10px;cursor:pointer;border:1px solid transparent;margin-bottom:6px;transition:all .12s}
     .category-item:hover{background:#F5F8FF}
@@ -31,6 +45,8 @@
     .pt-badge.off{background:#FEE2E2;color:#DC2626}
     .pt-sub{font-size:11px;color:#9AA7BA;margin-top:3px;font-weight:700}
     .ck{width:15px;height:15px;accent-color:#1CD8B7;cursor:pointer}
+    .th-tip{display:inline-grid;place-items:center;width:15px;height:15px;margin-left:4px;border-radius:50%;background:#E2E8F0;color:#64748B;font-size:10px;font-weight:900;cursor:pointer;vertical-align:-2px}
+    .th-tip:hover{background:#1CD8B7;color:#fff}
     .sel-chip{display:none;align-items:center;gap:8px;padding:5px 12px;border-radius:14px;background:#DDF7F1;color:#1CD8B7;font-size:12px;font-weight:800}
     .sel-chip.show{display:inline-flex}
     .sel-chip button{border:0;background:none;color:#1CD8B7;font:700 12px inherit;cursor:pointer;text-decoration:underline}
@@ -119,7 +135,7 @@
           </div>
           <div class="category-list" id="categoryList"></div>
         </section>
-
+        <button class="panel-collapse" onclick="toggleCategoryLayout('mallCatCollapsed')" title="收起/展开分类面板"><span class="arrow">▶</span></button>
         <!-- 右：商品管理 -->
         <section class="panel">
           <div class="panel-head" style="padding:18px 20px;border-bottom:1px solid #E4FAF4;display:flex;align-items:center;justify-content:space-between">
@@ -129,9 +145,9 @@
             </div>
           </div>
           <div class="cat-empty-tip" id="offTip" style="display:none">该分类已停用，小程序商城顶部入口已隐藏；重新上架分类即可恢复展示。</div>
-          <div class="table-wrap mall-table-wrap" style="border:0;box-shadow:none;border-radius:0;overflow-x:auto">
-            <table class="table mall-table" style="min-width:1100px">
-              <thead><tr><th style="width:36px"><input type="checkbox" class="ck" id="ckAll" onchange="toggleAll(this)"></th><th>商品信息</th><th>分类</th><th>售价</th><th>库存</th><th>已售</th><th>积分抵扣</th><th>排序</th><th>状态</th><th>操作</th></tr></thead>
+          <div class="table-wrap mall-table-wrap" style="overflow:auto;background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08)">
+            <table class="table mall-table" style="min-width:1200px" data-sticky-left="3" data-sticky-right="1" data-sticky-min="1400">
+              <thead><tr><th style="width:36px"><input type="checkbox" class="ck" id="ckAll" onchange="toggleAll(this)"></th><th>商品编号</th><th>商品信息</th><th>分类</th><th>售价</th><th>库存<span class="th-tip" onclick="showToast('绿色为正常，橙色为库存预警')">?</span></th><th>已售</th><th>积分抵扣</th><th>排序</th><th>状态</th><th>操作</th></tr></thead>
               <tbody id="rows"></tbody>
             </table>
             <div class="empty-state" id="emptyState" style="display:none">没有符合条件的商品</div>
@@ -238,10 +254,10 @@
       </div>
       <div class="form-2col">
         <div class="field"><label>上架状态</label><select id="pStatus"><option value="on">立即上架</option><option value="off">暂下架（小程序端隐藏）</option></select></div>
-        <div class="field"><label>实际已售（系统统计，只读）</label><input id="pActualSales" type="number" readonly style="background:#F2FCF9" /></div>
       </div>
       <div class="form-2col">
-        <div class="field"><label>已售基数</label><input id="pManualSales" type="number" min="0" step="1" /></div>
+        <div class="field"><label>实际已售（系统统计，只读）</label><input id="pActualSales" type="number" readonly style="background:#F2FCF9" /></div>
+        <div class="field"><label>已售基数<span style="color:#8F9BB0;font-weight:500;margin-left:6px">· 对外展示 = 已售基数 + 实际已售</span></label><input id="pManualSales" type="number" min="0" step="1" /></div>
       </div>
       <div class="form-2col">
         <div class="field"><label>积分抵扣</label><select id="pPointsDeduct"><option value="follow">跟随全局规则</option><option value="on">开启（可使用积分抵扣）</option><option value="off">关闭（不可使用积分抵扣）</option></select></div>
@@ -258,7 +274,7 @@
 
 <!-- 商品预览弹窗 -->
 <div class="modal-mask" id="previewModal" onclick="if(event.target===this)closePreview()">
-  <div class="modal" style="width:800px;max-width:92vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden">
+  <div class="modal" style="width:50vw;max-width:92vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden">
     <div class="modal-head">
       <div class="modal-title">预览效果</div>
       <button class="modal-close" onclick="closePreview()">&times;</button>
@@ -281,6 +297,21 @@
   .preview-nav{height:44px;display:flex;align-items:center;justify-content:center;background:#fff;border-bottom:1px solid #EDE9F5;position:relative;font-size:15px;font-weight:800;color:#172033}
   .preview-nav .back{position:absolute;left:12px;width:28px;height:28px;border-radius:8px;background:#DDF7F1;color:#1CD8B7;display:grid;place-items:center;font-size:18px;font-weight:800}
   .preview-body{padding:12px}
+.pv2-body{background:#F5F6FA;min-height:320px}
+.pv2-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(23,32,51,.06)}
+.pv2-img{width:100%;height:180px;background:#F3EDFB;display:grid;place-items:center;overflow:hidden}
+.pv2-img img{width:100%;height:100%;object-fit:cover;display:block}
+.pv2-ph{color:#B794E8;font-size:11px;font-weight:700}
+.pv2-name{padding:12px 12px 0;font-size:15px;font-weight:800;color:#172033}
+.pv2-sub{padding:4px 12px 0;font-size:12px;color:#9AA7BA}
+.pv2-points{display:flex;justify-content:space-between;align-items:center;padding:8px 12px 0}
+.pv2-off{color:#F59E0B;font-weight:800;font-size:12px}
+.pv2-mypoints{font-size:10px;color:#F59E0B;background:#FEF3C7;border-radius:10px;padding:2px 8px}
+.pv2-foot{display:flex;align-items:center;padding:8px 12px 12px}
+.pv2-price{color:#F59E0B;font-weight:900;font-size:18px}
+.pv2-qi{color:#F59E0B;font-size:11px;font-weight:700;margin-left:2px}
+.pv2-sales{color:#9AA7BA;font-size:11px;margin-left:6px}
+.pv2-add{margin-left:auto;width:26px;height:26px;border-radius:50%;background:#F59E0B;color:#fff;display:grid;place-items:center;font-size:16px;font-weight:800;line-height:1}
   .preview-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.1);border:1px solid rgba(237,233,245,.6);margin-bottom:12px}
   .preview-card-img{width:100%;height:130px;background:#F0E9FA;display:grid;place-items:center;position:relative;overflow:hidden}
   .preview-card-img img{width:100%;height:100%;object-fit:cover}
@@ -300,12 +331,53 @@
   .preview-section{margin-top:12px;padding:14px;border-radius:12px;background:#fff}
   .preview-section-title{font-size:13px;font-weight:900;color:#172033;margin-bottom:8px}
   .preview-section-content{font-size:12px;color:#6B6880;line-height:1.6}
+  .preview-section-content img{max-width:100%;height:auto}
+  #pDetailArea img{max-width:100%;height:auto}
 </style>
 
 <script>
+/* 左分类面板收起/展开（状态持久化到 localStorage） */
+window.toggleCategoryLayout=function(key){
+  var layout=document.querySelector('.catalog-layout');if(!layout)return;
+  layout.classList.toggle('collapsed');
+  try{localStorage.setItem(key,layout.classList.contains('collapsed')?'1':'0');}catch(e){}
+};
+(function initMallLayout(){
+  try{if(localStorage.getItem('mallCatCollapsed')==='1'){setTimeout(function(){var l=document.querySelector('.catalog-layout');if(l)l.classList.add('collapsed');},0);}}catch(e){}
+})();
 (function () {
   var M = window.AKBMallAdmin;
+  /* 自动生成商品编号：SP + 5 位递增，持久化序号 */
+  var CODE_SEQ_KEY = 'akb_mall_product_code_seq_v1';
+  function genNextCode() {
+    var seq = 10000;
+    try { seq = parseInt(localStorage.getItem(CODE_SEQ_KEY) || '10000', 10); } catch (e) {}
+    seq += 1;
+    localStorage.setItem(CODE_SEQ_KEY, String(seq));
+    return 'SP' + String(seq);
+  }
+  function ensureCodes(list) {
+    var needSave = false;
+    var maxSeq = 10000;
+    list.forEach(function (p) {
+      if (p.code) {
+        var m = /SP(\d+)/.exec(p.code);
+        if (m) { var n = parseInt(m[1], 10); if (n > maxSeq) maxSeq = n; }
+      } else {
+        p.code = genNextCode();
+        needSave = true;
+      }
+    });
+    /* 序号至少推进到 maxSeq + 1，避免新生成的编号与已有重复 */
+    try {
+      var cur = parseInt(localStorage.getItem(CODE_SEQ_KEY) || '10000', 10);
+      if (cur < maxSeq) localStorage.setItem(CODE_SEQ_KEY, String(maxSeq));
+    } catch (e) {}
+    return needSave;
+  }
+
   var products = M.getProducts(true);
+  if (ensureCodes(products)) { persistProducts(); } /* 历史存量商品补编号后持久化 */
   var categories = M.getCategories();
   var selectedId = categories[0] ? categories[0].id : '';
   var editingId = '';
@@ -337,7 +409,7 @@
   function stockCell(p) {
     if (p.status === 'off') return '<span class="stock-ok" style="color:#94A3B8">—</span>';
     if (p.stock <= 0) return '<span class="stock-out">缺货</span>';
-    if (p.stock < 30) return '<span class="stock-warn">' + p.stock + ' · 预警</span>';
+    if (p.stock < 30) return '<span class="stock-warn">' + p.stock + '</span>';
     return '<span class="stock-ok">' + p.stock + '</span>';
   }
 
@@ -452,10 +524,10 @@
   function pointsCell(p) {
     var cfg = window.AKBPointsAdmin.getConfig();
     var mode = p.pointsDeduct || 'follow';
-    var on = mode === 'on' ? true : mode === 'off' ? false : cfg.mallEnabled;
     var cap = p.pointsCap != null ? p.pointsCap : cfg.mallCapPercent;
-    if (!on) return '<span class="pt-badge off">关闭</span><div class="pt-sub">' + (mode === 'off' ? '单品关闭，不可抵扣' : '跟随全局（全局未开启）') + '</div>';
-    return '<span class="pt-badge on">开启</span><div class="pt-sub">' + (mode === 'follow' ? '跟随全局' : '单品设置') + ' · 上限 ' + cap + '%</div>';
+    if (mode === 'off') return '<span style="color:#94A3B8">禁用</span>';
+    if (mode === 'follow') return cfg.mallEnabled ? ('跟随全局 · 上限 ' + cap + '%') : '跟随全局（全局未开启）';
+    return '启用 · 上限 ' + cap + '%';
   }
 
   function syncSelectionUi() {
@@ -517,17 +589,18 @@
     document.getElementById('rows').innerHTML = list.map(function (p) {
       return '<tr>' +
         '<td><input type="checkbox" class="ck" ' + (selected[p.id] ? 'checked' : '') + ' onchange="toggleSel(\'' + M.esc(p.id) + '\', this.checked)"></td>' +
+        '<td><span style="font-family:Menlo,Consolas,monospace;color:#1CD8B7;font-weight:800;font-size:12px">#' + M.esc(p.code || '—') + '</span></td>' +
         '<td><div class="pdt-cell">' + thumb(p) +
-          '<div style="min-width:0"><div class="pdt-name">' + M.esc(p.name) + (p.badge ? '<span class="pdt-badge">' + M.esc(p.badge) + '</span>' : '') + '</div>' +
-          '<div class="pdt-sub">' + M.esc(p.sub || '—') + '</div></div></div></td>' +
+          '<div style="min-width:0"><div class="pdt-name">' + M.esc(p.name) + '</div></div></div></td>' +
         '<td><span class="cat-chip">' + M.esc(M.categoryName(p.category)) + '</span></td>' +
         '<td class="price-cell">' + M.money(p.price) + '</td>' +
         '<td>' + stockCell(p) + '</td>' +
-        '<td><div style="font-weight:700;color:#172033">' + ((p.manualSales || 0) + (p.actualSales || 0)) + ' 件</div><div class="pt-sub">已售基数 ' + (p.manualSales || 0) + ' + 实际已售 ' + (p.actualSales || 0) + '</div></td>' +
+        '<td><div style="font-weight:700;color:#172033">' + (p.actualSales || 0) + '</div></td>' +
         '<td>' + pointsCell(p) + '</td>' +
         '<td style="color:#657087;font-weight:700">' + p.sort + '</td>' +
         '<td><button class="status-btn ' + p.status + '" onclick="toggleStatus(\'' + M.esc(p.id) + '\')">' + (p.status === 'on' ? '已上架' : '已下架') + '</button></td>' +
         '<td><div class="op"><button onclick="openProductModal(\'' + M.esc(p.id) + '\')">编辑</button>' +
+          '<button onclick="previewProductById(\'' + M.esc(p.id) + '\')">预览</button>' +
           '<button onclick="toggleStatus(\'' + M.esc(p.id) + '\')">' + (p.status === 'on' ? '下架' : '上架') + '</button>' +
           '<button class="danger" style="color:#DC2626" onclick="removeProduct(\'' + M.esc(p.id) + '\')">删除</button></div></td>' +
       '</tr>';
@@ -579,14 +652,12 @@
   window.pInsertImageUrl = function () {
     var url = window.prompt('请输入图片链接（https://…）', 'https://');
     if (!url || url === 'https://') return;
-    pCmd('insertImage', url);
+    pCmd('insertHTML', '<img src="' + String(url).replace(/"/g, '&quot;') + '" style="max-width:100%;height:auto">');
   };
   window.pInsertImageFile = function (input) {
     var file = input.files && input.files[0];
     if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function () { pCmd('insertImage', reader.result); };
-    reader.readAsDataURL(file);
+    window.akbFitImage(file, function (src) { pCmd('insertHTML', '<img src="' + src + '" style="max-width:100%;height:auto">'); });
     input.value = '';
   };
 
@@ -674,6 +745,7 @@
       if (p) { data.id = p.id; data.icon = p.icon || 'generic'; Object.assign(p, data); }
     } else {
       data.id = 'p-' + Date.now();
+      data.code = data.code || genNextCode(); /* 新增商品自动编号 */
       products.push(data);
     }
     persistProducts(); closeProductModal(); renderMetrics(); render(); renderCategories();
@@ -703,6 +775,20 @@
     renderPreview(name, sub, price, sales, detail, cover);
   };
 
+  window.previewProductById = function(id) {
+    var p = products.filter(function(x) { return x.id === id; })[0];
+    if (!p) return;
+    var name = p.name || '商品名称';
+    var sub = p.sub || '';
+    var price = p.price || '0';
+    var sales = ((p.manualSales || 0) + (p.actualSales || 0));
+    var detail = p.detailHtml || '';
+    var cover = (p.coverGallery && p.coverGallery.length) ? p.coverGallery[0] : (p.cover || '');
+    switchPreviewTab('list');
+    document.getElementById('previewModal').classList.add('show');
+    renderPreview(name, sub, price, sales, detail, cover);
+  };
+
   window.closePreview = function() {
     document.getElementById('previewModal').classList.remove('show');
   };
@@ -724,19 +810,16 @@
     var html = '<div class="preview-phone">';
     html += '<div class="preview-status">9:41</div>';
     if (isList) {
+      var pvSales=(function(n){n=Number(n)||0;return n>=10000?((n/10000).toFixed(1).replace(/\.0$/,'')+'万+'):String(n);})(sales);
       html += '<div class="preview-nav">商城</div>';
-      html += '<div class="preview-body">';
-      html += '<div class="preview-card">';
-      html += '<div class="preview-card-img">';
-      if (cover) { html += '<img src="' + cover + '" alt="">'; } else { html += '<span class="placeholder">封面图</span>'; }
-      html += '</div>';
-      html += '<div class="preview-card-info">';
-      html += '<div class="preview-card-name">' + name.replace(/</g,'&lt;') + '</div>';
-      html += '<div class="preview-card-sub">' + sub.replace(/</g,'&lt;') + '</div>';
-      html += '<div class="preview-card-foot">';
-      html += '<span class="preview-card-price">¥' + price + '</span>';
-      html += '<span class="preview-card-sales">已售 ' + sales + '</span>';
-      html += '</div></div></div></div>';
+      html += '<div class="preview-body pv2-body">';
+      html += '<div class="pv2-card">';
+      html += '<div class="pv2-img">' + (cover ? '<img src="' + cover + '" alt="">' : '<span class="pv2-ph">封面图</span>') + '</div>';
+      html += '<div class="pv2-name">' + name.replace(/</g,'&lt;') + '</div>';
+      html += '<div class="pv2-sub">' + sub.replace(/</g,'&lt;') + '</div>';
+      html += '<div class="pv2-points"><span class="pv2-off">积分立减30%</span><span class="pv2-mypoints">我的积分30 ›</span></div>';
+      html += '<div class="pv2-foot"><span class="pv2-price">¥' + price + '</span><span class="pv2-qi">起</span><span class="pv2-sales">已售' + pvSales + '</span><span class="pv2-add">+</span></div>';
+      html += '</div></div>';
     } else {
       html += '<div class="preview-nav"><span class="back">‹</span>商品详情</div>';
       html += '<div class="preview-detail-hero">';

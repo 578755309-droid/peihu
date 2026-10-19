@@ -24,7 +24,9 @@
     .field{margin-bottom:14px}.field label{display:block;font-size:12px;color:#5f6f88;font-weight:800;margin-bottom:6px}.field input[type=text],.field input[type=url]{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font:inherit;font-size:13px;color:var(--ink);background:#fbfdff;outline:none}.field input:focus{border-color:var(--blue)}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field-tip{font-size:11px;color:#94a3b8;margin-top:5px;line-height:1.5}
     .mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}.mode-tab{border:1.5px solid var(--line);border-radius:11px;padding:12px 14px;cursor:pointer;background:#fbfdff;transition:border-color .15s,background .15s}.mode-tab.on{border-color:var(--blue);background:#f2f7ff}.mode-tab-title{font-size:13px;font-weight:900;display:flex;align-items:center;gap:7px}.mode-tab-title svg{width:16px;height:16px;color:var(--blue)}.mode-tab-desc{margin-top:5px;font-size:11px;color:#8b99ad;line-height:1.5}
     /* 富文本编辑器 */
-    .editor{border:1px solid var(--line);border-radius:11px;overflow:hidden}.editor:focus-within{border-color:var(--blue)}.toolbar{display:flex;flex-wrap:wrap;gap:4px;padding:8px 10px;border-bottom:1px solid #e7eef8;background:#F2FCF9}.toolbar button{min-width:30px;height:30px;padding:0 8px;border:1px solid transparent;border-radius:7px;background:none;color:#41536d;font:800 12px inherit;cursor:pointer}.toolbar button:hover{background:#DDF7F1;border-color:#cfe1f6}.toolbar .sep{width:1px;background:#D2F5EB;margin:4px 3px}.editor-area{min-height:220px;max-height:340px;overflow:auto;padding:14px 16px;font-size:13px;line-height:1.8;color:var(--ink);outline:none;background:#fff}.editor-area:empty:before{content:attr(data-ph);color:#a3b0c2}.editor-area img{max-width:100%;border-radius:8px;margin:6px 0}.editor-area h2{font-size:17px;margin:12px 0 6px}.editor-area h3{font-size:15px;margin:10px 0 5px}.editor-area ul,.editor-area ol{padding-left:22px;margin:6px 0}.editor-area blockquote{border-left:3px solid var(--blue);margin:8px 0;padding:4px 12px;background:#F2FCF9;color:#5b6b83}
+    .editor{border:1px solid var(--line);border-radius:11px;overflow:hidden}.editor:focus-within{border-color:var(--blue)}.toolbar{display:flex;flex-wrap:wrap;gap:4px;padding:8px 10px;border-bottom:1px solid #e7eef8;background:#F2FCF9}.toolbar button{min-width:30px;height:30px;padding:0 8px;border:1px solid transparent;border-radius:7px;background:none;color:#41536d;font:800 12px inherit;cursor:pointer}.toolbar button:hover{background:#DDF7F1;border-color:#cfe1f6}.toolbar .sep{width:1px;background:#D2F5EB;margin:4px 3px}.editor-area{min-height:220px;max-height:340px;overflow:auto;padding:14px 16px;font-size:13px;line-height:1.8;color:var(--ink);outline:none;background:#fff}
+    .editor-area img{max-width:100%;height:auto}
+    .pv-body img{max-width:100%;height:auto}.editor-area:empty:before{content:attr(data-ph);color:#a3b0c2}.editor-area img{max-width:100%;border-radius:8px;margin:6px 0}.editor-area h2{font-size:17px;margin:12px 0 6px}.editor-area h3{font-size:15px;margin:10px 0 5px}.editor-area ul,.editor-area ol{padding-left:22px;margin:6px 0}.editor-area blockquote{border-left:3px solid var(--blue);margin:8px 0;padding:4px 12px;background:#F2FCF9;color:#5b6b83}
     .link-preview{margin-top:10px;padding:12px 14px;border:1px dashed #cfe1f6;border-radius:10px;background:#F2FCF9;font-size:12px;color:#5b6b83;line-height:1.6}.link-preview b{color:var(--blue);word-break:break-all}
     /* 封面图（240×160） */
     .cover-row{display:flex;gap:14px;align-items:flex-start}.cover-box{width:240px;height:160px;border:1.5px dashed #cfe1f6;border-radius:12px;background:#F2FCF9;display:grid;place-items:center;overflow:hidden;flex-shrink:0}.cover-box img{width:100%;height:100%;object-fit:cover;display:block}
@@ -200,14 +202,12 @@ window.clearCover=function(){setCovers([]);};
     window.insertImageUrl=function(){
       var url=window.prompt('请输入图片链接（https://…）','https://');
       if(!url||url==='https://')return;
-      cmd('insertImage',url);
+      cmd('insertHTML','<img src="'+String(url).replace(/"/g,'&quot;')+'" style="max-width:100%;height:auto">');
     };
     window.insertImageFile=function(input){
       var file=input.files&&input.files[0];
       if(!file)return;
-      var reader=new FileReader();
-      reader.onload=function(){cmd('insertImage',reader.result);toast('图片已插入正文');};
-      reader.readAsDataURL(file);
+      window.akbFitImage(file,function(src){cmd('insertHTML','<img src="'+src+'" style="max-width:100%;height:auto">');toast('图片已插入正文');});
       input.value='';
     };
     window.renderLinkPreview=function(){

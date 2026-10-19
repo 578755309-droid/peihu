@@ -149,7 +149,17 @@
       if (!show) { card.style.display = 'none'; return; }
       card.style.display = '';
       var type = o.refundType === 'instant' ? '未发货退款（系统自动退）' : o.refundType === 'manual' ? '退货退款（人工审核）' : '—';
+      /* 金额对比 */
+      var _paid = Number(String(o.amount || '').replace(/[^0-9.]/g, '')) || 0;
+      var _applied = Number(String(o.refundAmount || '').replace(/[^0-9.]/g, '')) || 0;
+      var _refunded = (o.state === '已退款') ? _applied : 0;
+      var _used = (o.state === '已完成' || o.state === '已收货') ? _paid : 0;
+      var _refundable = Math.max(0, Number((_paid - _used - _refunded).toFixed(2)));
       var html = '<div class="info-grid">'
+        + info('付费金额', M.money(_paid))
+        + info('已使用金额', M.money(_used))
+        + info('可退款金额', '<b style="color:#1CD8B7;font-weight:900">' + M.money(_refundable) + '</b>')
+        + info('用户申请金额', M.money(_applied) + (_applied > _refundable ? ' <span style="color:#DC2626;font-weight:800">⚠ 超可退</span>' : ''))
         + info('售后类型', type)
         + info('售后状态', o.refundState || (o.state === '退款/售后' ? '待审核' : o.state === '已退款' ? '已退款' : '—'))
         + info('退款原因', o.refundReason || '—')

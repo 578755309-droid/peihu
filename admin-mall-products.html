@@ -14,6 +14,8 @@
     .pt-badge.off{background:#FEE2E2;color:#DC2626}
     .pt-sub{font-size:11px;color:#9AA7BA;margin-top:3px;font-weight:700}
     .ck{width:15px;height:15px;accent-color:#1CD8B7;cursor:pointer}
+    .th-tip{display:inline-grid;place-items:center;width:15px;height:15px;margin-left:4px;border-radius:50%;background:#E2E8F0;color:#64748B;font-size:10px;font-weight:900;cursor:pointer;vertical-align:-2px}
+    .th-tip:hover{background:#1CD8B7;color:#fff}
     /* 序号/勾选/商品信息 左侧固定，操作 右侧固定 */
     .mall-table .stk-l1,.mall-table .stk-l2,.mall-table .stk-l3,.mall-table .stk-r{position:sticky;z-index:2}
     .mall-table .stk-l1{left:0;width:48px;padding:0 6px;text-align:center}
@@ -53,6 +55,7 @@
     .rich-toolbar button:hover{background:#DDF7F1;border-color:#CFE1F6}
     .rich-toolbar .sep{width:1px;background:#D2F5EB;margin:4px 3px}
     .rich-area{min-height:180px;max-height:300px;overflow:auto;padding:12px 14px;font-size:13px;line-height:1.8;color:#172033;outline:none}
+.rich-area img{max-width:100%;height:auto}
     .rich-area:empty:before{content:attr(data-ph);color:#A3B0C2}
     .rich-area img{max-width:100%;border-radius:8px;margin:6px 0}
     .rich-area h2{font-size:17px;margin:12px 0 6px}
@@ -108,7 +111,7 @@
       <!-- 表格 -->
       <div class="table-wrap mall-table-wrap">
         <table class="table mall-table" style="min-width:1240px" data-sticky="done">
-          <thead><tr><th class="stk-l1">序号</th><th class="stk-l2"><input type="checkbox" class="ck" id="ckAll" onchange="toggleAll(this)"></th><th class="stk-l3">商品信息</th><th>分类</th><th>售价</th><th>库存</th><th>已售</th><th>积分抵扣</th><th>排序</th><th>状态</th><th class="stk-r">操作</th></tr></thead>
+          <thead><tr><th class="stk-l1">序号</th><th class="stk-l2"><input type="checkbox" class="ck" id="ckAll" onchange="toggleAll(this)"></th><th class="stk-l3">商品信息</th><th>分类</th><th>售价</th><th>库存<span class="th-tip" onclick="showToast('绿色为正常，橙色为库存预警')">?</span></th><th>已售</th><th>积分抵扣</th><th>排序</th><th>状态</th><th class="stk-r">操作</th></tr></thead>
           <tbody id="rows"></tbody>
         </table>
         <div class="empty-state" id="emptyState" style="display:none">没有符合条件的商品</div>
@@ -191,10 +194,10 @@
       </div>
       <div class="form-2col">
         <div class="field"><label>上架状态</label><select id="pStatus"><option value="on">立即上架</option><option value="off">暂下架（小程序端隐藏）</option></select></div>
-        <div class="field"><label>实际已售（系统统计，只读）</label><input id="pActualSales" type="number" readonly style="background:#F2FCF9" /></div>
       </div>
       <div class="form-2col">
-        <div class="field"><label>已售基数</label><input id="pManualSales" type="number" min="0" step="1" /></div>
+        <div class="field"><label>实际已售（系统统计，只读）</label><input id="pActualSales" type="number" readonly style="background:#F2FCF9" /></div>
+        <div class="field"><label>已售基数<span style="color:#8F9BB0;font-weight:500;margin-left:6px">· 对外展示 = 已售基数 + 实际已售</span></label><input id="pManualSales" type="number" min="0" step="1" /></div>
       </div>
       <div class="form-2col">
         <div class="field"><label>积分抵扣</label><select id="pPointsDeduct"><option value="follow">跟随全局规则</option><option value="on">开启（可使用积分抵扣）</option><option value="off">关闭（不可使用积分抵扣）</option></select></div>
@@ -249,7 +252,7 @@
   function stockCell(p) {
     if (p.status === 'off') return '<span class="stock-ok" style="color:#94A3B8">—</span>';
     if (p.stock <= 0) return '<span class="stock-out">缺货</span>';
-    if (p.stock < 30) return '<span class="stock-warn">' + p.stock + ' · 预警</span>';
+    if (p.stock < 30) return '<span class="stock-warn">' + p.stock + '</span>';
     return '<span class="stock-ok">' + p.stock + '</span>';
   }
 
@@ -295,10 +298,10 @@
   function pointsCell(p) {
     var cfg = window.AKBPointsAdmin.getConfig();
     var mode = p.pointsDeduct || 'follow';
-    var on = mode === 'on' ? true : mode === 'off' ? false : cfg.mallEnabled;
     var cap = p.pointsCap != null ? p.pointsCap : cfg.mallCapPercent;
-    if (!on) return '<span class="pt-badge off">关闭</span><div class="pt-sub">' + (mode === 'off' ? '单品关闭，不可抵扣' : '跟随全局（全局未开启）') + '</div>';
-    return '<span class="pt-badge on">开启</span><div class="pt-sub">' + (mode === 'follow' ? '跟随全局' : '单品设置') + ' · 上限 ' + cap + '%</div>';
+    if (mode === 'off') return '<span style="color:#94A3B8">禁用</span>';
+    if (mode === 'follow') return cfg.mallEnabled ? ('跟随全局 · 上限 ' + cap + '%') : '跟随全局（全局未开启）';
+    return '启用 · 上限 ' + cap + '%';
   }
 
   function syncSelectionUi() {
@@ -360,7 +363,7 @@
         '<td class="stk-l1 stk-idx">' + (i + 1) + '</td>' +
         '<td class="stk-l2"><input type="checkbox" class="ck" ' + (selected[p.id] ? 'checked' : '') + ' onchange="toggleSel(\'' + M.esc(p.id) + '\', this.checked)"></td>' +
         '<td class="stk-l3"><div class="pdt-cell">' + thumb(p) +
-          '<div style="min-width:0"><div class="pdt-name">' + M.esc(p.name) + (p.badge ? '<span class="pdt-badge">' + M.esc(p.badge) + '</span>' : '') + '</div>' +
+          '<div style="min-width:0"><div class="pdt-name">' + M.esc(p.name) + '</div>' +
           '<div class="pdt-sub">编号 ' + M.esc(p.code || '—') + '</div></div></div></td>' +
         '<td><span class="cat-chip">' + M.esc(M.categoryName(p.category)) + '</span></td>' +
         '<td class="price-cell">' + M.money(p.price) + '</td>' +
@@ -434,14 +437,12 @@ window.clearCover=function(){setCovers([]);};
   window.pInsertImageUrl = function () {
     var url = window.prompt('请输入图片链接（https://…）', 'https://');
     if (!url || url === 'https://') return;
-    pCmd('insertImage', url);
+    pCmd('insertHTML', '<img src="' + String(url).replace(/"/g, '&quot;') + '" style="max-width:100%;height:auto">');
   };
   window.pInsertImageFile = function (input) {
     var file = input.files && input.files[0];
     if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function () { pCmd('insertImage', reader.result); };
-    reader.readAsDataURL(file);
+    window.akbFitImage(file, function (src) { pCmd('insertHTML', '<img src="' + src + '" style="max-width:100%;height:auto">'); });
     input.value = '';
   };
 

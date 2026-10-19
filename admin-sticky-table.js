@@ -39,8 +39,10 @@
 
   var seq = 0;
 
-  function buildCss(cls, thCount, leftCount, right, lefts) {
+  function buildCss(cls, thCount, leftCount, rightCount, lefts, rights) {
     var s = '';
+    /* 表头纵向固定（所有 th 都 sticky top:0，z-index 低于左右固定的 th） */
+    s += '.' + cls + ' thead th{position:sticky;top:0;z-index:1;background:#F3FDFA}';
     if (leftCount > 0) {
       s += '.' + cls + ' thead th:nth-child(-n+' + leftCount + '){position:sticky;z-index:3;background:#F3FDFA}';
       s += '.' + cls + ' tbody td:nth-child(-n+' + leftCount + '):not([colspan]){position:sticky;z-index:2;background:#fff}';
@@ -50,9 +52,16 @@
       s += '.' + cls + ' thead th:nth-child(' + leftCount + '){' + SHADOW_L + '}';
       s += '.' + cls + ' tbody td:nth-child(' + leftCount + '):not([colspan]){' + SHADOW_L + '}';
     }
-    if (right) {
-      s += '.' + cls + ' thead th:nth-child(' + thCount + '){position:sticky;right:0;z-index:3;background:#F3FDFA;' + SHADOW_R + '}';
-      s += '.' + cls + ' tbody td:nth-child(' + thCount + '):not([colspan]){position:sticky;right:0;z-index:2;background:#fff;' + SHADOW_R + '}';
+    if (rightCount > 0) {
+      s += '.' + cls + ' thead th:nth-child(n+' + (thCount - rightCount + 1) + '){position:sticky;z-index:3;background:#F3FDFA}';
+      s += '.' + cls + ' tbody td:nth-child(n+' + (thCount - rightCount + 1) + '):not([colspan]){position:sticky;z-index:2;background:#fff}';
+      for (var j = 0; j < rightCount; j++) {
+        var colIdx = thCount - j; /* 1-based：最右列 right:0，向左依次累加偏移 */
+        s += '.' + cls + ' thead th:nth-child(' + colIdx + '),.' + cls + ' tbody td:nth-child(' + colIdx + '):not([colspan]){right:' + rights[j] + 'px}';
+      }
+      /* 最左的右固定列加阴影 */
+      s += '.' + cls + ' thead th:nth-child(' + (thCount - rightCount + 1) + '){' + SHADOW_R + '}';
+      s += '.' + cls + ' tbody td:nth-child(' + (thCount - rightCount + 1) + '):not([colspan]){' + SHADOW_R + '}';
     }
     return s;
   }
@@ -66,6 +75,17 @@
       sum += row.cells[i].offsetWidth || 0;
     }
     return lefts;
+  }
+  function measureRights(t, rightCount) {
+    var rights = [], sum = 0, j;
+    var row = t.tHead && t.tHead.rows[0];
+    if (!row) return null;
+    var n = row.cells.length;
+    for (j = 0; j < rightCount && j < n; j++) {
+      rights.push(sum);
+      sum += row.cells[n - 1 - j].offsetWidth || 0;
+    }
+    return rights;
   }
 
   function apply(table) {
@@ -83,7 +103,10 @@
       : cfg.left;
     leftCount = Math.max(0, Math.min(leftCount, ths.length - 1));
     var lastTh = ths[ths.length - 1];
-    var right = cfg.right && /操作/.test(lastTh.textContent || '');
+    var rightCount = table.hasAttribute('data-sticky-right')
+      ? parseInt(table.getAttribute('data-sticky-right'), 10) || 0
+      : (cfg.right && /操作/.test(lastTh.textContent || '') ? 1 : 0);
+    rightCount = Math.max(0, Math.min(rightCount, ths.length - leftCount - 1));
 
     var min = table.hasAttribute('data-sticky-min')
       ? parseInt(table.getAttribute('data-sticky-min'), 10) || 0
@@ -95,6 +118,9 @@
     if (wrap && wrap !== document.body) {
       var ws = getComputedStyle(wrap);
       if (ws.overflowX !== 'auto' && ws.overflowX !== 'scroll') wrap.style.overflowX = 'auto';
+      /* 纵向滚动条在表格容器内（表头 sticky top:0 才会生效） */
+      if (ws.overflowY !== 'auto' && ws.overflowY !== 'scroll') wrap.style.overflowY = 'auto';
+      if (!wrap.style.maxHeight) wrap.style.maxHeight = 'calc(100vh - 300px)';
     }
 
     table._akbStickyDone = true;
@@ -109,11 +135,12 @@
       var row = table.tHead && table.tHead.rows[0];
       if (!row) return;
       var lefts = measureLefts(table, leftCount);
-      if (!lefts) return;
-      var key = lefts.join(',') + '|' + ths.length;
+      var rights = measureRights(table, rightCount);
+      if (!lefts || !rights) return;
+      var key = lefts.join(',') + '|' + rights.join(',') + '|' + ths.length;
       if (styleEl._akbKey === key) return;
       styleEl._akbKey = key;
-      styleEl.textContent = buildCss(cls, row.cells.length, leftCount, right, lefts);
+      styleEl.textContent = buildCss(cls, row.cells.length, leftCount, rightCount, lefts, rights);
     }
     table._akbStickySync = sync;
     sync();

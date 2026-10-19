@@ -1,9 +1,12 @@
 /* Shared admin navigation shell */
 :root{--admin-nav:#002141;--admin-blue:#1CD8B7;--admin-sidebar-w:220px}
-body{min-width:1100px}
+body{min-width:1100px;height:100vh;overflow:hidden}
+.layout{display:flex;height:100vh;overflow:hidden}
 .sidebar{width:var(--admin-sidebar-w)!important;background:var(--admin-nav)!important;position:fixed!important;inset:0 auto 0 0!important;z-index:100!important;display:flex!important;flex-direction:column!important;color:#fff!important}
 .sidebar *{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
-.main{margin-left:var(--admin-sidebar-w)!important}
+.main{margin-left:var(--admin-sidebar-w)!important;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.topbar{flex-shrink:0}
+.page{flex:1;overflow:auto}
 .brand,.sb-logo{padding:24px 20px 20px!important;border-bottom:1px solid rgba(255,255,255,.08)!important}
 .brand-title,.sb-logo-title{font-size:18px!important;font-weight:900!important;color:#fff!important;letter-spacing:.3px}
 .brand-sub,.sb-logo-sub{font-size:11px!important;color:rgba(255,255,255,.45)!important;font-weight:600!important;margin-top:3px!important}

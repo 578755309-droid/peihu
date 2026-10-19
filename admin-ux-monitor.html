@@ -334,11 +334,13 @@
   }
 
   function removeKw(id) {
-    if (!confirm('确认删除该关键词？删除后仅启用中的关键词参与扫描。')) return;
-    U.removeKeyword(id);
-    renderKeywords();
-    renderStats();
-    renderHits();
+    showConfirm({ title: '删除关键词', message: '确认删除该关键词？删除后仅启用中的关键词参与扫描。', okText: '确认删除', danger: true }).then(function (ok) {
+      if (!ok) return;
+      U.removeKeyword(id);
+      renderKeywords();
+      renderStats();
+      renderHits();
+    });
   }
 
   function toggleKw(id) {

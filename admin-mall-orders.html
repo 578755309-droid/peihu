@@ -91,9 +91,9 @@
       </div>
 
       <!-- 表格：列结构与旧版订单管理商城订单一致 -->
-      <div class="table-wrap mall-table-wrap">
-        <table class="table mall-table" style="min-width:2580px">
-          <thead><tr><th>订单信息</th><th>商品</th><th>订单类型</th><th>收货人</th><th>收货地址</th><th>配送方式</th><th>下单时间</th><th>支付方式</th><th>应付金额</th><th>实付金额</th><th>积分抵扣</th><th>实收金额</th><th>支付完成时间</th><th>支付人</th><th>支付人电话</th><th>创建人</th><th>更新时间</th><th>备注</th><th>状态</th><th>操作</th></tr></thead>
+      <div class="table-wrap mall-table-wrap" data-ux-empty style="overflow:auto;max-height:calc(100vh - 320px);background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08)">
+        <table class="table mall-table" style="min-width:2700px" data-sticky-left="2" data-sticky-right="2" data-sticky-min="2900">
+          <thead><tr><th>订单信息</th><th>商品</th><th>订单类型</th><th>收货人</th><th>收货地址</th><th>配送方式</th><th>下单时间</th><th>支付方式</th><th>应付金额</th><th>实付金额</th><th>积分抵扣</th><th>实收金额</th><th>支付完成时间</th><th>支付人</th><th>支付人电话</th><th>创建人</th><th>更新时间</th><th>备注</th><th>退款时间</th><th>状态</th><th>操作</th></tr></thead>
           <tbody id="rows"></tbody>
         </table>
         <div class="empty-state" id="emptyState" style="display:none">暂无符合条件的订单</div>
@@ -154,6 +154,7 @@
       refundRemark: o.refundRemark || '',
       refundPhotos: o.refundPhotos || [],
       refundAppliedAt: o.refundAppliedAt || '',
+      refundAt: o.refundAt || '',
       refundAmount: o.refundAmount || '',
       state: STATE_TO_LEGACY[o.state] || o.state,
       _raw: o
@@ -174,21 +175,44 @@
   document.getElementById('topDate').textContent =
     (new Date()).getFullYear() + '年' + (new Date().getMonth() + 1) + '月' + new Date().getDate() + '日';
 
+  /* ── 顶部卡片过滤状态 ── */
+  let currentCard = null;
+  function mallCardFilter(o) {
+    if (!currentCard) return true;
+    if (currentCard === 'ship') return o.state === '待发货';
+    if (currentCard === 'confirm') return o.state === '配送中' || o.state === '待收货确认';
+    if (currentCard === 'refund') return o.state === '退款/售后' || o.state === '已退款';
+    return true;
+  }
+  function clearMallCardActive() { document.querySelectorAll('#metricCards .mall-metric').forEach(function (c) { c.classList.remove('active'); }); }
+  window.triggerMallCardFilter = function (f) {
+    currentCard = f;
+    current = 'all';
+    clearMallCardActive();
+    setTimeout(function () {
+      clearMallCardActive();
+      var card = document.querySelector('#metricCards .mall-metric[data-filter="' + f + '"]');
+      if (card) card.classList.add('active');
+    }, 0);
+    renderTabs();
+    render();
+  };
+
   /* ── 统计卡（基于数据层原始状态） ── */
   function renderMetrics() {
-    var all = M.getOrders();
-    var pay = all.filter(function (o) { return o.state === '待付款'; });
+    var all = window.ORDERS || [];
     var ship = all.filter(function (o) { return o.state === '待发货'; });
-    var refund = all.filter(function (o) { return o.state === '退款/售后'; });
-    var payAmount = pay.reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0);
+    var confirm = all.filter(function (o) { return o.state === '配送中' || o.state === '待收货确认'; });
+    var refund = all.filter(function (o) { return o.state === '退款/售后' || o.state === '已退款'; });
     var cards = [
-      { v: all.length, l: '订单总量', f: '商城全部订单', c: 'muted' },
-      { v: pay.length, l: '待付款订单', f: pay.length ? '待收款 ' + M.money(payAmount) : '暂无待付款', c: pay.length ? 'warn' : 'muted' },
-      { v: ship.length, l: '待发货订单', f: ship.length ? '请及时发货' : '无待发货', c: ship.length ? 'up' : 'muted' },
-      { v: refund.length, l: '退款/售后待处理', f: refund.length ? '需要人工介入' : '暂无售后', c: refund.length ? 'danger' : 'muted' }
+      { filter: 'ship', v: ship.length, l: '待发货', f: ship.length ? '请及时发货' : '无待发货', c: ship.length ? 'up' : 'muted' },
+      { filter: 'confirm', v: confirm.length, l: '待确认收货', f: confirm.length ? '等待用户确认' : '无待确认', c: confirm.length ? 'up' : 'muted' },
+      { filter: 'refund', v: refund.length, l: '退款/售后', f: refund.length ? '需要人工介入' : '暂无售后', c: refund.length ? 'danger' : 'muted' }
     ];
+    // 3 卡片布局
+    document.getElementById('metricCards').style.gridTemplateColumns = 'repeat(3,1fr)';
     document.getElementById('metricCards').innerHTML = cards.map(function (c) {
-      return '<div class="mall-metric"><div><div class="mm-val">' + c.v + '</div><div class="mm-lbl">' + c.l + '</div><div class="mm-foot ' + c.c + '">' + c.f + '</div></div></div>';
+      return '<div class="mall-metric clickable' + (currentCard === c.filter ? ' active' : '') + '" data-filter="' + c.filter + '" onclick="triggerMallCardFilter(\'' + c.filter + '\')"><div><div class="mm-val">' + c.v + '</div><div class="mm-lbl">' + c.l + '</div><div class="mm-foot ' + c.c + '">' + c.f + '</div></div></div>';
     }).join('');
   }
 
@@ -210,6 +234,7 @@
   }
 
   window.setTab = function (t) {
+    currentCard = null; clearMallCardActive();
     current = t;
     renderTabs(); render();
     var url = new URL(location.href);
@@ -264,13 +289,16 @@
     var orderType = raw.orderType || '普通订单';
     var ops = '<button onclick="location.href=\'admin-mall-order-detail.html?no=' + encodeURIComponent(order.no) + '\'">查看</button>' +
       (order.state === '已完成' ? '' : '<button onclick="openOrderIntervention(\'' + order.no + '\')">人工介入</button>');
+    /* 退款时间：有申请就显示申请时间 + 已退款时显示「完成 xx」；无退款显示 — */
+    var refundApplied = order.refundAppliedAt || (order.refundApp && order.refundApp.appliedAt) || '';
+    var refundCell = refundApplied ? esc(refundApplied) + ((order.state === '已退款' || order.refundAt) ? '<div class="sub">完成 ' + esc(order.refundAt || '—') + '</div>' : '') : '—';
     return '<tr class="mall-order-row">' +
       '<td><div class="order-no">' + esc(order.no) + '</div></td>' +
       '<td>' + (cat ? '<span class="mall-cat">' + esc(cat) + '</span>' : '') + '<div class="product-name">' + esc(order.product) + '</div><div class="sub">数量：' + esc(order.quantity) + ' 件</div></td>' +
       '<td><span class="order-type' + (orderType === '续费订单' ? ' renew' : '') + '">' + esc(orderType) + '</span></td>' +
       '<td><div class="person-name">' + esc(order.receiver) + '</div><div class="sub">' + esc(order.receiverPhone) + '</div></td>' +
       '<td class="location"><span class="address-type">收货地址</span><span class="address-detail">' + esc(order.address) + '</span></td>' +
-      '<td><div class="delivery-type">' + esc(order.deliveryType) + '</div><div class="sub">配送费：' + esc(order.deliveryFee) + '</div></td>' +
+      '<td><div class="delivery-type">' + esc(order.deliveryType) + '</div></td>' +
       '<td>' + esc(order.orderedAt) + '</td>' +
       '<td class="pay-cell">' + esc(pay.method) + '</td>' +
       '<td class="service pay-cell">' + esc(order.amount) + '</td>' +
@@ -283,6 +311,7 @@
       '<td class="pay-cell">' + esc(raw.creator || (raw.source === 'mini' ? '用户自主下单' : '管理员')) + '</td>' +
       '<td class="pay-cell">' + esc(raw.updatedAt || raw.createdAt || '—') + '</td>' +
       '<td class="note-cell">' + esc(raw.note || '—') + '</td>' +
+      '<td>' + refundCell + '</td>' +
       '<td><span class="tag ' + (TAG_CLASS[order.state] || '') + '">' + esc(order.state) + '</span></td>' +
       '<td><div class="op">' + ops + '</div></td>' +
     '</tr>';
@@ -294,6 +323,7 @@
     var dateRange = document.getElementById('fDate').value;
     var kw = document.getElementById('fSearch').value.trim().toLowerCase();
     var list = (window.ORDERS || []).filter(function (o) {
+      if (!mallCardFilter(o)) return false;
       if (current !== 'all' && o.state !== current) return false;
       if (distFilter && o._raw.distId !== distFilter) return false;
       if (product !== 'all' && !o._raw.items.some(function (i) { return i.name === product; })) return false;

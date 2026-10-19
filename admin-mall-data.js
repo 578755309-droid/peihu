@@ -19,15 +19,15 @@
 
   /* ── 默认商品（与小程序 mall.html 在售商品保持一致，扩展库存/销量/上下架） ── */
   var DEFAULT_PRODUCTS = [
-    { id: 'thermometer', name: '电子体温计', sub: '快速测温 · 大屏易读', category: 'measure', price: 39, badge: '居家常备', tone: 'purple', icon: 'thermometer', image: 'assets/mall/thermometer.png', desc: '适合家庭日常体温监测，读数清晰，操作简单。', points: ['测量便捷，适合老人和儿童使用', '蜂鸣提示，读数清晰易辨', '轻巧便携，方便家庭备用'], stock: 128, sales: 356, status: 'on', sort: 1 },
-    { id: 'infrared', name: '红外额温枪 / 耳温枪', sub: '非接触测温 · 一机两用', category: 'measure', price: 129, badge: '热销', tone: 'blue', icon: 'infrared', image: 'assets/mall/infrared-thermometer.png', desc: '支持额温与耳温测量，适合照护场景下快速了解体温变化。', points: ['非接触测量，减少交叉接触', '额温、耳温模式可切换', '夜间静音显示，使用更安心'], stock: 86, sales: 214, status: 'on', sort: 2 },
-    { id: 'bp', name: '电子血压计', sub: '上臂式无创血压计', category: 'measure', price: 239, badge: '无创监测', tone: 'blue', icon: 'bp', image: 'assets/mall/blood-pressure-monitor.png', desc: '上臂式设计，适合家庭日常血压记录与趋势观察。', points: ['上臂式测量，佩戴更稳定', '大屏显示血压与心率', '支持家庭成员数据记录'], stock: 42, sales: 168, status: 'on', sort: 3 },
-    { id: 'glucose', name: '血糖仪 + 血糖试纸', sub: '家用血糖监测套装', category: 'measure', price: 168, badge: '套装', tone: 'green', icon: 'glucose', image: 'assets/mall/glucose-meter.png', desc: '包含血糖仪与配套试纸，满足日常血糖监测需要。', points: ['采血量少，操作步骤清晰', '试纸独立包装，方便保存', '适合建立日常监测记录'], stock: 35, sales: 96, status: 'on', sort: 4 },
-    { id: 'oxygen', name: '家用制氧机', sub: '医用级 · 安静运行', category: 'care', price: 1599, badge: '医用级', tone: 'green', icon: 'oxygen', image: 'assets/mall/oxygen-concentrator.png', desc: '用于家庭氧疗场景的辅助设备，具体使用请遵医嘱。', points: ['医用级制氧能力', '运行声音低，适合居家使用', '配备基础雾化接口'], stock: 12, sales: 33, status: 'on', sort: 5 },
-    { id: 'nebulizer', name: '家用雾化器', sub: '细雾雾化 · 便携易收纳', category: 'care', price: 199, badge: '轻便', tone: 'purple', icon: 'nebulizer', image: 'assets/mall/nebulizer.png', desc: '适合家庭雾化护理场景，使用药液与频次请遵医嘱。', points: ['雾化颗粒细腻均匀', '操作简单，拆洗方便', '体积小，便于收纳携带'], stock: 58, sales: 120, status: 'on', sort: 6 },
-    { id: 'hearing', name: '助听器', sub: '轻巧隐形 · 日常交流辅助', category: 'care', price: 699, badge: '轻巧', tone: 'orange', icon: 'hearing', image: 'assets/mall/hearing-aid.png', desc: '帮助改善部分听力下降人群的日常交流体验，购买前建议先做听力评估。', points: ['轻巧佩戴，适合日常交流', '多档音量调节', '购买前建议进行专业听力评估'], stock: 24, sales: 41, status: 'on', sort: 7 },
-    { id: 'mask', name: '医用无菌口罩', sub: '医用外科 / 一次性使用', category: 'protection', price: 29, badge: '防护用品', tone: 'blue', icon: 'mask', image: 'assets/mall/medical-mask.png', desc: '医用外科口罩与一次性使用医用口罩可选，适合日常防护。', points: ['独立鼻梁条，贴合面部', '多层防护结构', '一次性使用，用后及时更换'], stock: 520, sales: 1280, status: 'on', sort: 8 },
-    { id: 'fetal', name: '家用胎心仪', sub: '胎心监护 · 孕期辅助', category: 'maternal', price: 299, badge: '母婴健康', tone: 'red', icon: 'fetal', image: 'assets/mall/fetal-monitor.png', desc: '用于孕期家庭胎心声音辅助监测，不能替代产检和医生判断。', points: ['便携机身，操作直观', '声音清晰，方便家属陪伴', '异常情况请及时就医检查'], stock: 30, sales: 52, status: 'on', sort: 9 }
+    { id: 'thermometer', code: 'SP10001', name: '电子体温计', sub: '快速测温 · 大屏易读', category: 'measure', price: 39, badge: '居家常备', tone: 'purple', icon: 'thermometer', image: 'assets/mall/thermometer.png', desc: '适合家庭日常体温监测，读数清晰，操作简单。', points: ['测量便捷，适合老人和儿童使用', '蜂鸣提示，读数清晰易辨', '轻巧便携，方便家庭备用'], stock: 128, sales: 356, status: 'on', sort: 1 },
+    { id: 'infrared', code: 'SP10002', name: '红外额温枪 / 耳温枪', sub: '非接触测温 · 一机两用', category: 'measure', price: 129, badge: '热销', tone: 'blue', icon: 'infrared', image: 'assets/mall/infrared-thermometer.png', desc: '支持额温与耳温测量，适合照护场景下快速了解体温变化。', points: ['非接触测量，减少交叉接触', '额温、耳温模式可切换', '夜间静音显示，使用更安心'], stock: 86, sales: 214, status: 'on', sort: 2 },
+    { id: 'bp', code: 'SP10003', name: '电子血压计', sub: '上臂式无创血压计', category: 'measure', price: 239, badge: '无创监测', tone: 'blue', icon: 'bp', image: 'assets/mall/blood-pressure-monitor.png', desc: '上臂式设计，适合家庭日常血压记录与趋势观察。', points: ['上臂式测量，佩戴更稳定', '大屏显示血压与心率', '支持家庭成员数据记录'], stock: 42, sales: 168, status: 'on', sort: 3 },
+    { id: 'glucose', code: 'SP10004', name: '血糖仪 + 血糖试纸', sub: '家用血糖监测套装', category: 'measure', price: 168, badge: '套装', tone: 'green', icon: 'glucose', image: 'assets/mall/glucose-meter.png', desc: '包含血糖仪与配套试纸，满足日常血糖监测需要。', points: ['采血量少，操作步骤清晰', '试纸独立包装，方便保存', '适合建立日常监测记录'], stock: 35, sales: 96, status: 'on', sort: 4 },
+    { id: 'oxygen', code: 'SP10005', name: '家用制氧机', sub: '医用级 · 安静运行', category: 'care', price: 1599, badge: '医用级', tone: 'green', icon: 'oxygen', image: 'assets/mall/oxygen-concentrator.png', desc: '用于家庭氧疗场景的辅助设备，具体使用请遵医嘱。', points: ['医用级制氧能力', '运行声音低，适合居家使用', '配备基础雾化接口'], stock: 12, sales: 33, status: 'on', sort: 5 },
+    { id: 'nebulizer', code: 'SP10006', name: '家用雾化器', sub: '细雾雾化 · 便携易收纳', category: 'care', price: 199, badge: '轻便', tone: 'purple', icon: 'nebulizer', image: 'assets/mall/nebulizer.png', desc: '适合家庭雾化护理场景，使用药液与频次请遵医嘱。', points: ['雾化颗粒细腻均匀', '操作简单，拆洗方便', '体积小，便于收纳携带'], stock: 58, sales: 120, status: 'on', sort: 6 },
+    { id: 'hearing', code: 'SP10007', name: '助听器', sub: '轻巧隐形 · 日常交流辅助', category: 'care', price: 699, badge: '轻巧', tone: 'orange', icon: 'hearing', image: 'assets/mall/hearing-aid.png', desc: '帮助改善部分听力下降人群的日常交流体验，购买前建议先做听力评估。', points: ['轻巧佩戴，适合日常交流', '多档音量调节', '购买前建议进行专业听力评估'], stock: 24, sales: 41, status: 'on', sort: 7 },
+    { id: 'mask', code: 'SP10008', name: '医用无菌口罩', sub: '医用外科 / 一次性使用', category: 'protection', price: 29, badge: '防护用品', tone: 'blue', icon: 'mask', image: 'assets/mall/medical-mask.png', desc: '医用外科口罩与一次性使用医用口罩可选，适合日常防护。', points: ['独立鼻梁条，贴合面部', '多层防护结构', '一次性使用，用后及时更换'], stock: 520, sales: 1280, status: 'on', sort: 8 },
+    { id: 'fetal', code: 'SP10009', name: '家用胎心仪', sub: '胎心监护 · 孕期辅助', category: 'maternal', price: 299, badge: '母婴健康', tone: 'red', icon: 'fetal', image: 'assets/mall/fetal-monitor.png', desc: '用于孕期家庭胎心声音辅助监测，不能替代产检和医生判断。', points: ['便携机身，操作直观', '声音清晰，方便家属陪伴', '异常情况请及时就医检查'], stock: 30, sales: 52, status: 'on', sort: 9 }
   ];
 
   /* ── 订单状态模型 ── */
@@ -76,6 +76,11 @@
       payer: meta.payer || userName,
       payerPhone: meta.payerPhone || userPhone,
       creator: meta.creator || '用户自主下单',
+      /* 退款状态下自动注入演示数据，供后台退款时间列 / 退款详情使用 */
+      refundAppliedAt: (state === '退款/售后' || state === '已退款') ? (date + ' 14:30:00') : '',
+      refundReason: (state === '退款/售后' || state === '已退款') ? ('用户申请退款 · ' + (note || '七天无理由')) : '',
+      refundState: state === '已退款' ? '已退款' : (state === '退款/售后' ? '待审核' : ''),
+      refundAt: state === '已退款' ? (date + ' 15:20:00') : '',
       updatedAt: meta.updatedAt || createdAt,
       shipInfo: null,
       distId: dist ? dist.id : '',
