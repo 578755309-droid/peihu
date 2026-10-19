@@ -527,6 +527,7 @@
         '<div class="cg-foot">' +
           '<button class="cg-btn" onclick="showToast(\'正在为您接通护理员电话，请稍候…\')">' + phoneSvg + '联系护理员</button>' +
           '<button class="cg-btn primary" onclick="location.href=\'order-detail.html?no=' + encodeURIComponent(o.id) + '\'">查看订单</button>' +
+          '<button class="cg-btn" onclick="location.href=\'orders.html?renew=' + encodeURIComponent(o.id) + '\'">续单</button>' +
         '</div>' +
       '</div>';
     }).join('');

@@ -144,6 +144,6 @@
   };
   function showToastSafe(msg){if(typeof showToast==='function')showToast(msg);}
   window.refreshOrderFilter=applyCurrentStatus;
-  function build(){var type=new URLSearchParams(location.search).get('type')==='mall'?'mall':'service';switchOrderType(type);renderOrderType(type);}
+  function build(){var params=new URLSearchParams(location.search);var type=params.get('type')==='mall'?'mall':'service';switchOrderType(type);renderOrderType(type);var renew=params.get('renew');if(renew){params.delete('renew');var qs=params.toString();try{history.replaceState(null,'',location.pathname+(qs?'?'+qs:''));}catch(e){}setTimeout(function(){openRenewModal(renew);},0);}}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build);else build();
 })();
