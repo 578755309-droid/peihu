@@ -35,7 +35,6 @@
     .cart-list{padding:14px}
     .cart-item{display:flex;gap:12px;background:#fff;border-radius:12px;padding:12px;margin-bottom:12px;box-shadow:var(--sh)}
     .cart-check{width:20px;height:20px;border-radius:12px;border:2px solid var(--text3);flex-shrink:0;margin-top:2px;display:grid;place-items:center;cursor:pointer}
-    .cart-item.checked .cart-check{background:var(--purple);border-color:var(--purple)}
     .cart-check svg{width:12px;height:12px;color:#fff;display:none}
     .cart-item.checked .cart-check svg{display:block}
     .cart-img{width:80px;height:80px;border-radius:12px;flex-shrink:0;display:grid;place-items:center;background:var(--purple-light);color:var(--purple)}
@@ -61,7 +60,6 @@
     .checkout-left{flex:1;min-width:0}
     .cart-select-all{display:flex;align-items:center;gap:6px;min-height:44px;margin-right:12px;font-size:13px;color:var(--text);cursor:pointer;white-space:nowrap;flex-shrink:0}
     .cart-select-all input{appearance:none;-webkit-appearance:none;width:20px;height:20px;margin:0;border:2px solid var(--text3);border-radius:50%;background:transparent;cursor:pointer;flex-shrink:0;background-position:center;background-repeat:no-repeat;background-size:12px 12px}
-    .cart-select-all input:checked,.cart-select-all input:indeterminate{background-color:var(--purple);border-color:var(--purple)}
     .cart-select-all input:checked{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.5l3 3 4-5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
     .cart-select-all input:indeterminate{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 6h6' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E")}
     .cart-select-all:has(input:disabled){opacity:.45;cursor:default}
@@ -178,7 +176,7 @@
 
   <!-- 结算栏 -->
   <div class="checkout-bar">
-    <label class="cart-select-all"><input type="checkbox" id="selectAll" aria-label="全选购物车商品" onchange="toggleSelectAll(this.checked)" /><span>全选</span></label>
+    <label class="cart-select-all"><input type="checkbox" class="akb-choice-commerce" id="selectAll" aria-label="全选购物车商品" onchange="toggleSelectAll(this.checked)" /><span>全选</span></label>
     <div class="checkout-left">
       <div class="checkout-total">合计：<span id="totalPrice"><b>¥0</b></span></div>
     </div>
@@ -260,7 +258,7 @@
     const key = type+':'+item.id;
     const checked = selected.has(key);
     return '<div class="cart-item '+(checked?'checked':'')+'" data-key="'+key+'">'+
-      '<div class="cart-check" onclick="toggleCheck(\''+key+'\')"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5l3 3 4-5"/></svg></div>'+
+      '<div class="cart-check akb-choice-commerce" onclick="toggleCheck(\''+key+'\')"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5l3 3 4-5"/></svg></div>'+
       '<div class="cart-img" style="background:var(--purple-light)">'+(p.image?'<img src="'+p.image+'" alt="'+p.name+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px" onerror="this.style.display=\'none\'">':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11z"/></svg>')+'</div>'+
       '<div class="cart-info">'+
         '<div class="cart-name">'+p.name+'</div>'+

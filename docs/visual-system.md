@@ -9,3 +9,5 @@
 assets/design/ 含 15 个独立 SVG：4 个服务入口、5 个订单状态、3 个个人中心图标、服务插画、金币礼盒插画、背景纹理。均为本地矢量资源，不依赖临时 Figma 地址。图标具有固定画布比例，装饰图不承载业务文字；标题、金额、邀请码仍为可访问 HTML。
 
 ui/icons.js 是三端 Vue 公共线性图标来源；填充插画与线性操作图标分别用于入口和轻量操作。移动端沿用 10px 页面边距与卡片间距、12px 圆角。
+
+购物车商品选择与全选统一使用公共类 `.akb-choice-commerce`，复用 `--color-commerce`。支持原生 checked/indeterminate、自定义 aria-checked/is-checked 与父容器 checked 状态；圆形轮廓和勾选图形由控件自身定义。

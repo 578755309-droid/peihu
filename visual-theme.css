@@ -361,3 +361,12 @@ body[data-surface="mobile"] :is(#paySubmitBtn,#payConfirmBtn,.checkout-btn):disa
 body[data-page="order-detail"] .primary[onclick*="订单页完成支付"] {background:var(--color-payment-gradient)!important;color:#fff!important;border-color:transparent!important}
 
 body[data-page="profile"] :is(.hero-name,.hero-id-inline,.hero-arrow,.hero-top-actions svg) {color:#fff}
+
+/* Shared commerce selection: product choices and select-all use the same red token. */
+.akb-choice-commerce {--choice-active:var(--color-commerce);accent-color:var(--choice-active)}
+.akb-choice-commerce:checked,
+.akb-choice-commerce:indeterminate,
+.akb-choice-commerce[aria-checked="true"],
+.akb-choice-commerce.is-checked,
+.checked > .akb-choice-commerce {background-color:var(--choice-active)!important;border-color:var(--choice-active)!important}
+.akb-choice-commerce:focus-visible {outline-color:var(--choice-active)}
