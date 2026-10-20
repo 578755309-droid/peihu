@@ -2223,9 +2223,10 @@
     /* 检查项目模块插入到就诊人之后 */
     if (p1 && patientModule && examModule) p1.insertBefore(examModule, patientModule.nextSibling);
     if (examModule) examModule.style.display = '';
-    /* 备注模块移到最后（服务地址之后） */
+    /* 备注放在计费提示上方，位于服务地址之后。 */
     var p3 = document.getElementById('p3');
-    if (p3 && needsModule) p3.appendChild(needsModule);
+    var billingNote = p3 && p3.querySelector('.note-bar');
+    if (p3 && needsModule) p3.insertBefore(needsModule, billingNote || null);
     /* 重编序号：就诊人 → 检查项目 → 联系人 → 时间 → 地址 → 备注 */
     var nums = [patientModule, examModule, contactModule, timeModule, addrModule, needsModule];
     nums.forEach(function (el, i) { var n = el && el.querySelector('.module-num'); if (n) n.textContent = String(i + 1); });
