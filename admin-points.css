@@ -1,5 +1,5 @@
 /* 积分管理模块共享样式（积分概览 / 用户积分 / 获取明细 / 使用明细 / 邀请明细） */
-body{margin:0;background: #F5F5F5;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;min-width:1100px;overflow-x:hidden}
+body{margin:0;background: #F5F5F5;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
 .layout{display:flex;min-height:100vh;min-width:0}
 .main{margin-left:220px;flex:1;min-width:0;max-width:calc(100vw - 220px);overflow:hidden}
 .topbar{height:60px;background:#fff;border-bottom:1px solid #CFF5ED;display:flex;align-items:center;padding:0 28px;gap:16px;box-shadow:0 1px 8px rgba(0,0,0,0.1)}

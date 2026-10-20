@@ -2,8 +2,13 @@
   var currentActive='';
   function init(){
     var shared=document.querySelector('link[href="admin-shell.css"]');
-    if(shared)document.head.appendChild(shared);
+    /* 规范层置于 body 末尾：确保全局视觉规范压过各页面内联样式（含 body 内 <style>） */
+    if(shared)(document.body||document.head).appendChild(shared);
     var side=document.querySelector('.sidebar'); if(!side)return;
+    /* 视觉规范兜底：inline style 压过页面内联高优先级规则（背景/间距/横向溢出） */
+    side.style.setProperty('background','linear-gradient(165deg,#093B4D,#082C40 72%)','important');
+    var pgEl=document.querySelector('.page');
+    if(pgEl){pgEl.style.setProperty('background','#F5F6F8','important');pgEl.style.setProperty('padding','20px','important');pgEl.style.setProperty('overflow-x','hidden','important');}
     var file=(location.pathname.split('/').pop()||'admin.html').toLowerCase();
     if(file.indexOf('.')===-1)file+='.html';
     currentActive=file==='admin.html'?'dashboard':file.indexOf('admin-ops')>-1?'ops':file.indexOf('admin-finance')>-1?'finance':file.indexOf('ux-monitor')>-1?'ux-monitor':file.indexOf('agreement')>-1?'agreement':file.indexOf('admin-mall-order')>-1?'mall-orders':file.indexOf('admin-mall-products')>-1?'mall-products':file.indexOf('admin-mall-categories')>-1?'mall-categories':file.indexOf('admin-mall-distribution')>-1?'mall-dist':file==='admin-mall.html'?'mall-dashboard':file.indexOf('message-templates')>-1?'msg-templates':file.indexOf('bookings')>-1?'bookings':file.indexOf('service-categories')>-1?'catalog':file==='admin-points.html'?'points':file.indexOf('points-users')>-1?'points-users':file.indexOf('points-earn')>-1?'points-earn':file.indexOf('points-spend')>-1?'points-spend':file.indexOf('points-invite')>-1?'points-invite':file.indexOf('contract')>-1?'contracts':file.indexOf('consult')>-1?'consult':file.indexOf('feedback')>-1?'feedback':file.indexOf('order')>-1?'orders':file.indexOf('caregiver')>-1?'caregivers':file.indexOf('user')>-1?'users':'';
@@ -37,8 +42,24 @@
     if(file==='admin-caregivers.html') initCaregiverManagement();
     if(file==='admin-caregiver-detail.html') initCaregiverOrderRecords();
     if(file==='admin-caregiver-detail.html') initCaregiverProfile();
+    initModuleTabs();
     initTerminalLinks();
     initSidebarGroups(side);
+  }
+  /* 模块 tab 行：参考后台设计稿第二行导航，按侧栏分组渲染当前模块的兄弟页面 */
+  function initModuleTabs(){
+    var page=document.querySelector('.page');if(!page||document.querySelector('.module-tabs'))return;
+    var GROUPS=[
+      {lbl:'概览',tabs:[['ops','运营看板','admin-ops.html'],['finance','财务看板','admin-finance.html']]},
+      {lbl:'业务管理',tabs:[['dashboard','业务概览','admin.html'],['orders','订单管理','admin-orders.html'],['caregivers','陪护员管理','admin-caregivers.html'],['users','用户管理','admin-users.html'],['catalog','服务管理','admin-service-categories.html'],['bookings','预约管理','admin-bookings.html']]},
+      {lbl:'商城管理',tabs:[['mall-dashboard','商城概览','admin-mall.html'],['mall-categories','商品管理','admin-mall-categories.html'],['mall-orders','商城订单','admin-mall-orders.html'],['mall-dist','分销管理','admin-mall-distribution.html']]},
+      {lbl:'积分管理',tabs:[['points','积分概览','admin-points.html'],['points-users','用户积分','admin-points-users.html'],['points-earn','积分获取规则','admin-points-earn.html'],['points-spend','积分消耗规则','admin-points-spend.html'],['points-invite','邀请奖励规则','admin-points-invite.html']]},
+      {lbl:'其他',tabs:[['ux-monitor','用户体验监测','admin-ux-monitor.html'],['msg-templates','消息模板','admin-message-templates.html'],['consult','资讯内容','admin-consult.html'],['agreement','协议管理','admin-agreements.html'],['comments','评论管理','admin-comments.html'],['feedback','意见反馈','admin-feedback.html']]}
+    ];
+    var cur=GROUPS.find(function(g){return g.tabs.some(function(t){return t[0]===currentActive;});});
+    if(!cur)return;
+    var html='<div class="module-tabs"><span class="mt-lbl">'+cur.lbl+'</span>'+cur.tabs.map(function(t){return '<a href="'+t[2]+'"'+(t[0]===currentActive?' class="on"':'')+'>'+t[1]+'</a>';}).join('')+'</div>';
+    page.insertAdjacentHTML('afterbegin',html);
   }
   /* Vue sidebar groups preserve the generated links, badge counts and current route. */
   function initSidebarGroups(side){
