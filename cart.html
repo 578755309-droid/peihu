@@ -177,10 +177,10 @@
   <!-- 结算栏 -->
   <div class="checkout-bar">
     <label class="cart-select-all"><input type="checkbox" class="akb-choice-commerce" id="selectAll" aria-label="全选购物车商品" onchange="toggleSelectAll(this.checked)" /><span>全选</span></label>
-    <div class="checkout-left">
+    <div class="checkout-left" data-checkout-summary>
       <div class="checkout-total">合计：<span id="totalPrice"><b>¥0</b></span></div>
     </div>
-    <button class="checkout-btn" id="checkoutBtn" onclick="checkout()" disabled>结算(0)</button>
+    <button class="checkout-btn" id="checkoutBtn" onclick="checkout()" disabled>结算（0） ¥0</button>
   </div>
 
   <!-- 底部 Tab -->
@@ -340,7 +340,7 @@
     document.getElementById('pointsInfo').textContent = '可用 '+ptsBalance+' 积分 · '+(usePoints?'已抵 ¥'+discount:'可抵 ¥'+Math.min(ptsBalance,Math.floor(total*0.3)));
     document.getElementById('pointsCheck').checked = usePoints;
     const btn = document.getElementById('checkoutBtn');
-    btn.textContent = '结算('+count+')';
+    btn.textContent = '结算（'+count+'） ¥'+(finalPrice%1?finalPrice.toFixed(2):finalPrice);
     btn.disabled = count===0;
   }
 

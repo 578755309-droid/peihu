@@ -370,3 +370,8 @@ body[data-page="profile"] :is(.hero-name,.hero-id-inline,.hero-arrow,.hero-top-a
 .akb-choice-commerce.is-checked,
 .checked > .akb-choice-commerce {background-color:var(--choice-active)!important;border-color:var(--choice-active)!important}
 .akb-choice-commerce:focus-visible {outline-color:var(--choice-active)}
+
+/* Checkout total is presented once, on the action; retain nodes for legacy calculations. */
+[data-checkout-summary] {display:none!important}
+body[data-page="cart"] .checkout-btn {flex:1;min-width:0;white-space:nowrap;padding-inline:14px;font-variant-numeric:tabular-nums}
+body[data-surface="mobile"] :is(#paySubmitBtn,#payConfirmBtn,#akbPayBtn,#orderPayBtn) {font-variant-numeric:tabular-nums}

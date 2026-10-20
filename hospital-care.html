@@ -1224,16 +1224,16 @@
         <!-- 下单态底部 -->
         <div class="buy-only">
           <div id="redeemBannerBox" style="display:none;margin-bottom:8px"></div>
-          <div class="price-row" id="priceRow">
+          <div class="price-row" id="priceRow" data-checkout-summary>
             <span class="price-lbl" id="priceLabel">应付金额</span>
             <span class="price-num" id="priceNum">¥300</span>
           </div>
-          <div class="price-row" id="actualPayRow" style="display:none">
+          <div class="price-row" id="actualPayRow" data-checkout-summary style="display:none">
             <span class="price-lbl" id="actualPayLabel">实付金额</span>
             <span class="price-num" id="actualPayNum" style="color:var(--green)">¥0</span>
             <span class="price-lbl" style="margin-left:6px">卡兑换</span>
           </div>
-          <div class="price-save" id="priceSave" style="display:none"></div>
+          <div class="price-save" id="priceSave" data-checkout-summary style="display:none"></div>
           <div class="btn-row">
             <button class="btn-primary" id="paySubmitBtn" onclick="nextStep()">立即支付</button>
           </div>
@@ -1888,6 +1888,7 @@
     if (redeemCard) {
       /* 兑换卡核销：本次 ¥0，不显示积分抵扣与应付/实付金额 */
       basePrice = 0; currentPrice = 0; pointsDiscount = 0; pointsUsed = 0;
+      document.getElementById('paySubmitBtn').textContent = '立即预约 ¥0';
       document.getElementById('priceRow').style.display = 'none';
       var actualPayRowR = document.getElementById('actualPayRow');
       if (actualPayRowR) actualPayRowR.style.display = 'none';
@@ -1919,6 +1920,7 @@
     document.getElementById('pointsDetail').innerHTML = !ready ? '选择服务时长后查看本单可抵金额' : !availablePoints ? '暂无可用积分，本单不抵扣' : usePoints ? '使用 ' + pointsUsed + ' 积分 · 本单已抵 <strong>¥' + pointsDiscount + '</strong>' : '本单可抵 <strong>¥' + maxDiscount + '</strong> · 勾选后使用 ' + maxDiscount + ' 积分';
     document.getElementById('priceLabel').textContent = '应付金额';
     document.getElementById('priceNum').textContent = '¥' + currentPrice;
+    document.getElementById('paySubmitBtn').textContent = ready ? '立即支付 ¥' + currentPrice : '立即支付';
     const save = document.getElementById('priceSave');
     save.style.display = (pointsDiscount > 0 || bath10Discount) ? '' : 'none';
     const saveParts = [];
@@ -2977,7 +2979,7 @@
     var priceSave = document.getElementById('priceSave');
     if (priceSave) priceSave.style.display = 'none';
     var payBtn = document.getElementById('paySubmitBtn');
-    if (payBtn) payBtn.textContent = '立即预约';
+    if (payBtn) payBtn.textContent = '立即预约 ¥0';
     updatePatientSummary();
   }
 

@@ -180,10 +180,10 @@
       '<div class="renew-title">确认支付<button class="renew-close" onclick="closeRenewPay()">✕</button></div>'+
       '<div class="renew-origin" id="akbPayOrigin"></div>'+
       '<div class="akb-pay-rows">'+
-        '<div class="akb-pay-row"><span class="lbl">应付金额</span><span class="val" id="akbPayAmt"></span></div>'+
+        '<div class="akb-pay-row" data-checkout-summary><span class="lbl">应付金额</span><span class="val" id="akbPayAmt"></span></div>'+
         '<div class="akb-pay-row"><span class="lbl">积分抵扣</span><span class="akb-pay-points-txt" id="akbPayPointsTxt"></span><button type="button" class="akb-pay-switch" id="akbPaySwitch" onclick="toggleRenewPoints(this)" aria-label="使用积分抵扣"></button></div>'+
-        '<div class="akb-pay-divider"></div>'+
-        '<div class="akb-pay-row akb-pay-final"><span class="lbl">实付金额</span><span class="val" id="akbPayFinal"></span></div>'+
+        '<div class="akb-pay-divider" data-checkout-summary></div>'+
+        '<div class="akb-pay-row akb-pay-final" data-checkout-summary><span class="lbl">实付金额</span><span class="val" id="akbPayFinal"></span></div>'+
       '</div>'+
       '<div class="akb-pay-tip">模拟支付 · 确认后订单立即生效</div>'+
       '<div class="renew-foot"><button class="renew-btn" onclick="closeRenewPay()">取消</button><button class="renew-btn primary" id="akbPayBtn" onclick="confirmRenewPay()">确认支付</button></div>'+
@@ -277,8 +277,8 @@
       '<div class="akb-pay-rows">'+
         '<div class="akb-pay-row"><span class="lbl">商品金额</span><span class="val" id="orderPayAmt"></span></div>'+
         '<div class="akb-pay-row"><span class="lbl">积分抵扣</span><span class="akb-pay-points-txt" id="orderPayPointsTxt"></span><button type="button" class="akb-pay-switch" id="orderPaySwitch" onclick="toggleOrderPayPoints(this)" aria-label="使用积分抵扣"></button></div>'+
-        '<div class="akb-pay-divider"></div>'+
-        '<div class="akb-pay-row akb-pay-final"><span class="lbl">实付金额</span><span class="val" id="orderPayFinal"></span></div>'+
+        '<div class="akb-pay-divider" data-checkout-summary></div>'+
+        '<div class="akb-pay-row akb-pay-final" data-checkout-summary><span class="lbl">实付金额</span><span class="val" id="orderPayFinal"></span></div>'+
       '</div>'+
       '<div class="akb-pay-tip">模拟支付 · 确认后订单立即生效</div>'+
       '<div class="renew-foot"><button class="renew-btn" onclick="closeOrderPaySheet()">取消</button><button class="renew-btn primary" id="orderPayBtn" onclick="confirmOrderPay()">确认支付</button></div>'+
