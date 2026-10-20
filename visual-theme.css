@@ -59,14 +59,62 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-vis
 :is(.city-overlay,.book-overlay,.modal-overlay,.cui-mask) {background-color:rgba(34,39,54,.32)!important}
 :is(.book-confirm,.submit-btn,.primary-btn,.btn-primary,.send-btn,.cui-btn.primary) {background:linear-gradient(135deg,#1CD8B7,#0FA98C)!important;color:#fff;box-shadow:0 4px 10px rgba(15,169,140,.16)!important;font-weight:600!important}
 /* Home: coherent header, four clear service entries and readable two-column cards. */
-[data-page="home"] .top-bar {display:grid;grid-template-columns:72px 1fr 72px;min-height:54px;padding:6px 16px 12px;background:transparent!important;box-shadow:none!important;border:0!important}
-.home-brand {text-align:center;font-size:17px;font-weight:600;white-space:nowrap}
-[data-page="home"] .city-pill {justify-self:start;background:transparent!important;padding:6px 0;color:var(--text2);font-size:13px;font-weight:500;box-shadow:none}
-[data-page="home"] .top-avatar {justify-self:end;width:30px;height:30px;font-weight:600;font-size:13px}
-[data-page="home"] .top-tabs {background:transparent!important;padding:0 16px;gap:24px;border:0}
-[data-page="home"] .top-tab {font-size:15px;color:var(--text2);font-weight:500;padding:10px 0 14px}
-[data-page="home"] .top-tab.on {font-size:16px;color:var(--text);font-weight:600}
-[data-page="home"] .top-tab.on::after {bottom:4px;width:20px;background:var(--purple-dark)}
+/* Home and mall share one continuous header, rather than separately colored strips. */
+.service-header {
+  background:linear-gradient(180deg,#e5f5ef 0%,#edf4f2 60%,#f0f3f5 100%);
+  border:0; box-shadow:none; margin:0; padding:0;
+}
+[data-surface="mobile"] .service-header .status-bar {
+  height:38px; padding:8px 20px; line-height:22px;
+  background:transparent!important;
+}
+[data-surface="mobile"] .service-header .top-bar {
+  display:grid; grid-template-columns:64px minmax(0,1fr) 64px;
+  align-items:center; gap:8px; width:100%; height:54px; min-height:54px;
+  padding:8px 16px 12px; background:transparent!important;
+  border:0!important; box-shadow:none!important;
+}
+.service-header .home-brand {
+  min-width:0; text-align:center; font-size:17px; line-height:24px;
+  font-weight:600; color:var(--text); white-space:nowrap;
+}
+.service-header .city-pill {
+  justify-self:start; max-width:100%; min-width:0;
+  background:transparent!important; padding:6px 0;
+  color:var(--text2); font-size:13px; font-weight:500; box-shadow:none;
+}
+.service-header .top-avatar {
+  justify-self:end; width:30px; height:30px;
+  font-weight:600; font-size:13px;
+}
+.service-header .top-tabs {
+  height:48px; align-items:stretch; background:transparent!important;
+  padding:0 16px; gap:24px; border:0; box-shadow:none;
+}
+.service-header .top-tabs .top-tab {
+  display:flex; align-items:center; padding:8px 0 14px;
+  font-size:15px; line-height:24px; color:var(--text2); font-weight:500;
+}
+.service-header .top-tabs .top-tab.on {
+  font-size:16px; color:var(--text); font-weight:600;
+}
+.service-header .top-tabs .top-tab.on::after {
+  bottom:5px; width:20px; height:3px; background:var(--purple-dark);
+}
+[data-page="mall"] .category-row {
+  background:transparent; padding:10px 12px 14px; gap:8px;
+  border:0; box-shadow:none;
+}
+[data-page="mall"] .category {
+  padding:8px 13px; font-size:13px; line-height:20px; font-weight:500;
+}
+[data-page="mall"] .category.active {
+  background:var(--purple-light); color:var(--purple-dark);
+  font-weight:600; box-shadow:none;
+}
+[data-page="mall"] .product-section {
+  background:transparent; margin-top:0; padding:0 12px 20px;
+}
 [data-page="home"] .cat-row {margin:10px 12px 0;padding:16px 4px 12px;gap:0;background:rgba(255,255,255,.93)!important;border:1px solid #e5e9ef;border-radius:12px;box-shadow:var(--soft-shadow)}
 [data-page="home"] .cat-item {padding:0;gap:9px}
 [data-page="home"] .cat-ico {width:48px;height:48px;background:linear-gradient(145deg,#ecfbf6,#d9f5ed)}
