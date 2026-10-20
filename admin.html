@@ -27,7 +27,7 @@
       --blue:         #1CD8B7;
       --blue-bg:      #DDF7F1;
       --sh: 0 2px 16px rgba(0,0,0,0.1);
-      --r-lg: 14px; --r-md: 10px; --r-sm: 8px;
+      --r-lg: 12px; --r-md: 12px; --r-sm: 12px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -62,7 +62,7 @@
     }
     .nav-link {
       display: flex; align-items: center; gap: 11px;
-      padding: 10px 20px; margin: 2px 10px; border-radius: 10px;
+      padding: 10px 20px; margin: 2px 10px; border-radius: 12px;
       font-size: 13px; font-weight: 700; color: rgba(255,255,255,.6);
       cursor: pointer; transition: all .15s; text-decoration: none;
     }
@@ -73,7 +73,7 @@
       box-shadow: inset 3px 0 0 #7FE5D0;
     }
     .nav-badge {
-      margin-left: auto; min-width: 20px; height: 18px; border-radius: 9px;
+      margin-left: auto; min-width: 20px; height: 18px; border-radius: 12px;
       background: #EF4444; color: #fff; font-size: 10px; font-weight: 800;
       display: grid; place-items: center; padding: 0 5px;
     }
@@ -83,14 +83,14 @@
       display: flex; align-items: center; gap: 10px;
     }
     .sb-av {
-      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      width: 36px; height: 36px; border-radius: 12px; flex-shrink: 0;
       background: rgba(255,255,255,.2); display: grid; place-items: center;
       font-size: 15px; font-weight: 900; color: #fff;
     }
     .sb-uname { font-size: 13px; font-weight: 800; color: #fff; }
     .sb-urole { font-size: 11px; color: rgba(255,255,255,.4); font-weight: 600; margin-top: 2px; }
     .sb-logout {
-      margin-left: auto; width: 28px; height: 28px; border-radius: 8px;
+      margin-left: auto; width: 28px; height: 28px; border-radius: 12px;
       border: none; cursor: pointer; background: rgba(255,255,255,.1);
       display: grid; place-items: center; color: rgba(255,255,255,.5);
       transition: all .15s;
@@ -116,7 +116,7 @@
     /* Search */
     .tb-search {
       display: flex; align-items: center; gap: 8px;
-      background: var(--purple-bg); border-radius: 8px;
+      background: var(--purple-bg); border-radius: 12px;
       padding: 0 12px; height: 36px; width: 220px;
       border: 1.5px solid transparent; transition: border-color .2s;
     }
@@ -131,7 +131,7 @@
     /* Topbar actions */
     .tb-actions { display: flex; align-items: center; gap: 10px; }
     .tb-btn {
-      width: 36px; height: 36px; border-radius: 9px; border: none; cursor: pointer;
+      width: 36px; height: 36px; border-radius: 12px; border: none; cursor: pointer;
       background: var(--purple-bg); display: grid; place-items: center;
       color: var(--text2); position: relative; transition: background .15s;
     }
@@ -139,11 +139,11 @@
     .tb-btn svg { width: 17px; height: 17px; }
     .tb-notif-dot {
       position: absolute; top: 6px; right: 7px;
-      width: 7px; height: 7px; border-radius: 50%;
+      width: 7px; height: 7px; border-radius: 12px;
       background: #EF4444; border: 1.5px solid var(--card);
     }
     .tb-av {
-      width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
+      width: 36px; height: 36px; border-radius: 12px; cursor: pointer;
       background: #1CD8B7;
       display: grid; place-items: center;
       font-size: 14px; font-weight: 900; color: #fff;
@@ -159,7 +159,7 @@
     .page-sub { font-size: 13px; color: var(--text3); font-weight: 600; margin-top: 4px; }
     .page-actions { display: flex; gap: 10px; }
     .btn-outline {
-      height: 36px; padding: 0 16px; border-radius: 9px;
+      height: 36px; padding: 0 16px; border-radius: 12px;
       border: 1.5px solid var(--border); background: var(--card);
       font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; color: var(--text2);
       display: flex; align-items: center; gap: 6px; transition: all .15s;
@@ -167,7 +167,7 @@
     .btn-outline:hover { border-color: var(--purple); color: var(--purple); }
     .btn-outline svg { width: 14px; height: 14px; }
     .btn-primary {
-      height: 36px; padding: 0 18px; border-radius: 9px; border: none; cursor: pointer;
+      height: 36px; padding: 0 18px; border-radius: 12px; border: none; cursor: pointer;
       background: #1CD8B7; color: #fff;
       font-size: 13px; font-weight: 800; font-family: inherit;
       display: flex; align-items: center; gap: 6px;
@@ -179,14 +179,14 @@
     /* ── Metric cards ── */
     .metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 20px; }
     .metric-card {
-      background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh);
+      background: var(--card); border-radius: 12px; box-shadow: var(--sh);
       padding: 20px; display: flex; flex-direction: column; gap: 14px;
     }
     .metric-top { display: flex; align-items: center; justify-content: space-between; }
     .metric-icon { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; }
     .metric-icon svg { width: 22px; height: 22px; }
     .metric-badge {
-      font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 12px;
       display: flex; align-items: center; gap: 3px;
     }
     .metric-bottom { display: flex; flex-direction: column; gap: 4px; }
@@ -200,17 +200,17 @@
     .mid-row { display: grid; grid-template-columns: 1fr 340px; gap: 16px; margin-bottom: 20px; }
 
     /* Chart */
-    .chart-card { background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh); overflow: hidden; }
+    .chart-card { background: var(--card); border-radius: 12px; box-shadow: var(--sh); overflow: hidden; }
     .card-hd {
       display: flex; align-items: center; justify-content: space-between;
       padding: 16px 20px 14px; border-bottom: 1px solid var(--border);
     }
     .card-hd-left { display: flex; align-items: center; gap: 9px; }
-    .sec-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); flex-shrink: 0; }
+    .sec-dot { width: 8px; height: 8px; border-radius: 12px; background: var(--purple); flex-shrink: 0; }
     .sec-title { font-size: 14px; font-weight: 800; color: var(--text); }
     .chart-tabs { display: flex; gap: 4px; }
     .ctab {
-      padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 700;
+      padding: 5px 12px; border-radius: 12px; font-size: 12px; font-weight: 700;
       cursor: pointer; border: none; font-family: inherit;
       background: transparent; color: var(--text3); transition: all .15s;
     }
@@ -221,28 +221,28 @@
       display: flex; align-items: center; gap: 16px; padding: 0 20px 16px;
     }
     .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--text2); }
-    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 12px; }
 
     /* Side stats */
     .side-stats { display: flex; flex-direction: column; gap: 16px; }
-    .stat-card { background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh); padding: 18px 20px; }
+    .stat-card { background: var(--card); border-radius: 12px; box-shadow: var(--sh); padding: 18px 20px; }
     .stat-card-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
     .stat-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
     .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
     .stat-row-lbl { font-size: 12px; color: var(--text2); font-weight: 600; display: flex; align-items: center; gap: 7px; }
     .stat-row-val { font-size: 13px; font-weight: 800; color: var(--text); }
-    .mini-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .mini-dot { width: 8px; height: 8px; border-radius: 12px; flex-shrink: 0; }
 
     /* Progress bar */
     .progress-wrap { margin-top: 6px; }
     .progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12px; }
     .progress-lbl { width: 60px; color: var(--text2); font-weight: 700; flex-shrink: 0; }
-    .progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-    .progress-fill { height: 100%; border-radius: 3px; }
+    .progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 12px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 12px; }
     .progress-pct { width: 36px; text-align: right; color: var(--text); font-weight: 800; flex-shrink: 0; }
 
     /* ── Order table ── */
-    .order-card { background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh); overflow: hidden; }
+    .order-card { background: var(--card); border-radius: 12px; box-shadow: var(--sh); overflow: hidden; }
     .order-table { width: 100%; border-collapse: collapse; }
     .order-table th {
       padding: 10px 16px; font-size: 11px; font-weight: 800; color: var(--text3);
@@ -257,7 +257,7 @@
     .order-no { font-family: 'SF Mono','Courier New',monospace; font-size: 12px; color: var(--text3); font-weight: 700; }
     .patient-cell { display: flex; align-items: center; gap: 9px; }
     .mini-av {
-      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      width: 30px; height: 30px; border-radius: 12px; flex-shrink: 0;
       display: grid; place-items: center; font-size: 12px; font-weight: 900; color: #fff;
     }
     .patient-name { font-size: 13px; font-weight: 800; color: var(--text); }
@@ -267,10 +267,10 @@
 
     .st-pill {
       display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800;
+      padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800;
       white-space: nowrap;
     }
-    .st-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+    .st-pill::before { content: ''; width: 6px; height: 6px; border-radius: 12px; }
     .st-pending { background: var(--amber-bg); color: var(--amber); }
     .st-pending::before { background: var(--amber); }
     .st-active  { background: var(--green-bg);  color: var(--green); }
@@ -287,7 +287,7 @@
     }
     .bill-link {
       display: flex; align-items: center; gap: 6px;
-      padding: 7px 16px; border-radius: 8px; border: none; cursor: pointer;
+      padding: 7px 16px; border-radius: 12px; border: none; cursor: pointer;
       background: #1CD8B7; color: #fff;
       font-size: 12px; font-weight: 800; font-family: inherit;
       box-shadow: 0 3px 10px rgba(0,0,0,0.1); transition: filter .15s;
@@ -296,7 +296,8 @@
     .bill-link svg { width: 13px; height: 13px; }
   </style>
 <link rel="stylesheet" href="admin-mall.css" />
-<script defer src="admin-sidebar.js"></script></head>
+<script defer src="admin-sidebar.js"></script>  <link rel="stylesheet" href="visual-theme.css" />
+</head>
 <body>
 <div class="admin-layout">
 

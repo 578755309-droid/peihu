@@ -20,7 +20,7 @@
       --red:          #DC2626;
       --red-light:    #FEE2E2;
       --sh: 0 2px 16px rgba(0,0,0,0.1);
-      --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
+      --r-lg: 12px; --r-md: 12px; --r-sm: 12px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -38,7 +38,7 @@
     @media (min-width: 520px) {
       .frame { align-items: flex-start; padding: 20px 0 40px; }
       .phone {
-        height: 900px; min-height: unset; border-radius: 42px; overflow: hidden;
+        height: 900px; min-height: unset; border-radius: 12px; overflow: hidden;
         box-shadow: 0 24px 72px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,.06);
       }
     }
@@ -67,7 +67,7 @@
     }
     .back-btn {
       width: 36px; height: 36px; border: none; cursor: pointer;
-      background: var(--purple-light); border-radius: 11px;
+      background: var(--purple-light); border-radius: 12px;
       display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
     }
     .back-btn svg { width: 20px; height: 20px; }
@@ -78,13 +78,13 @@
     .content { padding: 14px; display: flex; flex-direction: column; gap: 14px; }
 
     /* Card */
-    .card { background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh); overflow: hidden; }
+    .card { background: var(--card); border-radius: 12px; box-shadow: var(--sh); overflow: hidden; }
     .card-hd {
       display: flex; align-items: center; justify-content: space-between;
       padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
     }
     .card-hd-left { display: flex; align-items: center; gap: 8px; }
-    .sec-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); flex-shrink: 0; }
+    .sec-dot { width: 8px; height: 8px; border-radius: 12px; background: var(--purple); flex-shrink: 0; }
     .sec-title { font-size: 14px; font-weight: 800; color: var(--text); }
     .req { color: #EF4444; margin-left: 2px; }
 
@@ -95,7 +95,7 @@
       background: var(--purple-bg);
     }
     .pat-av {
-      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      width: 36px; height: 36px; border-radius: 12px; flex-shrink: 0;
       display: grid; place-items: center;
       font-size: 14px; font-weight: 900; color: #fff;
       background: linear-gradient(140deg,#3B82F6,#60A5FA);
@@ -105,12 +105,12 @@
     .pat-tag {
       margin-left: auto; font-size: 10px; font-weight: 700;
       background: var(--purple-light); color: var(--purple);
-      padding: 3px 9px; border-radius: 20px; flex-shrink: 0;
+      padding: 3px 9px; border-radius: 12px; flex-shrink: 0;
     }
 
     .status-btns { display: flex; gap: 10px; padding: 14px 16px; }
     .svc-btn {
-      flex: 1; height: 52px; border-radius: 14px; border: none; cursor: pointer;
+      flex: 1; height: 52px; border-radius: 12px; border: none; cursor: pointer;
       font-size: 14px; font-weight: 800; font-family: inherit;
       display: flex; align-items: center; justify-content: center; gap: 6px;
       -webkit-tap-highlight-color: transparent; transition: all .18s;
@@ -148,7 +148,7 @@
       display: flex; gap: 10px; padding: 0 16px 14px;
     }
     .time-chip {
-      flex: 1; background: var(--purple-bg); border-radius: var(--r-sm);
+      flex: 1; background: var(--purple-bg); border-radius: 12px;
       padding: 9px 12px;
     }
     .time-lbl { font-size: 10px; color: var(--text3); font-weight: 600; margin-bottom: 2px; }
@@ -159,7 +159,7 @@
     .textarea-wrap { padding: 14px 16px; }
     .f-textarea {
       width: 100%; min-height: 140px; border: 1.5px solid var(--border);
-      border-radius: var(--r-md); padding: 13px 14px;
+      border-radius: 12px; padding: 13px 14px;
       font-size: 14px; font-family: inherit; color: var(--text);
       resize: none; outline: none; line-height: 1.7; background: var(--purple-bg);
       transition: border-color .2s, box-shadow .2s;
@@ -175,7 +175,7 @@
     /* Quick-fill chips */
     .quick-fill { display: flex; flex-wrap: wrap; gap: 7px; padding: 0 16px 14px; }
     .qf-chip {
-      padding: 5px 12px; border-radius: 20px; cursor: pointer;
+      padding: 5px 12px; border-radius: 12px; cursor: pointer;
       font-size: 12px; font-weight: 700;
       background: var(--purple-bg); color: var(--text2);
       border: 1.5px solid var(--border); font-family: inherit;
@@ -186,7 +186,7 @@
     /* ── Upload grid ── */
     .upload-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; padding: 14px 16px; }
     .upload-cell {
-      aspect-ratio: 1; border-radius: var(--r-md);
+      aspect-ratio: 1; border-radius: 12px;
       border: 1.5px dashed var(--border); background: var(--purple-bg);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       gap: 5px; cursor: pointer; position: relative; overflow: hidden;
@@ -200,11 +200,11 @@
     /* Filled cell */
     .upload-cell.filled { border-style: solid; border-color: transparent; }
     .fill-bg {
-      position: absolute; inset: 0; border-radius: calc(var(--r-md) - 1px);
+      position: absolute; inset: 0; border-radius: 12px;
     }
     .fill-del {
       position: absolute; top: 5px; right: 5px;
-      width: 20px; height: 20px; border-radius: 50%;
+      width: 20px; height: 20px; border-radius: 12px;
       background: rgba(0,0,0,.45); border: none; cursor: pointer;
       display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
     }
@@ -218,7 +218,7 @@
     /* Video upload */
     .video-upload { padding: 0 16px 16px; }
     .video-cell {
-      width: 100%; aspect-ratio: 16/9; border-radius: var(--r-md);
+      width: 100%; aspect-ratio: 16/9; border-radius: 12px;
       border: 1.5px dashed var(--border); background: var(--purple-bg);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       gap: 8px; cursor: pointer; position: relative; overflow: hidden;
@@ -239,7 +239,7 @@
     .video-cell.filled > span,
     .video-cell.filled > small { display: none; }
     .play-circle {
-      width: 48px; height: 48px; border-radius: 50%;
+      width: 48px; height: 48px; border-radius: 12px;
       background: rgba(255,255,255,.18); border: 2px solid rgba(255,255,255,.4);
       display: grid; place-items: center;
     }
@@ -247,7 +247,7 @@
     .video-name { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.75); }
     .video-del {
       position: absolute; top: 8px; right: 8px;
-      width: 26px; height: 26px; border-radius: 50%;
+      width: 26px; height: 26px; border-radius: 12px;
       background: rgba(0,0,0,.45); border: none; cursor: pointer;
       display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
     }
@@ -263,7 +263,7 @@
       z-index: 20;
     }
     .submit-btn {
-      width: 100%; height: 52px; border-radius: 16px; border: none; cursor: pointer;
+      width: 100%; height: 52px; border-radius: 12px; border: none; cursor: pointer;
       font-family: inherit; font-size: 16px; font-weight: 800; letter-spacing: .4px;
       background: linear-gradient(135deg,#2BD8BC,#0FA98C); color: #fff;
       box-shadow: 0 8px 22px rgba(0,0,0,0.1);
@@ -281,13 +281,14 @@
     .toast {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(.85);
       background: rgba(20,14,40,.88); color: #fff; backdrop-filter: blur(8px);
-      padding: 18px 30px; border-radius: 18px; text-align: center;
+      padding: 18px 30px; border-radius: 12px; text-align: center;
       font-size: 15px; font-weight: 800; z-index: 99;
       opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
     }
     .toast.show { opacity: 1; transform: translate(-50%,-50%) scale(1); }
     .toast-icon { font-size: 32px; display: block; margin-bottom: 8px; }
   </style>
+  <link rel="stylesheet" href="visual-theme.css" />
 </head>
 <body>
 <div class="frame">

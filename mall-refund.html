@@ -23,7 +23,7 @@
     .phone { width: 100%; max-width: 430px; min-height: 100vh; display: flex; flex-direction: column; background: var(--purple-bg); position: relative; }
     @media (min-width: 520px) {
       .frame { align-items: flex-start; padding: 20px 0 40px; }
-      .phone { height: 900px; min-height: unset; border-radius: 42px; overflow: hidden; box-shadow: 0 24px 72px rgba(0,0,0,0.1); }
+      .phone { height: 900px; min-height: unset; border-radius: 12px; overflow: hidden; box-shadow: 0 24px 72px rgba(0,0,0,0.1); }
     }
 
     /* Status bar */
@@ -44,7 +44,7 @@
     .nav h1 { font-size: 17px; font-weight: 800; }
     .back {
       position: absolute; left: 16px; width: 34px; height: 34px; border: 0;
-      background: var(--purple-light); border-radius: 11px; color: var(--purple);
+      background: var(--purple-light); border-radius: 12px; color: var(--purple);
       display: grid; place-items: center; cursor: pointer;
     }
     .back svg { width: 18px; height: 18px; }
@@ -54,7 +54,7 @@
     .scroll::-webkit-scrollbar { display: none; }
 
     /* Product summary */
-    .product-card { background: var(--card); border-radius: 16px; margin: 12px 14px 0; box-shadow: var(--sh); padding: 14px; display: flex; gap: 12px; }
+    .product-card { background: var(--card); border-radius: 12px; margin: 12px 14px 0; box-shadow: var(--sh); padding: 14px; display: flex; gap: 12px; }
     .product-thumb { width: 66px; height: 66px; border-radius: 12px; background: var(--purple-light); flex-shrink: 0; overflow: hidden; }
     .product-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .product-info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
@@ -64,7 +64,7 @@
     .product-price small { font-size: 11px; }
 
     /* Form card */
-    .form-card { background: var(--card); border-radius: 16px; margin: 12px 14px; box-shadow: var(--sh); overflow: hidden; }
+    .form-card { background: var(--card); border-radius: 12px; margin: 12px 14px; box-shadow: var(--sh); overflow: hidden; }
 
     /* Reason row */
     .form-row {
@@ -93,7 +93,7 @@
     .amount-input-wrap { display: none; margin-top: 10px; }
     .amount-input-wrap.show { display: block; }
     .amount-input {
-      width: 100%; height: 44px; border: 1.5px solid var(--purple); border-radius: 10px;
+      width: 100%; height: 44px; border: 1.5px solid var(--purple); border-radius: 12px;
       padding: 0 14px; font-size: 18px; font-weight: 800; color: var(--text);
       outline: none; text-align: right;
     }
@@ -102,7 +102,7 @@
     /* Quick amounts */
     .quick-amounts { display: flex; gap: 8px; margin-top: 12px; }
     .quick-btn {
-      flex: 1; height: 36px; border: 1px solid var(--border); border-radius: 8px;
+      flex: 1; height: 36px; border: 1px solid var(--border); border-radius: 12px;
       background: var(--purple-bg); color: var(--text2); font-size: 13px; font-weight: 700;
       cursor: pointer; transition: all .15s;
     }
@@ -122,7 +122,7 @@
     .photo-section { padding: 0 18px 16px; }
     .photo-grid { display: flex; gap: 10px; flex-wrap: wrap; }
     .photo-add {
-      width: 72px; height: 72px; border: 1.5px dashed #D0C8E0; border-radius: 10px;
+      width: 72px; height: 72px; border: 1.5px dashed #D0C8E0; border-radius: 12px;
       background: var(--purple-bg); display: flex; flex-direction: column;
       align-items: center; justify-content: center; gap: 4px; cursor: pointer;
       color: var(--text3);
@@ -130,13 +130,13 @@
     .photo-add svg { width: 22px; height: 22px; }
     .photo-add span { font-size: 11px; }
     .photo-item {
-      width: 72px; height: 72px; border-radius: 10px; overflow: hidden;
+      width: 72px; height: 72px; border-radius: 12px; overflow: hidden;
       position: relative; border: 1px solid var(--border);
     }
     .photo-item img { width: 100%; height: 100%; object-fit: cover; }
     .photo-del {
       position: absolute; top: 3px; right: 3px; width: 18px; height: 18px;
-      border-radius: 50%; background: rgba(0,0,0,.55); color: #fff; border: 0;
+      border-radius: 12px; background: rgba(0,0,0,.55); color: #fff; border: 0;
       font-size: 11px; display: grid; place-items: center; cursor: pointer;
     }
 
@@ -162,7 +162,7 @@
     .success-wrap { display: none; flex-direction: column; align-items: center; padding: 80px 30px; text-align: center; }
     .success-wrap.show { display: flex; }
     .success-icon {
-      width: 72px; height: 72px; border-radius: 50%;
+      width: 72px; height: 72px; border-radius: 12px;
       background: linear-gradient(135deg, #34D399, #10B981);
       display: grid; place-items: center; margin-bottom: 20px; color: #fff;
     }
@@ -170,7 +170,7 @@
     .success-title { font-size: 19px; font-weight: 900; margin-bottom: 10px; }
     .success-desc { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 28px; }
     .success-back {
-      height: 44px; padding: 0 32px; border: 0; border-radius: 22px;
+      height: 44px; padding: 0 32px; border: 0; border-radius: 12px;
       background: linear-gradient(135deg, #1CD8B7, #0FA98C); color: #fff;
       font-size: 15px; font-weight: 800; cursor: pointer;
     }
@@ -182,7 +182,7 @@
     }
     .picker-mask.show { display: flex; }
     .picker-sheet {
-      width: 100%; background: var(--card); border-radius: 20px 20px 0 0;
+      width: 100%; background: var(--card); border-radius: 12px;
       padding: 8px 0 calc(16px + env(safe-area-inset-bottom));
       animation: slideUp .25s ease;
     }
@@ -199,6 +199,7 @@
       font-weight: 700; color: var(--text3); border-top: 6px solid var(--purple-bg); cursor: pointer;
     }
   </style>
+  <link rel="stylesheet" href="visual-theme.css" />
 </head>
 <body>
 <div class="frame">
@@ -341,7 +342,7 @@
 
   /* 已在退款流程中的订单不允许重复申请 */
   if (order.status === 'refund' || order.state === '退款/售后' || order.refundState === '待审核') {
-    document.getElementById('formView').innerHTML = '<div style="padding:60px 30px;text-align:center;color:#AEACC0;font-size:14px;">该订单已提交退款申请，正在审核中<br><br><button onclick="location.href=\'orders.html?type=mall\'" style="height:40px;padding:0 24px;border:1px solid #1CD8B7;border-radius:20px;background:#fff;color:#1CD8B7;font-size:13px;font-weight:700;cursor:pointer">返回订单列表</button></div>';
+    document.getElementById('formView').innerHTML = '<div style="padding:60px 30px;text-align:center;color:#AEACC0;font-size:14px;">该订单已提交退款申请，正在审核中<br><br><button onclick="location.href=\'orders.html?type=mall\'" style="height:40px;padding:0 24px;border:1px solid #1CD8B7;border-radius:12px;background:#fff;color:#1CD8B7;font-size:13px;font-weight:700;cursor:pointer">返回订单列表</button></div>';
     document.getElementById('submitBar').style.display = 'none';
     return;
   }
@@ -538,7 +539,7 @@
     if (existing) existing.remove();
     var toast = document.createElement('div');
     toast.id = 'refundToast';
-    toast.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.72);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;z-index:999;pointer-events:none;white-space:nowrap;';
+    toast.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.72);color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;z-index:999;pointer-events:none;white-space:nowrap;';
     toast.textContent = msg;
     document.querySelector('.phone').appendChild(toast);
     setTimeout(function() { toast.remove(); }, 2000);

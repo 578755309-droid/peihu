@@ -22,7 +22,7 @@
       --amber:        #D97706;
       --amber-bg:     #FEF3C7;
       --sh: 0 2px 16px rgba(0,0,0,0.1);
-      --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
+      --r-lg: 12px; --r-md: 12px; --r-sm: 12px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -41,7 +41,7 @@
     @media (min-width: 520px) {
       .frame { align-items: flex-start; padding: 20px 0 40px; }
       .phone {
-        height: 900px; min-height: unset; border-radius: 42px; overflow: hidden;
+        height: 900px; min-height: unset; border-radius: 12px; overflow: hidden;
         box-shadow: 0 24px 72px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,.06);
       }
     }
@@ -65,27 +65,27 @@
     }
     .hero::after {
       content: ''; position: absolute;
-      width: 220px; height: 220px; border-radius: 50%;
+      width: 220px; height: 220px; border-radius: 12px;
       background: rgba(255,255,255,.05); top: -60px; right: -60px; pointer-events: none;
     }
     .hero-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
     .hero-brand { font-size: 15px; font-weight: 800; color: rgba(255,255,255,.7); letter-spacing: .5px; }
     .notif-btn {
-      width: 36px; height: 36px; border-radius: 11px; border: none; cursor: pointer;
+      width: 36px; height: 36px; border-radius: 12px; border: none; cursor: pointer;
       background: rgba(255,255,255,.15); display: grid; place-items: center;
       -webkit-tap-highlight-color: transparent; position: relative;
     }
     .notif-btn svg { width: 20px; height: 20px; }
     .notif-dot {
       position: absolute; top: 6px; right: 7px;
-      width: 8px; height: 8px; border-radius: 50%;
+      width: 8px; height: 8px; border-radius: 12px;
       background: #FCA5A5; border: 1.5px solid var(--purple-dark);
     }
 
     /* Nurse identity */
     .nurse-id { display: flex; align-items: center; gap: 14px; }
     .nurse-av-lg {
-      width: 68px; height: 68px; border-radius: 50%; flex-shrink: 0;
+      width: 68px; height: 68px; border-radius: 12px; flex-shrink: 0;
       display: grid; place-items: center;
       font-size: 26px; font-weight: 900; color: #fff;
       background: linear-gradient(140deg,#AA7AE0,#7B3FBE);
@@ -97,20 +97,20 @@
     .nurse-no { font-size: 12px; color: rgba(255,255,255,.6); font-weight: 600; margin-bottom: 8px; }
     .status-pill {
       display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 12px; border-radius: 20px; cursor: pointer;
+      padding: 4px 12px; border-radius: 12px; cursor: pointer;
       font-size: 12px; font-weight: 800; transition: all .2s;
       -webkit-tap-highlight-color: transparent; border: none; font-family: inherit;
     }
     .status-pill.idle { background: var(--green-bg); color: var(--green); }
     .status-pill.busy { background: rgba(255,255,255,.15); color: rgba(255,255,255,.85); }
-    .status-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .status-dot { width: 7px; height: 7px; border-radius: 12px; }
     .status-pill.idle .status-dot { background: var(--green); }
     .status-pill.busy .status-dot { background: #FCA5A5; }
 
     /* Stats strip */
     .stats-strip {
       display: grid; grid-template-columns: repeat(3,1fr);
-      background: rgba(255,255,255,.1); border-radius: var(--r-md);
+      background: rgba(255,255,255,.1); border-radius: 12px;
       margin-top: 18px; overflow: hidden;
     }
     .stat-item { padding: 12px 8px; text-align: center; }
@@ -131,7 +131,7 @@
 
     /* ── Pending order card ── */
     .pending-card {
-      background: var(--card); border-radius: var(--r-lg);
+      background: var(--card); border-radius: 12px;
       box-shadow: var(--sh); overflow: hidden;
       border: 1.5px solid #FCD34D;
     }
@@ -145,7 +145,7 @@
       font-size: 13px; font-weight: 800; color: var(--amber);
     }
     .pulse-dot {
-      width: 10px; height: 10px; border-radius: 50%; background: var(--amber);
+      width: 10px; height: 10px; border-radius: 12px; background: var(--amber);
       animation: pulse 1.4s ease-in-out infinite;
     }
     @keyframes pulse {
@@ -154,7 +154,7 @@
     }
     .cd-badge {
       display: flex; align-items: center; gap: 5px;
-      background: rgba(217,119,6,.12); padding: 4px 11px; border-radius: 20px;
+      background: rgba(217,119,6,.12); padding: 4px 11px; border-radius: 12px;
     }
     .cd-badge svg { width: 13px; height: 13px; }
     .cd-time { font-size: 14px; font-weight: 900; color: var(--amber); font-family: 'SF Mono','Courier New',monospace; letter-spacing: 1px; }
@@ -164,7 +164,7 @@
     /* Patient row */
     .patient-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
     .patient-av {
-      width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+      width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
       background: linear-gradient(140deg,#3B82F6,#60A5FA);
       display: grid; place-items: center;
       font-size: 17px; font-weight: 900; color: #fff;
@@ -174,22 +174,22 @@
     .patient-tag {
       margin-left: auto; font-size: 11px; font-weight: 700;
       background: var(--purple-light); color: var(--purple);
-      padding: 3px 10px; border-radius: 20px; flex-shrink: 0;
+      padding: 3px 10px; border-radius: 12px; flex-shrink: 0;
     }
 
     /* Info chips */
     .info-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
     .info-chip {
-      background: var(--purple-bg); border-radius: var(--r-sm);
+      background: var(--purple-bg); border-radius: 12px;
       padding: 10px 12px;
     }
     .chip-lbl { font-size: 10px; color: var(--text3); font-weight: 600; margin-bottom: 3px; }
     .chip-val { font-size: 13px; color: var(--text); font-weight: 800; }
     .chip-val.accent { color: var(--purple); }
-    .care-needs { margin-bottom: 14px; padding: 10px 11px; border-radius: var(--r-sm); background: #FFF9ED; border: 1px solid #FDE7B0; }
+    .care-needs { margin-bottom: 14px; padding: 10px 11px; border-radius: 12px; background: #FFF9ED; border: 1px solid #FDE7B0; }
     .care-needs-title { font-size: 10px; color: var(--amber); font-weight: 800; margin-bottom: 8px; }
     .care-needs-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-    .care-need { min-width: 0; padding: 7px 6px; border-radius: 8px; background: rgba(255,255,255,.82); }
+    .care-need { min-width: 0; padding: 7px 6px; border-radius: 12px; background: rgba(255,255,255,.82); }
     .care-need-label { display: block; color: #A87628; font-size: 9px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .care-need-value { display: block; margin-top: 3px; color: var(--text); font-size: 11px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .care-need-value.warn { color: var(--red); }
@@ -197,14 +197,14 @@
     /* Action buttons */
     .action-row { display: flex; gap: 10px; }
     .btn-transfer {
-      flex: 1; height: 50px; border-radius: 14px; cursor: pointer; font-family: inherit;
+      flex: 1; height: 50px; border-radius: 12px; cursor: pointer; font-family: inherit;
       border: 2px solid var(--amber); background: transparent; color: var(--amber);
       font-size: 15px; font-weight: 800;
       -webkit-tap-highlight-color: transparent; transition: background .12s;
     }
     .btn-transfer:active { background: var(--amber-bg); }
     .btn-accept {
-      flex: 2; height: 50px; border-radius: 14px; cursor: pointer; font-family: inherit;
+      flex: 2; height: 50px; border-radius: 12px; cursor: pointer; font-family: inherit;
       border: none; background: linear-gradient(135deg,#1DB954,#16A34A);
       color: #fff; font-size: 15px; font-weight: 800; letter-spacing: .3px;
       box-shadow: 0 6px 18px rgba(22,163,74,.28);
@@ -216,14 +216,14 @@
 
     /* ── Today schedule ── */
     .schedule-card {
-      background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh);
+      background: var(--card); border-radius: 12px; box-shadow: var(--sh);
     }
     .sch-hd {
       padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
     }
     .sch-hd-left { display: flex; align-items: center; gap: 8px; }
-    .sec-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--purple); }
+    .sec-dot { width: 8px; height: 8px; border-radius: 12px; background: var(--purple); }
 
     /* Timeline item */
     .timeline { padding: 14px 16px; display: flex; flex-direction: column; gap: 0; }
@@ -231,7 +231,7 @@
     .tl-item:last-child { padding-bottom: 0; }
     .tl-left { display: flex; flex-direction: column; align-items: center; width: 20px; flex-shrink: 0; }
     .tl-dot {
-      width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid var(--purple);
+      width: 14px; height: 14px; border-radius: 12px; border: 2.5px solid var(--purple);
       background: var(--card); flex-shrink: 0; z-index: 1;
     }
     .tl-dot.filled { background: var(--purple); }
@@ -244,14 +244,14 @@
     .tl-sub { font-size: 12px; color: var(--text2); font-weight: 600; }
     .tl-tag {
       display: inline-block; margin-top: 4px; font-size: 10px; font-weight: 700;
-      padding: 2px 8px; border-radius: 20px;
+      padding: 2px 8px; border-radius: 12px;
     }
     .tl-tag.done   { background: var(--green-bg); color: var(--green); }
     .tl-tag.active { background: var(--purple-light); color: var(--purple); }
 
     /* ── Work queue ── */
     .work-queue { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
-    .queue-card { display:block; min-width:0; padding:13px 10px 12px; border-radius:var(--r-md); background:var(--card); box-shadow:var(--sh); color:inherit; text-decoration:none; }
+    .queue-card { display:block; min-width:0; padding:13px 10px 12px; border-radius:12px; background:var(--card); box-shadow:var(--sh); color:inherit; text-decoration:none; }
     .queue-label { color:var(--text2); font-size:11px; font-weight:700; line-height:1.35; }
     .queue-value { margin-top:5px; color:var(--text); font-size:22px; font-weight:900; line-height:1; }
     .queue-value.amber { color:var(--amber); }
@@ -265,14 +265,14 @@
       display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;
     }
     .qa-item {
-      background: var(--card); border-radius: var(--r-md); box-shadow: var(--sh);
+      background: var(--card); border-radius: 12px; box-shadow: var(--sh);
       padding: 14px 8px 12px; display: flex; flex-direction: column;
       align-items: center; gap: 7px; cursor: pointer;
       -webkit-tap-highlight-color: transparent; transition: transform .1s;
     }
     .qa-item:active { transform: scale(.96); }
     .qa-icon {
-      width: 44px; height: 44px; border-radius: 13px;
+      width: 44px; height: 44px; border-radius: 12px;
       display: grid; place-items: center;
     }
     .qa-icon svg { width: 22px; height: 22px; }
@@ -297,7 +297,7 @@
     .result-toast {
       position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(.85);
       background: rgba(20,14,40,.88); color: #fff;
-      padding: 20px 36px; border-radius: 20px;
+      padding: 20px 36px; border-radius: 12px;
       font-size: 16px; font-weight: 800; text-align: center;
       opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
       z-index: 99; backdrop-filter: blur(6px);
@@ -315,7 +315,7 @@
     .tf-overlay.show { opacity: 1; pointer-events: auto; }
     .tf-modal {
       width: 90%; max-width: 370px;
-      background: var(--card); border-radius: 22px;
+      background: var(--card); border-radius: 12px;
       box-shadow: 0 20px 60px rgba(60,30,120,.25);
       transform: scale(.9); transition: transform .25s cubic-bezier(.4,.2,.2,1);
       overflow: hidden;
@@ -362,6 +362,7 @@
     }
     .tf-submit:active { transform: scale(.97); filter: brightness(.92); }
   </style>
+  <link rel="stylesheet" href="visual-theme.css" />
 </head>
 <body>
 <div class="frame">
@@ -501,7 +502,7 @@
           </div>
 
           <!-- No order placeholder (hidden initially) -->
-          <div id="noOrder" style="display:none; background:var(--card); border-radius:var(--r-lg); box-shadow:var(--sh); padding:32px 20px; text-align:center;">
+          <div id="noOrder" style="display:none; background:var(--card); border-radius:12px; box-shadow:var(--sh); padding:32px 20px; text-align:center;">
             <div style="font-size:36px; opacity:.25; margin-bottom:10px;">📋</div>
             <div style="font-size:14px; font-weight:800; color:var(--text2); margin-bottom:4px;">暂无待接订单</div>
             <div style="font-size:12px; color:var(--text3);">保持空闲状态，新订单将推送给您</div>

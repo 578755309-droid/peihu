@@ -12,7 +12,7 @@
     --card:#FFFFFF;--text:#1A1828;--text2:#6B6880;--text3:#AEACC0;--border:#CFF5ED;
     --green:#16A34A;--green-bg:#DCFCE7;--amber:#D97706;--amber-bg:#FEF3C7;
     --red:#DC2626;--red-bg:#FEE2E2;--blue-bg:#DDF7F1;
-    --sh:0 2px 16px rgba(0,0,0,0.1);--r-lg:14px;
+    --sh:0 2px 16px rgba(0,0,0,0.1);--r-lg:12px;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#F5F5F5;color:var(--text);min-width:1100px}
@@ -28,76 +28,77 @@
   .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
   .page-title{font-size:22px;font-weight:900}
   .page-sub{font-size:13px;color:var(--text3);font-weight:600;margin-top:4px}
-  .btn-primary{height:36px;padding:0 18px;border-radius:9px;border:none;cursor:pointer;background:#1CD8B7;color:#fff;font-size:13px;font-weight:800;font-family:inherit;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(0,0,0,0.1);transition:filter .15s}
+  .btn-primary{height:36px;padding:0 18px;border-radius:12px;border:none;cursor:pointer;background:#1CD8B7;color:#fff;font-size:13px;font-weight:800;font-family:inherit;display:flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(0,0,0,0.1);transition:filter .15s}
   .btn-primary:hover{filter:brightness(1.08)}
   .btn-primary svg{width:14px;height:14px}
 
   /* 指标卡 */
   .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
-  .metric-card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh);padding:20px;display:flex;flex-direction:column;gap:14px}
+  .metric-card{background:var(--card);border-radius:12px;box-shadow:var(--sh);padding:20px;display:flex;flex-direction:column;gap:14px}
   .metric-top{display:flex;align-items:center;justify-content:space-between}
   .metric-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center}
   .metric-icon svg{width:22px;height:22px}
-  .metric-badge{font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px}
+  .metric-badge{font-size:11px;font-weight:800;padding:4px 10px;border-radius:12px}
   .metric-val{font-size:26px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
   .metric-lbl{font-size:13px;color:var(--text3);font-weight:600;margin-top:4px}
   .metric-trend{font-size:12px;font-weight:700;margin-top:6px;color:var(--text3)}
 
   /* 中部：趋势 + 营收构成 */
   .mid-row{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-bottom:20px}
-  .chart-card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden}
+  .chart-card{background:var(--card);border-radius:12px;box-shadow:var(--sh);overflow:hidden}
   .card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 14px;border-bottom:1px solid var(--border)}
   .card-hd-left{display:flex;align-items:center;gap:9px}
-  .sec-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);flex-shrink:0}
+  .sec-dot{width:8px;height:8px;border-radius:12px;background:var(--purple);flex-shrink:0}
   .sec-title{font-size:14px;font-weight:800}
   .chart-tabs{display:flex;gap:4px}
-  .ctab{padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;background:transparent;color:var(--text3);transition:all .15s}
+  .ctab{padding:5px 12px;border-radius:12px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;background:transparent;color:var(--text3);transition:all .15s}
   .ctab.on{background:var(--purple-light);color:var(--purple)}
   .chart-body{padding:16px 20px 12px}
   canvas#lineChart{width:100%;height:340px;display:block}
   .chart-legend{display:flex;align-items:center;gap:16px;padding:0 20px 16px}
   .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--text2)}
-  .legend-dot{width:8px;height:8px;border-radius:50%}
+  .legend-dot{width:8px;height:8px;border-radius:12px}
 
-  .stat-card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh);padding:18px 20px}
+  .stat-card{background:var(--card);border-radius:12px;box-shadow:var(--sh);padding:18px 20px}
   .stat-card-title{font-size:13px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-  .share-track{display:flex;height:14px;border-radius:7px;overflow:hidden;margin-bottom:14px}
+  .share-track{display:flex;height:14px;border-radius:12px;overflow:hidden;margin-bottom:14px}
   .share-seg{height:100%}
   .stat-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
   .stat-row:last-child{border-bottom:none;padding-bottom:0}
   .stat-row-lbl{font-size:12px;color:var(--text2);font-weight:600;display:flex;align-items:center;gap:7px}
   .stat-row-val{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
-  .mini-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .mini-dot{width:8px;height:8px;border-radius:12px;flex-shrink:0}
 
   /* 成本支出行 */
   .row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
   .cost-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .cost-item{background:var(--purple-bg);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+  .cost-item{background:var(--purple-bg);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
   .cost-val{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums}
   .cost-lbl{font-size:12px;color:var(--text3);font-weight:600;margin-top:4px}
   .cost-note{font-size:11px;color:var(--text3);margin-top:2px}
 
   /* 表格 */
-  .table-card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden;margin-bottom:20px}
+  .table-card{background:var(--card);border-radius:12px;box-shadow:var(--sh);overflow:hidden;margin-bottom:20px}
   .table{width:100%;border-collapse:collapse}
   .table th{padding:10px 16px;font-size:11px;font-weight:800;color:var(--text3);background:var(--purple-bg);text-align:left;white-space:nowrap;letter-spacing:.3px}
   .table td{padding:13px 16px;font-size:13px;font-weight:600;color:var(--text2);border-top:1px solid var(--border);vertical-align:middle}
   .amt{font-weight:900;color:var(--purple);font-variant-numeric:tabular-nums}
   .amt-neg{font-weight:900;color:var(--red);font-variant-numeric:tabular-nums}
-  .biz-tag{display:inline-flex;padding:4px 10px;border-radius:14px;font-size:11px;font-weight:800}
+  .biz-tag{display:inline-flex;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:800}
   .biz-svc{background:var(--blue-bg);color:#0FA98C}
   .biz-mall{background:var(--amber-bg);color:var(--amber)}
-  .fund-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;white-space:nowrap}
-  .fund-pill::before{content:'';width:6px;height:6px;border-radius:50%}
+  .fund-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:800;white-space:nowrap}
+  .fund-pill::before{content:'';width:6px;height:6px;border-radius:12px}
   .fund-ok{background:var(--green-bg);color:var(--green)}.fund-ok::before{background:var(--green)}
   .fund-run{background:var(--amber-bg);color:var(--amber)}.fund-run::before{background:var(--amber)}
   .fund-loss{background:var(--red-bg);color:var(--red)}.fund-loss::before{background:var(--red)}
-  .rank-no{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;background:var(--purple-light);color:var(--purple);font-size:11px;font-weight:900}
+  .rank-no{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:12px;background:var(--purple-light);color:var(--purple);font-size:11px;font-weight:900}
   .rank-no.top{background:#1CD8B7;color:#fff}
   .cell-name{font-size:13px;font-weight:800;color:var(--text)}
   .cell-sub{font-size:11px;color:var(--text3);margin-top:1px}
 </style>
 <script defer src="admin-sidebar.js"></script>
+  <link rel="stylesheet" href="visual-theme.css" />
 </head>
 <body>
 <div class="layout">

@@ -27,7 +27,7 @@
       --blue:         #1CD8B7;
       --blue-bg:      #DDF7F1;
       --sh: 0 2px 16px rgba(0,0,0,0.1);
-      --r-lg: 14px; --r-md: 10px; --r-sm: 8px;
+      --r-lg: 12px; --r-md: 12px; --r-sm: 12px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -59,7 +59,7 @@
     }
     .nav-link {
       display: flex; align-items: center; gap: 11px;
-      padding: 10px 20px; margin: 2px 10px; border-radius: 10px;
+      padding: 10px 20px; margin: 2px 10px; border-radius: 12px;
       font-size: 13px; font-weight: 700; color: rgba(255,255,255,.6);
       cursor: pointer; transition: all .15s; text-decoration: none;
     }
@@ -67,7 +67,7 @@
     .nav-link:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.9); }
     .nav-link.active { background: rgba(255,255,255,.15); color: #fff; box-shadow: inset 3px 0 0 #7FE5D0; }
     .nav-badge {
-      margin-left: auto; min-width: 20px; height: 18px; border-radius: 9px;
+      margin-left: auto; min-width: 20px; height: 18px; border-radius: 12px;
       background: #EF4444; color: #fff; font-size: 10px; font-weight: 800;
       display: grid; place-items: center; padding: 0 5px;
     }
@@ -76,14 +76,14 @@
       display: flex; align-items: center; gap: 10px;
     }
     .sb-av {
-      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      width: 36px; height: 36px; border-radius: 12px; flex-shrink: 0;
       background: rgba(255,255,255,.2); display: grid; place-items: center;
       font-size: 15px; font-weight: 900; color: #fff;
     }
     .sb-uname { font-size: 13px; font-weight: 800; color: #fff; }
     .sb-urole { font-size: 11px; color: rgba(255,255,255,.4); font-weight: 600; margin-top: 2px; }
     .sb-logout {
-      margin-left: auto; width: 28px; height: 28px; border-radius: 8px;
+      margin-left: auto; width: 28px; height: 28px; border-radius: 12px;
       border: none; cursor: pointer; background: rgba(255,255,255,.1);
       display: grid; place-items: center; color: rgba(255,255,255,.5); transition: all .15s;
     }
@@ -106,7 +106,7 @@
     .breadcrumb svg { width: 14px; height: 14px; }
     .tb-search {
       display: flex; align-items: center; gap: 8px;
-      background: var(--purple-bg); border-radius: 8px;
+      background: var(--purple-bg); border-radius: 12px;
       padding: 0 12px; height: 36px; width: 220px;
       border: 1.5px solid transparent; transition: border-color .2s;
     }
@@ -119,14 +119,14 @@
     .tb-search input::placeholder { color: var(--text3); }
     .tb-actions { display: flex; align-items: center; gap: 10px; }
     .tb-btn {
-      width: 36px; height: 36px; border-radius: 9px; border: none; cursor: pointer;
+      width: 36px; height: 36px; border-radius: 12px; border: none; cursor: pointer;
       background: var(--purple-bg); display: grid; place-items: center;
       color: var(--text2); transition: background .15s;
     }
     .tb-btn:hover { background: var(--purple-light); color: var(--purple); }
     .tb-btn svg { width: 17px; height: 17px; }
     .tb-av {
-      width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
+      width: 36px; height: 36px; border-radius: 12px; cursor: pointer;
       background: #1CD8B7;
       display: grid; place-items: center; font-size: 14px; font-weight: 900; color: #fff;
     }
@@ -139,7 +139,7 @@
     .page-sub   { font-size: 13px; color: var(--text3); font-weight: 600; margin-top: 4px; }
     .page-actions { display: flex; gap: 10px; }
     .btn-outline {
-      height: 36px; padding: 0 16px; border-radius: 9px;
+      height: 36px; padding: 0 16px; border-radius: 12px;
       border: 1.5px solid var(--border); background: var(--card);
       font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; color: var(--text2);
       display: flex; align-items: center; gap: 6px; transition: all .15s;
@@ -147,7 +147,7 @@
     .btn-outline:hover { border-color: var(--purple); color: var(--purple); }
     .btn-outline svg { width: 14px; height: 14px; }
     .btn-primary {
-      height: 36px; padding: 0 18px; border-radius: 9px; border: none; cursor: pointer;
+      height: 36px; padding: 0 18px; border-radius: 12px; border: none; cursor: pointer;
       background: #1CD8B7; color: #fff;
       font-size: 13px; font-weight: 800; font-family: inherit;
       display: flex; align-items: center; gap: 6px;
@@ -159,11 +159,11 @@
     /* Stats row */
     .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 20px; }
     .stat-mini {
-      background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh);
+      background: var(--card); border-radius: 12px; box-shadow: var(--sh);
       padding: 16px 18px; display: flex; align-items: center; gap: 14px;
     }
     .stat-mini-ico {
-      width: 42px; height: 42px; border-radius: 11px; display: grid; place-items: center; flex-shrink: 0;
+      width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0;
     }
     .stat-mini-ico svg { width: 20px; height: 20px; }
     .stat-mini-val { font-size: 22px; font-weight: 900; color: var(--text); line-height: 1; }
@@ -171,14 +171,14 @@
 
     /* Filter bar */
     .filter-bar {
-      background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh);
+      background: var(--card); border-radius: 12px; box-shadow: var(--sh);
       padding: 14px 20px; margin-bottom: 16px;
       display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
     }
     .filter-label { font-size: 12px; font-weight: 800; color: var(--text3); white-space: nowrap; }
     .filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
     .ftag {
-      padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      padding: 5px 14px; border-radius: 12px; font-size: 12px; font-weight: 700;
       border: 1.5px solid var(--border); background: transparent; color: var(--text2);
       cursor: pointer; font-family: inherit; transition: all .15s;
     }
@@ -186,7 +186,7 @@
     .filter-divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
     .filter-search {
       display: flex; align-items: center; gap: 7px; margin-left: auto;
-      background: var(--purple-bg); border-radius: 8px; padding: 0 12px; height: 34px;
+      background: var(--purple-bg); border-radius: 12px; padding: 0 12px; height: 34px;
       border: 1.5px solid transparent; transition: border-color .2s; min-width: 200px;
     }
     .filter-search:focus-within { border-color: var(--purple); background: #fff; }
@@ -198,7 +198,7 @@
     .filter-search input::placeholder { color: var(--text3); }
 
     /* Table card */
-    .table-card { background: var(--card); border-radius: var(--r-lg); box-shadow: var(--sh); overflow: hidden; }
+    .table-card { background: var(--card); border-radius: 12px; box-shadow: var(--sh); overflow: hidden; }
     .table-card-hd {
       display: flex; align-items: center; justify-content: space-between;
       padding: 16px 20px; border-bottom: 1px solid var(--border);
@@ -220,7 +220,7 @@
 
     /* Hospital avatar */
     .hosp-av {
-      width: 38px; height: 38px; border-radius: 10px;
+      width: 38px; height: 38px; border-radius: 12px;
       display: grid; place-items: center; font-size: 14px; font-weight: 900;
       color: #fff; flex-shrink: 0;
     }
@@ -230,7 +230,7 @@
 
     /* Badge */
     .badge {
-      display: inline-block; padding: 3px 9px; border-radius: 20px;
+      display: inline-block; padding: 3px 9px; border-radius: 12px;
       font-size: 11px; font-weight: 800;
     }
     .badge-green  { background: var(--green-bg);  color: var(--green); }
@@ -245,7 +245,7 @@
     /* Action buttons */
     .act-btns { display: flex; gap: 6px; }
     .act-btn {
-      height: 28px; padding: 0 12px; border-radius: 7px; font-size: 12px; font-weight: 700;
+      height: 28px; padding: 0 12px; border-radius: 12px; font-size: 12px; font-weight: 700;
       font-family: inherit; cursor: pointer; border: 1.5px solid var(--border);
       background: transparent; color: var(--text2); transition: all .15s;
     }
@@ -260,7 +260,7 @@
     }
     .pagination { display: flex; gap: 4px; }
     .pg-btn {
-      min-width: 30px; height: 30px; border-radius: 7px; border: 1.5px solid var(--border);
+      min-width: 30px; height: 30px; border-radius: 12px; border: 1.5px solid var(--border);
       background: transparent; font-size: 12px; font-weight: 700;
       font-family: inherit; cursor: pointer; color: var(--text2); transition: all .15s;
       display: grid; place-items: center; padding: 0 6px;
@@ -275,7 +275,7 @@
     }
     .modal-overlay.show { display: grid; }
     .modal {
-      background: var(--card); border-radius: 18px;
+      background: var(--card); border-radius: 12px;
       box-shadow: 0 24px 60px rgba(0,0,0,.2);
       width: 520px; max-width: 95vw; overflow: hidden;
       animation: modalIn .22s cubic-bezier(.22,.88,.36,1);
@@ -287,7 +287,7 @@
     }
     .modal-title { font-size: 16px; font-weight: 900; color: var(--text); }
     .modal-close {
-      width: 30px; height: 30px; border-radius: 8px; border: none;
+      width: 30px; height: 30px; border-radius: 12px; border: none;
       background: var(--purple-bg); cursor: pointer; display: grid; place-items: center;
       color: var(--text3); transition: all .15s;
     }
@@ -299,13 +299,13 @@
     .form-group.full { grid-column: 1 / -1; }
     .form-lbl { font-size: 12px; font-weight: 800; color: var(--text2); }
     .form-input {
-      height: 38px; border-radius: 9px; border: 1.5px solid var(--border);
+      height: 38px; border-radius: 12px; border: 1.5px solid var(--border);
       padding: 0 12px; font-size: 13px; font-family: inherit; color: var(--text);
       background: var(--purple-bg); outline: none; transition: border-color .15s;
     }
     .form-input:focus { border-color: var(--purple); background: #fff; }
     .form-select {
-      height: 38px; border-radius: 9px; border: 1.5px solid var(--border);
+      height: 38px; border-radius: 12px; border: 1.5px solid var(--border);
       padding: 0 12px; font-size: 13px; font-family: inherit; color: var(--text);
       background: var(--purple-bg); outline: none; cursor: pointer; transition: border-color .15s;
     }
@@ -322,7 +322,7 @@
       padding: 16px 24px; border-bottom: 1px solid var(--border);
     }
     .qr-hosp-av {
-      width: 44px; height: 44px; border-radius: 11px; flex-shrink: 0;
+      width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
       display: grid; place-items: center; font-size: 15px; font-weight: 900; color: #fff;
     }
     .qr-hosp-name { font-size: 14px; font-weight: 800; color: var(--text); }
@@ -331,7 +331,7 @@
       padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 14px;
     }
     .qr-frame {
-      padding: 16px; border-radius: 16px;
+      padding: 16px; border-radius: 12px;
       background: #fff; border: 2px solid var(--border);
       box-shadow: 0 4px 20px rgba(0,0,0,0.1);
       position: relative;
@@ -340,8 +340,8 @@
       content:''; position:absolute; width:18px; height:18px;
       border-color: var(--purple); border-style: solid;
     }
-    .qr-frame::before { top:6px; left:6px; border-width:3px 0 0 3px; border-radius:4px 0 0 0; }
-    .qr-frame::after  { bottom:6px; right:6px; border-width:0 3px 3px 0; border-radius:0 0 4px 0; }
+    .qr-frame::before { top:6px; left:6px; border-width:3px 0 0 3px; border-radius:12px; }
+    .qr-frame::after  { bottom:6px; right:6px; border-width:0 3px 3px 0; border-radius:12px; }
     #qrCanvas { display: block; }
     .qr-label {
       font-size: 12px; font-weight: 700; color: var(--text2);
@@ -351,7 +351,7 @@
       display: flex; gap: 10px; padding: 0 24px 20px; justify-content: center;
     }
     .btn-qr-dl {
-      height: 38px; padding: 0 20px; border-radius: 9px; border: none; cursor: pointer;
+      height: 38px; padding: 0 20px; border-radius: 12px; border: none; cursor: pointer;
       background: #1CD8B7; color: #fff;
       font-size: 13px; font-weight: 800; font-family: inherit;
       display: flex; align-items: center; gap: 7px;
@@ -360,7 +360,7 @@
     .btn-qr-dl:hover { filter: brightness(1.08); }
     .btn-qr-dl svg { width: 14px; height: 14px; }
     .btn-qr-print {
-      height: 38px; padding: 0 20px; border-radius: 9px; cursor: pointer;
+      height: 38px; padding: 0 20px; border-radius: 12px; cursor: pointer;
       border: 1.5px solid var(--border); background: var(--card);
       font-size: 13px; font-weight: 700; font-family: inherit; color: var(--text2);
       display: flex; align-items: center; gap: 7px; transition: all .15s;
@@ -381,7 +381,8 @@
     #printArea .print-sub  { font-size: 13px; color: #6B6880; margin-top: 4px; }
     #printArea .print-tip  { font-size: 12px; color: #AEACC0; margin-top: 8px; }
   </style>
-<script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css"></head>
+<script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css">  <link rel="stylesheet" href="visual-theme.css" />
+</head>
 <body>
 <div class="admin-layout">
 
@@ -616,7 +617,7 @@
 
 <!-- Print Area -->
 <div id="printArea">
-  <div id="paAv" style="width:60px;height:60px;border-radius:16px;display:grid;place-items:center;font-size:22px;font-weight:900;color:#fff"></div>
+  <div id="paAv" style="width:60px;height:60px;border-radius:12px;display:grid;place-items:center;font-size:22px;font-weight:900;color:#fff"></div>
   <div style="text-align:center">
     <div class="print-name" id="paName"></div>
     <div class="print-sub" id="paSub"></div>

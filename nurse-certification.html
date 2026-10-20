@@ -5,29 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>护理员申请认证 · 护理员端</title>
   <style>
-    :root{--purple:#1CD8B7;--purple-dark:#0FA98C;--purple-light:#DDF7F1;--purple-bg:#F5F5F5;--card:#fff;--text:#1A1828;--text2:#6B6880;--text3:#AEACC0;--border:#EDE9F5;--green:#16A34A;--green-bg:#DCFCE7;--amber:#D97706;--amber-bg:#FEF3C7;--red:#DC2626;--red-bg:#FEE2E2;--sh:0 2px 16px rgba(0,0,0,0.1);--r-lg:20px}
+    :root{--purple:#1CD8B7;--purple-dark:#0FA98C;--purple-light:#DDF7F1;--purple-bg:#F5F5F5;--card:#fff;--text:#1A1828;--text2:#6B6880;--text3:#AEACC0;--border:#EDE9F5;--green:#16A34A;--green-bg:#DCFCE7;--amber:#D97706;--amber-bg:#FEF3C7;--red:#DC2626;--red-bg:#FEE2E2;--sh:0 2px 16px rgba(0,0,0,0.1);--r-lg:12px}
     *,*:before,*:after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;background:var(--purple-bg);color:var(--text);-webkit-font-smoothing:antialiased}
     .frame{display:flex;justify-content:center;min-height:100vh;background:#F5F5F5}
     .phone{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;background:var(--purple-bg)}
-    @media(min-width:520px){.frame{align-items:flex-start;padding:20px 0 40px}.phone{height:900px;min-height:unset;border-radius:42px;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,0.1)}}
+    @media(min-width:520px){.frame{align-items:flex-start;padding:20px 0 40px}.phone{height:900px;min-height:unset;border-radius:12px;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,0.1)}}
     .scroll{flex:1;overflow:auto}.scroll::-webkit-scrollbar{display:none}
     .status-bar{display:flex;justify-content:space-between;align-items:center;padding:13px 22px 8px;background:#fff;font-size:13px;font-weight:700}
     .status-right{display:flex;gap:5px;align-items:center}.status-right svg{width:17px;height:17px}
     .navbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 12px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:5}
-    .back-btn{width:36px;height:36px;border:0;border-radius:11px;background:var(--purple-light);color:var(--purple);display:grid;place-items:center;cursor:pointer}
+    .back-btn{width:36px;height:36px;border:0;border-radius:12px;background:var(--purple-light);color:var(--purple);display:grid;place-items:center;cursor:pointer}
     .back-btn svg{width:20px;height:20px}.nav-title{font-size:17px;font-weight:900}.nav-ph{width:36px}
     .content{padding:14px;display:flex;flex-direction:column;gap:12px;padding-bottom:28px}
-    .card{background:var(--card);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden}
+    .card{background:var(--card);border-radius:12px;box-shadow:var(--sh);overflow:hidden}
     .status-card{padding:16px}.status-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
     .section-title{font-size:15px;font-weight:900}
-    .status-badge{padding:5px 9px;border-radius:8px;font-size:11px;font-weight:800;white-space:nowrap}
+    .status-badge{padding:5px 9px;border-radius:12px;font-size:11px;font-weight:800;white-space:nowrap}
     .status-badge.approved{background:var(--green-bg);color:var(--green)}
     .status-badge.pending{background:var(--amber-bg);color:var(--amber)}
     .status-badge.rejected{background:var(--red-bg);color:var(--red)}
     .status-desc{margin-top:9px;color:var(--text2);font-size:12px;line-height:1.55}
     .status-meta{margin-top:9px;color:var(--text3);font-size:11px}
-    .reason{margin-top:11px;padding:10px 11px;border-radius:10px;background:var(--red-bg);color:#991B1B;font-size:11px;line-height:1.5}
+    .reason{margin-top:11px;padding:10px 11px;border-radius:12px;background:var(--red-bg);color:#991B1B;font-size:11px;line-height:1.5}
     .card-head{display:flex;align-items:center;justify-content:space-between;padding:15px 16px 11px;border-bottom:1px solid var(--border)}
     .card-action{border:0;background:none;color:var(--purple);font:800 12px inherit;cursor:pointer}
     .info-list{padding:13px 16px 16px;display:flex;flex-direction:column;gap:9px}
@@ -35,43 +35,44 @@
     .info-row .k{color:var(--text3);flex-shrink:0}
     .info-row .v{color:var(--text);font-weight:700;text-align:right;word-break:break-all}
     .chip-row{display:flex;flex-wrap:wrap;gap:7px}
-    .chip{padding:4px 9px;border-radius:8px;background:var(--purple-light);color:var(--purple-dark);font-size:11px;font-weight:800}
-    .cert-brief{display:flex;align-items:center;gap:9px;padding:10px;border-radius:11px;background:#FAF9FD}
-    .cert-brief .ico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--purple-light);color:var(--purple);font-size:12px;font-weight:900;flex-shrink:0}
+    .chip{padding:4px 9px;border-radius:12px;background:var(--purple-light);color:var(--purple-dark);font-size:11px;font-weight:800}
+    .cert-brief{display:flex;align-items:center;gap:9px;padding:10px;border-radius:12px;background:#FAF9FD}
+    .cert-brief .ico{width:30px;height:30px;border-radius:12px;display:grid;place-items:center;background:var(--purple-light);color:var(--purple);font-size:12px;font-weight:900;flex-shrink:0}
     .cert-brief .nm{font-size:12px;font-weight:800}
     .cert-brief .sub{margin-top:2px;color:var(--text3);font-size:10px}
     /* 表单 */
     .form{padding:4px 16px 16px}
-    .form-banner{margin-bottom:10px;padding:10px 11px;border-radius:10px;font-size:11px;line-height:1.5;background:var(--amber-bg);color:#92400E}
+    .form-banner{margin-bottom:10px;padding:10px 11px;border-radius:12px;font-size:11px;line-height:1.5;background:var(--amber-bg);color:#92400E}
     .form-banner.red{background:var(--red-bg);color:#991B1B}
     .form-sec{margin:13px 0 4px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:900}
-    .form-sec:before{content:"";width:4px;height:13px;border-radius:4px;background:var(--purple)}
+    .form-sec:before{content:"";width:4px;height:13px;border-radius:12px;background:var(--purple)}
     .field{padding:11px 0;border-bottom:1px solid var(--border)}
     .field:last-of-type{border-bottom:0}
     .field label{display:block;color:var(--text2);font-size:11px;font-weight:800;margin-bottom:7px}
     .req{color:var(--red);margin-left:2px}
-    .field input,.field select{width:100%;height:42px;border:1px solid var(--border);outline:0;border-radius:10px;padding:0 11px;background:var(--purple-bg);color:var(--text);font:700 13px inherit}
+    .field input,.field select{width:100%;height:42px;border:1px solid var(--border);outline:0;border-radius:12px;padding:0 11px;background:var(--purple-bg);color:var(--text);font:700 13px inherit}
     .field input:focus,.field select:focus{border-color:#7FE9D4;box-shadow:0 0 0 3px rgba(28,216,183,.1)}
     .field input[readonly]{color:var(--text3)}
     .skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .skill-chip{display:flex;align-items:center;justify-content:center;gap:6px;height:40px;border:1.5px solid var(--border);border-radius:10px;font-size:12px;font-weight:800;color:var(--text2);cursor:pointer;user-select:none}
+    .skill-chip{display:flex;align-items:center;justify-content:center;gap:6px;height:40px;border:1.5px solid var(--border);border-radius:12px;font-size:12px;font-weight:800;color:var(--text2);cursor:pointer;user-select:none}
     .skill-chip.on{border-color:var(--purple);background:var(--purple-light);color:var(--purple-dark)}
     .skill-chip input{display:none}
     .cert-item{padding:12px;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;background:#FCFBFE}
     .cert-item .cert-name{font-size:12px;font-weight:900;margin-bottom:8px}
     .up-row{display:flex;align-items:center;gap:8px;margin-top:8px}
-    .up-ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--purple-light);color:var(--purple);font-size:11px;font-weight:900;flex-shrink:0}
-    .up-ico img{width:100%;height:100%;object-fit:cover;border-radius:9px}
+    .up-ico{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:var(--purple-light);color:var(--purple);font-size:11px;font-weight:900;flex-shrink:0}
+    .up-ico img{width:100%;height:100%;object-fit:cover;border-radius:12px}
     .up-name{flex:1;min-width:0;font-size:10px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .up-btn{height:30px;padding:0 11px;border:1.5px dashed #7FE9D4;border-radius:8px;background:#fff;color:var(--purple);font:800 10px inherit;cursor:pointer;white-space:nowrap}
+    .up-btn{height:30px;padding:0 11px;border:1.5px dashed #7FE9D4;border-radius:12px;background:#fff;color:var(--purple);font:800 10px inherit;cursor:pointer;white-space:nowrap}
     .err{display:none;margin-top:6px;color:var(--red);font-size:10px;font-weight:700}
     .field.invalid .err{display:block}
-    .submit{display:block;width:100%;height:46px;border:0;border-radius:13px;background:linear-gradient(135deg,var(--purple),var(--purple-dark));color:#fff;font:800 14px inherit;cursor:pointer;margin-top:14px}
+    .submit{display:block;width:100%;height:46px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--purple-dark));color:#fff;font:800 14px inherit;cursor:pointer;margin-top:14px}
     .submit:active{opacity:.88}
     .form-hint{padding:0 2px 4px;color:var(--text3);font-size:10px;line-height:1.5}
-    .toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.94);padding:17px 25px;border-radius:16px;background:rgba(25,15,45,.9);color:#fff;font-size:14px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;z-index:30;max-width:80vw;text-align:center}
+    .toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.94);padding:17px 25px;border-radius:12px;background:rgba(25,15,45,.9);color:#fff;font-size:14px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;z-index:30;max-width:80vw;text-align:center}
     .toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
   </style>
+  <link rel="stylesheet" href="visual-theme.css" />
 </head>
 <body>
 <div class="frame"><div class="phone"><main class="scroll">

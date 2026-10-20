@@ -18,7 +18,7 @@
       --green:        #16A34A;
       --green-bg:     #DCFCE7;
       --sh: 0 2px 16px rgba(0,0,0,0.1);
-      --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
+      --r-lg: 12px; --r-md: 12px; --r-sm: 12px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -37,7 +37,7 @@
     @media (min-width: 520px) {
       .frame { align-items: flex-start; padding: 20px 0 40px; }
       .phone {
-        height: 900px; min-height: unset; border-radius: 42px; overflow: hidden;
+        height: 900px; min-height: unset; border-radius: 12px; overflow: hidden;
         box-shadow: 0 24px 72px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,.06);
       }
     }
@@ -58,7 +58,7 @@
     .ptr.pulling { height: 48px; }
     .ptr.refreshing { height: 48px; color: var(--purple); }
     .ptr-spin {
-      width: 18px; height: 18px; border-radius: 50%;
+      width: 18px; height: 18px; border-radius: 12px;
       border: 2px solid var(--purple-light); border-top-color: var(--purple);
       display: none;
     }
@@ -82,7 +82,7 @@
     }
     .back-btn {
       width: 36px; height: 36px; border: none; cursor: pointer;
-      background: var(--purple-light); border-radius: 11px;
+      background: var(--purple-light); border-radius: 12px;
       display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
     }
     .back-btn svg { width: 20px; height: 20px; }
@@ -96,7 +96,7 @@
     .search-wrap { padding: 12px 14px 10px; }
     .search-box {
       display: flex; align-items: center; gap: 9px;
-      background: var(--purple-bg); border-radius: 13px;
+      background: var(--purple-bg); border-radius: 12px;
       padding: 0 14px; height: 44px;
       border: 1.5px solid transparent; transition: border-color .2s, box-shadow .2s;
     }
@@ -112,7 +112,7 @@
     }
     .search-box input::placeholder { color: var(--text3); }
     .clear-btn {
-      width: 20px; height: 20px; border-radius: 50%; border: none; cursor: pointer;
+      width: 20px; height: 20px; border-radius: 12px; border: none; cursor: pointer;
       background: var(--text3); display: none; place-items: center; flex-shrink: 0;
       -webkit-tap-highlight-color: transparent;
     }
@@ -129,7 +129,7 @@
 
     .fchip {
       flex-shrink: 0; display: flex; align-items: center; gap: 4px;
-      padding: 6px 13px; border-radius: 20px; cursor: pointer;
+      padding: 6px 13px; border-radius: 12px; cursor: pointer;
       font-size: 12px; font-weight: 700; font-family: inherit;
       border: 1.5px solid var(--border); background: transparent; color: var(--text3);
       transition: all .15s; -webkit-tap-highlight-color: transparent;
@@ -154,13 +154,13 @@
       font-size: 12px; font-weight: 700; color: var(--text2); cursor: pointer;
     }
     .toggle-track {
-      width: 34px; height: 20px; border-radius: 10px; background: var(--border);
+      width: 34px; height: 20px; border-radius: 12px; background: var(--border);
       position: relative; transition: background .2s; flex-shrink: 0;
     }
     .toggle-track.on { background: var(--purple); }
     .toggle-thumb {
       position: absolute; top: 2px; left: 2px;
-      width: 16px; height: 16px; border-radius: 50%; background: #fff;
+      width: 16px; height: 16px; border-radius: 12px; background: #fff;
       box-shadow: 0 1px 4px rgba(0,0,0,.15); transition: transform .2s;
     }
     .toggle-track.on .toggle-thumb { transform: translateX(14px); }
@@ -170,20 +170,20 @@
 
     /* Nurse card */
     .nurse-card {
-      background: var(--card); border-radius: var(--r-lg);
+      background: var(--card); border-radius: 12px;
       box-shadow: var(--sh); padding: 16px; overflow: hidden;
     }
     .nc-top { display: flex; gap: 13px; align-items: flex-start; }
     .nc-av-wrap { position: relative; flex-shrink: 0; }
     .nc-av {
-      width: 62px; height: 62px; border-radius: 50%;
+      width: 62px; height: 62px; border-radius: 12px;
       display: grid; place-items: center;
       font-size: 22px; font-weight: 900; color: #fff;
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
     .avail-dot {
       position: absolute; bottom: 2px; right: 2px;
-      width: 14px; height: 14px; border-radius: 50%;
+      width: 14px; height: 14px; border-radius: 12px;
       border: 2px solid var(--card);
     }
     .avail-dot.on  { background: var(--green); }
@@ -193,7 +193,7 @@
     .nc-name-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
     .nc-name { font-size: 16px; font-weight: 900; color: var(--text); }
     .nc-gender {
-      font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 12px;
     }
     .nc-gender.f { background: #FCE7F3; color: #BE185D; }
     .nc-gender.m { background: #DBEAFE; color: #1D4ED8; }
@@ -213,7 +213,7 @@
     .cert-tag {
       font-size: 10px; font-weight: 700;
       background: var(--purple-bg); color: var(--purple);
-      padding: 3px 8px; border-radius: 6px;
+      padding: 3px 8px; border-radius: 12px;
       display: flex; align-items: center; gap: 3px;
     }
     .cert-tag svg { width: 10px; height: 10px; }
@@ -250,19 +250,20 @@
     }
     .empty.show { display: flex; }
     .empty-icon {
-      width: 80px; height: 80px; border-radius: 24px;
+      width: 80px; height: 80px; border-radius: 12px;
       background: var(--purple-light); display: grid; place-items: center;
     }
     .empty-icon svg { width: 38px; height: 38px; }
     .empty-title { font-size: 16px; font-weight: 800; color: var(--text2); }
     .empty-sub { font-size: 13px; color: var(--text3); line-height: 1.6; }
     .empty-btn {
-      padding: 9px 24px; border-radius: 20px; border: none; cursor: pointer;
+      padding: 9px 24px; border-radius: 12px; border: none; cursor: pointer;
       background: var(--purple-light); color: var(--purple);
       font-size: 13px; font-weight: 700; font-family: inherit;
     }
 
   </style>
+  <link rel="stylesheet" href="visual-theme.css" />
 </head>
 <body>
 <div class="frame">

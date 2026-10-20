@@ -11,7 +11,7 @@
     body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;background:var(--purple-bg);color:var(--text);-webkit-font-smoothing:antialiased}
     .frame{display:flex;justify-content:center;min-height:100vh;background: #F5F5F5}
     .phone{width:100%;max-width:430px;min-height:100vh;display:flex;flex-direction:column;background:var(--purple-bg)}
-    @media(min-width:520px){.frame{align-items:flex-start;padding:20px 0 40px}.phone{height:900px;min-height:unset;border-radius:42px;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,0.1)}}
+    @media(min-width:520px){.frame{align-items:flex-start;padding:20px 0 40px}.phone{height:900px;min-height:unset;border-radius:12px;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,0.1)}}
     .status-bar{display:flex;justify-content:space-between;align-items:center;padding:13px 22px 8px;background:#fff;font-size:13px;font-weight:700}.status-right{display:flex;gap:5px;align-items:center}.status-right svg{width:17px;height:17px}
     .navbar{display:flex;align-items:center;justify-content:center;padding:10px 16px 12px;background:#fff;border-bottom:1px solid var(--border)}
     .nav-title{font-size:17px;font-weight:800}
@@ -19,7 +19,7 @@
 
     /* ── 2列网格卡片 ── */
     .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .svc-tile{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.1);cursor:pointer;-webkit-tap-highlight-color:transparent}
+    .svc-tile{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.1);cursor:pointer;-webkit-tap-highlight-color:transparent}
     .svc-tile:active{transform:scale(.985)}
     .svc-tile .svc-img{position:relative;width:100%;padding-top:62%;overflow:hidden;background:var(--purple-light)}
     .svc-tile .svc-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
@@ -32,7 +32,7 @@
     .svc-tile .svc-price small{font-size:10px;font-weight:700}
     .svc-tile .svc-sales{font-size:10px;color:var(--text3);white-space:nowrap}
     .svc-tile .svc-points{margin-top:4px;display:flex;align-items:center;gap:4px}
-    .svc-tile .svc-points .pts-tag{font-size:10px;font-weight:800;color:#E94E4E;background:#FFF0F0;padding:1px 5px;border-radius:4px}
+    .svc-tile .svc-points .pts-tag{font-size:10px;font-weight:800;color:#E94E4E;background:#FFF0F0;padding:1px 5px;border-radius:12px}
     .svc-tile .svc-points .pts-link{font-size:10px;color:var(--purple);font-weight:700}
 
     .svc-tile-wrap{position:relative}
@@ -45,6 +45,7 @@
     .nav-item.act .nav-ico{stroke:var(--purple)}
     .nav-item.act .nav-lbl{color:var(--purple)}
   </style>
+  <link rel="stylesheet" href="visual-theme.css" />
 </head>
 <body><div class="frame"><div class="phone">
   <div class="status-bar"><span>9:41</span><div class="status-right"><svg viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="1.5" width="3" height="10.5" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 24 12" fill="none"><rect x=".6" y=".6" width="20" height="10.8" rx="2.8" stroke="currentColor" stroke-width="1.2"/><rect x="21.2" y="3.6" width="2.2" height="4.8" rx="1.1" fill="currentColor"/></svg></div></div>

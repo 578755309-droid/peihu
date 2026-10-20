@@ -1,0 +1,47 @@
+/* Shared visual layer for user, caregiver and administration pages. */
+:root {
+  --r-sm:12px; --r-md:12px; --r-lg:12px;
+  --purple-bg:#f2f8f7;
+  --glass:rgba(255,255,255,.82);
+  --glass-line:rgba(255,255,255,.9);
+  --soft-shadow:0 10px 32px rgba(27,92,83,.07),0 2px 8px rgba(38,66,77,.035);
+}
+body,.frame {
+  background-color:#f2f8f7!important;
+  background-image:radial-gradient(ellipse at 8% 8%,rgba(86,220,190,.18),transparent 48%),radial-gradient(ellipse at 96% 38%,rgba(153,184,245,.16),transparent 48%),radial-gradient(ellipse at 40% 96%,rgba(152,228,206,.13),transparent 50%)!important;
+}
+.phone {background:rgba(246,250,249,.88)!important;box-shadow:0 28px 80px rgba(30,81,77,.13),0 4px 16px rgba(30,81,77,.04)!important}
+/* Keep blur on bounded surfaces, so long lists scroll smoothly. */
+.banner,.svc-tile,.consult-item,.card,.panel,.stat-card,.stats-card,
+.order-card,.nurse-card,.hospital-card,.service-card,.patient-card,
+.address-card,.product-card,.section-card,.info-card {
+  background-color:var(--glass)!important;
+  border:1px solid var(--glass-line);
+  box-shadow:var(--soft-shadow)!important;
+}
+.top-bar,.topbar,.bottom-nav,.tab-bar,.tabbar,.bottom-bar {
+  background:rgba(255,255,255,.86)!important;
+  border-color:rgba(205,226,220,.65)!important;
+  box-shadow:0 6px 24px rgba(27,92,83,.055)!important;
+}
+.modal,.modal-box,.modal-content,.dialog,.sheet,.sheet-panel {
+  background-color:rgba(255,255,255,.94)!important;
+  box-shadow:0 24px 80px rgba(24,64,61,.16)!important;
+  border:1px solid rgba(255,255,255,.9);
+}
+.top-search,.city-pill {background:rgba(255,255,255,.88)!important;box-shadow:0 2px 10px rgba(27,92,83,.035)}
+.top-tabs,.cat-row {background:rgba(255,255,255,.7)!important}
+.sidebar {background:linear-gradient(165deg,#093b4d,#082c40 72%)!important;box-shadow:8px 0 36px rgba(15,54,66,.09)}
+.main,.page {background-color:transparent!important}
+input,textarea,select {border-color:#dce9e5}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible {outline:2px solid #0fa98c;outline-offset:3px}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {
+  .banner,.card,.panel,.stat-card,.stats-card,.top-bar,.topbar,.bottom-nav,.tab-bar,.tabbar,.bottom-bar,.modal-box,.modal-content,.dialog,.sheet-panel {
+    -webkit-backdrop-filter:blur(16px) saturate(125%);
+    backdrop-filter:blur(16px) saturate(125%);
+  }
+}
+@media (prefers-reduced-transparency:reduce) {
+  :root {--glass:#fff}
+  .top-bar,.topbar,.bottom-nav,.modal-box,.modal-content,.dialog,.sheet-panel {background:#fff!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}

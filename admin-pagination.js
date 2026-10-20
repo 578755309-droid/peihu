@@ -11,8 +11,8 @@
   /* 注入样式（单文件自包含，不改动 admin-shell.css） */
   var css = '.akb-pager{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 4px 2px;font-size:12px;color:#5b6b8c}' +
     '.akb-pager .pg-total{margin-right:auto}' +
-    '.akb-pager select{height:26px;border:1px solid #d8e0f0;border-radius:6px;padding:0 6px;font-size:12px;color:#41536d;background:#fff}' +
-    '.akb-pager .pg-btn{min-width:26px;height:26px;padding:0 8px;border:1px solid #d8e0f0;border-radius:6px;background:#fff;color:#41536d;font-size:12px;cursor:pointer}' +
+    '.akb-pager select{height:26px;border:1px solid #d8e0f0;border-radius:12px;padding:0 6px;font-size:12px;color:#41536d;background:#fff}' +
+    '.akb-pager .pg-btn{min-width:26px;height:26px;padding:0 8px;border:1px solid #d8e0f0;border-radius:12px;background:#fff;color:#41536d;font-size:12px;cursor:pointer}' +
     '.akb-pager .pg-btn:hover:not(:disabled){border-color:#1CD8B7;color:#1CD8B7}' +
     '.akb-pager .pg-btn:disabled{opacity:.4;cursor:default}' +
     '.akb-pager .pg-btn.cur{background:#1CD8B7;border-color:#1CD8B7;color:#fff;font-weight:700}' +
