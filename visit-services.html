@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
 <script src="common-ui.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>陪诊服务 · 安科邦陪护</title>
+  <title>热门服务 · 安科邦陪护</title>
   <style>
     :root{--purple:#1CD8B7;--purple-dark:#0FA98C;--purple-light:#DDF7F1;--purple-bg: #F5F5F5;--card:#fff;--text:#1A1828;--text2:#6B6880;--text3:#AEACC0;--border:#EDE9F5}
     *{box-sizing:border-box;margin:0;padding:0}
@@ -17,26 +17,8 @@
     .nav-title{font-size:17px;font-weight:600}
     .scroll{flex:1;overflow:auto;padding:14px 13px 28px}
 
-    /* ── 2列网格卡片 ── */
-    .svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .svc-tile{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.1);cursor:pointer;-webkit-tap-highlight-color:transparent}
-    .svc-tile:active{transform:scale(.985)}
-    .svc-tile .svc-img{position:relative;width:100%;padding-top:62%;overflow:hidden;background:var(--purple-light)}
-    .svc-tile .svc-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-    .svc-tile .svc-img svg{position:absolute;inset:0;margin:auto;width:58%;height:58%}
-    .svc-tile .svc-body{padding:10px 12px 12px}
-    .svc-tile .svc-name{font-size:14px;font-weight:700;color:var(--text);line-height:1.35}
-    .svc-tile .svc-sub{margin-top:3px;font-size:12px;color:var(--text3);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .svc-tile .svc-meta{display:flex;align-items:center;gap:6px;margin-top:8px}
-    .svc-tile .svc-price{font-size:15px;font-weight:700;color:#E94E4E}
-    .svc-tile .svc-price small{font-size:11px;font-weight:600}
-    .svc-tile .svc-sales{font-size:11px;color:var(--text3);white-space:nowrap}
-    .svc-tile .svc-points{margin-top:4px;display:flex;align-items:center;gap:4px}
-    .svc-tile .svc-points .pts-tag{font-size:11px;font-weight:600;color:#E94E4E;background:#FFF0F0;padding:1px 5px;border-radius:12px}
-    .svc-tile .svc-points .pts-link{font-size:11px;color:var(--purple);font-weight:600}
-
-    .svc-tile-wrap{position:relative}
-
+    /* Service cards share the home page component in visual-theme.css. */
+    .svc-tile-wrap{position:relative;min-width:0}
     /* ── 底部 Tab ── */
     .bottom-nav{flex-shrink:0;display:flex;background:#fff;border-top:1px solid var(--border);padding:8px 0 calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(0,0,0,0.1)}
     .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;text-decoration:none;min-width:0}
@@ -50,7 +32,7 @@
 <body data-surface="mobile" data-page="visit-services"><div class="frame"><div class="phone">
   <div class="status-bar"><span>9:41</span><div class="status-right"><svg viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="3" width="3" height="9" rx="1"/><rect x="4.5" y="1.5" width="3" height="10.5" rx="1"/><rect x="9" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 24 12" fill="none"><rect x=".6" y=".6" width="20" height="10.8" rx="2.8" stroke="currentColor" stroke-width="1.2"/><rect x="21.2" y="3.6" width="2.2" height="4.8" rx="1.1" fill="currentColor"/></svg></div></div>
   <header class="navbar"><span class="nav-title">热门服务</span></header>
-  <main class="scroll"><div class="svc-grid" id="serviceList"></div></main>
+  <main class="scroll"><div class="svc-grid service-card-grid" id="serviceList"></div></main>
 
   <!-- 底部 Tab -->
   <nav class="bottom-nav">
@@ -118,15 +100,15 @@
       else if(s.sales!=null){sales=s.sales;}
       else{sales=DEFAULT_SALES[s.id]||0;}
       var price=s.price!=null?s.price:0;
-      return '<div class="svc-tile-wrap" onclick="selectService(\''+s.id+'\')"><article class="svc-tile">'+
-        '<div class="svc-img">'+(SVC_IMGS[s.id]?'<img src="'+SVC_IMGS[s.id]+'" alt="'+(s.name||'服务')+'" onerror="this.remove()">':'')+(ICONS[s.id]||'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><text x="24" y="28" text-anchor="middle" fill="#1CD8B7" font-size="14" font-weight="800">服务</text></svg>')+'</div>'+
-        '<div class="svc-body">'+
-          '<div class="svc-name">'+(s.name||'')+'</div>'+
-          '<div class="svc-sub">'+(s.summary||'')+'</div>'+
-          '<div class="svc-points"><span class="pts-tag">积分立减30%</span><span class="pts-link">我的积分 30 ›</span></div>'+
-          '<div class="svc-meta">'+
-            '<div class="svc-price"><small>¥</small>'+price+'<small>起</small></div>'+
-            '<div class="svc-sales">已售 '+fmtSales(sales)+'</div>'+
+      return '<div class="svc-tile-wrap" onclick="selectService(\''+s.id+'\')"><article class="svc-tile service-card">'+
+        '<div class="svc-tile-img">'+(SVC_IMGS[s.id]?'<img src="'+SVC_IMGS[s.id]+'" alt="'+(s.name||'服务')+'" onerror="this.remove()">':'')+(ICONS[s.id]||'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><text x="24" y="28" text-anchor="middle" fill="#1CD8B7" font-size="14" font-weight="800">服务</text></svg>')+'</div>'+
+        '<div class="svc-tile-body">'+
+          '<div class="svc-tile-name">'+(s.name||'')+'</div>'+
+          '<div class="svc-tile-sub">'+(s.summary||'')+'</div>'+
+          '<div class="svc-tile-pts"><span class="pts-tag">积分立减30%</span><span class="pts-link">我的积分 30</span></div>'+
+          '<div class="svc-tile-meta">'+
+            '<div class="svc-tile-price"><small>¥</small>'+price+'<small>起</small></div>'+
+            '<div class="svc-tile-sales">已售 '+fmtSales(sales)+'</div>'+
           '</div>'+
         '</div>'+
       '</article></div>';
