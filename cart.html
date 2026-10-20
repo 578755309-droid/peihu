@@ -58,7 +58,10 @@
 
     /* 底部结算栏 */
     .checkout-bar{flex-shrink:0;display:flex;align-items:center;background:#fff;border-top:1px solid var(--border);padding:12px 14px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(0,0,0,0.1)}
-    .checkout-left{flex:1}
+    .checkout-left{flex:1;min-width:0}
+    .cart-select-all{display:flex;align-items:center;gap:6px;min-height:44px;margin-right:12px;font-size:13px;color:var(--text);cursor:pointer;white-space:nowrap;flex-shrink:0}
+    .cart-select-all input{width:20px;height:20px;accent-color:var(--purple-dark);cursor:pointer;flex-shrink:0}
+    .cart-select-all:has(input:disabled){opacity:.45;cursor:default}
     .checkout-total{font-size:14px;color:var(--text2)}
     .checkout-total b{font-size:18px;color:#E94E4E}
     .checkout-btn{padding:11px 28px;border:0;border-radius:12px;background:var(--purple);color:#fff;font-size:15px;font-weight:600;cursor:pointer}
@@ -172,6 +175,7 @@
 
   <!-- 结算栏 -->
   <div class="checkout-bar">
+    <label class="cart-select-all"><input type="checkbox" id="selectAll" aria-label="全选购物车商品" onchange="toggleSelectAll(this.checked)" /><span>全选</span></label>
     <div class="checkout-left">
       <div class="checkout-total">合计：<span id="totalPrice"><b>¥0</b></span></div>
     </div>
@@ -271,6 +275,12 @@
     '</div>';
   }
 
+  function toggleSelectAll(checked){
+    selected.clear();
+    if(checked)mallCart.forEach(function(item){if(getProduct(item.id))selected.add('mall:'+item.id);});
+    render();
+  }
+
   function toggleCheck(key){
     if(selected.has(key)) selected.delete(key); else selected.add(key);
     render();
@@ -312,6 +322,12 @@
   }
 
   function updateTotal(){
+    var selectable=mallCart.filter(function(item){return !!getProduct(item.id);});
+    var selectedCount=selectable.filter(function(item){return selected.has('mall:'+item.id);}).length;
+    var selectAll=document.getElementById('selectAll');
+    selectAll.checked=selectable.length>0 && selectedCount===selectable.length;
+    selectAll.indeterminate=selectedCount>0 && selectedCount<selectable.length;
+    selectAll.disabled=selectable.length===0;
     var items = getSelectedItems();
     var total = items.reduce(function(sum,it){ return sum + it.price*it.qty; }, 0);
     var count = items.reduce(function(sum,it){ return sum + it.qty; }, 0);
