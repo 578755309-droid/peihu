@@ -53,7 +53,7 @@
     .ptr {
       display: flex; align-items: center; justify-content: center; gap: 8px;
       height: 0; overflow: hidden; transition: height .2s;
-      background: var(--purple-bg); font-size: 12px; font-weight: 700; color: var(--text3);
+      background: var(--purple-bg); font-size: 13px; font-weight: 600; color: var(--text3);
     }
     .ptr.pulling { height: 48px; }
     .ptr.refreshing { height: 48px; color: var(--purple); }
@@ -68,7 +68,7 @@
     /* Status bar */
     .status-bar {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 13px 22px 8px; font-size: 13px; font-weight: 700;
+      padding: 13px 22px 8px; font-size: 14px; font-weight: 600;
       background: var(--card);
     }
     .status-right { display: flex; align-items: center; gap: 5px; }
@@ -86,7 +86,7 @@
       display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
     }
     .back-btn svg { width: 20px; height: 20px; }
-    .nav-title { font-size: 17px; font-weight: 800; color: var(--text); }
+    .nav-title { font-size: 17px; font-weight: 600; color: var(--text); }
     .nav-ph { width: 36px; }
 
     /* Sticky header wrapper */
@@ -130,7 +130,7 @@
     .fchip {
       flex-shrink: 0; display: flex; align-items: center; gap: 4px;
       padding: 6px 13px; border-radius: 12px; cursor: pointer;
-      font-size: 12px; font-weight: 700; font-family: inherit;
+      font-size: 13px; font-weight: 600; font-family: inherit;
       border: 1.5px solid var(--border); background: transparent; color: var(--text3);
       transition: all .15s; -webkit-tap-highlight-color: transparent;
     }
@@ -147,11 +147,11 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 12px 14px 6px;
     }
-    .result-count { font-size: 12px; color: var(--text3); font-weight: 600; }
+    .result-count { font-size: 13px; color: var(--text3); font-weight: 600; }
     .result-count strong { color: var(--purple); }
     .avail-toggle {
       display: flex; align-items: center; gap: 6px;
-      font-size: 12px; font-weight: 700; color: var(--text2); cursor: pointer;
+      font-size: 13px; font-weight: 600; color: var(--text2); cursor: pointer;
     }
     .toggle-track {
       width: 34px; height: 20px; border-radius: 12px; background: var(--border);
@@ -178,7 +178,7 @@
     .nc-av {
       width: 62px; height: 62px; border-radius: 12px;
       display: grid; place-items: center;
-      font-size: 22px; font-weight: 900; color: #fff;
+      font-size: 22px; font-weight: 700; color: #fff;
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
     .avail-dot {
@@ -191,27 +191,27 @@
 
     .nc-info { flex: 1; min-width: 0; }
     .nc-name-row { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
-    .nc-name { font-size: 16px; font-weight: 900; color: var(--text); }
+    .nc-name { font-size: 16px; font-weight: 700; color: var(--text); }
     .nc-gender {
-      font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 12px;
+      font-size: 12px; font-weight: 600; padding: 2px 7px; border-radius: 12px;
     }
     .nc-gender.f { background: #FCE7F3; color: #BE185D; }
     .nc-gender.m { background: #DBEAFE; color: #1D4ED8; }
 
-    .nc-meta { font-size: 12px; color: var(--text3); font-weight: 600; margin-bottom: 8px; }
-    .nc-meta span { color: var(--text2); font-weight: 700; }
+    .nc-meta { font-size: 13px; color: var(--text3); font-weight: 600; margin-bottom: 8px; }
+    .nc-meta span { color: var(--text2); font-weight: 600; }
 
     /* Rating bar */
     .nc-rate-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
     .rate-stars { display: flex; gap: 2px; }
     .rate-stars svg { width: 13px; height: 13px; fill: #F59E0B; }
-    .rate-num { font-size: 13px; font-weight: 800; color: var(--purple); }
-    .rate-orders { font-size: 11px; color: var(--text3); font-weight: 600; }
+    .rate-num { font-size: 14px; font-weight: 600; color: var(--purple); }
+    .rate-orders { font-size: 12px; color: var(--text3); font-weight: 600; }
 
     /* Certs */
     .nc-certs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
     .cert-tag {
-      font-size: 10px; font-weight: 700;
+      font-size: 11px; font-weight: 600;
       background: var(--purple-bg); color: var(--purple);
       padding: 3px 8px; border-radius: 12px;
       display: flex; align-items: center; gap: 3px;
@@ -224,14 +224,14 @@
       padding-top: 12px; border-top: 1px solid var(--border);
     }
     .nc-price { display: flex; align-items: baseline; gap: 2px; }
-    .price-num { font-size: 22px; font-weight: 900; color: var(--purple); }
-    .price-unit { font-size: 12px; color: var(--text3); font-weight: 600; }
-    .price-note { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .price-num { font-size: 22px; font-weight: 700; color: var(--purple); }
+    .price-unit { font-size: 13px; color: var(--text3); font-weight: 600; }
+    .price-note { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
     .select-btn {
       height: 40px; padding: 0 20px; border-radius: 12px; border: none; cursor: pointer;
       background: linear-gradient(135deg,#2BD8BC,#0FA98C); color: #fff;
-      font-size: 14px; font-weight: 800; font-family: inherit;
+      font-size: 14px; font-weight: 600; font-family: inherit;
       display: flex; align-items: center; gap: 5px;
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
       -webkit-tap-highlight-color: transparent; transition: transform .1s, filter .1s;
@@ -254,18 +254,18 @@
       background: var(--purple-light); display: grid; place-items: center;
     }
     .empty-icon svg { width: 38px; height: 38px; }
-    .empty-title { font-size: 16px; font-weight: 800; color: var(--text2); }
-    .empty-sub { font-size: 13px; color: var(--text3); line-height: 1.6; }
+    .empty-title { font-size: 16px; font-weight: 600; color: var(--text2); }
+    .empty-sub { font-size: 14px; color: var(--text3); line-height: 1.6; }
     .empty-btn {
       padding: 9px 24px; border-radius: 12px; border: none; cursor: pointer;
       background: var(--purple-light); color: var(--purple);
-      font-size: 13px; font-weight: 700; font-family: inherit;
+      font-size: 14px; font-weight: 600; font-family: inherit;
     }
 
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
 </head>
-<body>
+<body data-surface="mobile" data-page="nurses">
 <div class="frame">
   <div class="phone">
     <div class="scroll-area" id="scrollArea">
@@ -488,7 +488,7 @@
               <span class="price-num">¥${n.price}</span>
               <span class="price-unit">/天起</span>
             </div>
-            <div class="price-note">${n.avail?'<span style="color:var(--green);font-weight:700">● 空闲中</span>':'<span style="color:var(--text3)">● 服务中</span>'}</div>
+            <div class="price-note">${n.avail?'<span style="color:var(--green);font-weight:600">● 空闲中</span>':'<span style="color:var(--text3)">● 服务中</span>'}</div>
           </div>
           <button class="select-btn ${n.avail?'':'unavail'}"
             onclick="${n.avail?`location.href='hospital-care.html'`:`alert('${n.name} 当前正在服务中，请选择其他护理员')`}">

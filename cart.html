@@ -16,13 +16,13 @@
     .scroll-area::-webkit-scrollbar{display:none}
 
     /* 状态栏 */
-    .status-bar{display:flex;justify-content:space-between;align-items:center;padding:13px 22px 6px;font-size:13px;font-weight:700;background:linear-gradient(135deg,#DDF7F1,#EFFBF8)}
+    .status-bar{display:flex;justify-content:space-between;align-items:center;padding:13px 22px 6px;font-size:14px;font-weight:600;background:linear-gradient(135deg,#DDF7F1,#EFFBF8)}
     .status-right{display:flex;align-items:center;gap:5px}
     .status-right svg{width:17px;height:17px}
 
     /* 顶部导航 */
     .top-bar{display:flex;align-items:center;justify-content:center;height:56px;padding:0 14px;background:linear-gradient(135deg,#DDF7F1,#EFFBF8);position:relative}
-    .top-bar h1{font-size:18px;font-weight:900;color:var(--text)}
+    .top-bar h1{font-size:18px;font-weight:700;color:var(--text)}
 
     /* 购物车列表 */
     .cart-list{padding:14px}
@@ -34,27 +34,27 @@
     .cart-img{width:80px;height:80px;border-radius:12px;flex-shrink:0;display:grid;place-items:center;background:var(--purple-light);color:var(--purple)}
     .cart-img svg{width:40px;height:40px}
     .cart-info{flex:1;min-width:0;display:flex;flex-direction:column}
-    .cart-name{font-size:14px;font-weight:800;color:var(--text);line-height:1.3}
-    .cart-sub{font-size:12px;color:var(--text3);margin-top:4px;line-height:1.4}
+    .cart-name{font-size:14px;font-weight:600;color:var(--text);line-height:1.3}
+    .cart-sub{font-size:13px;color:var(--text3);margin-top:4px;line-height:1.4}
     .cart-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto}
-    .cart-price{font-size:16px;font-weight:900;color:#E94E4E}
+    .cart-price{font-size:16px;font-weight:700;color:#E94E4E}
     .qty-ctrl{display:flex;align-items:center;gap:8px}
-    .qty-btn{width:24px;height:24px;border:1px solid var(--border);border-radius:12px;background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--text2);font-size:15px;font-weight:700}
-    .qty-num{font-size:14px;font-weight:700;color:var(--text);min-width:16px;text-align:center}
-    .cart-del{font-size:12px;color:var(--text3);cursor:pointer;margin-left:8px}
+    .qty-btn{width:24px;height:24px;border:1px solid var(--border);border-radius:12px;background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--text2);font-size:15px;font-weight:600}
+    .qty-num{font-size:14px;font-weight:600;color:var(--text);min-width:16px;text-align:center}
+    .cart-del{font-size:13px;color:var(--text3);cursor:pointer;margin-left:8px}
 
     /* 空状态 */
     .empty{text-align:center;padding:80px 20px;color:var(--text3)}
     .empty svg{width:64px;height:64px;color:var(--text3);opacity:.5;margin-bottom:16px}
     .empty p{font-size:14px;margin-bottom:16px}
-    .empty button{padding:10px 24px;border:0;border-radius:12px;background:var(--purple);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+    .empty button{padding:10px 24px;border:0;border-radius:12px;background:var(--purple);color:#fff;font-size:14px;font-weight:600;cursor:pointer}
 
     /* 底部结算栏 */
     .checkout-bar{flex-shrink:0;display:flex;align-items:center;background:#fff;border-top:1px solid var(--border);padding:12px 14px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(0,0,0,0.1)}
     .checkout-left{flex:1}
-    .checkout-total{font-size:13px;color:var(--text2)}
+    .checkout-total{font-size:14px;color:var(--text2)}
     .checkout-total b{font-size:18px;color:#E94E4E}
-    .checkout-btn{padding:11px 28px;border:0;border-radius:12px;background:var(--purple);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+    .checkout-btn{padding:11px 28px;border:0;border-radius:12px;background:var(--purple);color:#fff;font-size:15px;font-weight:600;cursor:pointer}
     .checkout-btn:disabled{background:var(--text3);cursor:not-allowed}
 
     /* ── 结算支付弹窗（与商城单品一致） ── */
@@ -63,7 +63,7 @@
     .sheet{width:min(430px,100%);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;background:#fff;border-radius:12px;padding:18px 16px calc(20px + env(safe-area-inset-bottom));transform:translateY(18px);transition:transform .24s}
     .overlay.show .sheet{transform:none}
     .sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-shrink:0}
-    .sheet-title{font-size:18px;font-weight:900}
+    .sheet-title{font-size:18px;font-weight:700}
     .close{width:32px;height:32px;border:0;border-radius:12px;background:var(--purple-light);color:var(--text2);font-size:20px;cursor:pointer}
     .pay-sheet{padding:0;display:flex;flex-direction:column;transform:none !important;transition:none}
     .pay-scroll{flex:1;overflow-y:auto;padding:0 16px;-webkit-overflow-scrolling:touch;min-height:0}
@@ -73,35 +73,35 @@
     .pay-thumb svg{width:48px;height:48px}
     .pay-thumb img{width:100%;height:100%;object-fit:cover;padding:0}
     .pay-info{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:5px}
-    .pay-name{font-size:14px;font-weight:800;color:var(--text);line-height:1.35}
-    .pay-sub{font-size:12px;color:var(--text3);margin-top:2px}
+    .pay-name{font-size:14px;font-weight:600;color:var(--text);line-height:1.35}
+    .pay-sub{font-size:13px;color:var(--text3);margin-top:2px}
     .pay-price-row{display:flex;align-items:baseline;gap:5px;justify-content:space-between}
-    .pay-price{font-size:17px;font-weight:900;color:#E94E4E}
-    .pay-price small{font-size:12px}
-    .pay-qty-txt{font-size:12px;color:var(--text3)}
+    .pay-price{font-size:17px;font-weight:700;color:#E94E4E}
+    .pay-price small{font-size:13px}
+    .pay-qty-txt{font-size:13px;color:var(--text3)}
     .pay-sec{padding:13px 0;border-bottom:1px solid var(--border)}
-    .pay-sec-label{font-size:12px;color:var(--text2);font-weight:700;margin-bottom:8px}
-    .pay-addr{font-size:13px;color:var(--text);font-weight:700;line-height:1.5;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}
+    .pay-sec-label{font-size:13px;color:var(--text2);font-weight:600;margin-bottom:8px}
+    .pay-addr{font-size:14px;color:var(--text);font-weight:600;line-height:1.5;display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}
     .pay-addr svg{width:14px;height:14px;color:var(--text3);flex-shrink:0}
     .addr-list{display:flex;flex-direction:column;gap:10px;max-height:46vh;overflow:auto}
     .addr-item{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--border);border-radius:12px;cursor:pointer}
     .addr-item.sel{border-color:var(--purple);background:var(--purple-light)}
     .addr-radio{width:16px;height:16px;border:2px solid #D5CFE0;border-radius:12px;flex-shrink:0;margin-top:2px}
     .addr-item.sel .addr-radio{border-color:var(--purple);background:radial-gradient(circle,var(--purple) 0 5px,transparent 6px)}
-    .addr-detail{font-size:13px;font-weight:700;color:var(--text);line-height:1.5}
-    .addr-sub{font-size:12px;color:var(--text3);margin-top:4px}
-    .addr-add{width:100%;height:42px;margin-top:12px;border:1px dashed #9FEDE0;border-radius:12px;background:var(--purple-bg);color:var(--purple);font-size:13px;font-weight:800;cursor:pointer;flex-shrink:0}
+    .addr-detail{font-size:14px;font-weight:600;color:var(--text);line-height:1.5}
+    .addr-sub{font-size:13px;color:var(--text3);margin-top:4px}
+    .addr-add{width:100%;height:42px;margin-top:12px;border:1px dashed #9FEDE0;border-radius:12px;background:var(--purple-bg);color:var(--purple);font-size:14px;font-weight:600;cursor:pointer;flex-shrink:0}
     .pay-dlv-row{display:flex;gap:8px}
-    .pay-dlv{flex:1;height:38px;border:1px solid var(--border);border-radius:12px;background:#fff;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;font-family:inherit;position:relative;transition:all .15s}
+    .pay-dlv{flex:1;height:38px;border:1px solid var(--border);border-radius:12px;background:#fff;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit;position:relative;transition:all .15s}
     .pay-dlv.on{border-color:#1CD8B7;color:#0FA98C;background:#DDF7F1}
-    .pay-dlv.on:after{content:'✓';position:absolute;right:6px;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:12px;background:#1CD8B7;color:#fff;font-size:9px;display:grid;place-items:center}
+    .pay-dlv.on:after{content:'✓';position:absolute;right:6px;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:12px;background:#1CD8B7;color:#fff;font-size:11px;display:grid;place-items:center}
     .pay-points-row{display:flex;align-items:center;justify-content:space-between}
-    .pay-points-txt{font-size:12px;color:#E94E4E;font-weight:700}
+    .pay-points-txt{font-size:13px;color:#E94E4E;font-weight:600}
     .pay-toggle{width:40px;height:22px;border-radius:12px;background:#E5E0EF;border:0;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
     .pay-toggle:after{content:'';position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);transition:left .2s}
     .pay-toggle.on{background:#1CD8B7}
     .pay-toggle.on:after{left:20px}
-    .pay-confirm{width:calc(100% - 32px);height:46px;margin:10px 16px calc(14px + env(safe-area-inset-bottom));flex-shrink:0;border:0;border-radius:12px;background:linear-gradient(135deg,#1CD8B7,#0FA98C);color:#fff;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+    .pay-confirm{width:calc(100% - 32px);height:46px;margin:10px 16px calc(14px + env(safe-area-inset-bottom));flex-shrink:0;border:0;border-radius:12px;background:linear-gradient(135deg,#1CD8B7,#0FA98C);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
     .pay-confirm:active{opacity:.88}
 
     /* ── 支付成功全页 ── */
@@ -109,17 +109,17 @@
     .pay-success-top{flex:1;display:flex;flex-direction:column;align-items:center;padding:42px 20px 20px;text-align:center}
     .pay-success-icon{width:66px;height:66px;border-radius:12px;background:linear-gradient(135deg,#34D399,#10B981);display:grid;place-items:center;margin-bottom:16px}
     .pay-success-icon svg{width:32px;height:32px;color:#fff}
-    .pay-success-title{font-size:20px;font-weight:900;margin-bottom:8px}
-    .pay-success-desc{font-size:13px;color:var(--text2);line-height:1.65;max-width:280px}
+    .pay-success-title{font-size:20px;font-weight:700;margin-bottom:8px}
+    .pay-success-desc{font-size:14px;color:var(--text2);line-height:1.65;max-width:280px}
     .pay-success-card{background:#fff;border-radius:12px;padding:4px 18px;margin:20px 16px 0;box-shadow:var(--sh)}
-    .pay-success-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border);font-size:13px}
+    .pay-success-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border);font-size:14px}
     .pay-success-row:last-child{border-bottom:0}
     .pay-success-row .k{color:var(--text3);font-weight:600}
-    .pay-success-row .v{color:var(--text);font-weight:700;max-width:210px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .pay-success-row .v{color:var(--text);font-weight:600;max-width:210px;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .pay-success-row .v.highlight{color:#0FA98C}
     .pay-success-row .v.deduct{color:#EF4444}
     .pay-success-btns{display:flex;gap:12px;padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--border)}
-    .pay-success-btns button{flex:1;height:46px;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+    .pay-success-btns button{flex:1;height:46px;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
     .pay-success-btns .btn-ghost{border:1px solid #C5BDD8;background:#fff;color:var(--purple)}
     .pay-success-btns .btn-primary{border:0;background:linear-gradient(135deg,#34D399,#10B981);color:#fff}
 
@@ -127,13 +127,13 @@
     .bottom-nav{flex-shrink:0;display:flex;background:#fff;border-top:1px solid var(--border);padding:8px 0 calc(8px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(0,0,0,0.1)}
     .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;text-decoration:none;min-width:0}
     .nav-ico{width:26px;height:26px;stroke:#AEACC0;fill:none}
-    .nav-lbl{font-size:11px;font-weight:700;color:var(--text3);white-space:nowrap}
+    .nav-lbl{font-size:12px;font-weight:600;color:var(--text3);white-space:nowrap}
     .nav-item.act .nav-ico{stroke:var(--purple)}
     .nav-item.act .nav-lbl{color:var(--purple)}
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
 </head>
-<body>
+<body data-surface="mobile" data-page="cart">
 <div class="frame"><div class="phone">
   <div class="scroll-area">
     <div class="status-bar">
@@ -155,9 +155,9 @@
 
   <!-- 积分抵扣行 -->
   <div id="pointsRow" style="display:none;flex-shrink:0;background:#fff;padding:10px 14px;border-top:1px solid var(--border)">
-    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--text2)">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;color:var(--text2)">
       <input type="checkbox" id="pointsCheck" onchange="togglePoints(this)" style="width:16px;height:16px;accent-color:var(--purple)">
-      <span style="font-weight:700;color:var(--text)">积分抵扣</span>
+      <span style="font-weight:600;color:var(--text)">积分抵扣</span>
       <span id="pointsInfo" style="flex:1;text-align:right;color:var(--text3)">可用积分 0</span>
     </label>
   </div>
@@ -309,7 +309,7 @@
     var count = items.reduce(function(sum,it){ return sum + it.qty; }, 0);
     var discount = getPointsDiscount(total);
     var finalPrice = total - discount;
-    document.getElementById('totalPrice').innerHTML = discount > 0 ? '<s style="font-size:13px;color:#AEACC0;font-weight:400">¥'+total+'</s> <b style="color:#E94E4E">¥'+finalPrice+'</b>' : '<b>¥'+total+'</b>';
+    document.getElementById('totalPrice').innerHTML = discount > 0 ? '<s style="font-size:14px;color:#AEACC0;font-weight:400">¥'+total+'</s> <b style="color:#E94E4E">¥'+finalPrice+'</b>' : '<b>¥'+total+'</b>';
     document.getElementById('pointsRow').style.display = items.length ? '' : 'none';
     var ptsBalance = window.AKBPoints ? window.AKBPoints.get().balance : 0;
     document.getElementById('pointsInfo').textContent = '可用积分 '+ptsBalance+'，本单可抵扣 ¥'+getPointsDiscount(total);
@@ -338,7 +338,7 @@
   function getMallAddresses(){try{const v=JSON.parse(localStorage.getItem(ADDR_KEY));if(!Array.isArray(v))return fallbackAddrs.slice();const list=v.map(function(a){return Object.assign({addressType:'home'},a)});if(!list.some(function(a){return a.addressType==='hospital'}))list.push(fallbackAddrs[1]);return list}catch(e){return fallbackAddrs.slice()}}
   function renderPayAddr(){var list=getMallAddresses();var sel=list.find(function(a){return String(a.id)===String(payAddrId)});if(!sel&&list.length){sel=list[0];payAddrId=sel.id}var el=document.getElementById('payAddr');if(el)el.textContent=sel?sel.detail:'请选择收货地址';return sel}
   function openAddrDrawer(){renderAddrList();document.getElementById('addrOverlay').classList.add('show')}
-  function renderAddrList(){var list=getMallAddresses();document.getElementById('addrList').innerHTML=list.length?list.map(function(a){return '<div class="addr-item'+(String(a.id)===String(payAddrId)?' sel':'')+'" onclick="selectPayAddr(\''+a.id+'\')"><div class="addr-radio"></div><div><div class="addr-detail">'+esc(a.detail)+'</div><div class="addr-sub">'+(a.contact||'')+(a.phone?' · '+esc(a.phone):'')+'</div></div></div>'}).join(''):'<div style="text-align:center;color:var(--text3);font-size:12px;padding:10px 0">暂无收货地址，请新增</div>'}
+  function renderAddrList(){var list=getMallAddresses();document.getElementById('addrList').innerHTML=list.length?list.map(function(a){return '<div class="addr-item'+(String(a.id)===String(payAddrId)?' sel':'')+'" onclick="selectPayAddr(\''+a.id+'\')"><div class="addr-radio"></div><div><div class="addr-detail">'+esc(a.detail)+'</div><div class="addr-sub">'+(a.contact||'')+(a.phone?' · '+esc(a.phone):'')+'</div></div></div>'}).join(''):'<div style="text-align:center;color:var(--text3);font-size:13px;padding:10px 0">暂无收货地址，请新增</div>'}
   function selectPayAddr(id){payAddrId=id;renderPayAddr();renderAddrList();closeOverlay('addrOverlay')}
 
   /* 结算 → 打开支付确认弹窗 */

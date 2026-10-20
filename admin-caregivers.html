@@ -47,7 +47,7 @@
       }
       .brand-title {
         font-size: 18px;
-        font-weight: 900;
+        font-weight: 700;
       }
       .brand-sub {
         font-size: 11px;
@@ -63,7 +63,7 @@
         font-size: 10px;
         letter-spacing: 1px;
         color: rgba(255, 255, 255, 0.3);
-        font-weight: 800;
+        font-weight: 600;
       }
       .link {
         display: flex;
@@ -74,7 +74,7 @@
         border-radius: 12px;
         color: rgba(255, 255, 255, 0.6);
         font-size: 13px;
-        font-weight: 700;
+        font-weight: 600;
         text-decoration: none;
       }
       .link.active,
@@ -110,7 +110,7 @@
         background: var(--b);
         display: grid;
         place-items: center;
-        font-weight: 900;
+        font-weight: 700;
       }
       .role {
         font-size: 11px;
@@ -145,7 +145,7 @@
         gap: 7px;
         color: var(--muted);
         font-size: 13px;
-        font-weight: 700;
+        font-weight: 600;
       }
       .crumb .cur {
         color: var(--text);
@@ -159,7 +159,7 @@
       .date {
         font-size: 12px;
         color: var(--muted);
-        font-weight: 700;
+        font-weight: 600;
       }
       .page {
         padding: 24px 28px;
@@ -172,7 +172,7 @@
       }
       .title {
         font-size: 22px;
-        font-weight: 900;
+        font-weight: 700;
       }
       .sub {
         font-size: 13px;
@@ -214,11 +214,11 @@
       .stat-label {
         font-size: 12px;
         color: var(--muted);
-        font-weight: 700;
+        font-weight: 600;
       }
       .stat-value {
         font-size: 26px;
-        font-weight: 900;
+        font-weight: 700;
         margin-top: 8px;
       }
       .stat-value.blue {
@@ -243,7 +243,7 @@
       .filter-label {
         font-size: 12px;
         color: var(--muted);
-        font-weight: 800;
+        font-weight: 600;
       }
       .select {
         height: 36px;
@@ -273,7 +273,7 @@
         margin-left: auto;
         color: var(--muted);
         font-size: 12px;
-        font-weight: 700;
+        font-weight: 600;
       }
       .count strong {
         color: var(--b);
@@ -319,10 +319,10 @@
         color: var(--b);
         display: grid;
         place-items: center;
-        font-weight: 900;
+        font-weight: 700;
       }
       .name {
-        font-weight: 800;
+        font-weight: 600;
         color: var(--text);
       }
       .small {
@@ -337,7 +337,7 @@
         padding: 5px 9px;
         border-radius: 12px;
         font-size: 11px;
-        font-weight: 800;
+        font-weight: 600;
       }
       .state:before {
         content: "";
@@ -364,7 +364,7 @@
       }
       .rating {
         color: #d97706;
-        font-weight: 900;
+        font-weight: 700;
       }
       .ops {
         display: flex;
@@ -394,7 +394,7 @@
         display: flex; align-items: center; justify-content: space-between;
         padding: 21px 24px 17px; border-bottom: 1px solid #D9F6EE;
       }
-      .import-head h2 { margin: 0; color: #172033; font-size: 20px; font-weight: 900; }
+      .import-head h2 { margin: 0; color: #172033; font-size: 20px; font-weight: 700; }
       .import-close {
         display: grid; place-items: center;
         width: 32px; height: 32px; border: 0; border-radius: 12px;
@@ -410,12 +410,12 @@
       .import-drop.dragover { border-color: var(--b); background: #F5F5F5; }
       .import-icon { width: 48px; height: 48px; }
       .import-tip { color: #71819A; font-size: 13px; text-align: center; margin: 0; }
-      .import-link { color: var(--b); font-weight: 700; cursor: pointer; }
+      .import-link { color: var(--b); font-weight: 600; cursor: pointer; }
       .import-link:hover { text-decoration: underline; }
-      .import-file { color: #172033; font-size: 13px; font-weight: 700; margin: 0; }
+      .import-file { color: #172033; font-size: 13px; font-weight: 600; margin: 0; }
       .import-template {
         display: inline-block; margin-top: 14px;
-        color: var(--b); font-size: 13px; font-weight: 700; text-decoration: none;
+        color: var(--b); font-size: 13px; font-weight: 600; text-decoration: none;
       }
       .import-template:hover { text-decoration: underline; }
       .import-foot {
@@ -426,7 +426,7 @@
     <script defer src="admin-sidebar.js"></script>
     <link rel="stylesheet" href="visual-theme.css" />
 </head>
-  <body>
+  <body data-surface="admin" data-page="admin-caregivers">
     <div class="layout">
       <aside class="sidebar">
         <div class="brand">
@@ -447,7 +447,7 @@
         <div class="admin">
           <div class="av">管</div>
           <div>
-            <div style="font-size: 13px; font-weight: 800">管理员</div>
+            <div style="font-size: 13px; font-weight: 600">管理员</div>
             <div class="role">超级管理员</div>
           </div>
           <button class="logout">↗</button>
@@ -476,7 +476,7 @@
               ><button class="btn" onclick="openImport()">
                 批量导入</button
               ><button class="btn" onclick="openCaregiverAudit()">
-                入驻审核<span id="auditBadge" style="display:none;margin-left:5px;padding:1px 7px;border-radius:12px;background:#E23B45;color:#fff;font-size:11px;font-weight:800"></span></button
+                入驻审核<span id="auditBadge" style="display:none;margin-left:5px;padding:1px 7px;border-radius:12px;background:#E23B45;color:#fff;font-size:11px;font-weight:600"></span></button
               ><button class="btn primary" onclick="openCaregiverCreate()">
                 + 新增陪护员
               </button>

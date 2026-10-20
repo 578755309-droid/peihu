@@ -1,6 +1,6 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>邀请明细 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script>  <link rel="stylesheet" href="visual-theme.css" />
 </head>
-<body><div class="layout">
+<body data-surface="admin" data-page="admin-points-invite"><div class="layout">
   <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
   <main class="main">
     <header class="topbar">
@@ -68,7 +68,7 @@
       return '<tr>' +
         '<td class="time-cell">' + P.esc(r.date) + '<span class="sub">' + P.esc(r.time) + '</span></td>' +
         '<td><div class="name-cell"><div class="main">' + P.esc(r.inviter) + '</div><div class="sub">' + P.esc(r.inviterId) + '</div></div></td>' +
-        '<td style="font-weight:800;color:#172033">' + P.esc(r.invitee) + '</td>' +
+        '<td style="font-weight:600;color:#172033">' + P.esc(r.invitee) + '</td>' +
         '<td class="mono">' + P.esc(r.inviteePhone) + '</td>' +
         '<td><span class="tag ' + (r.status === '已注册' ? 'done' : 'waiting') + '">' + P.esc(r.status) + '</span></td>' +
         '<td>' + (r.reward > 0 ? '<span class="pt-val plus" style="font-size:13px">+' + r.reward + '</span>' : '<span class="pt-val zero" style="font-size:12px">待发放</span>') + '</td>' +

@@ -15,7 +15,7 @@
     '.akb-pager .pg-btn{min-width:26px;height:26px;padding:0 8px;border:1px solid #d8e0f0;border-radius:12px;background:#fff;color:#41536d;font-size:12px;cursor:pointer}' +
     '.akb-pager .pg-btn:hover:not(:disabled){border-color:#1CD8B7;color:#1CD8B7}' +
     '.akb-pager .pg-btn:disabled{opacity:.4;cursor:default}' +
-    '.akb-pager .pg-btn.cur{background:#1CD8B7;border-color:#1CD8B7;color:#fff;font-weight:700}' +
+    '.akb-pager .pg-btn.cur{background:#1CD8B7;border-color:#1CD8B7;color:#fff;font-weight:600}' +
     '.akb-pager .pg-ellipsis{padding:0 2px;color:#9aa7c0}';
   var style = document.createElement('style');
   style.textContent = css;

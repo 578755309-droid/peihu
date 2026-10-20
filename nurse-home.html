@@ -52,7 +52,7 @@
     /* ── Status bar ── */
     .status-bar {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 13px 22px 8px; font-size: 13px; font-weight: 700;
+      padding: 13px 22px 8px; font-size: 14px; font-weight: 600;
       background: var(--purple-dark); color: rgba(255,255,255,.85);
     }
     .status-right { display: flex; align-items: center; gap: 5px; }
@@ -69,7 +69,7 @@
       background: rgba(255,255,255,.05); top: -60px; right: -60px; pointer-events: none;
     }
     .hero-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    .hero-brand { font-size: 15px; font-weight: 800; color: rgba(255,255,255,.7); letter-spacing: .5px; }
+    .hero-brand { font-size: 15px; font-weight: 600; color: rgba(255,255,255,.7); letter-spacing: .5px; }
     .notif-btn {
       width: 36px; height: 36px; border-radius: 12px; border: none; cursor: pointer;
       background: rgba(255,255,255,.15); display: grid; place-items: center;
@@ -87,18 +87,18 @@
     .nurse-av-lg {
       width: 68px; height: 68px; border-radius: 12px; flex-shrink: 0;
       display: grid; place-items: center;
-      font-size: 26px; font-weight: 900; color: #fff;
+      font-size: 26px; font-weight: 700; color: #fff;
       background: linear-gradient(140deg,#AA7AE0,#7B3FBE);
       border: 3px solid rgba(255,255,255,.35);
       box-shadow: 0 6px 20px rgba(0,0,0,.2);
     }
     .nurse-meta { flex: 1; }
-    .nurse-name-lg { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 4px; }
-    .nurse-no { font-size: 12px; color: rgba(255,255,255,.6); font-weight: 600; margin-bottom: 8px; }
+    .nurse-name-lg { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .nurse-no { font-size: 13px; color: rgba(255,255,255,.6); font-weight: 600; margin-bottom: 8px; }
     .status-pill {
       display: inline-flex; align-items: center; gap: 5px;
       padding: 4px 12px; border-radius: 12px; cursor: pointer;
-      font-size: 12px; font-weight: 800; transition: all .2s;
+      font-size: 13px; font-weight: 600; transition: all .2s;
       -webkit-tap-highlight-color: transparent; border: none; font-family: inherit;
     }
     .status-pill.idle { background: var(--green-bg); color: var(--green); }
@@ -115,8 +115,8 @@
     }
     .stat-item { padding: 12px 8px; text-align: center; }
     .stat-item + .stat-item { border-left: 1px solid rgba(255,255,255,.12); }
-    .stat-val { font-size: 20px; font-weight: 900; color: #fff; }
-    .stat-lbl { font-size: 11px; color: rgba(255,255,255,.55); font-weight: 600; margin-top: 2px; }
+    .stat-val { font-size: 20px; font-weight: 700; color: #fff; }
+    .stat-lbl { font-size: 12px; color: rgba(255,255,255,.55); font-weight: 600; margin-top: 2px; }
 
     /* ── Content ── */
     .content { padding: 16px 14px; display: flex; flex-direction: column; gap: 14px; }
@@ -126,8 +126,8 @@
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 10px;
     }
-    .sec-title { font-size: 15px; font-weight: 800; color: var(--text); }
-    .sec-more { font-size: 12px; color: var(--purple); font-weight: 700; cursor: pointer; }
+    .sec-title { font-size: 15px; font-weight: 600; color: var(--text); }
+    .sec-more { font-size: 13px; color: var(--purple); font-weight: 600; cursor: pointer; }
 
     /* ── Pending order card ── */
     .pending-card {
@@ -142,7 +142,7 @@
     }
     .pending-badge {
       display: flex; align-items: center; gap: 6px;
-      font-size: 13px; font-weight: 800; color: var(--amber);
+      font-size: 14px; font-weight: 600; color: var(--amber);
     }
     .pulse-dot {
       width: 10px; height: 10px; border-radius: 12px; background: var(--amber);
@@ -157,7 +157,7 @@
       background: rgba(217,119,6,.12); padding: 4px 11px; border-radius: 12px;
     }
     .cd-badge svg { width: 13px; height: 13px; }
-    .cd-time { font-size: 14px; font-weight: 900; color: var(--amber); font-family: 'SF Mono','Courier New',monospace; letter-spacing: 1px; }
+    .cd-time { font-size: 14px; font-weight: 700; color: var(--amber); font-family: 'SF Mono','Courier New',monospace; letter-spacing: 1px; }
 
     .order-body { padding: 14px 16px; }
 
@@ -167,12 +167,12 @@
       width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
       background: linear-gradient(140deg,#3B82F6,#60A5FA);
       display: grid; place-items: center;
-      font-size: 17px; font-weight: 900; color: #fff;
+      font-size: 17px; font-weight: 700; color: #fff;
     }
-    .patient-name { font-size: 16px; font-weight: 900; color: var(--text); }
-    .patient-meta { font-size: 12px; color: var(--text3); font-weight: 600; margin-top: 3px; }
+    .patient-name { font-size: 16px; font-weight: 700; color: var(--text); }
+    .patient-meta { font-size: 13px; color: var(--text3); font-weight: 600; margin-top: 3px; }
     .patient-tag {
-      margin-left: auto; font-size: 11px; font-weight: 700;
+      margin-left: auto; font-size: 12px; font-weight: 600;
       background: var(--purple-light); color: var(--purple);
       padding: 3px 10px; border-radius: 12px; flex-shrink: 0;
     }
@@ -183,15 +183,15 @@
       background: var(--purple-bg); border-radius: 12px;
       padding: 10px 12px;
     }
-    .chip-lbl { font-size: 10px; color: var(--text3); font-weight: 600; margin-bottom: 3px; }
-    .chip-val { font-size: 13px; color: var(--text); font-weight: 800; }
+    .chip-lbl { font-size: 11px; color: var(--text3); font-weight: 600; margin-bottom: 3px; }
+    .chip-val { font-size: 14px; color: var(--text); font-weight: 600; }
     .chip-val.accent { color: var(--purple); }
     .care-needs { margin-bottom: 14px; padding: 10px 11px; border-radius: 12px; background: #FFF9ED; border: 1px solid #FDE7B0; }
-    .care-needs-title { font-size: 10px; color: var(--amber); font-weight: 800; margin-bottom: 8px; }
+    .care-needs-title { font-size: 11px; color: var(--amber); font-weight: 600; margin-bottom: 8px; }
     .care-needs-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
     .care-need { min-width: 0; padding: 7px 6px; border-radius: 12px; background: rgba(255,255,255,.82); }
-    .care-need-label { display: block; color: #A87628; font-size: 9px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .care-need-value { display: block; margin-top: 3px; color: var(--text); font-size: 11px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .care-need-label { display: block; color: #A87628; font-size: 11px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .care-need-value { display: block; margin-top: 3px; color: var(--text); font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .care-need-value.warn { color: var(--red); }
 
     /* Action buttons */
@@ -199,14 +199,14 @@
     .btn-transfer {
       flex: 1; height: 50px; border-radius: 12px; cursor: pointer; font-family: inherit;
       border: 2px solid var(--amber); background: transparent; color: var(--amber);
-      font-size: 15px; font-weight: 800;
+      font-size: 15px; font-weight: 600;
       -webkit-tap-highlight-color: transparent; transition: background .12s;
     }
     .btn-transfer:active { background: var(--amber-bg); }
     .btn-accept {
       flex: 2; height: 50px; border-radius: 12px; cursor: pointer; font-family: inherit;
       border: none; background: linear-gradient(135deg,#1DB954,#16A34A);
-      color: #fff; font-size: 15px; font-weight: 800; letter-spacing: .3px;
+      color: #fff; font-size: 15px; font-weight: 600; letter-spacing: .3px;
       box-shadow: 0 6px 18px rgba(22,163,74,.28);
       -webkit-tap-highlight-color: transparent; transition: transform .1s, filter .1s;
       display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -239,11 +239,11 @@
     .tl-line { flex: 1; width: 2px; background: var(--border); margin-top: 2px; }
     .tl-item:last-child .tl-line { display: none; }
     .tl-content { flex: 1; padding-top: 0; }
-    .tl-time { font-size: 11px; color: var(--text3); font-weight: 700; margin-bottom: 4px; }
-    .tl-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
-    .tl-sub { font-size: 12px; color: var(--text2); font-weight: 600; }
+    .tl-time { font-size: 12px; color: var(--text3); font-weight: 600; margin-bottom: 4px; }
+    .tl-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .tl-sub { font-size: 13px; color: var(--text2); font-weight: 600; }
     .tl-tag {
-      display: inline-block; margin-top: 4px; font-size: 10px; font-weight: 700;
+      display: inline-block; margin-top: 4px; font-size: 11px; font-weight: 600;
       padding: 2px 8px; border-radius: 12px;
     }
     .tl-tag.done   { background: var(--green-bg); color: var(--green); }
@@ -252,12 +252,12 @@
     /* ── Work queue ── */
     .work-queue { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
     .queue-card { display:block; min-width:0; padding:13px 10px 12px; border-radius:12px; background:var(--card); box-shadow:var(--sh); color:inherit; text-decoration:none; }
-    .queue-label { color:var(--text2); font-size:11px; font-weight:700; line-height:1.35; }
-    .queue-value { margin-top:5px; color:var(--text); font-size:22px; font-weight:900; line-height:1; }
+    .queue-label { color:var(--text2); font-size:12px; font-weight:600; line-height:1.35; }
+    .queue-value { margin-top:5px; color:var(--text); font-size:22px; font-weight:700; line-height:1; }
     .queue-value.amber { color:var(--amber); }
     .queue-value.green { color:var(--green); }
     .queue-value.purple { color:var(--purple); }
-    .queue-note { margin-top:6px; color:var(--text3); font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .queue-note { margin-top:6px; color:var(--text3); font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .home-schedule-section, .home-quick-section { display: none; }
 
     /* ── Quick actions ── */
@@ -276,7 +276,7 @@
       display: grid; place-items: center;
     }
     .qa-icon svg { width: 22px; height: 22px; }
-    .qa-label { font-size: 11px; font-weight: 700; color: var(--text2); text-align: center; }
+    .qa-label { font-size: 12px; font-weight: 600; color: var(--text2); text-align: center; }
 
     /* ── Bottom nav ── */
     .bottom-nav {
@@ -290,7 +290,7 @@
       -webkit-tap-highlight-color: transparent;
     }
     .nav-item svg { width: 24px; height: 24px; }
-    .nav-lbl { font-size: 11px; font-weight: 700; color: var(--text3); }
+    .nav-lbl { font-size: 12px; font-weight: 600; color: var(--text3); }
     .nav-item.active .nav-lbl { color: var(--purple); }
 
     /* Toast */
@@ -298,7 +298,7 @@
       position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(.85);
       background: rgba(20,14,40,.88); color: #fff;
       padding: 20px 36px; border-radius: 12px;
-      font-size: 16px; font-weight: 800; text-align: center;
+      font-size: 16px; font-weight: 600; text-align: center;
       opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
       z-index: 99; backdrop-filter: blur(6px);
     }
@@ -329,9 +329,9 @@
       background: var(--amber-bg); display: grid; place-items: center; flex-shrink: 0;
     }
     .tf-icon svg { width: 20px; height: 20px; }
-    .tf-title { font-size: 17px; font-weight: 900; color: var(--text); }
+    .tf-title { font-size: 17px; font-weight: 700; color: var(--text); }
     .tf-desc {
-      padding: 12px 20px 0; font-size: 13px; color: var(--text2); line-height: 1.7;
+      padding: 12px 20px 0; font-size: 14px; color: var(--text2); line-height: 1.7;
     }
     .tf-textarea {
       display: block; width: calc(100% - 40px); margin: 12px 20px 0;
@@ -349,14 +349,14 @@
     .tf-cancel {
       flex: 1; height: 44px; border-radius: 12px; border: 1.5px solid var(--border);
       background: transparent; color: var(--text2);
-      font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer;
+      font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;
       -webkit-tap-highlight-color: transparent; transition: background .12s;
     }
     .tf-cancel:active { background: var(--purple-bg); }
     .tf-submit {
       flex: 1; height: 44px; border-radius: 12px; border: none;
       background: linear-gradient(135deg,#D97706,#F59E0B);
-      color: #fff; font-size: 14px; font-weight: 800; font-family: inherit; cursor: pointer;
+      color: #fff; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;
       box-shadow: 0 4px 14px rgba(217,119,6,.25);
       -webkit-tap-highlight-color: transparent; transition: transform .1s, filter .1s;
     }
@@ -364,7 +364,7 @@
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
 </head>
-<body>
+<body data-surface="mobile" data-page="nurse-home">
 <div class="frame">
   <div class="phone">
     <div class="scroll-area">
@@ -504,8 +504,8 @@
           <!-- No order placeholder (hidden initially) -->
           <div id="noOrder" style="display:none; background:var(--card); border-radius:12px; box-shadow:var(--sh); padding:32px 20px; text-align:center;">
             <div style="font-size:36px; opacity:.25; margin-bottom:10px;">📋</div>
-            <div style="font-size:14px; font-weight:800; color:var(--text2); margin-bottom:4px;">暂无待接订单</div>
-            <div style="font-size:12px; color:var(--text3);">保持空闲状态，新订单将推送给您</div>
+            <div style="font-size:14px; font-weight:600; color:var(--text2); margin-bottom:4px;">暂无待接订单</div>
+            <div style="font-size:13px; color:var(--text3);">保持空闲状态，新订单将推送给您</div>
           </div>
         </div>
 
@@ -544,7 +544,7 @@
             <div class="sch-hd">
               <div class="sch-hd-left">
                 <div class="sec-dot"></div>
-                <span style="font-size:14px;font-weight:800;color:var(--text)">已完成 2 单，进行中 1 单</span>
+                <span style="font-size:14px;font-weight:600;color:var(--text)">已完成 2 单，进行中 1 单</span>
               </div>
             </div>
             <div class="timeline">

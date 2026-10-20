@@ -60,7 +60,7 @@
     /* ── Status bar ── */
     .status-bar {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 13px 22px 8px; font-size: 13px; font-weight: 700;
+      padding: 13px 22px 8px; font-size: 14px; font-weight: 600;
       background: var(--card); letter-spacing: .2px;
     }
     .status-right { display: flex; align-items: center; gap: 5px; }
@@ -81,7 +81,7 @@
     }
     .back-btn:active { background: #D9CFF0; }
     .back-btn svg { width: 20px; height: 20px; }
-    .nav-title { font-size: 17px; font-weight: 800; color: var(--text); letter-spacing: .3px; }
+    .nav-title { font-size: 17px; font-weight: 600; color: var(--text); letter-spacing: .3px; }
     .nav-ph { width: 36px; }
 
     /* ── Stepper ── */
@@ -100,7 +100,7 @@
       width:28px; height:28px; border-radius:12px;
       border:2px solid var(--border);
       display:grid; place-items:center;
-      font-size:12px; font-weight:800; color:var(--text3);
+      font-size:13px; font-weight:600; color:var(--text3);
       transition:all .28s;
     }
     .step-dot.active {
@@ -108,7 +108,7 @@
       color:#fff; box-shadow:0 3px 10px rgba(0,0,0,0.1);
     }
     .step-dot.done { border-color:var(--purple); background:var(--purple); color:#fff; }
-    .step-lbl { font-size:10px; font-weight:700; color:var(--text3); white-space:nowrap; }
+    .step-lbl { font-size:11px; font-weight:600; color:var(--text3); white-space:nowrap; }
     .step-item.active .step-lbl, .step-item.done .step-lbl { color:var(--purple); }
     /* ── Step panels ── */
     .step-panel { display:none; }
@@ -128,7 +128,7 @@
     }
     .module-title {
       display: flex; align-items: center; gap: 9px;
-      font-size: 16px; font-weight: 800; color: var(--text);
+      font-size: 16px; font-weight: 600; color: var(--text);
       margin-bottom: 16px;
     }
     .module-title::before {
@@ -138,7 +138,7 @@
     .module-num {
       width: 22px; height: 22px; border-radius: 12px;
       background: var(--purple); color: #fff;
-      font-size: 12px; font-weight: 800;
+      font-size: 13px; font-weight: 600;
       display: grid; place-items: center; flex-shrink: 0;
     }
 
@@ -171,14 +171,14 @@
     .hosp-logo-sm {
       width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
       display: grid; place-items: center;
-      font-size: 13px; font-weight: 900; color: #fff; letter-spacing: .3px;
+      font-size: 14px; font-weight: 700; color: #fff; letter-spacing: .3px;
     }
     .hosp-info { flex: 1; min-width: 0; }
-    .hosp-info-name { font-size: 14px; font-weight: 800; color: var(--text); }
-    .hosp-info-addr { font-size: 12px; color: var(--text3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hosp-info-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .hosp-info-addr { font-size: 13px; color: var(--text3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .hosp-badges { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
     .badge {
-      font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 12px;
+      font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 12px;
     }
     .badge-partner { background: #DCFCE7; color: #16A34A; }
     .badge-3a { background: #DDF7F1; color: var(--purple); }
@@ -209,7 +209,7 @@
     .form-row { margin-bottom: 14px; }
     .form-row:last-child { margin-bottom: 0; }
     .form-label {
-      font-size: 13px; font-weight: 700; color: var(--text2); margin-bottom: 7px;
+      font-size: 14px; font-weight: 600; color: var(--text2); margin-bottom: 7px;
       display: flex; align-items: center; gap: 3px;
     }
     .req { color: var(--red); font-size: 14px; line-height: 1; }
@@ -225,7 +225,7 @@
     textarea.f-input { resize: none; height: 90px; line-height: 1.5; }
     .patient-inline-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .patient-readonly { color:var(--text2); background:var(--purple-bg); }
-    .patient-tip { margin-top:7px; font-size:11px; color:var(--text3); line-height:1.45; }
+    .patient-tip { margin-top:7px; font-size:12px; color:var(--text3); line-height:1.45; }
 
     /* Gender pill toggle */
     .gender-toggle { display: flex; gap: 10px; }
@@ -233,7 +233,7 @@
       flex: 1; height: 46px; border-radius: 12px;
       border: 1.5px solid var(--border); background: #fff;
       display: flex; align-items: center; justify-content: center; gap: 7px;
-      font-size: 15px; font-weight: 700; color: var(--text2);
+      font-size: 15px; font-weight: 600; color: var(--text2);
       cursor: pointer; transition: border-color .15s, background .15s, color .15s;
       -webkit-tap-highlight-color: transparent;
     }
@@ -247,7 +247,7 @@
     }
     .tab {
       flex: 1; padding: 9px 6px; border-radius: 12px;
-      font-size: 13px; font-weight: 700; color: var(--text3);
+      font-size: 14px; font-weight: 600; color: var(--text3);
       text-align: center; cursor: pointer;
       transition: background .15s, color .15s, box-shadow .15s;
       -webkit-tap-highlight-color: transparent;
@@ -276,7 +276,7 @@
     .nc-avatar {
       width: 64px; height: 64px; border-radius: 12px; flex-shrink: 0;
       display: grid; place-items: center;
-      font-size: 24px; font-weight: 900; color: #fff;
+      font-size: 24px; font-weight: 700; color: #fff;
       box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
     .nc-right { flex: 1; min-width: 0; }
@@ -284,23 +284,23 @@
       display: flex; align-items: center; gap: 6px;
       margin-bottom: 3px; flex-wrap: wrap;
     }
-    .nc-name { font-size: 16px; font-weight: 900; color: var(--text); }
+    .nc-name { font-size: 16px; font-weight: 700; color: var(--text); }
     .nc-title {
-      font-size: 11px; font-weight: 700; color: var(--text2);
+      font-size: 12px; font-weight: 600; color: var(--text2);
     }
     .nc-dept {
-      font-size: 11px; font-weight: 700; color: var(--text3);
+      font-size: 12px; font-weight: 600; color: var(--text3);
     }
-    .nc-sep { color: var(--text3); font-size: 11px; margin: 0 1px; }
+    .nc-sep { color: var(--text3); font-size: 12px; margin: 0 1px; }
     .nc-row2 {
       display: flex; align-items: center; gap: 5px;
       margin-bottom: 6px; flex-wrap: wrap;
     }
     .nc-hosp {
-      font-size: 12px; font-weight: 700; color: var(--text2);
+      font-size: 13px; font-weight: 600; color: var(--text2);
     }
     .nc-badge {
-      font-size: 9px; font-weight: 800; padding: 2px 6px;
+      font-size: 11px; font-weight: 600; padding: 2px 6px;
       border-radius: 12px; border: 1px solid; line-height: 1.2;
     }
     .nc-badge.gold { border-color: #E1C16E; color: #A67C00; background: #FFF9E6; }
@@ -310,7 +310,7 @@
       display: flex; flex-wrap: wrap; gap: 5px;
     }
     .nc-honor {
-      font-size: 10px; font-weight: 800; padding: 3px 8px;
+      font-size: 11px; font-weight: 600; padding: 3px 8px;
       border-radius: 12px; line-height: 1.2;
     }
     .nc-honor.purple { background: var(--purple-light); color: var(--purple); }
@@ -320,12 +320,12 @@
     .nc-bio {
       margin-top: 10px; padding: 10px 12px;
       background: var(--purple-bg); border-radius: 12px;
-      font-size: 12px; line-height: 1.65; color: var(--text2);
+      font-size: 13px; line-height: 1.65; color: var(--text2);
       position: relative;
     }
     .nc-bio::before {
       content: '\201C'; position: absolute; top: 4px; left: 10px;
-      font-size: 22px; font-weight: 900; color: var(--purple); opacity: .35;
+      font-size: 22px; font-weight: 700; color: var(--purple); opacity: .35;
       line-height: 1;
     }
     .nc-bio-text { padding-left: 14px; }
@@ -337,16 +337,16 @@
     }
     .nc-rating {
       display: flex; align-items: center; gap: 4px;
-      font-size: 12px; font-weight: 600; color: var(--text3);
+      font-size: 13px; font-weight: 600; color: var(--text3);
     }
     .nc-rating-val {
-      font-size: 18px; font-weight: 900; color: var(--text);
+      font-size: 18px; font-weight: 700; color: var(--text);
     }
     .nc-rating svg { width: 13px; height: 13px; fill: #F59E0B; }
     .nc-actions { display: flex; gap: 8px; }
     .nc-btn {
       height: 32px; padding: 0 14px; border-radius: 12px;
-      font-size: 12px; font-weight: 800; font-family: inherit;
+      font-size: 13px; font-weight: 600; font-family: inherit;
       display: flex; align-items: center; gap: 5px;
       cursor: pointer; transition: all .12s;
       -webkit-tap-highlight-color: transparent;
@@ -401,15 +401,15 @@
     }
     .dur-icon svg { width: 24px; height: 24px; }
     .dur-card.sel .dur-icon { background: rgba(0,0,0,0.1); }
-    .dur-name { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
-    .dur-price { font-size: 22px; font-weight: 900; color: var(--purple); }
-    .dur-price span { font-size: 12px; font-weight: 600; color: var(--text3); }
-    .dur-desc { font-size: 11px; color: var(--text3); margin-top: 5px; line-height: 1.4; }
+    .dur-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+    .dur-price { font-size: 22px; font-weight: 700; color: var(--purple); }
+    .dur-price span { font-size: 13px; font-weight: 600; color: var(--text3); }
+    .dur-desc { font-size: 12px; color: var(--text3); margin-top: 5px; line-height: 1.4; }
 
     /* ── Time & address picker ── */
     .time-grid { display:grid; gap:14px; }
     .hours-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-    .field-label { display:block; font-size:12px; color:var(--text2); font-weight:700; margin:0 0 6px; }
+    .field-label { display:block; font-size:13px; color:var(--text2); font-weight:600; margin:0 0 6px; }
     .field-input, .address-input {
       width:100%; height:44px; border:1.5px solid var(--border); border-radius:12px;
       background:var(--purple-bg); color:var(--text); padding:0 12px; font:600 14px inherit;
@@ -424,54 +424,54 @@
     .duration-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
     .custom-count { display:none; align-items:center; gap:10px; margin-top:10px; padding:10px 12px; border:1.5px solid var(--purple-light); border-radius:12px; background:#fff; }
     .custom-count.show { display:flex; }
-    .custom-count-label { flex:1; font-size:12px; color:var(--text2); font-weight:700; }
+    .custom-count-label { flex:1; font-size:13px; color:var(--text2); font-weight:600; }
     .custom-count-input { width:74px; height:36px; border:1.5px solid var(--border); border-radius:12px; padding:0 8px; color:var(--text); font:800 14px inherit; text-align:center; outline:0; }
     .custom-count-input:focus { border-color:var(--purple); }
-    .custom-count-unit { color:var(--text2); font-size:13px; font-weight:700; }
+    .custom-count-unit { color:var(--text2); font-size:14px; font-weight:600; }
     /* ── 上门助浴 10 次套餐 · 按次预约 ── */
     .bath-sessions { display:none; margin-top:14px; }
     .bath-sessions.show { display:block; }
-    .bath-sessions-count { float:right; font-size:11px; color:var(--purple); font-weight:800; }
-    .bath-sessions-tip { font-size:12px; color:var(--text3); font-weight:600; line-height:1.5; margin:0 0 10px; }
+    .bath-sessions-count { float:right; font-size:12px; color:var(--purple); font-weight:600; }
+    .bath-sessions-tip { font-size:13px; color:var(--text3); font-weight:600; line-height:1.5; margin:0 0 10px; }
     .bath-session { border:1.5px solid var(--border); border-radius:12px; background:#fff; padding:12px; }
     .bath-session + .bath-session { margin-top:10px; }
     .bath-session-hd { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
-    .bath-session-no { font-size:13px; font-weight:800; color:var(--purple); }
-    .bath-session-patient { flex:1; min-width:0; font-size:12px; color:var(--text2); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .bath-session-no { font-size:14px; font-weight:600; color:var(--purple); }
+    .bath-session-patient { flex:1; min-width:0; font-size:13px; color:var(--text2); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .bath-session-del { border:0; background:none; color:var(--text3); font-size:18px; line-height:1; cursor:pointer; padding:0 2px; }
     .bath-session-bd { display:grid; gap:8px; }
     .bath-session-addr { display:flex; align-items:center; gap:8px; width:100%; min-height:44px; padding:0 12px; border:1.5px solid var(--border); border-radius:12px; background:var(--purple-bg); color:var(--text); font:600 13px inherit; cursor:pointer; text-align:left; }
     .bath-session-addr-text { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .bath-session-addr-text.placeholder { color:var(--text3); }
     .bath-session-addbtn { width:100%; height:42px; margin-top:10px; border:1.5px dashed var(--purple-light); border-radius:12px; background:var(--purple-bg); color:var(--purple); font:700 13px inherit; cursor:pointer; }
-    .time-summary { margin-top:12px; padding:11px 12px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:12px; font-weight:700; text-align:center; }
+    .time-summary { margin-top:12px; padding:11px 12px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:13px; font-weight:600; text-align:center; }
     .points-card { margin-top:12px; padding:13px 14px; border:1.5px solid var(--border); border-radius:12px; background:#fff; }
     .points-check { display:flex; align-items:center; gap:10px; cursor:pointer; }
     .points-check input { width:19px; height:19px; accent-color:var(--purple); flex-shrink:0; }
-    .points-main { flex:1; font-size:14px; color:var(--text); font-weight:800; }
-    .points-balance { font-size:12px; color:var(--text3); font-weight:600; }
-    .points-detail { margin:8px 0 0 29px; font-size:12px; color:var(--text2); }
-    .points-detail strong { color:var(--purple); font-size:13px; }
-    .price-save { margin-top:2px; color:var(--green); font-size:12px; font-weight:700; text-align:center; }
+    .points-main { flex:1; font-size:14px; color:var(--text); font-weight:600; }
+    .points-balance { font-size:13px; color:var(--text3); font-weight:600; }
+    .points-detail { margin:8px 0 0 29px; font-size:13px; color:var(--text2); }
+    .points-detail strong { color:var(--purple); font-size:14px; }
+    .price-save { margin-top:2px; color:var(--green); font-size:13px; font-weight:600; text-align:center; }
     .address-list { display:grid; gap:10px; }
     .address-card { display:flex; align-items:flex-start; gap:10px; border:2px solid var(--border); border-radius:12px; padding:12px; cursor:pointer; }
     .address-card.sel { border-color:var(--purple); background:#F7F3FD; }
     .address-radio { width:18px; height:18px; border:1.5px solid var(--text3); border-radius:12px; flex-shrink:0; margin-top:2px; display:grid; place-items:center; }
     .address-card.sel .address-radio { border-color:var(--purple); box-shadow:inset 0 0 0 4px #fff; background:var(--purple); }
-    .address-main { font-size:14px; font-weight:800; color:var(--text); }
-    .address-sub { margin-top:4px; font-size:12px; color:var(--text3); line-height:1.4; }
+    .address-main { font-size:14px; font-weight:600; color:var(--text); }
+    .address-sub { margin-top:4px; font-size:13px; color:var(--text3); line-height:1.4; }
     .address-main-row { display:flex; align-items:center; gap:7px; }
-    .address-type-tag { display:inline-flex; align-items:center; height:20px; padding:0 7px; border-radius:12px; font-size:10px; font-weight:800; flex-shrink:0; }
+    .address-type-tag { display:inline-flex; align-items:center; height:20px; padding:0 7px; border-radius:12px; font-size:11px; font-weight:600; flex-shrink:0; }
     .address-type-tag.home { color:#4D936F; background:#E7F7ED; }
     .address-type-tag.hospital { color:#4F6FBE; background:#EAF0FF; }
     .address-add { margin-top:10px; width:100%; height:42px; border:1.5px dashed var(--purple); border-radius:12px; background:#fff; color:var(--purple); font:700 13px inherit; cursor:pointer; }
     .selector-trigger { width:100%; min-height:74px; padding:12px 13px; display:flex; align-items:center; gap:11px; border:1.5px solid var(--border); border-radius:12px; background:#FCFBFE; color:var(--text); text-align:left; font-family:inherit; cursor:pointer; transition:border-color .15s, box-shadow .15s, background .15s; }
     .selector-trigger:hover { border-color:#D3BEEB; }
     .selector-trigger:active { background:var(--purple-bg); border-color:var(--purple); box-shadow:0 0 0 3px rgba(0,0,0,0.1); }
-    .selector-marker { width:38px; height:38px; border-radius:12px; background:var(--purple-light); color:var(--purple); display:grid; place-items:center; flex-shrink:0; font-size:16px; font-weight:900; }
+    .selector-marker { width:38px; height:38px; border-radius:12px; background:var(--purple-light); color:var(--purple); display:grid; place-items:center; flex-shrink:0; font-size:16px; font-weight:700; }
     .selector-copy { min-width:0; flex:1; overflow:hidden; }
-    .selector-value { display:block; max-width:100%; font-size:14px; color:var(--text); font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .selector-meta { display:block; max-width:100%; margin-top:4px; font-size:12px; color:var(--text3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .selector-value { display:block; max-width:100%; font-size:14px; color:var(--text); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .selector-meta { display:block; max-width:100%; margin-top:4px; font-size:13px; color:var(--text3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .selector-arrow { width:24px; color:#9B91AC; font-size:25px; line-height:1; font-weight:400; text-align:center; }
     .selection-drawer { position:fixed; inset:auto; z-index:90; overflow:hidden; display:flex; align-items:flex-end; justify-content:center; background:rgba(24,18,40,.42); opacity:0; pointer-events:none; transition:opacity .2s; }
     .selection-drawer.show { opacity:1; pointer-events:auto; }
@@ -479,7 +479,7 @@
     .selection-drawer.show .selection-sheet { transform:translateY(0); }
     .sheet-grip { width:38px; height:4px; margin:0 auto 16px; border-radius:12px; background:#D8D1E1; }
     .sheet-head { display:flex; align-items:center; justify-content:space-between; min-height:34px; margin-bottom:14px; }
-    .sheet-title { font-size:18px; color:var(--text); font-weight:900; letter-spacing:.1px; }
+    .sheet-title { font-size:18px; color:var(--text); font-weight:700; letter-spacing:.1px; }
     .sheet-close { width:34px; height:34px; border:0; border-radius:12px; background:#F5F2FA; color:#766C87; font:700 21px/1 inherit; cursor:pointer; }
     .sheet-close:active { background:#EAE3F4; }
     /* ── 服务时间底部抽屉（滚轮选择器） ── */
@@ -487,7 +487,7 @@
     .selection-drawer.show .tp-sheet { transform:translateY(0); }
     .tp-head { display:flex; align-items:center; justify-content:space-between; height:54px; padding:0 18px; border-bottom:1px solid #F0EEF5; }
     .tp-cancel { border:0; background:none; font:400 16px/1 inherit; color:#969799; cursor:pointer; padding:8px 2px; }
-    .tp-title { font-size:16px; font-weight:900; color:var(--text); }
+    .tp-title { font-size:16px; font-weight:700; color:var(--text); }
     .tp-confirm { border:0; background:none; font:800 16px/1 inherit; color:#0FA98C; cursor:pointer; padding:8px 2px; }
     .tp-body { position:relative; }
     .tp-cols { display:flex; }
@@ -495,8 +495,8 @@
     .tp-col::-webkit-scrollbar { display:none; }
     .tp-col ul { list-style:none; margin:0; padding:0; }
     .tp-col li { height:44px; line-height:44px; text-align:center; font-size:16px; color:#C8C9CC; scroll-snap-align:center; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:0 8px; }
-    .tp-col li em { font-style:normal; font-size:12px; color:#B9B6C6; margin-left:5px; font-weight:400; }
-    .tp-col li.on { color:var(--text); font-weight:800; }
+    .tp-col li em { font-style:normal; font-size:13px; color:#B9B6C6; margin-left:5px; font-weight:400; }
+    .tp-col li.on { color:var(--text); font-weight:600; }
     .tp-col li.on em { color:#8E8A9C; }
     .tp-center { position:absolute; left:18px; right:18px; top:50%; height:44px; transform:translateY(-50%); border-top:1px solid #EDEBF2; border-bottom:1px solid #EDEBF2; pointer-events:none; }
     .drawer-list { display:grid; gap:10px; }
@@ -516,8 +516,8 @@
     .patient-card.sel { border-color:var(--purple); background:#F7F3FD; }
     .patient-radio { width:18px; height:18px; border:1.5px solid var(--text3); border-radius:12px; flex-shrink:0; margin-top:2px; display:grid; place-items:center; }
     .patient-card.sel .patient-radio { border-color:var(--purple); box-shadow:inset 0 0 0 4px #fff; background:var(--purple); }
-    .patient-card-main { font-size:14px; color:var(--text); font-weight:800; }
-    .patient-card-sub { margin-top:4px; font-size:12px; color:var(--text3); line-height:1.45; }
+    .patient-card-main { font-size:14px; color:var(--text); font-weight:600; }
+    .patient-card-sub { margin-top:4px; font-size:13px; color:var(--text3); line-height:1.45; }
     .patient-editor { margin-top:10px; padding-top:2px; }
     .patient-editor[hidden] { display:none; }
 
@@ -539,14 +539,14 @@
 
     /* 服务信息 */
     .svc-info{background:var(--card);margin:14px 14px 0;border-radius:12px;padding:16px;box-shadow:var(--sh)}
-    .svc-title{font-size:18px;font-weight:900;color:var(--text);line-height:1.35}
-    .svc-sub{margin-top:4px;font-size:12px;color:var(--text3);line-height:1.5}
+    .svc-title{font-size:18px;font-weight:700;color:var(--text);line-height:1.35}
+    .svc-sub{margin-top:4px;font-size:13px;color:var(--text3);line-height:1.5}
     .svc-price-row{display:flex;align-items:baseline;gap:10px;margin-top:10px}
-    .svc-price{font-size:24px;font-weight:900;color:#E94E4E}
-    .svc-price small{font-size:12px;font-weight:700}
-    .svc-sales{font-size:11px;color:var(--text3)}
+    .svc-price{font-size:24px;font-weight:700;color:#E94E4E}
+    .svc-price small{font-size:13px;font-weight:600}
+    .svc-sales{font-size:12px;color:var(--text3)}
     .svc-badges{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
-    .svc-badge{font-size:10px;font-weight:800;padding:3px 8px;border-radius:12px;line-height:1.2}
+    .svc-badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:12px;line-height:1.2}
     .svc-badge.pts{background:#FFF0F0;color:#E94E4E}
     .svc-badge.guarantee{background:#E8F7EE;color:#22A06B}
     .svc-badge.instant{background:#F0F6FF;color:#4F6FBE}
@@ -554,43 +554,43 @@
     /* 详情/评价 Tab 卡（对齐商城商品详情） */
     .svc-tab-card{background:var(--card);margin:14px 14px 0;border-radius:12px;box-shadow:var(--sh);overflow:hidden}
     .svc-tab-card .dtabs{display:flex;border-bottom:1px solid var(--border)}
-    .svc-tab-card .dtab{flex:1;padding:13px 0;border:0;background:none;font-size:14px;font-weight:700;color:var(--text3);cursor:pointer;position:relative;font-family:inherit}
-    .svc-tab-card .dtab.on{color:var(--text);font-weight:900}
+    .svc-tab-card .dtab{flex:1;padding:13px 0;border:0;background:none;font-size:14px;font-weight:600;color:var(--text3);cursor:pointer;position:relative;font-family:inherit}
+    .svc-tab-card .dtab.on{color:var(--text);font-weight:700}
     .svc-tab-card .dtab.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:3px;border-radius:12px;background:var(--purple)}
     .svc-tab-card .svc-detail,.svc-tab-card .review-section{margin:0;border-radius:0;box-shadow:none}
 
     /* 服务详情 */
     .svc-detail{background:var(--card);margin:14px 14px 0;border-radius:12px;padding:16px;box-shadow:var(--sh)}
-    .svc-detail h3{font-size:15px;font-weight:900;color:var(--text);margin-bottom:12px}
+    .svc-detail h3{font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px}
     .svc-detail ul{list-style:none}
-    .svc-detail li{position:relative;padding-left:14px;font-size:13px;color:var(--text2);line-height:1.9}
-    .svc-detail li::before{content:'·';position:absolute;left:0;color:var(--purple);font-weight:900}
+    .svc-detail li{position:relative;padding-left:14px;font-size:14px;color:var(--text2);line-height:1.9}
+    .svc-detail li::before{content:'·';position:absolute;left:0;color:var(--purple);font-weight:700}
 
     /* 评论区 */
     .review-section{background:var(--card);margin:14px 14px 14px;border-radius:12px;padding:16px;box-shadow:var(--sh)}
     .review-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-    .review-title{font-size:15px;font-weight:900;color:var(--text)}
-    .review-more{font-size:11px;color:var(--text3);cursor:pointer}
+    .review-title{font-size:15px;font-weight:700;color:var(--text)}
+    .review-more{font-size:12px;color:var(--text3);cursor:pointer}
     .review-score-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:12px;border-radius:12px;background:var(--purple-light)}
-    .review-score-num{font-size:28px;font-weight:900;color:var(--purple-dark);line-height:1}
-    .review-score-star{color:#F59E0B;font-size:12px;margin-top:2px}
-    .review-score-meta{font-size:11px;color:var(--text3);margin-top:2px}
+    .review-score-num{font-size:28px;font-weight:700;color:var(--purple-dark);line-height:1}
+    .review-score-star{color:#F59E0B;font-size:13px;margin-top:2px}
+    .review-score-meta{font-size:12px;color:var(--text3);margin-top:2px}
     .review-list{display:flex;flex-direction:column;gap:14px}
     .review-item{padding-bottom:14px;border-bottom:1px dashed var(--border)}
     .review-item:last-child{border-bottom:none;padding-bottom:0}
     .review-hd{display:flex;align-items:center;gap:10px}
-    .review-avatar{width:32px;height:32px;border-radius:12px;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff;background:linear-gradient(135deg,#2BD8BC,#0FA98C)}
-    .review-name{font-size:13px;font-weight:800;color:var(--text)}
-    .review-stars{color:#F59E0B;font-size:11px;letter-spacing:1px}
-    .review-time{margin-left:auto;font-size:10px;color:var(--text3)}
-    .review-body{margin-top:6px;font-size:13px;color:var(--text);line-height:1.6}
+    .review-avatar{width:32px;height:32px;border-radius:12px;display:grid;place-items:center;font-size:14px;font-weight:600;color:#fff;background:linear-gradient(135deg,#2BD8BC,#0FA98C)}
+    .review-name{font-size:14px;font-weight:600;color:var(--text)}
+    .review-stars{color:#F59E0B;font-size:12px;letter-spacing:1px}
+    .review-time{margin-left:auto;font-size:11px;color:var(--text3)}
+    .review-body{margin-top:6px;font-size:14px;color:var(--text);line-height:1.6}
     .review-tags{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
-    .review-tag{font-size:10px;color:var(--text2);background:var(--purple-light);padding:2px 7px;border-radius:12px;font-weight:700}
+    .review-tag{font-size:11px;color:var(--text2);background:var(--purple-light);padding:2px 7px;border-radius:12px;font-weight:600}
 
     /* ── Bottom note ── */
     .note-bar {
       text-align:center; margin:6px 14px 14px;
-      font-size:12px; color:var(--text3); line-height:1.6;
+      font-size:13px; color:var(--text3); line-height:1.6;
     }
     .note-bar strong { color:var(--text2); }
     /* ── Navigation bar (prev / next) ── */
@@ -603,14 +603,14 @@
       display:flex; align-items:baseline; justify-content:center;
       gap:4px; margin-bottom:10px;
     }
-    .price-lbl  { font-size:13px; color:var(--text3); font-weight:600; }
-    .price-num  { font-size:26px; font-weight:900; color:var(--purple); }
-    .price-unit { font-size:13px; color:var(--text3); font-weight:600; }
+    .price-lbl  { font-size:14px; color:var(--text3); font-weight:600; }
+    .price-num  { font-size:26px; font-weight:700; color:var(--purple); }
+    .price-unit { font-size:14px; color:var(--text3); font-weight:600; }
     .btn-row { display:flex; gap:10px; }
     .btn-ghost {
       flex:1; height:52px; border-radius:12px;
       border:2px solid var(--purple); background:transparent;
-      color:var(--purple); font-size:16px; font-weight:800;
+      color:var(--purple); font-size:16px; font-weight:600;
       font-family:inherit; cursor:pointer;
       -webkit-tap-highlight-color:transparent; transition:background .12s;
     }
@@ -618,7 +618,7 @@
     .btn-primary {
       flex:2; height:52px; border-radius:12px; border:none;
       background:linear-gradient(135deg,#2BD8BC 0%,#0FA98C 100%);
-      color:#fff; font-size:16px; font-weight:800; letter-spacing:.5px;
+      color:#fff; font-size:16px; font-weight:600; letter-spacing:.5px;
       font-family:inherit; cursor:pointer;
       box-shadow:0 8px 22px rgba(0,0,0,0.1);
       -webkit-tap-highlight-color:transparent;
@@ -634,20 +634,20 @@
     .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .day-stepper-row { display:flex; align-items:center; gap:12px; margin-top:12px; }
     .day-stepper { display:inline-flex; align-items:center; border:1px solid #E4FAF4; border-radius:12px; overflow:hidden; background:#fff; }
-    .day-stepper button { width:38px; height:38px; border:0; background:#F7FEFC; color:#1CD8B7; font-size:18px; font-weight:900; cursor:pointer; line-height:1; }
+    .day-stepper button { width:38px; height:38px; border:0; background:#F7FEFC; color:#1CD8B7; font-size:18px; font-weight:700; cursor:pointer; line-height:1; }
     .day-stepper button:active { background:#DDF7F1; }
-    .day-stepper span { min-width:46px; text-align:center; font-size:16px; font-weight:900; color:#172033; }
-    .day-unit { font-size:12px; color:#6B7A90; font-weight:700; }
+    .day-stepper span { min-width:46px; text-align:center; font-size:16px; font-weight:700; color:#172033; }
+    .day-unit { font-size:13px; color:#6B7A90; font-weight:600; }
     .single-page-needs .module-title { margin-bottom:14px; }
     .need-group + .need-group { margin-top:16px; }
-    .need-label { display:block; margin-bottom:8px; color:var(--text2); font-size:12px; font-weight:700; }
+    .need-label { display:block; margin-bottom:8px; color:var(--text2); font-size:13px; font-weight:600; }
     .need-label .req { color:#D93025; margin-right:3px; }
     .need-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
     .need-option { min-height:40px; padding:0 8px; border:1.5px solid var(--border); border-radius:12px; background:var(--purple-bg); color:var(--text2); font:700 12px inherit; cursor:pointer; }
     .need-option.sel { border-color:var(--purple); background:var(--purple-light); color:var(--purple); box-shadow:0 3px 9px rgba(0,0,0,0.1); }
     .need-textarea { width:100%; min-height:72px; resize:vertical; padding:10px 11px; border:1.5px solid var(--border); border-radius:12px; background:var(--purple-bg); color:var(--text); font:600 13px/1.5 inherit; outline:none; }
     .need-textarea:focus { border-color:var(--purple); background:#fff; }
-    .service-mode-note { padding:11px 12px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:12px; font-weight:800; text-align:center; }
+    .service-mode-note { padding:11px 12px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:13px; font-weight:600; text-align:center; }
     /* 隐藏"服务方式"提示（天数选择正常显示） */
     .service-mode-note { display: none !important; }
     .needs-price-card { display:block; }
@@ -678,8 +678,8 @@
     }
     @keyframes popIn { from{transform:scale(0)} to{transform:scale(1)} }
     .pay-circle svg { width:32px; height:32px; }
-    .pay-title { font-size:20px; font-weight:900; color:var(--text); margin-bottom:8px; }
-    .pay-sub   { font-size:13px; color:var(--text2); line-height:1.65; max-width:300px; }
+    .pay-title { font-size:20px; font-weight:700; color:var(--text); margin-bottom:8px; }
+    .pay-sub   { font-size:14px; color:var(--text2); line-height:1.65; max-width:300px; }
     .pay-card  {
       background:#fff; border-radius:12px;
       padding:4px 18px; margin:20px 16px 0; text-align:left;
@@ -687,19 +687,19 @@
     }
     .pay-row   { display:flex; justify-content:space-between; align-items:center; padding:12px 0; }
     .pay-row + .pay-row { border-top:1px solid var(--border); }
-    .pay-key   { font-size:13px; color:var(--text3); font-weight:600; flex-shrink:0; margin-right:12px; }
-    .pay-val   { font-size:13px; color:var(--text); font-weight:700; text-align:right; overflow-wrap:anywhere; }
-    .pay-val.purple { color:var(--purple); font-size:15px; font-weight:900; }
+    .pay-key   { font-size:14px; color:var(--text3); font-weight:600; flex-shrink:0; margin-right:12px; }
+    .pay-val   { font-size:14px; color:var(--text); font-weight:600; text-align:right; overflow-wrap:anywhere; }
+    .pay-val.purple { color:var(--purple); font-size:15px; font-weight:700; }
     .pay-val.deduct { color:#EF4444; }
     .pay-btns { display:flex; gap:12px; padding:14px 16px calc(14px + env(safe-area-inset-bottom)); background:#fff; border-top:1px solid var(--border); }
-    .pay-btns button { flex:1; height:46px; border-radius:12px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; }
+    .pay-btns button { flex:1; height:46px; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; }
     .pay-btn-ghost { border:1px solid #C5BDD8; background:#fff; color:var(--purple); }
     .pay-btn-primary { border:0; background:linear-gradient(135deg,#2BD8BC,#0FA98C); color:#fff; }
-    .pay-order-num { font-size:12px; color:var(--text3); text-align:center; padding:12px 0 4px; }
+    .pay-order-num { font-size:13px; color:var(--text3); text-align:center; padding:12px 0 4px; }
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
 </head>
-<body>
+<body data-surface="mobile" data-page="hospital-care">
 <div class="frame">
   <div class="phone">
 
@@ -792,8 +792,8 @@
                   <div class="review-score-star">★★★★★</div>
                 </div>
                 <div style="flex:1">
-                  <div style="display:flex;gap:4px;margin-bottom:2px"><span class="review-score-star" style="color:#F59E0B">★</span><span style="font-size:11px;color:var(--text2);font-weight:700">98%好评</span></div>
-                  <div style="font-size:11px;color:var(--text3)">服务态度 · 专业能力 · 响应速度</div>
+                  <div style="display:flex;gap:4px;margin-bottom:2px"><span class="review-score-star" style="color:#F59E0B">★</span><span style="font-size:12px;color:var(--text2);font-weight:600">98%好评</span></div>
+                  <div style="font-size:12px;color:var(--text3)">服务态度 · 专业能力 · 响应速度</div>
                 </div>
               </div>
               <div class="review-list" id="reviewList"></div>
@@ -869,7 +869,7 @@
         <div class="module">
           <div class="module-title">
             <div class="module-num">2</div>
-            选择护理员<span id="nurseTitleHint" style="font-size:11px;color:var(--text3);font-weight:600;margin-left:6px"></span>
+            选择护理员<span id="nurseTitleHint" style="font-size:12px;color:var(--text3);font-weight:600;margin-left:6px"></span>
           </div>
 
           <!-- Nurse cards -->
@@ -1311,7 +1311,7 @@
       <div class="pay-card">
         <div class="pay-row" id="payBath10Tip" style="display:none">
         <span class="pay-key">卡包提醒</span>
-        <span class="pay-val" style="color:var(--purple);font-weight:700">首次已付款，剩余9次请在「我的-我的卡包」中预约兑换</span>
+        <span class="pay-val" style="color:var(--purple);font-weight:600">首次已付款，剩余9次请在「我的-我的卡包」中预约兑换</span>
       </div>
         <div class="pay-row">
           <span class="pay-key">服务类型</span>
@@ -1825,7 +1825,7 @@
     const typeLabel = addressType === 'hospital' ? '医院' : addressType === 'home' ? '家' : '全部';
     let selId = currentSelectedId();
     if (!selId && list.length) { selId = list[0].id; setCurrentSelectedId(selId); }
-    box.innerHTML = list.length ? list.map(function(a) { return '<div class="address-card ' + (String(a.id) === String(selId) ? 'sel' : '') + '" onclick="selectAddress(\'' + escapeHtml(a.id) + '\')"><div class="address-radio"></div><div><div class="address-main-row"><div class="address-main">' + escapeHtml(a.detail) + '</div><span class="address-type-tag ' + a.addressType + '">' + (a.addressType === 'hospital' ? '医院' : '家') + '</span></div><div class="address-sub">' + escapeHtml(a.contact || '') + (a.phone ? ' · ' + escapeHtml(a.phone) : '') + '</div></div></div>'; }).join('') : '<div style="text-align:center;color:var(--text3);font-size:12px;padding:10px 0">暂无' + typeLabel + '类型服务地址，请新增</div>';
+    box.innerHTML = list.length ? list.map(function(a) { return '<div class="address-card ' + (String(a.id) === String(selId) ? 'sel' : '') + '" onclick="selectAddress(\'' + escapeHtml(a.id) + '\')"><div class="address-radio"></div><div><div class="address-main-row"><div class="address-main">' + escapeHtml(a.detail) + '</div><span class="address-type-tag ' + a.addressType + '">' + (a.addressType === 'hospital' ? '医院' : '家') + '</span></div><div class="address-sub">' + escapeHtml(a.contact || '') + (a.phone ? ' · ' + escapeHtml(a.phone) : '') + '</div></div></div>'; }).join('') : '<div style="text-align:center;color:var(--text3);font-size:13px;padding:10px 0">暂无' + typeLabel + '类型服务地址，请新增</div>';
     const titleEl = document.getElementById('drawerAddressTitle');
     if (titleEl) titleEl.textContent = dualAddr ? '选择' + dualAddr[addressDrawerSlot === 'to' ? 'to' : 'from'].label : '选择服务地址';
     updateAddressSummary();
@@ -2242,7 +2242,7 @@
     /* 备注移到最后（服务地址之后）并标记必填 */
     if (p3 && needsModule) p3.appendChild(needsModule);
     var needsTitle = document.getElementById('needsTitle');
-    if (needsTitle) needsTitle.innerHTML = '备注 <span style="color:#D93025;font-weight:800;margin-left:2px">*</span>';
+    if (needsTitle) needsTitle.innerHTML = '备注 <span style="color:#D93025;font-weight:600;margin-left:2px">*</span>';
     var otherTa = document.getElementById('otherNeeds');
     if (otherTa) otherTa.placeholder = '请描述检查单信息或需要重点关注的事项（必填）';
     /* 重编序号：就诊人 → 上传检查单 → 联系人 → 时间 → 地址 → 备注 */
@@ -2897,7 +2897,7 @@
     var pArrow = document.querySelector('#patientInfoModule .selector-arrow');
     if (pArrow) pArrow.style.display = 'none';
     var banner = document.createElement('div');
-    banner.style.cssText = 'padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,#1CD8B7,#0FA98C);color:#fff;font-size:12px;font-weight:700;line-height:1.5;box-shadow:0 4px 14px rgba(0,0,0,0.1);text-align:center';
+    banner.style.cssText = 'padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,#1CD8B7,#0FA98C);color:#fff;font-size:13px;font-weight:600;line-height:1.5;box-shadow:0 4px 14px rgba(0,0,0,0.1);text-align:center';
     banner.textContent = '正在使用「上门助浴 10 次兑换卡」· 本次 ¥0 · 剩余 ' + (hit.total - hit.used) + ' 次 · 适用对象：' + hit.patient.name + '（锁定）';
     var bannerBox = document.getElementById('redeemBannerBox');
     if (bannerBox) { bannerBox.innerHTML = ''; bannerBox.appendChild(banner); bannerBox.style.display = ''; }
@@ -2930,9 +2930,9 @@
       var left = (c.total || 10) - (c.used || 0);
       var p = c.patient || {};
       return '<button type="button" onclick="pickCard(\'' + escapeHtml(c.id) + '\')" style="width:100%;text-align:left;border:1px solid #CFF5ED;background:#F7FEFC;border-radius:12px;padding:13px 14px;margin-bottom:10px;cursor:pointer;font:inherit">'
-        + '<div style="font-size:14px;font-weight:900;color:#172033">上门助浴 10 次兑换卡</div>'
-        + '<div style="font-size:12px;color:#6B7A90;margin-top:4px;font-weight:600">适用对象：' + escapeHtml(p.name || '—') + '（' + escapeHtml(p.gender || '') + ' · ' + escapeHtml(String(p.age || '?')) + '岁 · 锁定）</div>'
-        + '<div style="font-size:12px;color:#0FA98C;margin-top:4px;font-weight:800">剩余 ' + left + ' 次 · 卡号 ' + escapeHtml(c.id) + '</div>'
+        + '<div style="font-size:14px;font-weight:700;color:#172033">上门助浴 10 次兑换卡</div>'
+        + '<div style="font-size:13px;color:#6B7A90;margin-top:4px;font-weight:600">适用对象：' + escapeHtml(p.name || '—') + '（' + escapeHtml(p.gender || '') + ' · ' + escapeHtml(String(p.age || '?')) + '岁 · 锁定）</div>'
+        + '<div style="font-size:13px;color:#0FA98C;margin-top:4px;font-weight:600">剩余 ' + left + ' 次 · 卡号 ' + escapeHtml(c.id) + '</div>'
         + '</button>';
     }).join('');
     fitOverlayToPhone('cardPickerDrawer');

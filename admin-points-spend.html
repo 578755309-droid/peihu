@@ -1,6 +1,6 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=1280"><title>使用明细 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><link rel="stylesheet" href="admin-points.css"><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script>  <link rel="stylesheet" href="visual-theme.css" />
 </head>
-<body><div class="layout">
+<body data-surface="admin" data-page="admin-points-spend"><div class="layout">
   <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
   <main class="main">
     <header class="topbar">
@@ -71,7 +71,7 @@
         '<td><span class="tag ' + (r.orderType === '商城订单' ? 'mall' : 'service') + '">' + P.esc(r.orderType) + '</span></td>' +
         '<td class="mono">' + P.esc(r.orderNo) + '</td>' +
         '<td><span class="pt-val minus">-' + r.points + '</span></td>' +
-        '<td style="font-weight:900;color:#172033">¥' + r.amount + '</td>' +
+        '<td style="font-weight:700;color:#172033">¥' + r.amount + '</td>' +
         '<td style="max-width:280px;line-height:1.6">' + P.esc(r.detail) + '</td>' +
       '</tr>';
     }).join('');

@@ -51,7 +51,7 @@
     /* Status bar */
     .status-bar {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 13px 22px 8px; font-size: 13px; font-weight: 700;
+      padding: 13px 22px 8px; font-size: 14px; font-weight: 600;
       background: var(--card); letter-spacing: .2px;
     }
     .status-right { display: flex; align-items: center; gap: 5px; }
@@ -70,7 +70,7 @@
       display: grid; place-items: center; -webkit-tap-highlight-color: transparent;
     }
     .back-btn svg { width: 20px; height: 20px; }
-    .nav-title { font-size: 17px; font-weight: 800; color: var(--text); }
+    .nav-title { font-size: 17px; font-weight: 600; color: var(--text); }
     .nav-ph { width: 36px; }
 
     /* Tab filter */
@@ -80,7 +80,7 @@
     }
     .order-type-tab {
       flex: 1; padding: 12px 4px 10px; text-align: center;
-      font-size: 14px; font-weight: 800; color: var(--text3);
+      font-size: 14px; font-weight: 600; color: var(--text3);
       border: 0; border-bottom: 2.5px solid transparent; background: transparent;
       cursor: pointer; transition: color .15s, border-color .15s;
       -webkit-tap-highlight-color: transparent;
@@ -98,8 +98,8 @@
     .mall-order-card { overflow: hidden; cursor: pointer; }
     .mall-order-main { padding: 15px 16px 12px; }
     .mall-order-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .mall-order-no { color: var(--text3); font-size: 11px; font-weight: 600; }
-    .mall-state { padding: 4px 9px; border-radius: 12px; font-size: 11px; font-weight: 800; }
+    .mall-order-no { color: var(--text3); font-size: 12px; font-weight: 600; }
+    .mall-state { padding: 4px 9px; border-radius: 12px; font-size: 12px; font-weight: 600; }
     .mall-state.payment { color: #D97706; background: #FEF3C7; }
     .mall-state.shipping { color: #397EED; background: #E8F1FF; }
     .mall-state.receiving { color: #C26C16; background: #FFF1DD; }
@@ -114,24 +114,24 @@
     .mall-product-thumb svg { width: 42px; height: 42px; }
     .mall-product-thumb img { width: 54px; height: 54px; object-fit: contain; }
     .mall-product-copy { min-width: 0; flex: 1; }
-    .mall-product-name { font-size: 15px; font-weight: 900; line-height: 1.3; }
-    .mall-product-desc { margin-top: 5px; color: var(--text2); font-size: 11px; line-height: 1.4; }
-    .mall-product-price { align-self: flex-start; color: var(--text); font-size: 14px; font-weight: 900; white-space: nowrap; }
-    .mall-product-price small { font-size: 11px; }
-    .mall-order-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--border); color: var(--text2); font-size: 11px; }
+    .mall-product-name { font-size: 15px; font-weight: 700; line-height: 1.3; }
+    .mall-product-desc { margin-top: 5px; color: var(--text2); font-size: 12px; line-height: 1.4; }
+    .mall-product-price { align-self: flex-start; color: var(--text); font-size: 14px; font-weight: 700; white-space: nowrap; }
+    .mall-product-price small { font-size: 12px; }
+    .mall-order-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 13px; padding-top: 11px; border-top: 1px solid var(--border); color: var(--text2); font-size: 12px; }
     .mall-order-meta strong { color: var(--text); font-size: 14px; }
     .mall-order-actions { display: flex; justify-content: flex-end; gap: 8px; padding: 0 16px 14px; }
     .mall-action { min-width: 82px; height: 34px; padding: 0 12px; border: 1px solid var(--border); border-radius: 12px; background: #fff; color: var(--text2); font: 700 11px inherit; cursor: pointer; }
     .mall-action.primary { border-color: #1CD8B7; background: #1CD8B7; color: #fff; }
     .mall-action:active { transform: scale(.97); }
-    .mall-empty { margin: 16px 14px; padding: 36px 16px; text-align: center; color: var(--text3); font-size: 12px; background: var(--card); border-radius: 12px; }
+    .mall-empty { margin: 16px 14px; padding: 36px 16px; text-align: center; color: var(--text3); font-size: 13px; background: var(--card); border-radius: 12px; }
     @media (max-width: 360px) {
       .order-type-tabs { padding: 0 22px; }
-      .tf { font-size: 10px; }
+      .tf { font-size: 11px; }
     }
     .tf {
       flex: 1; min-width: 0; padding: 11px 4px 10px; text-align: center;
-      font-size: 11px; font-weight: 700; color: var(--text3);
+      font-size: 12px; font-weight: 600; color: var(--text3);
       border-bottom: 2.5px solid transparent;
       cursor: pointer; transition: color .15s, border-color .15s;
       -webkit-tap-highlight-color: transparent;
@@ -150,20 +150,20 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
     }
-    .order-no { font-size: 12px; color: var(--text3); font-weight: 600; }
+    .order-no { font-size: 13px; color: var(--text3); font-weight: 600; }
 
     /* Status badges */
     .status-badge {
       display: flex; align-items: center; gap: 5px;
       padding: 4px 11px; border-radius: 12px;
-      font-size: 12px; font-weight: 800; letter-spacing: .2px;
+      font-size: 13px; font-weight: 600; letter-spacing: .2px;
     }
     .badge-pending { background: #FEF3C7; color: #D97706; }
     .badge-payment { background: #FEE2E2; color: #DC2626; }
     .badge-active  { background: #DCFCE7; color: #16A34A; }
     .badge-done    { background: #F1F5F9; color: #64748B; }
     .badge-refund  { background: var(--purple-light); color: var(--purple); }
-    .countdown { font-family: 'SF Mono', 'Courier New', monospace; font-size: 13px; letter-spacing: 1px; }
+    .countdown { font-family: 'SF Mono', 'Courier New', monospace; font-size: 14px; letter-spacing: 1px; }
 
     /* Card body */
     .card-body { padding: 14px 16px 0; }
@@ -177,19 +177,19 @@
     .service-visual.home { background:linear-gradient(145deg,#D97706,#F4B55C); }
     .service-visual.bath { background:linear-gradient(145deg,#2F78B7,#70B9E8); }
     .service-copy { min-width:0; flex:1; }
-    .service-type { font-size:11px; color:var(--purple); font-weight:800; margin-bottom:3px; }
-    .service-project { font-size:17px; line-height:1.25; font-weight:900; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .service-desc { margin-top:4px; font-size:11px; color:var(--text2); line-height:1.4; }
+    .service-type { font-size:12px; color:var(--purple); font-weight:600; margin-bottom:3px; }
+    .service-project { font-size:17px; line-height:1.25; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .service-desc { margin-top:4px; font-size:12px; color:var(--text2); line-height:1.4; }
 
     /* Hospital row */
     .hosp-row { display: flex; align-items: center; gap: 9px; margin: 0 0 11px; padding: 0 0 10px; border-bottom: 1px solid var(--border); }
     .hosp-logo {
       width: 34px; height: 34px; border-radius: 12px; flex-shrink: 0;
       display: grid; place-items: center;
-      font-size: 11px; font-weight: 900; color: #fff;
+      font-size: 12px; font-weight: 700; color: #fff;
     }
-    .hosp-name { font-size: 12px; font-weight: 800; color: var(--text2); }
-    .hosp-ward { font-size: 11px; color: var(--text3); margin-top: 1px; }
+    .hosp-name { font-size: 13px; font-weight: 600; color: var(--text2); }
+    .hosp-ward { font-size: 12px; color: var(--text3); margin-top: 1px; }
     .home-location { background:linear-gradient(140deg,#D97706,#F4B55C); }
     .bath-location { background:linear-gradient(140deg,#2F78B7,#70B9E8); }
 
@@ -201,19 +201,19 @@
     .nurse-av {
       width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
       display: grid; place-items: center;
-      font-size: 17px; font-weight: 900; color: #fff;
+      font-size: 17px; font-weight: 700; color: #fff;
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
     .nurse-info { flex: 1; }
-    .nurse-name { font-size: 14px; font-weight: 800; color: var(--text); }
+    .nurse-name { font-size: 14px; font-weight: 600; color: var(--text); }
     .nurse-meta { display: flex; align-items: center; gap: 7px; margin-top: 4px; }
     .nurse-rate {
       display: flex; align-items: center; gap: 3px;
-      font-size: 12px; font-weight: 700; color: var(--purple);
+      font-size: 13px; font-weight: 600; color: var(--purple);
     }
     .nurse-rate svg { width: 12px; height: 12px; fill: #F59E0B; }
     .nurse-spec {
-      font-size: 10px; font-weight: 700;
+      font-size: 11px; font-weight: 600;
       background: var(--purple-light); color: var(--purple);
       padding: 2px 8px; border-radius: 12px;
     }
@@ -234,8 +234,8 @@
       border-right:1px solid var(--border);
     }
     .chip:last-child { border-right:0; }
-    .chip-lbl { font-size: 10px; color: var(--text3); font-weight: 600; }
-    .chip-val { font-size: 12px; color: var(--text); font-weight: 800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .chip-lbl { font-size: 11px; color: var(--text3); font-weight: 600; }
+    .chip-val { font-size: 13px; color: var(--text); font-weight: 600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .chip-val.accent { color: var(--purple); }
 
     /* Countdown chip special */
@@ -250,7 +250,7 @@
     }
     .act-btn {
       flex: 1; height: 36px; border-radius: 12px; border: none;
-      font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit;
+      font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
       display: flex; align-items: center; justify-content: center; gap: 3px;
       -webkit-tap-highlight-color: transparent; transition: transform .1s, filter .1s;
       white-space: nowrap;
@@ -272,26 +272,26 @@
     .action-sheet { width:min(360px,100%); max-height:calc(100vh - 40px); overflow-y:auto; background:#fff; border-radius:12px; padding:22px 18px 16px; box-shadow:0 18px 60px rgba(35,18,70,.25); transform:translateY(12px) scale(.98); transition:transform .2s; }
     .action-modal.show .action-sheet { transform:none; }
     .action-icon { width:46px; height:46px; margin:0 auto 10px; border-radius:12px; display:grid; place-items:center; background:var(--purple-light); color:var(--purple); font-size:23px; }
-    .action-title { text-align:center; font-size:17px; font-weight:900; }
-    .action-desc { margin:9px 4px 18px; color:var(--text2); font-size:13px; line-height:1.6; text-align:center; white-space:pre-line; }
+    .action-title { text-align:center; font-size:17px; font-weight:700; }
+    .action-desc { margin:9px 4px 18px; color:var(--text2); font-size:14px; line-height:1.6; text-align:center; white-space:pre-line; }
     .action-actions { display:flex; gap:9px; }
     .action-actions button { flex:1; height:42px; border:0; border-radius:12px; font:800 13px inherit; cursor:pointer; }
     .modal-cancel { background:var(--purple-bg); color:var(--text2); }
     .modal-confirm { background:linear-gradient(135deg,#2BD8BC,#0FA98C); color:#fff; }
     .refund-form { display:none; margin:0 2px 15px; text-align:left; }
     .refund-form.show { display:block; }
-    .refund-form label { display:block; font-size:12px; color:var(--text2); font-weight:800; margin:0 0 6px; }
+    .refund-form label { display:block; font-size:13px; color:var(--text2); font-weight:600; margin:0 0 6px; }
     .refund-form select, .refund-form textarea { width:100%; border:1.5px solid var(--border); border-radius:12px; background:#FAF9FC; color:var(--text); padding:10px; font:500 13px inherit; outline:none; }
     .refund-form textarea { height:65px; resize:none; margin-top:9px; }
-    .after-sale-note { margin:0 0 12px; padding:9px 11px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:12px; font-weight:700; }
+    .after-sale-note { margin:0 0 12px; padding:9px 11px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:13px; font-weight:600; }
     .refund-btn[disabled] { opacity:.62; cursor:default; }
     .rating-form { display:none; margin:2px 0 17px; text-align:center; }
     .rating-form.show { display:block; }
-    .rating-hint { color:var(--text2); font-size:12px; line-height:1.5; }
+    .rating-hint { color:var(--text2); font-size:13px; line-height:1.5; }
     .rating-stars { display:flex; justify-content:center; gap:6px; margin-top:13px; }
     .rating-star { width:35px; height:35px; padding:0; border:0; background:transparent; color:#D7D2E4; font-size:28px; line-height:1; cursor:pointer; transition:transform .15s,color .15s; }
     .rating-star.selected,.rating-star:hover { color:#F3B63F; transform:scale(1.08); }
-    .rating-score { margin-top:8px; color:var(--purple); font-size:12px; font-weight:800; min-height:18px; }
+    .rating-score { margin-top:8px; color:var(--purple); font-size:13px; font-weight:600; min-height:18px; }
     .order-v2-btn.evaluated { border-color:#D9F0E5; background:#F0FBF5; color:#16965A; cursor:default; }
 
     /* Bottom nav */
@@ -306,14 +306,14 @@
       text-decoration: none;
     }
     .nav-ico { width: 26px; height: 26px; }
-    .nav-lbl { font-size: 11px; font-weight: 700; color: var(--text3); }
+    .nav-lbl { font-size: 12px; font-weight: 600; color: var(--text3); }
     .nav-item.active .nav-lbl { color: var(--purple); }
     .nav-item.active .ni { stroke: var(--purple) !important; }
     .nav-item.active .nif { fill: var(--purple) !important; }
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
 </head>
-<body>
+<body data-surface="mobile" data-page="orders">
 <div class="frame">
   <div class="phone">
     <div class="scroll-area">
@@ -490,7 +490,7 @@
                 <circle cx="8" cy="8" r="6.5" stroke="#1CD8B7" stroke-width="1.3"/>
                 <path d="M8 5v3l2 1.5" stroke="#1CD8B7" stroke-width="1.3" stroke-linecap="round"/>
               </svg>
-              <span style="font-size:12px;font-weight:700;color:#0FA98C;">护理员已接单，将于 04/10 08:00 开始服务</span>
+              <span style="font-size:13px;font-weight:600;color:#0FA98C;">护理员已接单，将于 04/10 08:00 开始服务</span>
             </div>
 
             <!-- Actions -->

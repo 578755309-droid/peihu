@@ -7,16 +7,16 @@
     var st = document.createElement('style');
     st.id = 'cui-style';
     st.textContent = [
-      '.cui-toast{position:fixed;left:50%;top:18%;transform:translateX(-50%) translateY(-8px);max-width:min(320px,80vw);padding:11px 18px;border-radius:12px;background:rgba(20,16,32,.88);color:#fff;font-size:13px;font-weight:600;line-height:1.5;text-align:center;z-index:99999;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;box-shadow:0 8px 28px rgba(20,16,32,.28)}',
+      '.cui-toast{position:fixed;left:50%;top:18%;transform:translateX(-50%) translateY(-8px);max-width:min(320px,80vw);padding:11px 18px;border-radius:12px;background:rgba(20,16,32,.88);color:#fff;font-size:14px;font-weight:600;line-height:1.5;text-align:center;z-index:99999;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;box-shadow:0 8px 28px rgba(20,16,32,.28)}',
       '.cui-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}',
       '.cui-mask{position:fixed;inset:0;background:rgba(15,12,26,.45);z-index:99998;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .18s}',
       '.cui-mask.show{opacity:1}',
       '.cui-dialog{width:min(300px,82vw);background:#fff;border-radius:12px;padding:22px 20px 16px;box-shadow:0 18px 50px rgba(15,12,26,.3);transform:scale(.94);transition:transform .18s}',
       '.cui-mask.show .cui-dialog{transform:scale(1)}',
-      '.cui-title{font-size:15px;font-weight:800;color:#221d33;text-align:center}',
-      '.cui-msg{margin-top:8px;font-size:13px;color:#5d5870;line-height:1.6;text-align:center;white-space:pre-wrap;word-break:break-all}',
+      '.cui-title{font-size:15px;font-weight:600;color:#221d33;text-align:center}',
+      '.cui-msg{margin-top:8px;font-size:14px;color:#5d5870;line-height:1.6;text-align:center;white-space:pre-wrap;word-break:break-all}',
       '.cui-btns{display:flex;gap:10px;margin-top:18px}',
-      '.cui-btn{flex:1;height:40px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid #E4E0EE;background:#F6F4FA;color:#5d5870}',
+      '.cui-btn{flex:1;height:40px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid #E4E0EE;background:#F6F4FA;color:#5d5870}',
       '.cui-btn.primary{border-color:#1CD8B7;background:#1CD8B7;color:#fff}',
       '.cui-btn.danger{border-color:#EF4444;background:#EF4444;color:#fff}'
     ].join('\n');
@@ -130,7 +130,7 @@
   var STYLE = [
     '.akb-contact{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
     '.akb-contact.single{grid-template-columns:1fr}',
-    '.akb-contact-label{display:block;font-size:12px;color:#6B6880;font-weight:700;margin:0 0 6px;font-family:inherit}',
+    '.akb-contact-label{display:block;font-size:13px;color:#6B6880;font-weight:600;margin:0 0 6px;font-family:inherit}',
     '.akb-contact-input{width:100%;height:44px;border:1.5px solid #EDE9F5;border-radius:12px;background:#F5F5F5;color:#1A1828;padding:0 12px;font:600 14px inherit;outline:none;transition:border-color .15s,background .15s;box-sizing:border-box;-webkit-appearance:none;appearance:none}',
     '.akb-contact-input:focus{border-color:#1CD8B7;background:#fff}',
     '.akb-contact-input::placeholder{color:#AEACC0;font-weight:500}'
@@ -169,7 +169,7 @@
   'use strict';
   var STYLE = [
     '.akb-upload{display:flex;gap:10px;flex-wrap:wrap}',
-    '.akb-upload-btn{width:72px;height:72px;border:1.5px dashed #EDE9F5;border-radius:12px;background:#FAFAFC;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#AEACC0;font-size:10px;font-weight:700;cursor:pointer;box-sizing:border-box;text-align:center}',
+    '.akb-upload-btn{width:72px;height:72px;border:1.5px dashed #EDE9F5;border-radius:12px;background:#FAFAFC;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#AEACC0;font-size:11px;font-weight:600;cursor:pointer;box-sizing:border-box;text-align:center}',
     '.akb-upload-btn svg{width:20px;height:20px}',
     '.akb-upload-thumb{width:72px;height:72px;border-radius:12px;object-fit:cover;border:1px solid #EDE9F5;cursor:pointer}'
   ].join('\n');
