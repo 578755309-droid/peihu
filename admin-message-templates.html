@@ -204,8 +204,6 @@
     { g: 'mall',     gl: '商城订单', key: 'mall.refund',         tip: '售后/退款进度更新（mall-refund.html · admin-mall-order-detail.html）' },
     { g: 'booking',  gl: '预约管理', key: 'booking.submit',      tip: '用户提交预约（bath-booking.html / visit-services.html 预约表单）' },
     { g: 'booking',  gl: '预约管理', key: 'booking.confirm',     tip: '后台确认预约（admin-bookings.html 跟进动作）' },
-    { g: 'contract', gl: '合同服务', key: 'contract.pending',    tip: '服务合同生成待签署（contract.html 生成 / admin-contracts 推送）' },
-    { g: 'contract', gl: '合同服务', key: 'contract.signed',     tip: '合同签署完成（contract.html 签署动作）' },
     { g: 'points',   gl: '积分体系', key: 'points.earn',         tip: '积分获取（points-store.js / admin-points-earn 手动发放）' },
     { g: 'points',   gl: '积分体系', key: 'points.spend',        tip: '积分抵扣使用（订单结算页积分抵扣动作）' },
     { g: 'points',   gl: '积分体系', key: 'points.invite',       tip: '邀请好友奖励到账（invite-friends.html 注册成功回调）' },
@@ -219,7 +217,6 @@
     { id: 'order', name: '订单服务', color: '#DCFCE7', fg: '#16A34A' },
     { id: 'mall', name: '商城订单', color: '#F0E9FA', fg: '#8B5CF6' },
     { id: 'booking', name: '预约管理', color: '#EAF3FF', fg: '#397EBA' },
-    { id: 'contract', name: '合同服务', color: '#FFF3E1', fg: '#C17A24' },
     { id: 'points', name: '积分体系', color: '#DDF7F1', fg: '#0FAE92' },
     { id: 'nurse', name: '护理员端', color: '#FEE2E2', fg: '#DC2626' },
     { id: 'system', name: '系统', color: '#F3F4F6', fg: '#657087' }
@@ -282,7 +279,7 @@
     try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {}
     return s;
   }
-  var templates = load().filter(function (t) { return ['tpl-016', 'tpl-023', 'tpl-024'].indexOf(t.id) === -1; }); /* 隐藏：预约确认通知 / 认证审核结果 / 收到新评价 */
+  var templates = load().filter(function (t) { return t.group !== 'contract' && ['tpl-016', 'tpl-023', 'tpl-024'].indexOf(t.id) === -1; }); /* 隐藏：预约确认通知 / 认证审核结果 / 收到新评价 */
   function persist() { try { localStorage.setItem(STORE_KEY, JSON.stringify(templates)); } catch (e) {} }
 
   var editingId = '';

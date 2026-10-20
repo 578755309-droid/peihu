@@ -5,6 +5,9 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+  <script src="ui/consent-data.js"></script>
+  <script src="ui/consent.js"></script>
+  <link rel="stylesheet" href="ui/consent.css" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>按次预约 · 佑小邦</title>
@@ -181,17 +184,19 @@
     dateEl.min=todayStr;dateEl.value=selDate;
     document.getElementById('sheetSlots').innerHTML=TIME_SLOTS.map(function(t){return '<button type="button" class="slot-btn'+(t===selTime?' sel':'')+'" onclick="pickTime(this,\''+t+'\')">'+t+'</button>';}).join('');
     document.getElementById('sheetAddrs').innerHTML=addrs.map(function(a,i){return '<div class="addr-opt'+(i===selAddrIdx?' sel':'')+'" onclick="pickAddr('+i+')"><span class="addr-radio"></span><div><div class="addr-detail">'+esc(a.detail)+'</div><div class="addr-contact">'+esc(a.contact||'')+' '+esc(a.phone||'')+'</div></div></div>';}).join('');
+    AKBConsent.mountBefore('#sheetMask .sheet-confirm','bath','bath-booking',true);
     document.getElementById('sheetMask').classList.add('show');
   }
   function closeSheet(){document.getElementById('sheetMask').classList.remove('show');}
   function pickTime(el,t){selTime=t;document.querySelectorAll('#sheetSlots .slot-btn').forEach(function(b){b.classList.toggle('sel',b===el);});}
   function pickAddr(i){selAddrIdx=i;document.querySelectorAll('#sheetAddrs .addr-opt').forEach(function(el,j){el.classList.toggle('sel',j===i);});}
   function confirmSheet(){
+    if (!AKBConsent.require('bath-booking')) return;
     var date=document.getElementById('sheetDate').value;
     if(!date){toast('请选择服务日期');return;}
     if(date<todayStr){toast('服务日期不能早于今天');return;}
     var addr=getAddresses()[selAddrIdx]||{};
-    var entry={date:date,time:selTime,addressDetail:addr.detail||'',contact:addr.contact||patientInfo().name,phone:addr.phone||''};
+    var entry={consent:AKBConsent.snapshot('bath-booking'),date:date,time:selTime,addressDetail:addr.detail||'',contact:addr.contact||patientInfo().name,phone:addr.phone||''};
     if(editIndex>=0){sessions[editIndex]=Object.assign({},sessions[editIndex],entry);}
     else{sessions.push(Object.assign({seq:sessions.length+1},entry));}
     save();closeSheet();render();toast(editIndex>=0?'已修改预约':'预约成功');

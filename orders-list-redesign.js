@@ -37,7 +37,7 @@
   var userIcon='<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="6.4" r="3.1"/><path d="M4 17c.7-3.1 2.7-4.8 6-4.8s5.3 1.7 6 4.8"/></svg>';
   var pinIcon='<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8.5c0 4-6 8.3-6 8.3S4 12.5 4 8.5a6 6 0 1112 0z"/><circle cx="10" cy="8.5" r="1.8"/></svg>';
   var phoneIcon='<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.4c.5-.4 1.1-.4 1.6 0l1.6 1.6c.4.4.5 1 .2 1.5l-.8 1.2c.8 1.8 2.2 3.2 4 4l1.2-.8c.5-.3 1.1-.2 1.5.2l1.6 1.6c.4.5.4 1.1 0 1.6l-.7.7c-.7.7-1.7 1-2.6.7C8.5 15 5 11.5 4.3 7.6c-.3-.9 0-1.9.7-2.6z"/></svg>';
-  function contractAction(order){if(order.status!=='pending-service'||!window.AKBContract)return{btn:'',note:''};var rec=window.AKBContract.recordFor(order.id);if(!rec)return{btn:'',note:''};var signed=rec.status==='已签署';var btn='<button class="order-v2-btn '+(signed?'link':'primary')+'" type="button" onclick="location.href=\'contract.html?no='+encodeURIComponent(order.id)+'\'">'+(signed?'查看电子合同':'签署电子合同')+'</button>';var note=signed?'':'<div style="display:flex;align-items:center;gap:6px;background:#FFF7E8;border-radius:12px;padding:9px 12px;margin-top:12px"><svg viewBox="0 0 16 16" fill="none" width="15" height="15"><rect x="3" y="2" width="10" height="12" rx="2" stroke="#D97706" stroke-width="1.3"/><path d="M6 6h4M6 9h4" stroke="#D97706" stroke-width="1.2" stroke-linecap="round"/></svg><span style="font-size:13px;font-weight:600;color:#B45309">护理员已发起电子合同，请及时签署</span></div>';return{btn:btn,note:note};}
+  function contractAction(){return {btn:'',note:''};}
   function card(order){var sessSummary='';if(order.sessions){sessSummary=order.sessionSummary||('已预约 '+order.sessions.length+'/10 次'+(order.sessions[0]?' · 下次 '+order.sessions[0].date:''));}var timeHtml=order.sessions?('<div class="time-v2"><b>按次预约：</b>'+sessSummary+'</div>'):('<div class="time-v2"><b>服务时间：</b>'+order.time+'</div>');var contract=contractAction(order);return '<article class="order-card order-card-v2" data-status="'+order.status+'" data-order-id="'+order.id+'" data-years="'+order.years+'" onclick="openServiceOrderDetail(\''+order.id+'\',event)"><div class="order-v2-main"><div class="order-v2-top"><span class="type-v2-row"><span class="service-tag-v2 '+typeClass(order)+'">'+order.type+'</span>'+otypeBadge(order)+'</span><span class="state-v2 '+order.status+'">'+stateText(order)+'</span></div><div class="order-v2-summary"><div class="order-v2-left"><div class="order-v2-title">'+order.project+'</div><div class="order-v2-lines"><div class="order-v2-line"><span class="line-ico">'+userIcon+'</span><span>'+order.person+'</span></div><div class="order-v2-line"><span class="line-ico">'+pinIcon+'</span><span>'+order.address+'</span></div></div></div><div class="price-stack"><div class="unit-price"><strong>'+order.unit+'</strong><span>'+order.unitLabel+'</span></div><div class="quantity">'+order.quantity+'</div><div class="amount-v2"><span>实付款</span><strong>¥'+order.amount+'</strong></div></div></div><div class="v2-rule"></div>'+timeHtml+contract.note+'<div class="nurse-v2"><div class="nurse-av-v2">'+order.avatar+'</div><div class="nurse-copy-v2"><div><span class="nurse-name-v2">'+order.nurse+'</span><span class="nurse-role-v2">'+order.role+'</span></div><div class="nurse-badges"><span class="nurse-badge">'+order.cert+'</span><span class="nurse-badge experience">'+order.years+'</span></div></div><button class="call-v2" title="联系陪护员" onclick="openActionModal(\'call\',this)">'+phoneIcon+'</button></div></div><div class="order-v2-actions">'+contract.btn+order.actions.map(function(kind){return action(order,kind);}).join('')+'</div></article>';}
   window.openServiceOrderDetail=function(id,event){if(event&&event.target&&event.target.closest('button'))return;location.href='order-detail.html?no='+encodeURIComponent(id);};
   function getMallOrders(){var saved=[];try{saved=JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');if(!Array.isArray(saved))saved=[]}catch(error){saved=[]}var ids={};var seedMap={};mallOrders.forEach(function(o){seedMap[o.id]=o});return saved.concat(mallOrders).filter(function(order){if(ids[order.id])return false;ids[order.id]=true;return true}).map(function(order){var seed=seedMap[order.id];if(seed){Object.keys(seed).forEach(function(k){if(order[k]===undefined)order[k]=seed[k]})}var st=order.status;if(order.state==='已退款')st='cancel';else if(order.state==='退款/售后')st='refund';order.actions=st==='payment'?['cancel','pay']:st==='shipping'?['remind','refund']:st==='receiving'?['refund','receive']:st==='refund'?[]:st==='cancel'?[]:st==='done'?['buy-again']:['remind'];return order})}
@@ -230,13 +230,15 @@
     renewPay={order:draft,usePoints:true};
     ensureRenewPayDom();
     renderRenewPay();
+    AKBConsent.mountBefore(document.getElementById('akbPayBtn').parentNode,AKBConsentData.typeFor(order.type+' '+order.project),'renew',true);
     document.getElementById('akbPayMask').classList.add('show');
   };
   window.confirmRenewPay=function(){
-    if(!renewPay)return;
+    if(!renewPay || !AKBConsent.require('renew'))return;
     var c=renewPayCalc();
     if(c.disc>0&&window.AKBPoints)AKBPoints.spend(c.disc,'续约订单积分抵扣 · '+renewPay.order.project);
     var o=renewPay.order;
+    o.consent=AKBConsent.snapshot('renew');
     o.payAmount=c.pay%1?c.pay.toFixed(2):String(c.pay);
     o.pointsUsed=c.disc;
     o.pointsDiscount=c.disc;
@@ -307,6 +309,7 @@
       name:kind==='mall'?(order.product||'商城商品'):(order.project||'服务订单')};
     ensureOrderPayDom();
     renderOrderPay();
+    AKBConsent.mountBefore(document.getElementById('orderPayBtn').parentNode,kind==='mall'?'mall':AKBConsentData.typeFor(order.type+' '+order.project),'order-pay',true);
     document.getElementById('orderPayMask').classList.add('show');
   };
   window.closeOrderPaySheet=function(){var m=document.getElementById('orderPayMask');if(m)m.classList.remove('show');};
@@ -375,14 +378,14 @@
     m.classList.add('show');
   }
   window.confirmOrderPay=function(){
-    if(!orderPay)return;
+    if(!orderPay || !AKBConsent.require('order-pay'))return;
     var c=orderPayCalc();
     if(c.disc>0&&window.AKBPoints)AKBPoints.spend(c.disc,'订单支付积分抵扣 · '+orderPay.name);
     var today=new Date().toISOString().slice(0,10);
     if(orderPay.kind==='mall'){
       var saved=[];try{saved=JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');if(!Array.isArray(saved))saved=[];}catch(e){saved=[];}
       var full=(typeof mallOrders!=='undefined'?(mallOrders.find(function(o){return o.id===orderPay.id;})||{}):{});
-      var next=Object.assign({},full,{status:'shipping',state:'待发货',payAmount:c.pay,pointsUsed:c.disc,pointsDiscount:c.disc,paidAt:today});
+      var next=Object.assign({},full,{consent:AKBConsent.snapshot('order-pay'),status:'shipping',state:'待发货',payAmount:c.pay,pointsUsed:c.disc,pointsDiscount:c.disc,paidAt:today});
       var idx=saved.findIndex(function(o){return o.id===orderPay.id;});
       if(idx>=0)saved[idx]=Object.assign({},saved[idx],next);else saved.unshift(next);
       try{localStorage.setItem('ankebang_mall_orders',JSON.stringify(saved));}catch(e){}
@@ -392,7 +395,7 @@
     }else{
       var saved2=[];try{saved2=JSON.parse(localStorage.getItem('ankebang_service_orders')||'[]');if(!Array.isArray(saved2))saved2=[];}catch(e){saved2=[];}
       var full2=(typeof orders!=='undefined'?(orders.find(function(o){return o.id===orderPay.id;})||{}):{});
-      var next2=Object.assign({},full2,{status:'pending-service',state:'待服务',actions:['cancel','call'],payAmount:c.pay,pointsUsed:c.disc,pointsDiscount:c.disc,paidAt:today});
+      var next2=Object.assign({},full2,{consent:AKBConsent.snapshot('order-pay'),status:'pending-service',state:'待服务',actions:['cancel','call'],payAmount:c.pay,pointsUsed:c.disc,pointsDiscount:c.disc,paidAt:today});
       var idx2=saved2.findIndex(function(o){return o.id===orderPay.id;});
       if(idx2>=0)saved2[idx2]=Object.assign({},saved2[idx2],next2);else saved2.unshift(next2);
       try{localStorage.setItem('ankebang_service_orders',JSON.stringify(saved2));}catch(e){}

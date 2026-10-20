@@ -5,6 +5,9 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+  <script src="ui/consent-data.js"></script>
+  <script src="ui/consent.js"></script>
+  <link rel="stylesheet" href="ui/consent.css" />
   <script src="ui/card-carousel.js"></script>
   <meta charset="utf-8" />
 
@@ -1395,6 +1398,7 @@
 <script>
   /* ── 详情态 ↔ 下单态 切换 ── */
   function enterBuyMode() {
+    AKBConsent.mountBefore('#priceRow',serviceKey==='bath'?'bath':serviceKey==='visit'?'visit':'care','service',true);
     document.querySelector('.phone').classList.add('buy-mode');
     document.querySelector('.scroll-area').scrollTop = 0;
     updateTimePrice(); // 刷新价格显示
@@ -2662,6 +2666,7 @@
 
   /* ── Submit ── */
   function submitOrder() {
+    if (!AKBConsent.require('service')) return;
     /* populate summary */
     if (dualAddr) {
       const fromAddr = findAddress(selectedFromAddressId);
@@ -2732,6 +2737,7 @@
     document.getElementById('payOrderNum').textContent = '订单号：' + orderNo;
     /* 保存订单到 localStorage（后台派单、用户端订单列表共用） */
     saveServiceOrder(orderNo, date);
+    AKBConsent.reset('service');
     /* show overlay */
     const ov = document.getElementById('payOverlay');
     ov.style.cssText = '';
@@ -2772,6 +2778,7 @@
       avatar: selectedNurses[0] ? selectedNurses[0].name.charAt(0) : '待',
       actions: ['cancel', 'call'],
       careNeeds: { independence: careNeeds.independence, tube: careNeeds.tube, infection: careNeeds.infection, skinBreak: careNeeds.skinBreak, infectionName: careNeeds.infection === 'has' ? document.getElementById('infectionName').value.trim() : '' },
+      consent: AKBConsent.snapshot('service'),
       createdAt: Date.now(),
       serviceDate: date,
       addressId: addr.id || '',
@@ -2844,7 +2851,8 @@
           amount: '0',
           actions: ['cancel', 'call'],
           careNeeds: order.careNeeds,
-          createdAt: Date.now(),
+          consent: AKBConsent.snapshot('service'),
+      createdAt: Date.now(),
           serviceDate: bookedSessions[0].date,
           addressId: order.addressId,
           addressDetail: order.addressDetail,
@@ -2970,6 +2978,7 @@
   };
 
   initService();
+  AKBConsent.mountBefore('#priceRow', serviceKey === 'bath' ? 'bath' : serviceKey === 'visit' ? 'visit' : 'care', 'service');
   applyRedeemMode();
   /* 非兑换模式：恢复服务对象箭头（兑换模式在 applyRedeemMode 中隐藏） */
   if (!redeemCard) { var paRestore = document.querySelector('#patientInfoModule .selector-arrow'); if (paRestore) paRestore.style.display = ''; }

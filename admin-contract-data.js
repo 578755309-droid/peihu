@@ -83,7 +83,7 @@
     if (!Array.isArray(t.clauses) || !t.clauses.length) t.clauses = clone(DEFAULT_TEMPLATE.clauses);
     return t;
   }
-  function saveTemplate(t) {
+  function saveTemplate(t) { return null; /* disabled */
     t.updatedAt = now();
     write(TEMPLATE_KEY, t);
     return t;
@@ -111,7 +111,7 @@
   }
 
   /* 护理员端发起合同 */
-  function issue(orderNo, meta) {
+  function issue(orderNo, meta) { return null; /* disabled */
     var existing = recordFor(orderNo);
     if (existing) return existing;
     meta = meta || {};
@@ -136,7 +136,7 @@
   }
 
   /* 用户端签署 */
-  function sign(orderNo, payload) {
+  function sign(orderNo, payload) { return null; /* disabled */
     var rec = recordFor(orderNo);
     if (!rec || rec.status === '已签署') return rec;
     rec.status = '已签署';
@@ -161,6 +161,7 @@
   function esc(v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
   w.AKBContract = {
+    enabled: false,
     getTemplate: getTemplate,
     saveTemplate: saveTemplate,
     getRecords: getRecords,

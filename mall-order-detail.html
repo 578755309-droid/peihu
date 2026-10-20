@@ -5,6 +5,9 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+  <script src="ui/consent-data.js"></script>
+  <script src="ui/consent.js"></script>
+  <link rel="stylesheet" href="ui/consent.css" />
   <meta charset="utf-8" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -78,10 +81,10 @@
     else if(st==='shipping'||order.state==='待发货'){html='<button class="op-btn" onclick="remindShip()">提醒发货</button>'}
     else if(st==='receiving'||order.state==='待收货'){html='<button class="op-btn primary" onclick="confirmReceiptBar()">确认收货</button>'}
     else if(st==='done'||order.state==='已完成'){html='<button class="op-btn primary" onclick="rebuy()">再次购买</button>'}
-    bar.innerHTML=html;bar.hidden=!html}
+    bar.innerHTML=html;bar.hidden=!html;var old=document.getElementById('mall-detail-consent');if(old)old.remove();if(st==='payment'||order.state==='待付款'){var wrap=document.createElement('div');wrap.id='mall-detail-consent';bar.parentNode.insertBefore(wrap,bar);AKBConsent.mountBefore(wrap,'mall','mall-detail',true);}else{AKBConsent.reset('mall-detail');var consent=document.getElementById('consent-mall-detail');if(consent)consent.closest('.akb-consent').remove();}}
   function saveOrder(order,patch){let saved=[];try{saved=JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');if(!Array.isArray(saved))saved=[]}catch(e){}const i=saved.findIndex(function(x){return x.id===order.id});if(i>=0){Object.assign(saved[i],patch)}else{saved.unshift(Object.assign({},order,patch))}localStorage.setItem('ankebang_mall_orders',JSON.stringify(saved))}
   function cancelOrder(){const o=getOrder();if(!o)return;saveOrder(o,{status:'cancel',state:'已取消',note:'用户取消订单'});render();showToast('订单已取消')}
-  function payNow(){const o=getOrder();if(!o)return;const now=new Date().toISOString().slice(0,16).replace('T',' ');saveOrder(o,{status:'shipping',state:'待发货',deliveryStatus:'processing',receiptCode:o.receiptCode||String(Math.floor(1000+Math.random()*9000)),pay:{method:'微信支付',total:String(o.amount),points:'0',paid:String(o.amount),received:String(o.amount),paidAt:now}});render();showToast('支付成功，商家将尽快发货')}
+  function payNow(){if(!AKBConsent.require('mall-detail'))return;const o=getOrder();if(!o)return;const now=new Date().toISOString().slice(0,16).replace('T',' ');saveOrder(o,{consent:AKBConsent.snapshot('mall-detail'),status:'shipping',state:'待发货',deliveryStatus:'processing',receiptCode:o.receiptCode||String(Math.floor(1000+Math.random()*9000)),pay:{method:'微信支付',total:String(o.amount),points:'0',paid:String(o.amount),received:String(o.amount),paidAt:now}});render();showToast('支付成功，商家将尽快发货')}
   function remindShip(){showToast('已提醒商家尽快发货')}
   function confirmReceiptBar(){var b=document.querySelector('.receipt-code-button');var i=document.getElementById('receiptInput');if(b){b.scrollIntoView({behavior:'smooth',block:'center'});b.click()}else if(i){i.scrollIntoView({behavior:'smooth',block:'center'});i.focus()}else{showToast('请等待配送员送达后再确认收货')}}
   function rebuy(){showToast('商品已加入购物车，可前往商城结算')}

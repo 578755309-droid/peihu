@@ -5,6 +5,9 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+  <script src="ui/consent-data.js"></script>
+  <script src="ui/consent.js"></script>
+  <link rel="stylesheet" href="ui/consent.css" />
   <meta charset="utf-8" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -353,6 +356,7 @@
     payDelivery='instant'; usePoints=false;
     renderPayBody();
     renderPayAddr();
+    AKBConsent.mountBefore('#payConfirmBtn','mall','mall-pay',true);
     document.getElementById('payOverlay').classList.add('show');
   }
 
@@ -385,6 +389,7 @@
 
   /* 立即支付 */
   function payConfirm(){
+    if (!AKBConsent.require('mall-pay')) return;
     if(!pendingItems.length) return;
     var selAddr=renderPayAddr();
     if(!selAddr){alert('请先选择收货地址'); return;}
@@ -416,7 +421,7 @@
     try{
       var saved=JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');
       if(!Array.isArray(saved)) saved=[];
-      saved.unshift(order);
+      order.consent=AKBConsent.snapshot('mall-pay');saved.unshift(order);
       localStorage.setItem('ankebang_mall_orders',JSON.stringify(saved));
     }catch(e){}
     pendingItems.forEach(function(it){

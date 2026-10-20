@@ -93,7 +93,7 @@
       return h('div',{class:'akb-ui-layer akb-dialog-backdrop',onClick:event=>{if(event.target===event.currentTarget&&o.cancelOnBackdrop!==false)cancel();}},[
         h('section',{ref:panel,class:'akb-dialog',role:'dialog','aria-modal':'true','aria-labelledby':id,'aria-describedby':msgId,tabindex:-1},[
           h('h2',{class:'akb-dialog-heading',id},[icon(o.danger?'warning':'info'),o.title||(item.kind==='confirm'?'请确认操作':item.kind==='prompt'?'填写信息':'温馨提示')]),
-          h('div',{class:'akb-dialog-message',id:msgId},o.message||''),
+          h('div',{class:['akb-dialog-message',o.messageClass],id:msgId},o.message||''),
           item.kind==='prompt'?h('input',{class:'akb-dialog-input',value:value.value,'aria-label':o.inputLabel||o.message||'请输入',placeholder:o.placeholder||'',autofocus:true,onInput:event=>{value.value=event.target.value;},onKeydown:event=>{if(event.key==='Enter'&&!event.isComposing){event.preventDefault();accept();}}}):null,
           h('div',{class:'akb-dialog-actions'},[
             item.kind!=='alert'?h('button',{type:'button',class:'akb-ui-button','data-act':'cancel',onClick:cancel},o.cancelText||'取消'):null,

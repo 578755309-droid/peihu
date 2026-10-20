@@ -5,6 +5,9 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+  <script src="ui/consent-data.js"></script>
+  <script src="ui/consent.js"></script>
+  <link rel="stylesheet" href="ui/consent.css" />
   <meta charset="utf-8">
 
   <meta name="viewport" content="width=1280">
@@ -115,7 +118,7 @@
         <div class="head">
           <div>
             <h1 class="title">协议管理</h1>
-            <div class="sub">维护平台对外展示的各类协议文档：政策协议、隐私协议、服务协议、免责声明等，内容变更即时同步小程序端</div>
+            <div class="sub">维护平台协议与四类下单知情同意书，已发布内容用于对应类型的下单确认</div>
           </div>
           <div class="actions">
             <button class="btn primary" onclick="openEditor('')">+ 新建协议</button>
@@ -229,10 +232,11 @@
       function load() {
         try {
           var raw = localStorage.getItem(KEY);
-          if (raw) return JSON.parse(raw);
+          if (raw) { var merged = AKBConsentData.read(SEED); localStorage.setItem(KEY, JSON.stringify(merged)); return merged; }
         } catch (e) {}
-        localStorage.setItem(KEY, JSON.stringify(SEED));
-        return SEED.slice();
+        var initial = AKBConsentData.read(SEED);
+        localStorage.setItem(KEY, JSON.stringify(initial));
+        return initial;
       }
       function save(list) {
         localStorage.setItem(KEY, JSON.stringify(list));
@@ -339,6 +343,9 @@
       if (!name) { alert('请填写协议名称'); return; }
       if (!key) { alert('请填写协议标识 Key'); return; }
       if (!content || content === '<br>') { alert('请填写协议正文'); return; }
+      if (AGREEMENTS.list().some(function(a){ return a.key === key && a.id !== editingId; })) { alert('该协议标识已存在，请使用其他标识'); return; }
+      var previous = editingId ? AGREEMENTS.get(editingId) : null;
+      if (previous && AKBConsentData.isRequired(previous.key) && previous.key !== key) { alert('知情同意书标识用于关联下单类型，不能修改'); return; }
       AGREEMENTS.upsert({
         id: editingId || ('agr_' + key.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()),
         name: name, key: key, desc: desc, version: version || 'v1.0.0',
@@ -396,6 +403,7 @@
     function deleteAgreement(id) {
       var a = AGREEMENTS.get(id);
       if (!a) return;
+      if (AKBConsentData.isRequired(a.key)) { alert('下单必需的知情同意书不能删除，如需停用请下架'); return; }
       showConfirm({ title: '删除协议', message: '确认删除协议「' + a.name + '」？删除后不可恢复', okText: '确认删除', danger: true }).then(function (ok) {
         if (!ok) return;
         AGREEMENTS.remove(id);
