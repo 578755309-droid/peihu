@@ -1,0 +1,14 @@
+const {JSDOM}=require('jsdom');
+const fs=require('fs'),assert=require('node:assert/strict');
+const dom=new JSDOM('',{url:'https://example.test',runScripts:'outside-only'}),w=dom.window;
+const old=[{id:'original',key:'consent_care',status:'off',content:'旧版'},{key:'custom',content:'自定义'}];
+w.localStorage.setItem('akb_agreements_v1',JSON.stringify(old));
+w.localStorage.setItem('akb_orders_v6',JSON.stringify([{consent:{content:'订单历史正文',version:'v1.0.0'}}]));
+const orderBefore=w.localStorage.getItem('akb_orders_v6');
+w.eval(fs.readFileSync('ui/consent-data.js','utf8'));
+let docs=w.AKBConsentData.read();assert.equal(docs.length,5);assert.equal(docs.find(x=>x.key==='custom').content,'自定义');
+const care=docs.find(x=>x.key==='consent_care');assert.equal(care.id,'original');assert.equal(care.status,'off');assert.equal(care.version,'v1.1.0');assert.ok(care.content.includes('第十条 其他'));
+care.content='<p>后台后续修改</p>';w.localStorage.setItem('akb_agreements_v1',JSON.stringify(docs));
+assert.equal(w.AKBConsentData.get('care').content,care.content);assert.equal(w.localStorage.getItem('akb_orders_v6'),orderBefore);
+for(const [type,phrase] of [['bath','第二条 助浴禁忌症'],['visit','一、您的权利与义务'],['mall','特殊医学用途配方食品']])assert.ok(w.AKBConsentData.get(type).content.includes(phrase));
+dom.window.close();console.log('PASS supplied consent import, one-time migration, admin edits, disabled state and historical snapshots');
