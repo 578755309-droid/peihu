@@ -2631,6 +2631,9 @@
     applyReportLayout();
     /* 按天陪护（住院/居家）专属布局：就诊人 → 联系人 → 护理需求 → 地址 → [科室床位] → 时间（天数加减） */
     applyDailyCareLayout();
+    /* 所有服务统一收尾：计费说明始终位于填写模块之后。 */
+    var formNote = document.querySelector('#p3 .note-bar');
+    if (formNote) formNote.parentNode.appendChild(formNote);
     syncBathSessionsUI();
     document.getElementById('serviceDate').addEventListener('change', updateTimePrice);
     selectedDailyType = 'full';
