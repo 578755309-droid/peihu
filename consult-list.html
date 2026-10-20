@@ -54,7 +54,6 @@
   window.openItem = function (id) {
     var item = window.AKBConsult.getById(id);
     if (!item) return;
-    if (item.mode === 'link') { window.open(item.link, '_blank'); return; }
     location.href = 'consult-detail.html?id=' + encodeURIComponent(id);
   };
 })();

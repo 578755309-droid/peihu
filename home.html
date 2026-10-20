@@ -5,6 +5,7 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+  <script src="consult-data.js"></script>
   <meta charset="utf-8" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -276,29 +277,7 @@
         <div class="consult-title">公告资讯</div>
         <div class="consult-more" onclick="location.href='consult-list.html'">更多 ›</div>
       </div>
-      <div class="consult-list" id="consultList">
-        <div class="consult-item" onclick="openConsult('c1')">
-          <div class="consult-main">
-            <div class="consult-item-title">粗粮可以降糖？这些糖尿病防治误区要警惕！</div>
-            <div class="consult-item-meta"><span>健康科普</span><span>6 小时前</span></div>
-          </div>
-          <div class="consult-item-cover" style="background:linear-gradient(135deg,#FEE2E2,#FEF3C7)"></div>
-        </div>
-        <div class="consult-item" onclick="openConsult('c2')">
-          <div class="consult-main">
-            <div class="consult-item-title">公益医疗献爱心 - 陕西省2025年度"粉红行动"乳腺癌防治公益活动今天正式启动</div>
-            <div class="consult-item-meta"><span class="tag red">公益</span><span>6 小时前</span></div>
-          </div>
-          <div class="consult-item-cover" style="background:linear-gradient(135deg,#FEE2E2,#FCA5A5)"></div>
-        </div>
-        <div class="consult-item" onclick="openConsult('c3')">
-          <div class="consult-main">
-            <div class="consult-item-title">省级医疗专家进驻渭南市第二医院开展帮扶工作</div>
-            <div class="consult-item-meta"><span class="tag blue">医疗动态</span><span>昨天</span></div>
-          </div>
-          <div class="consult-item-cover" style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE)"></div>
-        </div>
-      </div>
+      <div class="consult-list" id="consultList"></div>
     </div>
 
     <div style="height:72px"></div>
@@ -408,13 +387,13 @@
 
   /* ── 公告资讯（优先读取运营后台数据） ── */
   function openConsult(id){
-    if(window.AKBConsult){var item=window.AKBConsult.getById(id);if(item){if(item.mode==='link'){window.open(item.link,'_blank');return}location.href='consult-detail.html?id='+encodeURIComponent(id);return}}
-    location.href='consult-list.html';
+    location.href='consult-detail.html?id='+encodeURIComponent(id);
   }
+
   (function(){
     if(!window.AKBConsult)return;
     var box=document.getElementById('consultList');if(!box)return;
-    var list=window.AKBConsult.getEnabled().slice(0,3);if(!list.length)return;
+    var list=window.AKBConsult.getEnabled().slice(0,3);if(!list.length){box.closest('.consult-sec').hidden=true;return;}
     var esc=window.AKBConsult.esc;
     box.innerHTML=list.map(function(item){
       var sub=item.sub||(item.mode==='link'?'点击查看公众号文章':window.AKBConsult.strip(item.content).slice(0,30));

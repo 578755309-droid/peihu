@@ -49,7 +49,7 @@
   var esc = window.AKBConsult.esc;
   var cover = item.cover
     ? '<img class="cover" src="' + item.cover + '" alt="">'
-    : '<div class="cover cover-ph">封面 240×160</div>';
+    : '';
   var content = item.mode === 'link'
     ? '<div class="p-link">该资讯为公众号文章，点击下方按钮在微信中查看：<br><b>' + esc(item.link) + '</b></div><button class="open-btn" onclick="window.open(\'' + esc(item.link) + '\',\'_blank\')">打开公众号文章</button>'
     : '<div class="p-body">' + (item.content || '<span style="color:var(--text3)">（暂无正文）</span>') + '</div>';
