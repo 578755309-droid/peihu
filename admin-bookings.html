@@ -1,5 +1,9 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
-<script src="common-ui.js"></script><meta name="viewport" content="width=1280"><title>预约管理 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><style>
+<!doctype html><html lang="zh-CN"><head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script><meta charset="utf-8">
+<meta name="viewport" content="width=1280"><title>预约管理 · 佑小邦运营后台</title><link rel="stylesheet" href="admin-shell.css"><style>
 body{margin:0;background:#F5F5F5;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;min-width:1100px;overflow-x:hidden}
 .layout{display:flex;min-height:100vh;min-width:0}
 .main{margin-left:220px;flex:1;min-width:0;max-width:calc(100vw - 220px);overflow:hidden}
@@ -149,6 +153,7 @@ body{margin:0;background:#F5F5F5;color:#172033;font-family:-apple-system,BlinkMa
 .form-row select:focus,.form-row textarea:focus{border-color:#1CD8B7;box-shadow:0 0 0 3px rgba(0,0,0,0.1)}
 .form-row textarea{resize:vertical;min-height:90px;line-height:1.6}
 </style><script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css">  <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="admin" data-page="admin-bookings"><div class="layout">
   <aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside>
@@ -312,14 +317,10 @@ var currentPage=1;
 
 /* ── 自定义确认弹窗 / Toast ── */
 var _cfmCb=null;
-function showConfirm(msg,cb){document.getElementById('cfmMsg').textContent=msg;_cfmCb=cb||null;document.getElementById('cfmMask').classList.add('show');}
+function showConfirm(msg,cb){ return window.AKBUI.confirm(msg).then(function(ok){if(ok&&typeof cb==='function')cb();return ok;}); }
 function cfmConfirm(){document.getElementById('cfmMask').classList.remove('show');if(_cfmCb)_cfmCb();_cfmCb=null;}
 function cfmCancel(){document.getElementById('cfmMask').classList.remove('show');_cfmCb=null;}
-function showToast(msg){
-  var el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('show');
-  clearTimeout(el._t);el._t=setTimeout(function(){el.classList.remove('show');},2000);
-}
+function showToast(msg){ return window.AKBUI.toast(msg,2200); }
 
 function load(){try{var v=JSON.parse(localStorage.getItem(STORAGE_KEY));if(Array.isArray(v))return v;}catch(e){}return [];}
 function save(list){localStorage.setItem(STORAGE_KEY,JSON.stringify(list));}

@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>消息 · 佑小邦陪护</title>
@@ -53,6 +57,7 @@
     .nav-item.act .nav-lbl{color:var(--purple)}
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="mobile" data-page="messages">
 <div class="frame"><div class="phone">
@@ -134,7 +139,7 @@
       el.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M5 6.5A3.5 3.5 0 018.5 3h9A3.5 3.5 0 0121 6.5v7a3.5 3.5 0 01-3.5 3.5H12l-4.5 4v-4.2A3.5 3.5 0 015 13.5z"/></svg><p>暂无消息</p></div>';
       return;
     }
-    el.innerHTML = list.map(m => 
+    el.innerHTML = list.map(m =>
       '<div class="msg-item" onclick="alert(\'消息详情\')">'+
         '<div class="msg-avatar '+m.type+'">'+iconFor(m.type)+'</div>'+
         '<div class="msg-body">'+

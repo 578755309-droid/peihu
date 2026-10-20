@@ -1,8 +1,12 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+  <meta charset="utf-8">
+
   <meta name="viewport" content="width=1280">
   <title>协议管理 · 佑小邦运营后台</title>
   <link rel="stylesheet" href="admin-shell.css">
@@ -100,6 +104,7 @@
   </style>
   <link rel="stylesheet" href="modal-scroll.css">
   <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="admin" data-page="admin-agreements">
   <div class="layout">
@@ -399,14 +404,7 @@
       });
     }
 
-    function toast(msg) {
-      var t = document.createElement('div');
-      t.style.cssText = 'position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:100;background:#172033;color:#fff;font-size:13px;font-weight:600;padding:11px 20px;border-radius:12px;opacity:0;transition:opacity .2s;pointer-events:none';
-      t.textContent = msg;
-      document.body.appendChild(t);
-      setTimeout(function () { t.style.opacity = '1'; }, 10);
-      setTimeout(function () { t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 220); }, 1600);
-    }
+    function toast(msg) { return window.AKBUI.toast(msg,2200); }
 
     (function init() {
       var d = new Date();

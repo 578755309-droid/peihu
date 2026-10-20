@@ -24,7 +24,7 @@
       item('comments','评论管理','admin-comments.html','<path d="M3 4.5A1.5 1.5 0 014.5 3h9A1.5 1.5 0 0115 4.5v6A1.5 1.5 0 0113.5 12H8l-3.5 2.8c-.3.2-.5 0-.5-.4z"/><path d="M6 6.5h6M6 9h4"/>')+
       item('feedback','意见反馈','admin-feedback.html','<rect x="2" y="3.5" width="14" height="11" rx="2"/><path d="M2.8 5.5L9 10l6.2-4.5"/>',feedbackBadge())+
       '</nav>'+
-      '<div class="sb-user"><div class="sb-av">管</div><div><div class="sb-uname">超级管理员</div><div class="sb-urole">admin@akb.com</div></div><button class="sb-logout" onclick="if(confirm(\'确认退出？\'))location.href=\'index.html\'">↗</button></div>';
+      '<div class="sb-user"><div class="sb-av">管</div><div><div class="sb-uname">超级管理员</div><div class="sb-urole">admin@akb.com</div></div><button class="sb-logout" onclick="AKBUI.confirm(\'确认退出？\').then(function(ok){if(ok)location.href=\'index.html\'})">↗</button></div>';
     if(file.indexOf('user-detail')>-1||file.indexOf('caregiver-detail')>-1){
       var baseTab=side.parentElement.querySelector('.tab[data-tab="base"]');
       var basePanel=side.parentElement.querySelector('#base');

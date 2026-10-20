@@ -1,0 +1,8 @@
+{
+  "name":"ankebang-peihu-ui",
+  "private":true,
+  "version":"1.0.0",
+  "description":"Existing care service pages with a shared Vue 3 interaction layer",
+  "scripts":{"test":"node tests/ui.test.cjs","test:pages":"node tests/page-smoke.cjs"},
+  "devDependencies":{"acorn":"8.15.0","jsdom":"26.1.0"}
+}

@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>申请退款 · 佑小邦</title>
@@ -186,6 +190,7 @@
     }
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="mobile" data-page="bath-refund">
 <div class="frame">
@@ -492,16 +497,7 @@
   };
 
   /* ── Toast ── */
-  function showToast(msg) {
-    var existing = document.getElementById('refundToast');
-    if (existing) existing.remove();
-    var toast = document.createElement('div');
-    toast.id = 'refundToast';
-    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.72);color:#fff;padding:10px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:999;pointer-events:none;';
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-    setTimeout(function() { toast.remove(); }, 2000);
-  }
+  function showToast(msg) { return window.AKBUI.toast(msg,2200); }
 })();
 </script>
 </body>

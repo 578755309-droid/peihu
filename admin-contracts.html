@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=1280">
   <title>合同管理 · 佑小邦运营后台</title>
@@ -24,6 +28,7 @@
     .toast{position:fixed;left:50%;top:64px;transform:translateX(-50%);z-index:80;background:rgba(0,0,0,0.1);color:#fff;font-size:13px;font-weight:600;padding:11px 20px;border-radius:12px;opacity:0;pointer-events:none;transition:opacity .2s}.toast.show{opacity:1}
   </style>
 <link rel="stylesheet" href="modal-scroll.css">  <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="admin" data-page="admin-contracts">
   <div class="layout">
@@ -69,7 +74,7 @@
   <script>
     document.addEventListener('DOMContentLoaded',function(){
     var C=window.AKBContract,esc=C.esc;
-    function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},1600);}
+    function toast(msg){ return window.AKBUI.toast(msg,2200); }
 
     function renderStats(){
       var s=C.summarize(),tpl=C.getTemplate();

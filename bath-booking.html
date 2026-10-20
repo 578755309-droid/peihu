@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>按次预约 · 佑小邦</title>
@@ -66,6 +70,7 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
   <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="mobile" data-page="bath-booking">
 <div class="frame"><div class="phone">
@@ -141,7 +146,7 @@
   var editIndex=-1,selDate='',selTime=TIME_SLOTS[0],selAddrIdx=0;
   var todayStr=(function(){var d=new Date();var p=function(n){return (n<10?'0':'')+n};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());})();
   var toastTimer=null;
-  function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('show');},2200);}
+  function toast(msg){ return window.AKBUI.toast(msg,2200); }
   function patientChip(){var p=patientInfo();return esc(p.name+(p.gender?' · '+p.gender:'')+(p.age?' · '+p.age:''));}
   function render(){
     var main=document.getElementById('main');

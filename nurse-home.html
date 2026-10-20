@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>护理员工作台</title>
@@ -363,6 +367,7 @@
     .tf-submit:active { transform: scale(.97); filter: brightness(.92); }
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="mobile" data-page="nurse-home">
 <div class="frame">
@@ -697,13 +702,7 @@
   }
 
   /* ── Toast helper ── */
-  function showToast(icon, msg) {
-    const t = document.getElementById('toast');
-    document.getElementById('toastIcon').textContent = icon;
-    document.getElementById('toastMsg').textContent  = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
-  }
+  function showToast(icon, msg) { return window.AKBUI.toast(msg,2200,{icon:({'✅':'success','⚠️':'warning','❌':'warning'})[icon]||'info'}); }
 
   /* ── Accept / Reject ── */
   function acceptOrder() {

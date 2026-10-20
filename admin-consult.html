@@ -1,8 +1,12 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
   <meta charset="utf-8">
-<script src="common-ui.js"></script>
+
   <meta name="viewport" content="width=1280">
   <title>资讯内容 · 佑小邦运营后台</title>
   <link rel="stylesheet" href="admin-shell.css">
@@ -53,6 +57,7 @@
     .preview-paper{border:1px solid #e3ecf7;border-radius:12px;padding:22px;background:linear-gradient(180deg,#fdfeff,#F3FDFA);font-size:13px;line-height:1.8;color:#41536d}.preview-paper h2{font-size:17px;margin:12px 0 6px;color:var(--ink)}.preview-paper h3{font-size:15px;margin:10px 0 5px;color:var(--ink)}.preview-paper img{max-width:100%;border-radius:12px;margin:6px 0}.preview-paper ul,.preview-paper ol{padding-left:22px;margin:6px 0}.preview-paper blockquote{border-left:3px solid var(--blue);margin:8px 0;padding:4px 12px;background:#F2FCF9;color:#5b6b83}.preview-head{margin-bottom:14px;padding-bottom:12px;border-bottom:1px dashed #dfe8f4}.preview-title{font-size:19px;font-weight:700;color:var(--ink)}.preview-sub{margin-top:6px;font-size:13px;color:#8b99ad}
   </style>
 <link rel="stylesheet" href="modal-scroll.css">  <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="admin" data-page="admin-consult">
   <div class="layout">
@@ -161,7 +166,7 @@
     function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
     function pad(n){return n<10?'0'+n:''+n;}
     function now(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes());}
-    function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},1600);}
+    function toast(msg){ return window.AKBUI.toast(msg,2200); }
 
     /* 数据层：与用户移动端共享 consult-data.js（AKBConsult） */
     var getList=window.AKBConsult.get;
@@ -200,8 +205,8 @@ window.clearCover=function(){setCovers([]);};
 
     /* 富文本工具 */
     window.cmd=function(command,arg){document.getElementById('editorArea').focus();document.execCommand(command,false,arg||null);};
-    window.insertImageUrl=function(){
-      var url=window.prompt('请输入图片链接（https://…）','https://');
+    window.insertImageUrl=async function(){
+      var url=await AKBUI.prompt('请输入图片链接（https://…）','https://');
       if(!url||url==='https://')return;
       cmd('insertHTML','<img src="'+String(url).replace(/"/g,'&quot;')+'" style="max-width:100%;height:auto">');
     };

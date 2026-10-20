@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>护理员详情 · 佑小邦</title>
@@ -10,6 +14,7 @@
     .scroll{flex:1;overflow:auto;padding-bottom:92px}.scroll::-webkit-scrollbar{display:none}.status-bar{display:flex;justify-content:space-between;align-items:center;padding:13px 22px 8px;background:#fff;font-size:14px;font-weight:600}.status-right{display:flex;gap:5px}.status-right svg{width:17px;height:12px}.navbar{height:58px;display:flex;align-items:center;justify-content:center;position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--border)}.nav-title{font-size:18px;font-weight:700}.back{position:absolute;left:16px;width:36px;height:36px;border:0;border-radius:12px;background:var(--purple-light);color:var(--purple);display:grid;place-items:center;cursor:pointer}.back svg{width:20px;height:20px}.hero{padding:20px 18px 24px;background:linear-gradient(140deg,#1CD8B7,#0FA98C);color:#fff}.identity{display:flex;align-items:center;gap:13px}.avatar{width:70px;height:70px;border-radius:12px;display:grid;place-items:center;flex:0 0 70px;background:linear-gradient(140deg,#AA7AE0,#7B3FBE);border:3px solid rgba(255,255,255,.35);font-size:28px;font-weight:700}.identity-main{min-width:0}.name{font-size:22px;font-weight:700}.role{margin-top:5px;color:rgba(255,255,255,.75);font-size:13px}.rating{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:12px;color:rgba(255,255,255,.76)}.rating strong{color:#FFD978;font-size:18px}.stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:20px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.13)}.stat{padding:11px 5px;text-align:center}.stat+.stat{border-left:1px solid rgba(255,255,255,.14)}.stat-value{font-size:18px;font-weight:700}.stat-label{margin-top:3px;color:rgba(255,255,255,.65);font-size:11px}.section{margin:12px 14px 0;padding:16px;border-radius:12px;background:#fff;box-shadow:var(--sh)}.section-title{font-size:16px;font-weight:700;margin-bottom:12px}.intro{color:var(--text2);font-size:14px;line-height:1.65}.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{padding:6px 10px;border-radius:12px;background:var(--purple-light);color:var(--purple);font-size:12px;font-weight:600}.chip.green{background:#DCFCE7;color:var(--green)}.chip.blue{background:#E8F1FF;color:var(--blue)}.cert-list{display:grid;gap:10px}.cert{display:flex;align-items:center;gap:10px;padding:11px;border-radius:12px;background:#FAF9FD}.cert-icon{width:31px;height:31px;border-radius:12px;display:grid;place-items:center;background:#DCFCE7;color:var(--green);font-size:15px;font-weight:700}.cert-copy{flex:1}.cert-name{font-size:14px;font-weight:600}.cert-desc{margin-top:3px;color:var(--text3);font-size:11px}.cert-state{padding:4px 7px;border-radius:12px;background:#DCFCE7;color:var(--green);font-size:11px;font-weight:600}.bottom-actions{position:absolute;left:0;right:0;bottom:0;display:flex;gap:9px;padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.98);border-top:1px solid var(--border);z-index:8}.bottom-actions button{height:44px;border:0;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer}.back-orders{flex:1;background:var(--purple-light);color:var(--purple)}.book{flex:1.35;background:var(--purple);color:#fff}
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="mobile" data-page="nurse-detail">
 <div class="frame"><div class="phone">

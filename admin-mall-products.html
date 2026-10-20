@@ -1,8 +1,12 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
   <meta charset="utf-8" />
-<script src="common-ui.js"></script>
+
   <meta name="viewport" content="width=1280" />
   <title>商品管理 · 佑小邦运营后台</title>
   <link rel="stylesheet" href="admin-shell.css" />
@@ -66,6 +70,7 @@
   <script src="admin-mall-data.js"></script>
   <script defer src="admin-sidebar.js"></script>
 <link rel="stylesheet" href="modal-scroll.css">  <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="admin" data-page="admin-mall-products">
 <div class="layout">
@@ -415,7 +420,7 @@
   window.selectTone = function (id) { selectedTone = id; renderToneSwatches(); };
 
   /* ── 封面图上传 + 富文本详情 ── */
-  
+
 /* ── 封面图画廊：最多 COVER_MAX 张 · 拖拽排序 · 第 1 张为主封面 ── */
 var COVER_MAX=5,coverList=[],_cvDrag=null;
 window.getCoverList=function(){return coverList;};
@@ -435,8 +440,8 @@ window.clearCover=function(){setCovers([]);};
     document.getElementById('pDetailArea').focus();
     document.execCommand(command, false, arg || null);
   };
-  window.pInsertImageUrl = function () {
-    var url = window.prompt('请输入图片链接（https://…）', 'https://');
+  window.pInsertImageUrl = async function () {
+    var url = await AKBUI.prompt('请输入图片链接（https://…）', 'https://');
     if (!url || url === 'https://') return;
     pCmd('insertHTML', '<img src="' + String(url).replace(/"/g, '&quot;') + '" style="max-width:100%;height:auto">');
   };

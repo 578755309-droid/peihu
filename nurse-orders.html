@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>我的订单 · 护理员端</title>
@@ -12,6 +16,7 @@
     .care-needs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px;padding:8px;border-radius:12px;background:#FFF9ED;border:1px solid #FDE7B0}.care-need{min-width:0;padding:7px 6px;border-radius:12px;background:#fff}.care-need-label{display:block;color:#A87628;font-size:11px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.care-need-value{display:block;margin-top:3px;color:var(--text);font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.care-need-value.warn{color:var(--red)}.plan-note{margin-top:8px;padding:9px 10px;border-radius:12px;background: #F5F5F5;color:var(--text2);font-size:12px;line-height:1.5}.plan-note strong{color:var(--text);font-weight:600}.form-label{display:block;margin-top:16px;margin-bottom:7px;color:var(--text);font-size:13px;font-weight:600}.req{color:var(--red)}.start-plan{display:block;width:100%;min-height:82px;padding:10px 12px;border:1.5px solid var(--border);border-radius:12px;background:var(--purple-bg);color:var(--text);font-size:14px;line-height:1.5;font-family:inherit;resize:vertical;outline:none}.start-plan:focus{border-color:#7FE9D4;background:#fff;box-shadow:0 0 0 3px rgba(0,0,0,0.1)}.start-plan::placeholder{color:var(--text3)}
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="mobile" data-page="nurse-orders">
 <div class="frame"><div class="phone">
@@ -51,7 +56,7 @@
   document.getElementById('startPlan').addEventListener('input',updateStartConfirmState);
   function confirmStartService(){const file=document.getElementById('startPhoto').files[0],plan=document.getElementById('startPlan').value.trim();if(!plan){showToast('请先填写服务计划');document.getElementById('startPlan').focus();return}if(!file){showToast('请先拍照后再开始服务');return}const order=ORDERS.find(o=>o.id===startingOrderId);if(!order)return;order.status='in-progress';order.state='服务中';order.photoName=file.name;order.servicePlan=plan;order.actions=['log','detail'];closeStartModal();showToast('已开始服务，照片和服务计划已保存');render();}
   function contractOrder(id){const order=ORDERS.find(o=>o.id===id);if(!order)return;const rec=window.AKBContract.recordFor(id);if(rec){showToast(rec.status==='已签署'?'用户已完成电子合同签署':'电子合同已发起，等待用户在移动端签署');return;}window.AKBContract.issue(id,{userName:order.name,serviceType:order.type,serviceTime:order.time,amount:order.income,address:order.place,issuedBy:'护理员 李桂芳'});showToast('电子合同已发起，用户端已收到签署提醒');render();}
-  function showToast(text){const el=document.getElementById('toast');el.textContent=text;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2200)}
+  function showToast(text){ return window.AKBUI.toast(text,2200); }
   render();
 </script>
 </body>

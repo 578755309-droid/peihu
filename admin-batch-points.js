@@ -57,12 +57,7 @@
     }
   };
 
-  function showToast(message) {
-    var toast = document.getElementById('bptToast');
-    toast.textContent = message;
-    toast.classList.add('show');
-    window.setTimeout(function () { toast.classList.remove('show'); }, 2600);
-  }
+  function showToast(message) { return window.AKBUI.toast(message,2200); }
 
   document.getElementById('bptMask').onclick = function (event) { if (event.target === this) window.closeBatchPointsModal(); };
 })();

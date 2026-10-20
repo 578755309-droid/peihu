@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>提交日报</title>
@@ -289,6 +293,7 @@
     .toast-icon { font-size: 32px; display: block; margin-bottom: 8px; }
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="mobile" data-page="submit-report">
 <div class="frame">
@@ -458,13 +463,7 @@
     String(now.getDate()).padStart(2,'0');
 
   /* ── Toast ── */
-  function showToast(icon, msg, dur=2000) {
-    const t = document.getElementById('toast');
-    document.getElementById('toastIcon').textContent = icon;
-    document.getElementById('toastMsg').textContent  = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), dur);
-  }
+  function showToast(icon, msg, dur=2000) { return window.AKBUI.toast(msg,dur,{icon:({'✅':'success','⚠️':'warning','❌':'warning'})[icon]||'info'}); }
 
   /* ── Service status ── */
   let startTs = null, endTs = null;

@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>护理员申请认证 · 护理员端</title>
@@ -73,6 +77,7 @@
     .toast.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
 </head>
 <body data-surface="mobile" data-page="nurse-certification">
 <div class="frame"><div class="phone"><main class="scroll">
@@ -100,7 +105,7 @@
   var app=readApp();
   var editMode=false;
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  function showToast(t){var el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(function(){el.classList.remove('show');},2200);}
+  function showToast(t){ return window.AKBUI.toast(t,2200); }
   function badgeClass(st){return st==='审核通过'?'approved':(st==='审核驳回'?'rejected':'pending');}
   function parseIdNo(value){if(!/^\d{17}[\dXx]$/.test(value))return null;var birth=value.slice(6,14),d=new Date(birth.slice(0,4)+'-'+birth.slice(4,6)+'-'+birth.slice(6,8));if(isNaN(d.getTime()))return null;var today=new Date(),age=today.getFullYear()-d.getFullYear()-((today.getMonth()<d.getMonth()||(today.getMonth()===d.getMonth()&&today.getDate()<d.getDate()))?1:0);return {age:age,gender:Number(value.charAt(16))%2===1?'男':'女'};}
   /* 证书上传暂存 */
