@@ -215,3 +215,47 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-vis
 [data-page="mall"] .product-add:focus-visible {outline-color:var(--color-commerce)}
 
 [data-page="visit-services"] .scroll {padding:14px 12px 28px}
+
+/* Shared mobile layout spacing. Card padding is intentionally owned by each card. */
+:root {--mobile-page-gutter:10px;--mobile-card-gap:10px}
+body[data-surface="mobile"] :is(.service-card-grid,.product-grid,.consult-list,.patient-list,.nurse-list,.hospital-list,.card-list,.order-list,.order-list-v2,.queue-grid,.stats-grid) {
+  gap:var(--mobile-card-gap);
+}
+body[data-surface="mobile"]:not([data-page="hospital-care"]):not([data-page="orders"]) .phone > :is(.scroll,.content),
+body[data-surface="mobile"]:not([data-page="hospital-care"]):not([data-page="orders"]) .phone > .scroll-area > .content {
+  padding-top:var(--mobile-card-gap);
+  padding-inline:var(--mobile-page-gutter);
+  gap:var(--mobile-card-gap);
+}
+body[data-surface="mobile"] .phone > .scroll-area > .list,
+body[data-surface="mobile"] .phone > .list {
+  padding-top:var(--mobile-card-gap);padding-inline:var(--mobile-page-gutter);gap:var(--mobile-card-gap);
+}
+body[data-page="home"] :is(.cat-row,.banner),
+body[data-page="profile"] :is(.stats-card,.invite-banner) {
+  margin-inline:var(--mobile-page-gutter);
+}
+body[data-page="home"] .banner {margin-block:var(--mobile-card-gap)}
+body[data-page="home"] :is(.svc-sec,.consult-sec),
+body[data-page="mall"] :is(.product-section,.category-row) {padding-inline:var(--mobile-page-gutter)}
+body[data-page="home"] .consult-sec {padding-top:var(--mobile-card-gap)}
+body[data-page="home"] :is(.svc-sec-title,.consult-head) {margin-bottom:var(--mobile-card-gap)}
+body[data-surface="mobile"] .scroll-area > .section,
+body[data-surface="mobile"] .phone > .section {margin:var(--mobile-card-gap) var(--mobile-page-gutter) 0}
+body[data-page="profile"] .invite-banner {margin-top:var(--mobile-card-gap)}
+body[data-page="hospital-care"] .content,
+body[data-page="orders"] .content {padding-top:var(--mobile-card-gap);padding-inline:0}
+body[data-page="hospital-care"] .module,
+body[data-page="orders"] .order-card {margin:0 var(--mobile-page-gutter) var(--mobile-card-gap)}
+body[data-page="orders"] .order-list-v2 {padding-top:var(--mobile-card-gap);padding-inline:var(--mobile-page-gutter);gap:var(--mobile-card-gap)}
+body[data-surface="mobile"] .scroll > :is(.card,.state-card,.section-card,.sign-card,.signed-card,.hero,.reward-card,.address-card,.form-card) {margin-inline:0;margin-block:0}
+body[data-surface="mobile"] .scroll > :is(.card,.state-card,.section-card,.sign-card,.signed-card,.hero,.reward-card,.address-card,.form-card) + :is(.card,.state-card,.section-card,.sign-card,.signed-card,.hero,.reward-card,.address-card,.form-card) {margin-top:var(--mobile-card-gap)}
+body[data-page="feedback"] .card,
+body[data-page="service-review"] .review-card,
+body[data-page="nurse-detail"] .section,
+body[data-page="mall-refund"] :is(.product-card,.form-card),
+body[data-page="bath-refund"] .form-card {margin:var(--mobile-card-gap) var(--mobile-page-gutter)}
+body[data-page="cart"] .cart-list,
+body[data-page="messages"] .msg-list {padding:var(--mobile-card-gap) var(--mobile-page-gutter)}
+body[data-page="messages"] .msg-item {margin-bottom:var(--mobile-card-gap)}
+body[data-page="nurses"] .nurse-list {padding-inline:var(--mobile-page-gutter)}
