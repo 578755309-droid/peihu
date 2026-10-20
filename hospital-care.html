@@ -1493,7 +1493,7 @@
     if (!isEscortLayout() && !validateCareNeeds()) return;
     if (serviceKey === 'home' && !document.getElementById('otherNeeds').value.trim()) { alert('请填写其他诉求（如没有请填"无"）'); document.getElementById('otherNeeds').focus(); return; }
     if (isResultServiceLayout() && !document.getElementById('otherNeeds').value.trim()) { alert('请填写备注'); document.getElementById('otherNeeds').focus(); return; }
-    if (isExamBookingLayout() && !selectedExamItem) { alert('请选择检查项目'); document.getElementById('examModule').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    if (hasExamSelection() && !selectedExamItem) { alert('请选择检查项目'); document.getElementById('examModule').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
     if (isReportLayout() && !document.getElementById('reportNameInput').value.trim()) { alert('请填写报告名称'); document.getElementById('reportNameInput').focus(); return; }
     if (isHospitalLayout() && (!document.getElementById('careDeptInput').value.trim() || !document.getElementById('careBedInput').value.trim())) { alert('请填写科室与床位号'); document.getElementById('careDeptInput').focus(); return; }
     const isBath10Now = !redeemCard && serviceKey === 'bath' && selectedCount === 10;
@@ -2163,6 +2163,7 @@
   function isVipExamLayout() {
     return serviceKey === 'visit' && VIP_EXAM_KEYS.indexOf(visitServiceId) !== -1;
   }
+  function hasExamSelection() { return isVipExamLayout() || isExamBookingLayout(); }
   function applyVipExamLayout() {
     if (!isVipExamLayout()) return;
     var p1 = document.getElementById('p1');
@@ -2175,6 +2176,9 @@
     if (p1 && patientModule && addrModule) {
       p1.insertBefore(addrModule, patientModule);
     }
+    /* 复用已有检查项目，放在服务医院之后、就诊人之前。 */
+    if (p1 && patientModule && examModule) p1.insertBefore(examModule, patientModule);
+    if (examModule) examModule.style.display = '';
     /* 服务医院：复用地址选择器，文案改为医院场景 */
     var locTitle = document.getElementById('locationTitle');
     if (locTitle) locTitle.textContent = '选择服务医院';
@@ -2199,11 +2203,11 @@
       if (ol) ol.innerHTML = '备注 <span style="color:var(--text3);font-weight:600">（选填）</span>';
       otherTa.placeholder = '请填写备注（选填），如：行动不便、需要轮椅等';
     }
-    /* 按视觉顺序重编序号（服务医院 → 就诊人 → 联系人 → 时间 → 备注） */
-    var nums = [addrModule, patientModule, document.getElementById('contactModule'), document.getElementById('timeModule'), needsModule];
+    /* 按视觉顺序重编序号（服务医院 → 检查项目 → 就诊人 → 联系人 → 时间 → 备注） */
+    var nums = [addrModule, examModule, patientModule, document.getElementById('contactModule'), document.getElementById('timeModule'), needsModule];
     nums.forEach(function (el, i) { var n = el && el.querySelector('.module-num'); if (n) n.textContent = String(i + 1); });
   }
-  /* ── 代约检查：唯一显示「检查项目」选项模块的服务 ── */
+  /* ── 代约检查：复用检查项目模块，保留原有布局 ── */
   function isExamBookingLayout() {
     return serviceKey === 'visit' && visitServiceId === 'exam-booking';
   }
@@ -2633,7 +2637,7 @@
     isCustomCount = false;
     document.getElementById('customCountInput').value = 1;
     document.getElementById('usePoints').checked = true;
-    /* 检查项目：仅代约检查显示 examModule 选项模块，其余服务（含旧输入框形态）一律隐藏 */
+    /* 检查项目：贵宾/优享陪诊及代约检查复用 examModule，旧输入框保持隐藏 */
     var examRow = document.getElementById('examInputRow');
     if (examRow) examRow.style.display = 'none';
     /* 按天陪护：重置后同步天数步进器显示 */
@@ -2770,7 +2774,7 @@
       addressDetail: addr.detail || '',
       contact: (contactInput && contactInput.value.trim()) || addr.contact || '',
       phone: (phoneInput && phoneInput.value.trim()) || addr.phone || '',
-      examItem: isExamBookingLayout() ? (selectedExamItem === '其他检查' ? ((((document.getElementById('examOtherInput') || {}).value) || '').trim() || '其他检查') : selectedExamItem) : '',
+      examItem: hasExamSelection() ? (selectedExamItem === '其他检查' ? ((((document.getElementById('examOtherInput') || {}).value) || '').trim() || '其他检查') : selectedExamItem) : '',
       examPhotos: (isResultServiceLayout() && examSlipUploader) ? examSlipUploader.get() : [],
       serviceDept: isAdmDisServiceLayout() ? document.getElementById('serviceDeptInput').value.trim() : '',
       reportName: isReportLayout() ? document.getElementById('reportNameInput').value.trim() : '',
