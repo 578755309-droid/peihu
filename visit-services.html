@@ -67,21 +67,7 @@
 <script>
   /* 服务默认销量（供无数据时的种子展示） */
   const DEFAULT_SALES={vip:1280,premium:680,medicine:320,'exam-booking':210,result:190,admission:150,discharge:130,'ring-pickup':260,airport:145,report:380,station:175};
-  /* 图标（2色 SVG，居中显示） */
-  const ICONS={
-    vip:'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><path d="M24 14l3.4 7.1 7.6 1.1-5.5 5.4 1.3 7.5L24 31.9l-6.8 3.2 1.3-7.5-5.5-5.4 7.6-1.1z" fill="#1CD8B7"/></svg>',
-    premium:'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><circle cx="24" cy="24" r="10" fill="none" stroke="#1CD8B7" stroke-width="2.5"/><path d="M20 24l3 3 6-6" fill="none" stroke="#1CD8B7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    medicine:'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><rect x="17" y="14" width="14" height="20" rx="3" fill="none" stroke="#1CD8B7" stroke-width="2"/><path d="M21 24h6M24 21v6" stroke="#1CD8B7" stroke-width="2" stroke-linecap="round"/></svg>',
-    'exam-booking':'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><rect x="14" y="15" width="20" height="17" rx="2" fill="none" stroke="#1CD8B7" stroke-width="2"/><path d="M19 21h10M19 25h7" stroke="#1CD8B7" stroke-width="2" stroke-linecap="round"/></svg>',
-    result:'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><path d="M17 16h14v18H17z" fill="none" stroke="#1CD8B7" stroke-width="2"/><path d="M20 21h8M20 25h8M20 29h5" stroke="#1CD8B7" stroke-width="1.8" stroke-linecap="round"/></svg>',
-    admission:'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><rect x="15" y="14" width="18" height="18" rx="2" fill="none" stroke="#1CD8B7" stroke-width="2"/><path d="M22 19h4v4h4v4h-4v4h-4v-4h-4v-4h4z" fill="#1CD8B7"/></svg>',
-    discharge:'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><circle cx="24" cy="24" r="9" fill="none" stroke="#1CD8B7" stroke-width="2"/><path d="M24 19v10M19 24l5 5 5-5" fill="none" stroke="#1CD8B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    'ring-pickup':'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><path d="M14 28h20v-6l-3-5H17l-3 5z" fill="none" stroke="#1CD8B7" stroke-width="2"/><circle cx="18" cy="31" r="2.5" fill="#1CD8B7"/><circle cx="30" cy="31" r="2.5" fill="#1CD8B7"/></svg>',
-    airport:'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><path d="M12 30h24" stroke="#1CD8B7" stroke-width="2" stroke-linecap="round"/><path d="M34 20l-14 6 3 2 6-4 5 2" fill="none" stroke="#1CD8B7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-    report:'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><path d="M18 16h12l4 4v12H18z" fill="none" stroke="#1CD8B7" stroke-width="2"/><path d="M21 24h6M21 28h4" stroke="#1CD8B7" stroke-width="1.8" stroke-linecap="round"/></svg>',
-    station:'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><rect x="13" y="20" width="22" height="10" rx="1" fill="none" stroke="#1CD8B7" stroke-width="2"/><circle cx="17" cy="32" r="2" fill="#1CD8B7"/><circle cx="31" cy="32" r="2" fill="#1CD8B7"/><path d="M20 20v-4h8v4" fill="none" stroke="#1CD8B7" stroke-width="2" stroke-linecap="round"/></svg>'
-  };
-  /* 生成配图（加载失败时回退 SVG 图标） */
+  /* 服务配图：只显示照片，不叠加图标。 */
   var IMG_API='https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?image_size=landscape_4_3&prompt=';
   var SVC_IMGS={
     vip:'assets/svc/vip.png',
@@ -106,7 +92,7 @@
       else{sales=DEFAULT_SALES[s.id]||0;}
       var price=s.price!=null?s.price:0;
       return '<div class="svc-tile-wrap" onclick="selectService(\''+s.id+'\')"><article class="svc-tile service-card">'+
-        '<div class="svc-tile-img">'+(SVC_IMGS[s.id]?'<img src="'+SVC_IMGS[s.id]+'" alt="'+(s.name||'服务')+'" onerror="this.remove()">':'')+(ICONS[s.id]||'<svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="5" fill="#DDF7F1"/><text x="24" y="28" text-anchor="middle" fill="#1CD8B7" font-size="14" font-weight="800">服务</text></svg>')+'</div>'+
+        '<div class="svc-tile-img">'+(SVC_IMGS[s.id]?'<img src="'+SVC_IMGS[s.id]+'" alt="'+(s.name||'服务')+'" onerror="this.remove()">':'')+'</div>'+
         '<div class="svc-tile-body">'+
           '<div class="svc-tile-name">'+(s.name||'')+'</div>'+
           '<div class="svc-tile-sub">'+(s.summary||'')+'</div>'+
