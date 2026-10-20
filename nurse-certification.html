@@ -104,15 +104,24 @@
   function parseIdNo(value){if(!/^\d{17}[\dXx]$/.test(value))return null;var y=Number(value.slice(6,10)),m=Number(value.slice(10,12)),day=Number(value.slice(12,14)),d=new Date(y,m-1,day),now=new Date();if(d.getFullYear()!==y||d.getMonth()!==m-1||d.getDate()!==day||d>now)return null;var age=now.getFullYear()-y-((now.getMonth()<d.getMonth()||(now.getMonth()===d.getMonth()&&now.getDate()<day))?1:0);return {age:age,gender:Number(value.charAt(16))%2?'男':'女'};}
   /* 证书上传暂存 */
   var certData=[],certPending={idx:-1,kind:''};
+  var photoData='',photoName='';
   function defaultCerts(){return CERT_TYPES.map(function(t){return {type:t,certNo:'',image:'',imageName:'',fileName:'',fileSize:0};});}
   function syncCertFromApp(){certData=defaultCerts().map(function(c){var hit=((app&&app.certs)||[]).find(function(x){return x.type===c.type;});return hit?{type:c.type,certNo:hit.certNo||'',image:hit.image||'',imageName:hit.imageName||'',fileName:hit.fileName||'',fileSize:hit.fileSize||0}:c;});}
   function pickCert(i,kind){certPending={idx:i,kind:kind};var input=document.getElementById('certFile');input.accept=kind==='image'?'image/*':'image/*,.pdf,.doc,.docx';input.click();}
+  window.pickPhoto=function(){certPending={idx:-1,kind:'photo'};var input=document.getElementById('certFile');input.accept='image/*';input.click();};
   function captureDraft(){var get=function(id){return (document.getElementById(id)||{}).value||'';};if(!document.getElementById('fName'))return;draft={name:get('fName'),phone:get('fPhone'),gender:get('fGender'),idNo:get('fIdNo'),age:get('fAge'),workYears:get('fYears'),employmentType:get('fEmploy'),companyName:get('fCompany'),area:get('fArea'),skills:Array.from(document.querySelectorAll('#skillGrid .skill-chip.on')).map(el=>el.textContent)};}
   function onCertFileChange(){
     captureDraft();
     var file=this.files&&this.files[0];this.value='';
-    if(!file||certPending.idx<0)return;
+    if(!file)return;
     if(file.size>5*1024*1024){showToast('文件不能超过5MB，请压缩后重试');return;}
+    if(certPending.kind==='photo'){
+      photoName=file.name;
+      if(window.akbFitImage){window.akbFitImage(file,function(dataUrl){photoData=dataUrl;render();});}
+      else{var pr=new FileReader();pr.onload=function(){photoData=pr.result;render();};pr.readAsDataURL(file);}
+      return;
+    }
+    if(certPending.idx<0)return;
     var rec=certData[certPending.idx];if(!rec)return;
     if(certPending.kind==='image'){
       rec.imageName=file.name;rec.fileSize=file.size;
@@ -125,9 +134,11 @@
     var a=draft||app||{};
     var skillsArr=Array.isArray(a.skills)?a.skills:[];
     if(!certData.length)syncCertFromApp();
+    if(!photoData&&a.photo){photoData=a.photo;photoName=a.photoName||'';}
     var certsArr=certData;
     var html='<form class="form" onsubmit="submitApp(event)" novalidate>'+(bannerHtml||'');
     html+='<div class="form-sec">基础信息</div>';
+    html+='<div class="field"><label>个人照片</label><div class="up-row">'+(photoData?'<span class="up-ico"><img src="'+photoData+'" alt=""></span>':'<span class="up-ico">照</span>')+'<span class="up-name">'+esc(photoName||'未上传照片，用于审核员核对身份')+'</span><button type="button" class="up-btn" onclick="pickPhoto()">'+(photoData?'重新上传':'上传照片')+'</button></div></div>';
     html+='<div class="field" data-f="name"><label>姓名<span class="req">*</span></label><input id="fName" value="'+esc(a.name||'')+'" placeholder="请输入真实姓名"><div class="err">请填写姓名</div></div>';
     html+='<div class="field" data-f="phone"><label>手机号<span class="req">*</span></label><input id="fPhone" type="tel" maxlength="11" inputmode="numeric" value="'+esc(a.phone||'')+'" placeholder="请输入11位手机号"><div class="err">请填写正确的11位手机号</div></div>';
     html+='<div class="field" data-f="gender"><label>性别<span class="req">*</span></label><select id="fGender"><option'+(a.gender==='女'?' selected':'')+'>女</option><option'+(a.gender==='男'?' selected':'')+'>男</option></select></div>';
@@ -156,6 +167,7 @@
     var a=app;
     var typeName={self:'自营',personal:'个人',enterprise:'企业'}[a.employmentType]||'—';
     var html='<div class="info-list">';
+    html+='<div class="info-row" style="display:flex;align-items:center;gap:12px"><span class="k">个人照片</span>'+(a.photo?'<img src="'+a.photo+'" alt="个人照片" style="width:52px;height:52px;border-radius:12px;object-fit:cover">':'<span class="v">未上传</span>')+'</div>';
     html+='<div class="info-row"><span class="k">姓名</span><span class="v">'+esc(a.name)+'</span></div>';
     html+='<div class="info-row"><span class="k">手机号</span><span class="v">'+esc(a.phone)+'</span></div>';
     html+='<div class="info-row"><span class="k">性别 / 年龄</span><span class="v">'+esc(a.gender)+' / '+esc(a.age||'—')+'</span></div>';
@@ -264,6 +276,7 @@
       name:name,phone:phone,gender:gender,idNo:idNo,
       age:age||'',workYears:years,
       employmentType:employ,companyName:company,area:area,skills:skills,
+      photo:photoData,photoName:photoName,
       certs:certData.map(function(c){return {type:c.type,certNo:(c.certNo||'').trim(),image:c.image||'',imageName:c.imageName||'',fileName:c.fileName||'',fileSize:c.fileSize||0};})
     });
     try{saveApp();}catch(e){app=latest;showToast('申请未保存，请减少材料大小后重试');return;}

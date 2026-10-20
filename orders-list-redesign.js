@@ -168,9 +168,9 @@
         '.akb-pay-switch.on{background:#1CD8B7}',
         '.akb-pay-switch.on:after{left:20px}',
         '.akb-pay-points-txt{flex:1;margin-right:10px;font-size:13px;color:#8A879B;text-align:right;line-height:1.5}',
-        '.akb-pay-points-txt b{color:#E94E4E}',
+        '.akb-pay-points-txt b{color:#FF6A1F}',
         '.akb-pay-divider{height:1px;background:#F0EDF5;margin:6px 0}',
-        '.akb-pay-final .val{font-size:18px;color:#E94E4E;font-weight:700}',
+        '.akb-pay-final .val{font-size:18px;color:#FF6A1F;font-weight:700}',
         '.akb-pay-tip{font-size:12px;color:#AEACC0;text-align:center;margin:2px 0 10px}'].join('\n');
       document.head.appendChild(st);
     }
@@ -342,7 +342,7 @@
         '.akb-suc-key{color:#AEACC0;font-weight:600;flex-shrink:0;margin-right:12px}',
         '.akb-suc-val{color:#1A1828;font-weight:600;text-align:right;overflow-wrap:anywhere}',
         '.akb-suc-val.purple{color:#0FA98C;font-size:15px;font-weight:700}',
-        '.akb-suc-val.deduct{color:#EF4444}',
+        '.akb-suc-val.deduct{color:#FF6A1F}',
         '.akb-suc-btns{display:flex;gap:12px;padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #EDE9F5}',
         '.akb-suc-btns button{flex:1;height:46px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}',
         '.akb-suc-btns .ghost{border:1px solid #E0DBEA;background:#fff;color:#6B6880}',

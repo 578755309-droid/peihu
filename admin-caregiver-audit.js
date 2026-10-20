@@ -27,9 +27,10 @@
   /* 弹窗骨架 */
   document.body.insertAdjacentHTML('beforeend', '<div class="cg-audit-mask" id="cgAuditMask" aria-hidden="true"><section class="cg-audit-dialog" role="dialog" aria-modal="true" aria-labelledby="cgAuditTitle"><header class="cg-audit-head"><div><h2 id="cgAuditTitle">陪护员入驻审核</h2><p>护理员端提交的认证申请在此审核，通过后自动创建陪护员档案。</p></div><button class="cg-audit-close" type="button" onclick="closeCaregiverAudit()" aria-label="关闭">×</button></header><div class="cg-audit-toolbar"><select id="cgAuditFilter" onchange="renderCaregiverAudit()"><option value="审核中">待审核</option><option value="all">全部状态</option><option value="审核通过">已通过</option><option value="审核驳回">已驳回</option></select></div><div class="cg-audit-body" id="cgAuditBody"></div></section></div>');
   var rejectTarget = '';
-  window.openCaregiverAudit = function () { rejectTarget = ''; document.getElementById('cgAuditFilter').value = '审核中'; document.getElementById('cgAuditMask').classList.add('show'); renderCaregiverAudit(); };
+  window.openCaregiverAudit = function () { var f = document.getElementById('cgAuditFilter'); if (f) f.value = '审核中'; var m = document.getElementById('cgAuditMask'); if (!m) return; m.classList.add('show'); renderCaregiverAudit(); };
   window.closeCaregiverAudit = function () { document.getElementById('cgAuditMask').classList.remove('show'); refreshBadge(); };
-  document.getElementById('cgAuditMask').addEventListener('click', function (e) { if (e.target === this) closeCaregiverAudit(); });
+  var maskEl = document.getElementById('cgAuditMask');
+  if (maskEl) maskEl.addEventListener('click', function (e) { if (e.target === this) closeCaregiverAudit(); });
   function typeName(v) { return { self: '自营', personal: '个人', enterprise: '企业' }[v] || '—'; }
   function certLine(c) {
     var parts = [];
@@ -45,6 +46,7 @@
     html += '<div class="cg-audit-meta">提交于 ' + esc(app.submittedAt || '—') + (app.reviewedAt ? ' · 审核完成 ' + esc(app.reviewedAt) : '') + (app.status === '审核驳回' && app.rejectReason ? ' · 驳回原因：' + esc(app.rejectReason) : '') + '</div>';
     if (expanded) {
       html += '<div class="cg-audit-detail">';
+      html += '<div class="d-item"><div class="k">个人照片</div><div class="v">' + (app.photo ? '<img src="' + app.photo + '" alt="个人照片" style="width:56px;height:56px;border-radius:12px;object-fit:cover;display:block">' : '未上传') + '</div></div>';
       html += '<div class="d-item"><div class="k">性别 / 年龄</div><div class="v">' + esc(app.gender) + ' / ' + esc(app.age || '—') + '</div></div>';
       html += '<div class="d-item"><div class="k">身份证号</div><div class="v">' + esc(app.idNo) + '</div></div>';
       html += '<div class="d-item"><div class="k">工龄</div><div class="v">' + esc(app.workYears) + ' 年</div></div>';
@@ -68,7 +70,8 @@
     return html;
   }
   window.renderCaregiverAudit = function () {
-    var filter = document.getElementById('cgAuditFilter').value;
+    var filterEl = document.getElementById('cgAuditFilter');
+    var filter = filterEl ? filterEl.value : '审核中';
     var apps = readApps().filter(function (a) { return filter === 'all' ? true : a.status === filter; });
     var box = document.getElementById('cgAuditBody');
     if (!apps.length) { box.innerHTML = '<div class="cg-audit-empty">暂无' + (filter === 'all' ? '' : filter) + '的入驻申请</div>'; return; }
@@ -91,6 +94,7 @@
       workYears: (parseInt(app.workYears, 10) || 0) + '年',
       certification: '审核通过', area: app.area || '', idNo: app.idNo || '',
       employmentType: app.employmentType || 'personal', companyName: app.companyName || '',
+      photo: app.photo || '', photoName: app.photoName || '',
       certs: (app.certs || []).map(function (c) { return { type: c.type, certNo: c.certNo || '', imageName: c.imageName || '', image: c.image || '', fileName: c.fileName || '', fileSize: c.fileSize || 0 }; })
     };
     var saved;

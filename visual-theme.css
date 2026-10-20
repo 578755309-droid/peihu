@@ -1,8 +1,8 @@
 /* Video-reference refinement. Preserve the existing mint brand and 12px radius. */
 :root {
   /* Shared commerce emphasis, sampled from reference image 5. */
-  --color-commerce:#E94E4E; --color-commerce-soft:#FFF0F0;
-  --color-commerce-shadow:rgba(233,78,78,.18);
+  --color-commerce:#FF6A1F; --color-commerce-soft:#FFF1E8;
+  --color-commerce-shadow:rgba(255,106,31,.18);
   --purple:#1CD8B7; --purple-dark:#0FA98C; --purple-light:#DDF7F1;
   --purple-bg:#f0f3f5; --card:#fff;
   --text:#252831; --text2:#707682; --text3:#8b919d; --border:#e6e9ee;
