@@ -482,6 +482,23 @@
     .sheet-title { font-size:18px; color:var(--text); font-weight:900; letter-spacing:.1px; }
     .sheet-close { width:34px; height:34px; border:0; border-radius:11px; background:#F5F2FA; color:#766C87; font:700 21px/1 inherit; cursor:pointer; }
     .sheet-close:active { background:#EAE3F4; }
+    /* ── 服务时间底部抽屉（滚轮选择器） ── */
+    .tp-sheet { width:100%; background:#fff; border-radius:26px 26px 0 0; box-shadow:0 -14px 42px rgba(35,22,55,.22); transform:translateY(100%); transition:transform .26s cubic-bezier(.22,.88,.36,1); padding-bottom:calc(14px + env(safe-area-inset-bottom)); }
+    .selection-drawer.show .tp-sheet { transform:translateY(0); }
+    .tp-head { display:flex; align-items:center; justify-content:space-between; height:54px; padding:0 18px; border-bottom:1px solid #F0EEF5; }
+    .tp-cancel { border:0; background:none; font:400 16px/1 inherit; color:#969799; cursor:pointer; padding:8px 2px; }
+    .tp-title { font-size:16px; font-weight:900; color:var(--text); }
+    .tp-confirm { border:0; background:none; font:800 16px/1 inherit; color:#0FA98C; cursor:pointer; padding:8px 2px; }
+    .tp-body { position:relative; }
+    .tp-cols { display:flex; }
+    .tp-col { flex:1; min-width:0; height:208px; overflow-y:auto; scroll-snap-type:y mandatory; overscroll-behavior:contain; padding:82px 0; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+    .tp-col::-webkit-scrollbar { display:none; }
+    .tp-col ul { list-style:none; margin:0; padding:0; }
+    .tp-col li { height:44px; line-height:44px; text-align:center; font-size:16px; color:#C8C9CC; scroll-snap-align:center; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:0 8px; }
+    .tp-col li em { font-style:normal; font-size:12px; color:#B9B6C6; margin-left:5px; font-weight:400; }
+    .tp-col li.on { color:var(--text); font-weight:800; }
+    .tp-col li.on em { color:#8E8A9C; }
+    .tp-center { position:absolute; left:18px; right:18px; top:50%; height:44px; transform:translateY(-50%); border-top:1px solid #EDEBF2; border-bottom:1px solid #EDEBF2; pointer-events:none; }
     .drawer-list { display:grid; gap:10px; }
     .drawer-list .address-card, .drawer-list .patient-card { padding:13px; background:#FCFBFE; border-color:#EEEAF4; }
     .drawer-list .address-card.sel, .drawer-list .patient-card.sel { border-color:var(--purple); background:#FAF7FE; box-shadow:0 5px 14px rgba(104,63,172,.10); }
@@ -614,6 +631,13 @@
     #p2 { display:none !important; }
     .step-panel + .step-panel { margin-top:0; }
     .single-page-needs { margin-top:0; }
+    .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .day-stepper-row { display:flex; align-items:center; gap:12px; margin-top:12px; }
+    .day-stepper { display:inline-flex; align-items:center; border:1px solid #E4FAF4; border-radius:10px; overflow:hidden; background:#fff; }
+    .day-stepper button { width:38px; height:38px; border:0; background:#F7FEFC; color:#1CD8B7; font-size:18px; font-weight:900; cursor:pointer; line-height:1; }
+    .day-stepper button:active { background:#DDF7F1; }
+    .day-stepper span { min-width:46px; text-align:center; font-size:16px; font-weight:900; color:#172033; }
+    .day-unit { font-size:12px; color:#6B7A90; font-weight:700; }
     .single-page-needs .module-title { margin-bottom:14px; }
     .need-group + .need-group { margin-top:16px; }
     .need-label { display:block; margin-bottom:8px; color:var(--text2); font-size:12px; font-weight:700; }
@@ -802,27 +826,10 @@
       <div class="content">
 
         <div class="step-panel active" id="p1">
-        <!-- ① 选择服务地址 -->
-        <div class="module">
-          <div class="module-title">
-            <div class="module-num">1</div>
-            <span id="locationTitle">选择服务地址</span>
-          </div>
-          <button class="selector-trigger" type="button" onclick="openAddressDrawer()">
-            <span class="selector-marker" id="fromMarker">地</span>
-            <span class="selector-copy"><span class="selector-value" id="selectedAddressValue">请选择服务地址</span><span class="selector-meta" id="selectedAddressMeta">医院或家</span></span>
-            <span class="selector-arrow">›</span>
-          </button>
-          <button class="selector-trigger" type="button" id="toAddressTrigger" style="display:none;margin-top:10px" onclick="openAddressDrawer('to')">
-            <span class="selector-marker" id="toMarker">送</span>
-            <span class="selector-copy"><span class="selector-value" id="selectedToAddressValue">请选择送达地址</span><span class="selector-meta" id="selectedToAddressMeta">如：患者家</span></span>
-            <span class="selector-arrow">›</span>
-          </button>
-        </div>
-
+        <!-- ① 选择服务对象 -->
         <div class="module" id="patientInfoModule">
           <div class="module-title">
-            <div class="module-num">2</div>
+            <div class="module-num">1</div>
             <span id="patientTitle">选择服务对象</span>
           </div>
           <button class="selector-trigger" type="button" onclick="openPatientDrawer()">
@@ -830,6 +837,29 @@
             <span class="selector-copy"><span class="selector-value" id="selectedPatientValue">请选择服务对象</span><span class="selector-meta" id="selectedPatientMeta">选择已有档案或新增</span></span>
             <span class="selector-arrow">›</span>
           </button>
+          <!-- 检查项目（普通陪诊子服务：就诊人下方输入框） -->
+          <div id="examInputRow" style="display:none;margin-top:10px">
+            <label class="field-label" for="examInput">检查项目</label>
+            <input class="field-input" id="examInput" type="text" maxlength="50" placeholder="如：抽血化验、CT、核磁共振等" />
+          </div>
+        </div>
+
+        <!-- ② 联系人信息（AKBContact 组件渲染，保持各服务界面统一） -->
+        <div class="module" id="contactModule">
+          <div class="module-title">
+            <div class="module-num">2</div>
+            <span>联系人信息</span>
+          </div>
+          <div id="contactFields"></div>
+        </div>
+
+        <!-- 上传已有检查单（仅代看检查结果显示，AKBImageUpload 组件） -->
+        <div class="module" id="examSlipModule" style="display:none">
+          <div class="module-title">
+            <div class="module-num"></div>
+            <span>上传已有检查单</span>
+          </div>
+          <div id="examSlipUpload"></div>
         </div>
         </div><!-- /p1 -->
 
@@ -964,43 +994,9 @@
         </div><!-- /p2 -->
 
         <div class="step-panel" id="p3">
-        <!-- ④ 服务时间 -->
-        <div class="module">
-          <div class="module-title">
-            <div class="module-num">3</div>
-            选择服务时间
-          </div>
-          <div class="time-grid">
-            <div id="datePickRow"><label class="field-label" for="serviceDate">1. 选择服务日期</label><input class="field-input" id="serviceDate" type="date" /></div>
-            <div id="countBlock">
-              <div class="service-mode-note" id="serviceModeNote">服务方式：24 小时/天</div>
-              <span class="field-label" id="countLabel">选择服务天数</span>
-              <div class="duration-grid" id="countGrid">
-                <button class="hour-option sel" type="button" onclick="selectCount(this,1)">1 天</button>
-                <button class="hour-option" type="button" onclick="selectCount(this,2)">2 天</button>
-                <button class="hour-option" type="button" onclick="selectCount(this,3)">3 天</button>
-                <button class="hour-option" type="button" onclick="selectCount(this,5)">5 天</button>
-                <button class="hour-option" type="button" onclick="selectCount(this,7)">7 天</button>
-                <button class="hour-option" type="button" onclick="selectCustomCount(this)">自定义天数</button>
-              </div>
-              <div class="custom-count" id="customCountGroup">
-                <span class="custom-count-label" id="customCountLabel">自定义服务天数</span>
-                <input class="custom-count-input" id="customCountInput" type="number" min="1" max="365" value="1" inputmode="numeric" oninput="setCustomCount(this.value)" />
-                <span class="custom-count-unit" id="customCountUnit">天</span>
-              </div>
-            </div>
-          </div>
-          <!-- 上门助浴 · 10 次套餐按次预约 -->
-          <div class="bath-sessions" id="bathSessionsPanel">
-            <span class="field-label">2. 按次预约 <span class="bath-sessions-count" id="bathSessionsCount">已预约 1/10 次</span></span>
-            <div class="bath-sessions-tip">每次服务可分别选择时间与地点，服务对象自动带出；未预约的次数可在订单详情随时预约</div>
-            <div id="bathSessionsList"></div>
-            <button class="bath-session-addbtn" id="bathSessionAddBtn" type="button" onclick="addBathSession()">＋ 添加下次预约</button>
-          </div>
-        </div>
-
+        <!-- ③ 护理需求（接送类服务改为「备注」选填） -->
         <div class="module single-page-needs">
-          <div class="module-title"><div class="module-num">4</div><span>护理需求</span></div>
+          <div class="module-title"><div class="module-num">3</div><span id="needsTitle">备注</span></div>
           <div class="need-group">
             <span class="need-label"><span class="req">*</span>患者自理等级</span>
             <div class="need-options" id="independencePicker">
@@ -1035,7 +1031,6 @@
             </div>
           </div>
           <div class="need-group">
-            <label class="need-label" for="otherNeeds">其他诉求 <span style="color:var(--text3);font-weight:600">（非必填）</span></label>
             <textarea class="need-textarea" id="otherNeeds" maxlength="200" placeholder="请填写其他照护偏好或需要特别注意的事项"></textarea>
           </div>
           <div class="needs-price-card" id="needsPriceCard">
@@ -1049,6 +1044,151 @@
               <div class="points-detail" id="pointsDetail">本单最多可抵 ¥0</div>
             </div>
           </div>
+        </div>
+
+        <!-- ④ 乘车人数（仅接送服务显示） -->
+        <div class="module" id="paxModule" style="display:none">
+          <div class="module-title">
+            <div class="module-num">3</div>
+            乘车人数
+          </div>
+          <div class="day-stepper-row" style="display:flex">
+            <div class="day-stepper">
+              <button type="button" onclick="changePax(-1)" aria-label="减少人数">−</button>
+              <span id="paxVal">1</span>
+              <button type="button" onclick="changePax(1)" aria-label="增加人数">＋</button>
+            </div>
+            <span class="day-unit">人</span>
+          </div>
+        </div>
+
+        <!-- ④ 服务时间 -->
+        <div class="module" id="timeModule">
+          <div class="module-title">
+            <div class="module-num">4</div>
+            选择服务时间
+          </div>
+          <div class="time-grid">
+            <div id="datePickRow" style="display:none"><input class="field-input" id="serviceDate" type="date" /></div>
+            <div id="tpRow" onclick="openTimeSheet()" style="cursor:pointer"><div class="selector-trigger"><span id="tpTriggerVal">请选择服务时间</span><span class="selector-arrow">›</span></div></div>
+            <div class="day-stepper-row" id="dayStepperRow" style="display:none">
+              <span class="field-label">陪护天数</span>
+              <div class="day-stepper">
+                <button type="button" onclick="changeCareDays(-1)" aria-label="减少天数">−</button>
+                <span id="careDaysVal">1</span>
+                <button type="button" onclick="changeCareDays(1)" aria-label="增加天数">＋</button>
+              </div>
+              <span class="day-unit">天（24 小时/天）</span>
+            </div>
+            <div id="bathDateTimeRow" style="display:none"><label class="field-label" for="bathDateTime">选择服务时间</label><select class="field-input" id="bathDateTime" onchange="onBathDateTimeChange(this)">
+              <option value="">请选择日期和时间</option>
+            </select></div>
+            <div id="timeSlotRow"><label class="field-label" for="serviceTimeSlot">选择具体时间</label><select class="field-input" id="serviceTimeSlot">
+              <option value="">请选择具体时间</option>
+              <option value="09:00-11:00">上午9点（09:00-11:00）</option>
+              <option value="11:00-13:00">上午11点（11:00-13:00）</option>
+              <option value="14:00-16:00">下午2点（14:00-16:00）</option>
+              <option value="15:00-17:00">下午3点（15:00-17:00）</option>
+              <option value="19:00-21:00">晚上7点（19:00-21:00）</option>
+            </select></div>
+            <div id="countBlock">
+              <div class="service-mode-note" id="serviceModeNote">服务方式：24 小时/天</div>
+              <span class="field-label" id="countLabel">选择服务天数</span>
+              <div class="duration-grid" id="countGrid">
+                <button class="hour-option sel" type="button" onclick="selectCount(this,1)">1 天</button>
+                <button class="hour-option" type="button" onclick="selectCount(this,2)">2 天</button>
+                <button class="hour-option" type="button" onclick="selectCount(this,3)">3 天</button>
+                <button class="hour-option" type="button" onclick="selectCount(this,5)">5 天</button>
+                <button class="hour-option" type="button" onclick="selectCount(this,7)">7 天</button>
+                <button class="hour-option" type="button" onclick="selectCustomCount(this)">自定义天数</button>
+              </div>
+              <div class="custom-count" id="customCountGroup">
+                <span class="custom-count-label" id="customCountLabel">自定义服务天数</span>
+                <input class="custom-count-input" id="customCountInput" type="number" min="1" max="365" value="1" inputmode="numeric" oninput="setCustomCount(this.value)" />
+                <span class="custom-count-unit" id="customCountUnit">天</span>
+              </div>
+            </div>
+          </div>
+          <!-- 上门助浴 · 10 次套餐按次预约（可选，默认不预约） -->
+          <div class="bath-sessions" id="bathSessionsPanel">
+            <span class="field-label">按次预约（可选） <span class="bath-sessions-count" id="bathSessionsCount">已预约 0/10 次</span></span>
+            <div class="bath-sessions-tip">可提前预约其中几次的服务时间与地点；未预约的次数下单后可在「我的-我的卡包」随时预约</div>
+            <div id="bathSessionsList"></div>
+            <button class="bath-session-addbtn" id="bathSessionAddBtn" type="button" onclick="addBathSession()">＋ 添加预约</button>
+          </div>
+        </div>
+
+        <!-- 科室与床位（住院陪护专属，默认隐藏） -->
+        <div class="module" id="deptModule" style="display:none">
+          <div class="module-title">
+            <div class="module-num">5</div>
+            科室与床位
+          </div>
+          <div class="contact-grid">
+            <div>
+              <label class="field-label" for="careDeptInput">所在科室</label>
+              <input class="field-input" id="careDeptInput" type="text" maxlength="20" placeholder="如：心内科" />
+            </div>
+            <div>
+              <label class="field-label" for="careBedInput">床位号</label>
+              <input class="field-input" id="careBedInput" type="text" maxlength="20" placeholder="如：12床" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 检查项目（贵宾/优享陪诊专属，默认隐藏） -->
+        <div class="module" id="examModule" style="display:none">
+          <div class="module-title">
+            <div class="module-num">2</div>
+            检查项目
+          </div>
+          <div class="need-options" id="examPicker">
+            <button class="need-option" type="button" data-value="门诊全程陪诊" onclick="selectExamItem(this,'门诊全程陪诊')">门诊全程陪诊</button>
+            <button class="need-option" type="button" data-value="抽血·化验" onclick="selectExamItem(this,'抽血·化验')">抽血·化验</button>
+            <button class="need-option" type="button" data-value="CT·核磁共振" onclick="selectExamItem(this,'CT·核磁共振')">CT·核磁共振</button>
+            <button class="need-option" type="button" data-value="B超·心电图" onclick="selectExamItem(this,'B超·心电图')">B超·心电图</button>
+            <button class="need-option" type="button" data-value="胃肠镜检查" onclick="selectExamItem(this,'胃肠镜检查')">胃肠镜检查</button>
+            <button class="need-option" type="button" data-value="其他检查" onclick="selectExamItem(this,'其他检查')">其他检查</button>
+          </div>
+          <div id="examOtherRow" style="display:none;margin-top:10px">
+            <input class="field-input" id="examOtherInput" type="text" maxlength="50" placeholder="请填写具体检查项目，如：糖耐量检测、过敏原检测" />
+          </div>
+        </div>
+
+        <!-- 报告名称（代取报告专属，默认隐藏） -->
+        <div class="module" id="reportNameModule" style="display:none">
+          <div class="module-title">
+            <div class="module-num">2</div>
+            报告名称
+          </div>
+          <input class="field-input" id="reportNameInput" type="text" maxlength="50" placeholder="请填写需代取的报告名称，如：出院小结、检验报告单" />
+        </div>
+
+        <!-- ⑤ 选择服务地址 -->
+        <div class="module" id="addressModule">
+          <div class="module-title">
+            <div class="module-num">5</div>
+            <span id="locationTitle">选择服务地址</span>
+          </div>
+          <button class="selector-trigger" type="button" onclick="openAddressDrawer()">
+            <span class="selector-marker" id="fromMarker">地</span>
+            <span class="selector-copy"><span class="selector-value" id="selectedAddressValue">请选择服务地址</span><span class="selector-meta" id="selectedAddressMeta">医院或家</span></span>
+            <span class="selector-arrow">›</span>
+          </button>
+          <button class="selector-trigger" type="button" id="toAddressTrigger" style="display:none;margin-top:10px" onclick="openAddressDrawer('to')">
+            <span class="selector-marker" id="toMarker">送</span>
+            <span class="selector-copy"><span class="selector-value" id="selectedToAddressValue">请选择送达地址</span><span class="selector-meta" id="selectedToAddressMeta">如：患者家</span></span>
+            <span class="selector-arrow">›</span>
+          </button>
+        </div>
+
+        <!-- 服务科室（仅代办住院/出院手续显示） -->
+        <div class="module" id="serviceDeptModule" style="display:none">
+          <div class="module-title">
+            <div class="module-num"></div>
+            <span>服务科室</span>
+          </div>
+          <input class="field-input" id="serviceDeptInput" type="text" maxlength="30" placeholder="请填写科室，如：骨科 / 心内科" />
         </div>
 
         <!-- Note -->
@@ -1067,6 +1207,7 @@
       <div class="nav-bar">
         <!-- 详情态底部 -->
         <div class="detail-only">
+          <button class="btn-ghost" id="cardBookBtn" style="display:none;flex:1" onclick="openCardPicker()">预约 · 使用次卡</button>
           <button class="btn-primary" style="flex:1" onclick="enterBuyMode()">立即购买</button>
         </div>
         <!-- 下单态底部 -->
@@ -1084,7 +1225,7 @@
           <div class="price-save" id="priceSave" style="display:none"></div>
           <div class="btn-row">
             <button class="btn-ghost" onclick="exitBuyMode()">返回</button>
-            <button class="btn-primary" onclick="nextStep()">立即支付</button>
+            <button class="btn-primary" id="paySubmitBtn" onclick="nextStep()">立即支付</button>
           </div>
         </div>
       </div>
@@ -1097,6 +1238,31 @@
       <div class="sheet-head"><div class="sheet-title" id="drawerAddressTitle">选择服务地址</div><button class="sheet-close" type="button" onclick="closeDrawer('addressDrawer')" aria-label="关闭">×</button></div>
       <div class="drawer-list" id="drawerAddressList"></div>
       <button class="address-add" type="button" onclick="goAddAddress()">＋ 新增服务地址</button>
+    </section>
+  </div>
+
+  <div class="selection-drawer" id="cardPickerDrawer" onclick="closeDrawerOnBackdrop(event, 'cardPickerDrawer')">
+    <section class="selection-sheet" aria-label="选择兑换卡">
+      <div class="sheet-grip"></div>
+      <div class="sheet-head"><div class="sheet-title">选择兑换卡</div><button class="sheet-close" type="button" onclick="closeDrawer('cardPickerDrawer')" aria-label="关闭">×</button></div>
+      <div class="drawer-list" id="cardPickerList"></div>
+    </section>
+  </div>
+
+  <div class="selection-drawer" id="tpDrawer" onclick="closeTpOnBackdrop(event)">
+    <section class="tp-sheet" aria-label="选择服务时间">
+      <div class="tp-head">
+        <button class="tp-cancel" type="button" onclick="closeTimePicker()">取消</button>
+        <div class="tp-title">选择服务时间</div>
+        <button class="tp-confirm" type="button" onclick="confirmTimePicker()">确认</button>
+      </div>
+      <div class="tp-body">
+        <div class="tp-cols">
+          <div class="tp-col" id="tpDateCol"><ul id="tpDateList"></ul></div>
+          <div class="tp-col" id="tpSlotCol"><ul id="tpSlotList"></ul></div>
+        </div>
+        <div class="tp-center"></div>
+      </div>
     </section>
   </div>
 
@@ -1170,8 +1336,12 @@
           <span class="pay-key">护理需求</span>
           <span class="pay-val" id="payCareNeeds">—</span>
         </div>
+        <div class="pay-row" id="payPaxRow" style="display:none">
+          <span class="pay-key">乘车人数</span>
+          <span class="pay-val" id="payPaxVal">1 人</span>
+        </div>
         <div class="pay-row" id="payOtherNeedsRow" style="display:none">
-          <span class="pay-key">其他诉求</span>
+          <span class="pay-key" id="payOtherNeedsKey">其他诉求</span>
           <span class="pay-val" id="payOtherNeeds">—</span>
         </div>
         <div class="pay-row">
@@ -1203,6 +1373,7 @@
       <div class="pay-btns" id="payBtnsBath10" style="display:none">
         <button class="pay-btn-ghost" onclick="location.href='home.html'">返回首页</button>
         <button class="pay-btn-primary" onclick="location.href='orders.html'">订单详情</button>
+        <button class="pay-btn-primary" onclick="bookFromCard()">立即预约</button>
         <button class="pay-btn-primary" onclick="location.href='my-cards.html'">去卡包</button>
       </div>
     </div>
@@ -1236,10 +1407,10 @@
 
   /* ── 详情态种子数据（按服务类型） ── */
   const SVC_HERO_IMGS = {
-    hospital: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=caring%20nurse%20beside%20hospital%20bed%20caring%20for%20senior%20patient%2C%20bright%20modern%20ward%2C%20warm%20atmosphere%2C%20photorealistic&image_size=landscape_4_3',
-    home: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=caregiver%20helping%20senior%20woman%20in%20cozy%20home%20living%20room%2C%20warm%20sunlight%2C%20photorealistic&image_size=landscape_4_3',
-    bath: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20home%20bathing%20care%20service%2C%20caregiver%20assisting%20elderly%20with%20portable%20bath%20equipment%2C%20clean%20bright%20bathroom%2C%20photorealistic&image_size=landscape_4_3',
-    visit: 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=professional%20caregiver%20accompanying%20elderly%20patient%20in%20modern%20hospital%20corridor%2C%20warm%20teal%20tones%2C%20photorealistic%2C%20soft%20daylight&image_size=landscape_4_3'
+    hospital: 'assets/svc/care.png',
+    home: 'assets/svc/care.png',
+    bath: 'assets/svc/bath.png',
+    visit: 'assets/svc/visit.png'
   };
   const SERVICE_DETAIL = {
     hospital: {
@@ -1302,19 +1473,36 @@
       }
       if (i < TOTAL) document.getElementById('sc' + i).classList.toggle('done', i < step);
     }
-    /* 底部栏：下单态始终显示价格 */
-    document.getElementById('priceRow').style.display = '';
+    /* 底部栏：下单态显示价格（兑换卡核销时保持隐藏，本次 ¥0） */
+    document.getElementById('priceRow').style.display = redeemCard ? 'none' : '';
   }
 
   function nextStep() {
-    if (dualAddr) {
-      if (!selectedFromAddressId) { alert('请先选择或新增' + dualAddr.from.label); return; }
-      if (!selectedToAddressId) { alert('请先选择或新增' + dualAddr.to.label); return; }
-    } else if (!selectedAddressId) { alert('请先选择或新增服务地址'); return; }
     if (!redeemCard && !selectedPatientId) { alert('请先选择或新增' + patientDisplayName()); return; }
     if (!redeemCard && !validatePatientInfo()) return;
-    if (!document.getElementById('serviceDate').value) { alert('请选择服务日期'); document.getElementById('serviceDate').focus(); return; }
-    if (!validateCareNeeds()) return;
+    if (!redeemCard && !validateContactInfo()) return;
+    if (!isEscortLayout() && !validateCareNeeds()) return;
+    if (serviceKey === 'home' && !document.getElementById('otherNeeds').value.trim()) { alert('请填写其他诉求（如没有请填"无"）'); document.getElementById('otherNeeds').focus(); return; }
+    if (isResultServiceLayout() && !document.getElementById('otherNeeds').value.trim()) { alert('请填写备注'); document.getElementById('otherNeeds').focus(); return; }
+    if (isExamBookingLayout() && !selectedExamItem) { alert('请选择检查项目'); document.getElementById('examModule').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    if (isReportLayout() && !document.getElementById('reportNameInput').value.trim()) { alert('请填写报告名称'); document.getElementById('reportNameInput').focus(); return; }
+    if (isHospitalLayout() && (!document.getElementById('careDeptInput').value.trim() || !document.getElementById('careBedInput').value.trim())) { alert('请填写科室与床位号'); document.getElementById('careDeptInput').focus(); return; }
+    const isBath10Now = !redeemCard && serviceKey === 'bath' && selectedCount === 10;
+    const hasBookedSessions = isBath10Now && bathSessions.filter(function (s) { return s.date; }).length > 0;
+    if (!isBath10Now) {
+      var tpNoDate = !document.getElementById('serviceDate').value;
+      var tpNoSlot = tpNeedsSlot() && !document.getElementById('serviceTimeSlot').value;
+      if (tpNoDate || tpNoSlot) { alert(serviceKey === 'bath' ? '请选择服务时间（日期和时间）' : '请选择服务日期'); openTimeSheet(); return; }
+    }
+    if (dualAddr) {
+      if (isReportLayout()) {
+        /* 代取报告：服务医院选填，邮寄地址必填 */
+        if (!selectedToAddressId) { alert('请先选择或新增邮寄地址'); return; }
+      } else {
+        if (!selectedFromAddressId) { alert('请先选择或新增' + dualAddr.from.label); return; }
+        if (!selectedToAddressId) { alert('请先选择或新增' + dualAddr.to.label); return; }
+      }
+    } else if (!selectedAddressId && !hasBookedSessions) { alert(isVipExamLayout() || isHospitalLayout() ? '请选择就诊医院' : '请先选择或新增服务地址'); return; }
     submitOrder();
   }
   function prevStep() {
@@ -1344,6 +1532,16 @@
     document.getElementById('patientAge').value = patient ? patient.age + ' 岁' : '';
     document.getElementById('patientGender').value = patient ? patient.gender : '';
     input.classList.toggle('invalid', normalized.length === 18 && !patient);
+  }
+
+  /* ── 联系人信息校验（姓名 + 11位手机号），成功后本地缓存便于下次回填 ── */
+  function validateContactInfo() {
+    const name = document.getElementById('contactName').value.trim();
+    const phone = document.getElementById('contactPhone').value.trim();
+    if (!isEscortLayout() && !name) { alert('请填写联系人姓名'); document.getElementById('contactName').focus(); return false; }
+    if (!/^1[3-9]\d{9}$/.test(phone)) { alert('请填写正确的11位联系人手机号'); document.getElementById('contactPhone').focus(); return false; }
+    try { localStorage.setItem('ankebang_contact_info', JSON.stringify({ name: name, phone: phone })); } catch (e) {}
+    return true;
   }
 
   function validatePatientInfo() {
@@ -1417,7 +1615,7 @@
     discharge:      { name:'代办出院手续', price:300 },
     'ring-pickup':  { name:'三环内接/送患者', price:150, dualAddress:{ from:{ label:'上车地址', type:'any', marker:'接' }, to:{ label:'送达地址', type:'any', marker:'送' } } },
     airport:        { name:'机场接/送患者', price:380, dualAddress:{ from:{ label:'接机地址', type:'any', marker:'接' }, to:{ label:'送达地址', type:'any', marker:'送' } } },
-    report:         { name:'代取报告', price:89, dualAddress:{ from:{ label:'取报告地址', type:'hospital', marker:'取' }, to:{ label:'邮寄地址', type:'home', marker:'寄' } } },
+    report:         { name:'代取报告', price:89, dualAddress:{ from:{ label:'服务医院（选填）', type:'hospital', marker:'医' }, to:{ label:'邮寄地址', type:'home', marker:'寄' } } },
     station:        { name:'西安北站接送患者', price:200, dualAddress:{ from:{ label:'接站地址', type:'any', marker:'接' }, to:{ label:'送达地址', type:'any', marker:'送' } } }
   };
   const selectedVisitService = VISIT_SERVICE_CONFIG[visitServiceId] || null;
@@ -1444,8 +1642,8 @@
     Object.keys(VISIT_SERVICE_CONFIG).forEach(k => { if (visitItems[k] && visitItems[k].status === 'on') VISIT_SERVICE_CONFIG[k].name = visitItems[k].name; });
   })();
   const serviceKey = new URLSearchParams(location.search).get('service') || 'hospital';
-  /* 兑换卡模式：?card=CARD-ID（上门助浴10次兑换卡核销） */
-  const redeemCardId = new URLSearchParams(location.search).get('card') || '';
+  /* 兑换卡模式：?card=CARD-ID（上门助浴10次兑换卡核销）；也可从详情页「预约·使用次卡」选择 */
+  let redeemCardId = new URLSearchParams(location.search).get('card') || '';
   let redeemCard = null;
   const service = SERVICE_CONFIG[serviceKey] || SERVICE_CONFIG.hospital;
   if (serviceKey === 'bath') {
@@ -1549,7 +1747,7 @@
     meta.textContent = (parsed ? parsed.gender + ' · ' + parsed.age + '岁' : '身份信息待完善') + (patient.condition ? ' · ' + patient.condition : '');
     if (serviceKey === 'bath' && selectedCount === 10) renderBathSessions();
   }
-  function patientDisplayName() { return ['hospital', 'visit'].includes(serviceKey) ? '就诊人' : '服务对象'; }
+  function patientDisplayName() { return isEscortLayout() ? '接送人' : (['hospital', 'visit'].includes(serviceKey) ? '就诊人' : '服务对象'); }
   function renderPatients() {
     const box = document.getElementById('patientList');
     if (!box) return;
@@ -1678,17 +1876,13 @@
   function updateTimePrice() {
     availablePoints = AKBPoints.get().balance;
     if (redeemCard) {
+      /* 兑换卡核销：本次 ¥0，不显示积分抵扣与应付/实付金额 */
       basePrice = 0; currentPrice = 0; pointsDiscount = 0; pointsUsed = 0;
-      document.getElementById('needsPriceCard').classList.add('ready');
-      document.getElementById('priceRow').style.display = '';
-      document.getElementById('timeSummary').textContent = '兑换卡核销 · 本次 ¥0';
-      document.getElementById('pointsDetail').innerHTML = '兑换卡订单不可使用积分抵扣';
-      var singlePrice = getServicePrice();
-      document.getElementById('priceLabel').textContent = '应付金额';
-      document.getElementById('priceNum').textContent = '¥' + singlePrice;
-      document.getElementById('priceSave').style.display = 'none';
-      var actualPayRow = document.getElementById('actualPayRow');
-      if (actualPayRow) { actualPayRow.style.display = ''; document.getElementById('actualPayNum').textContent = '¥0'; }
+      document.getElementById('priceRow').style.display = 'none';
+      var actualPayRowR = document.getElementById('actualPayRow');
+      if (actualPayRowR) actualPayRowR.style.display = 'none';
+      var pointsCardR = document.querySelector('.buy-only .points-card');
+      if (pointsCardR) pointsCardR.style.display = 'none';
       return;
     }
     const isDaily = service.durationMode === 'daily';
@@ -1741,16 +1935,122 @@
   }
 
   /* ── 上门助浴 · 10 次套餐（购买后生成兑换卡，按次核销） ── */
-  function syncBathSessionsUI() {
-    if (serviceKey !== 'bath') return;
-    const tenPack = selectedCount === 10;
-    document.getElementById('datePickRow').style.display = '';
-    document.getElementById('countLabel').textContent = '2. 选择服务次数';
-    document.getElementById('bathSessionsPanel').classList.remove('show');
-    if (tenPack) {
-      document.getElementById('timeNoteTitle').textContent = '10 次套餐 · 八折优惠';
-      document.getElementById('timeNoteText').textContent = '首次服务按上方日期与地址安排；下单后生成 10 次兑换卡，可在「我的 - 我的卡包」中逐次免费兑换';
+  /* 服务时间统一使用底部抽屉滚轮选择器：日期列 7 天；需精确到时段的服务（助浴单次）额外提供时段列 */
+  const BATH_SLOTS = [['09:00-11:00','上午9点（09:00-11:00）'],['11:00-13:00','上午11点（11:00-13:00）'],['14:00-16:00','下午2点（14:00-16:00）'],['15:00-17:00','下午3点（15:00-17:00）'],['19:00-21:00','晚上7点（19:00-21:00）']];
+  var TP_ROW_H = 44;
+  function tpNeedsSlot() { return serviceKey === 'bath' && selectedCount !== 10; }
+  function tpBuildDates() {
+    var week = ['日','一','二','三','四','五','六'];
+    var arr = [];
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(); d.setDate(d.getDate() + i);
+      var iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      arr.push({ iso: iso, label: (i === 0 ? '今天 ' : i === 1 ? '明天 ' : i === 2 ? '后天 ' : '') + (d.getMonth() + 1) + '月' + d.getDate() + '日 周' + week[d.getDay()] });
+    }
+    return arr;
+  }
+  function tpRenderList(ul, items, selIdx) {
+    ul.innerHTML = items.map(function (t, i) { return '<li class="' + (i === selIdx ? 'on' : '') + '">' + t + '</li>'; }).join('');
+  }
+  function tpCurIdx(col) { return Math.max(0, Math.round(col.scrollTop / TP_ROW_H)); }
+  function tpBindScroll(col, ul) {
+    col.addEventListener('scroll', function () {
+      var idx = tpCurIdx(col);
+      Array.prototype.forEach.call(ul.children, function (li, i) { li.classList.toggle('on', i === idx); });
+    });
+  }
+  window.openTimeSheet = function () {
+    var dates = tpBuildDates();
+    var dateCol = document.getElementById('tpDateCol');
+    var slotCol = document.getElementById('tpSlotCol');
+    var dateList = document.getElementById('tpDateList');
+    var slotList = document.getElementById('tpSlotList');
+    var curDate = document.getElementById('serviceDate').value;
+    var selDate = dates.findIndex(function (x) { return x.iso === curDate; });
+    if (selDate < 0) selDate = 0;
+    tpRenderList(dateList, dates.map(function (x) { return x.label; }), selDate);
+    var needsSlot = tpNeedsSlot();
+    var slotIdx = 0;
+    if (needsSlot) {
+      var curSlot = document.getElementById('serviceTimeSlot').value;
+      slotIdx = BATH_SLOTS.findIndex(function (s) { return s[0] === curSlot; });
+      if (slotIdx < 0) slotIdx = 0;
+      tpRenderList(slotList, BATH_SLOTS.map(function (s) { return s[1].split('（')[0] + '<em>' + s[0] + '</em>'; }), slotIdx);
+      slotCol.style.display = '';
     } else {
+      slotList.innerHTML = '';
+      slotCol.style.display = 'none';
+    }
+    fitOverlayToPhone('tpDrawer');
+    document.getElementById('tpDrawer').classList.add('show');
+    dateCol.scrollTop = selDate * TP_ROW_H;
+    if (needsSlot) slotCol.scrollTop = slotIdx * TP_ROW_H;
+  };
+  window.confirmTimePicker = function () {
+    var dates = tpBuildDates();
+    var di = Math.min(dates.length - 1, tpCurIdx(document.getElementById('tpDateCol')));
+    document.getElementById('serviceDate').value = dates[di].iso;
+    if (tpNeedsSlot()) {
+      var si = Math.min(BATH_SLOTS.length - 1, tpCurIdx(document.getElementById('tpSlotCol')));
+      document.getElementById('serviceTimeSlot').value = BATH_SLOTS[si][0];
+    }
+    updateTpTrigger();
+    updateTimePrice();
+    closeTimePicker();
+  };
+  function closeTimePicker() { document.getElementById('tpDrawer').classList.remove('show'); }
+  function closeTpOnBackdrop(e) { if (e.target === e.currentTarget) closeTimePicker(); }
+  function updateTpTrigger() {
+    var el = document.getElementById('tpTriggerVal');
+    if (!el) return;
+    var iso = document.getElementById('serviceDate').value;
+    if (!iso) { el.textContent = '请选择服务时间'; return; }
+    var hit = tpBuildDates().find(function (x) { return x.iso === iso; });
+    var dTxt = hit ? hit.label : iso;
+    if (tpNeedsSlot()) {
+      var sv = document.getElementById('serviceTimeSlot').value;
+      var slot = BATH_SLOTS.find(function (s) { return s[0] === sv; });
+      el.textContent = dTxt + ' · ' + (slot ? slot[1].split('（')[0] : '请选择时间');
+    } else {
+      el.textContent = dTxt;
+    }
+  }
+  (function () {
+    var dc = document.getElementById('tpDateCol');
+    if (dc) tpBindScroll(dc, document.getElementById('tpDateList'));
+    var sc = document.getElementById('tpSlotCol');
+    if (sc) tpBindScroll(sc, document.getElementById('tpSlotList'));
+  })();
+  window.onBathDateTimeChange = function (el) {
+    if (el.value) {
+      var p = el.value.split('|');
+      document.getElementById('serviceDate').value = p[0];
+      document.getElementById('serviceTimeSlot').value = p[1];
+    }
+    updateTimePrice();
+  };
+  function syncBathSessionsUI() {
+    const tenPack = serviceKey === 'bath' && selectedCount === 10;
+    var dateRow = document.getElementById('datePickRow');
+    var slotRow = document.getElementById('timeSlotRow');
+    var dtRow = document.getElementById('bathDateTimeRow');
+    var tpRow = document.getElementById('tpRow');
+    var panel = document.getElementById('bathSessionsPanel');
+    /* 时间选择统一走底部抽屉触发条；原生日期/时段控件仅作为底层数据字段保留 */
+    if (dateRow) dateRow.style.display = 'none';
+    if (slotRow) slotRow.style.display = 'none';
+    if (dtRow) dtRow.style.display = 'none';
+    if (tpRow) tpRow.style.display = tenPack ? 'none' : '';
+    updateTpTrigger();
+    if (serviceKey !== 'bath') return;
+    document.getElementById('countLabel').textContent = '选择服务次数';
+    if (tenPack) {
+      /* 按次预约面板暂时隐藏：下单后统一在「我的-我的卡包」预约 */
+      panel.classList.remove('show');
+      document.getElementById('timeNoteTitle').textContent = '10 次套餐 · 八折优惠';
+      document.getElementById('timeNoteText').textContent = '下单后生成 10 次兑换卡，在「我的-我的卡包」随时预约';
+    } else {
+      panel.classList.remove('show');
       document.getElementById('timeNoteTitle').textContent = '按服务次数计费';
       document.getElementById('timeNoteText').textContent = '单次服务完成后将自动核销对应次数';
     }
@@ -1841,6 +2141,320 @@
     return true;
   }
 
+  /* ── 接送类服务（三环内接送/机场接送/西安北站接送）专属布局：
+     排序：接送人 → 时间 → 接送/送达地址 → 联系电话；护理需求改为「备注」选填 ── */
+  var ESCORT_LAYOUT_KEYS = ['ring-pickup', 'airport', 'station'];
+  function isEscortLayout() {
+    return serviceKey === 'visit' && ESCORT_LAYOUT_KEYS.indexOf(visitServiceId) !== -1;
+  }
+
+  /* ── 贵宾/优享陪诊专属布局：服务医院 → 检查项目 → 就诊人 → 联系人 → 服务时间 → 备注（选填） ── */
+  var VIP_EXAM_KEYS = ['vip', 'premium'];
+  let selectedExamItem = '';
+  function isVipExamLayout() {
+    return serviceKey === 'visit' && VIP_EXAM_KEYS.indexOf(visitServiceId) !== -1;
+  }
+  function applyVipExamLayout() {
+    if (!isVipExamLayout()) return;
+    var p1 = document.getElementById('p1');
+    var patientModule = document.getElementById('patientInfoModule');
+    var addrModule = document.getElementById('addressModule');
+    var examModule = document.getElementById('examModule');
+    var needsModule = document.querySelector('.single-page-needs');
+    var p3 = document.getElementById('p3');
+    /* 模块重排：服务医院移到 p1 最前 */
+    if (p1 && patientModule && addrModule) {
+      p1.insertBefore(addrModule, patientModule);
+    }
+    /* 服务医院：复用地址选择器，文案改为医院场景 */
+    var locTitle = document.getElementById('locationTitle');
+    if (locTitle) locTitle.textContent = '选择服务医院';
+    var addrValue = document.getElementById('selectedAddressValue');
+    if (addrValue && addrValue.textContent === '请选择服务地址') addrValue.textContent = '请选择就诊医院';
+    var addrMeta = document.getElementById('selectedAddressMeta');
+    if (addrMeta && addrMeta.textContent === '医院或家') addrMeta.textContent = '选择就诊医院';
+    var fromMarker = document.getElementById('fromMarker');
+    if (fromMarker) fromMarker.textContent = '医';
+    /* 备注模块移到服务时间之后 */
+    if (p3 && needsModule) {
+      var noteBar = p3.querySelector('.note-bar');
+      if (noteBar) p3.insertBefore(needsModule, noteBar); else p3.appendChild(needsModule);
+    }
+    /* 护理需求 → 备注（选填） */
+    var needsTitle = document.getElementById('needsTitle');
+    if (needsTitle) needsTitle.textContent = '备注';
+    var otherTa = document.getElementById('otherNeeds');
+    if (otherTa) {
+      var og = otherTa.closest('.need-group');
+      var ol = og && og.querySelector('.need-label');
+      if (ol) ol.innerHTML = '备注 <span style="color:var(--text3);font-weight:600">（选填）</span>';
+      otherTa.placeholder = '请填写备注（选填），如：行动不便、需要轮椅等';
+    }
+    /* 按视觉顺序重编序号（服务医院 → 就诊人 → 联系人 → 时间 → 备注） */
+    var nums = [addrModule, patientModule, document.getElementById('contactModule'), document.getElementById('timeModule'), needsModule];
+    nums.forEach(function (el, i) { var n = el && el.querySelector('.module-num'); if (n) n.textContent = String(i + 1); });
+  }
+  /* ── 代约检查：唯一显示「检查项目」选项模块的服务 ── */
+  function isExamBookingLayout() {
+    return serviceKey === 'visit' && visitServiceId === 'exam-booking';
+  }
+  function applyExamBookingLayout() {
+    if (!isExamBookingLayout()) return;
+    var p1 = document.getElementById('p1');
+    var patientModule = document.getElementById('patientInfoModule');
+    var examModule = document.getElementById('examModule');
+    var contactModule = document.getElementById('contactModule');
+    var timeModule = document.getElementById('timeModule');
+    var addrModule = document.getElementById('addressModule');
+    var needsModule = document.querySelector('.single-page-needs');
+    /* 检查项目模块插入到就诊人之后 */
+    if (p1 && patientModule && examModule) p1.insertBefore(examModule, patientModule.nextSibling);
+    if (examModule) examModule.style.display = '';
+    /* 备注模块移到最后（服务地址之后） */
+    var p3 = document.getElementById('p3');
+    if (p3 && needsModule) p3.appendChild(needsModule);
+    /* 重编序号：就诊人 → 检查项目 → 联系人 → 时间 → 地址 → 备注 */
+    var nums = [patientModule, examModule, contactModule, timeModule, addrModule, needsModule];
+    nums.forEach(function (el, i) { var n = el && el.querySelector('.module-num'); if (n) n.textContent = String(i + 1); });
+  }
+  /* ── 代看检查结果：就诊人 → 上传已有检查单 → 联系人 → 时间 → 地址 → 备注（必填，最后） ── */
+  function isResultServiceLayout() {
+    return serviceKey === 'visit' && visitServiceId === 'result';
+  }
+  var examSlipUploader = null;
+  function applyResultServiceLayout() {
+    if (!isResultServiceLayout()) return;
+    var p1 = document.getElementById('p1');
+    var patientModule = document.getElementById('patientInfoModule');
+    var slipModule = document.getElementById('examSlipModule');
+    var contactModule = document.getElementById('contactModule');
+    var timeModule = document.getElementById('timeModule');
+    var addrModule = document.getElementById('addressModule');
+    var needsModule = document.querySelector('.single-page-needs');
+    var p3 = document.getElementById('p3');
+    /* 上传已有检查单模块插入到就诊人之后 */
+    if (p1 && patientModule && slipModule) p1.insertBefore(slipModule, patientModule.nextSibling);
+    if (slipModule) {
+      slipModule.style.display = '';
+      if (window.AKBImageUpload && !examSlipUploader) examSlipUploader = AKBImageUpload.render(document.getElementById('examSlipUpload'), { max: 3, label: '添加图片' });
+    }
+    /* 备注移到最后（服务地址之后）并标记必填 */
+    if (p3 && needsModule) p3.appendChild(needsModule);
+    var needsTitle = document.getElementById('needsTitle');
+    if (needsTitle) needsTitle.innerHTML = '备注 <span style="color:#D93025;font-weight:800;margin-left:2px">*</span>';
+    var otherTa = document.getElementById('otherNeeds');
+    if (otherTa) otherTa.placeholder = '请描述检查单信息或需要重点关注的事项（必填）';
+    /* 重编序号：就诊人 → 上传检查单 → 联系人 → 时间 → 地址 → 备注 */
+    var nums = [patientModule, slipModule, contactModule, timeModule, addrModule, needsModule];
+    nums.forEach(function (el, i) { var n = el && el.querySelector('.module-num'); if (n) n.textContent = String(i + 1); });
+  }
+  /* ── 代办住院/出院手续：就诊人 → 联系人 → 时间 → 地址 → 服务科室 → 备注（最后） ── */
+  function isAdmDisServiceLayout() {
+    return serviceKey === 'visit' && (visitServiceId === 'admission' || visitServiceId === 'discharge');
+  }
+  function applyAdmDisServiceLayout() {
+    if (!isAdmDisServiceLayout()) return;
+    var patientModule = document.getElementById('patientInfoModule');
+    var contactModule = document.getElementById('contactModule');
+    var timeModule = document.getElementById('timeModule');
+    var addrModule = document.getElementById('addressModule');
+    var deptModule = document.getElementById('serviceDeptModule');
+    var needsModule = document.querySelector('.single-page-needs');
+    var p3 = document.getElementById('p3');
+    /* 备注移到最后（服务科室之后） */
+    if (p3 && needsModule) p3.appendChild(needsModule);
+    /* 服务科室插到服务地址之后 */
+    if (addrModule && deptModule) addrModule.parentNode.insertBefore(deptModule, addrModule.nextSibling);
+    if (deptModule) deptModule.style.display = '';
+    /* 重编序号：就诊人 → 联系人 → 时间 → 地址 → 服务科室 → 备注 */
+    var nums = [patientModule, contactModule, timeModule, addrModule, deptModule, needsModule];
+    nums.forEach(function (el, i) { var n = el && el.querySelector('.module-num'); if (n) n.textContent = String(i + 1); });
+  }
+  window.selectExamItem = function (btn, val) {
+    document.querySelectorAll('#examModule .need-option').forEach(function (b) { b.classList.toggle('sel', b === btn); });
+    selectedExamItem = val;
+    /* 选择「其他检查」时显示输入框，可填写具体项目 */
+    var otherRow = document.getElementById('examOtherRow');
+    if (otherRow) {
+      otherRow.style.display = val === '其他检查' ? '' : 'none';
+      if (val === '其他检查') { var ip = document.getElementById('examOtherInput'); if (ip) setTimeout(function () { ip.focus(); }, 150); }
+    }
+  };
+
+  /* ── 代取报告专属布局：就诊人 → 报告名称 → 时间 → 服务医院（选填）·邮寄地址 → 备注 ── */
+  function isReportLayout() {
+    return serviceKey === 'visit' && visitServiceId === 'report';
+  }
+  function applyReportLayout() {
+    if (!isReportLayout()) return;
+    var p1 = document.getElementById('p1');
+    var p3 = document.getElementById('p3');
+    var patientModule = document.getElementById('patientInfoModule');
+    var reportModule = document.getElementById('reportNameModule');
+    var contactModule = document.getElementById('contactModule');
+    var needsModule = document.querySelector('.single-page-needs');
+    var timeModule = document.getElementById('timeModule');
+    var addressModule = document.getElementById('addressModule');
+    /* 联系人模块保留在就诊人后；报告名称模块紧跟联系人并显示 */
+    if (p1 && patientModule && contactModule && reportModule) {
+      reportModule.style.display = '';
+      p1.insertBefore(reportModule, contactModule.nextSibling);
+    }
+    /* 备注模块移到末尾（note bar 前） */
+    if (p3 && needsModule) {
+      var nb = p3.querySelector('.note-bar');
+      if (nb) p3.insertBefore(needsModule, nb); else p3.appendChild(needsModule);
+    }
+    /* 地址模块标题：服务医院（选填）·邮寄地址 */
+    var locTitle = document.getElementById('locationTitle');
+    if (locTitle) locTitle.textContent = '服务医院（选填）· 邮寄地址';
+    /* 护理需求 → 备注（选填） */
+    var needsTitle = document.getElementById('needsTitle');
+    if (needsTitle) needsTitle.textContent = '备注';
+    var otherTa = document.getElementById('otherNeeds');
+    if (otherTa) {
+      var og = otherTa.closest('.need-group');
+      var ol = og && og.querySelector('.need-label');
+      if (ol) ol.innerHTML = '备注 <span style="color:var(--text3);font-weight:600">（选填）</span>';
+      otherTa.placeholder = '请填写备注（选填），如：需邮寄纸质版、加急等';
+    }
+    /* 重编序号：1就诊人 2联系人 3报告名称 4时间 5地址 6备注 */
+    var nums = [patientModule, contactModule, reportModule, timeModule, addressModule, needsModule];
+    nums.forEach(function (el, i) { var n = el && el.querySelector('.module-num'); if (n) n.textContent = String(i + 1); });
+  }
+  /* ── 按天陪护（住院/居家）专属布局：就诊人 → 联系人 → 护理需求 → 地址 → [科室与床位] → 陪护时间（天数加减） ── */
+  function isDailyCareLayout() {
+    return serviceKey === 'hospital' || serviceKey === 'home';
+  }
+  function isHospitalLayout() {
+    return serviceKey === 'hospital';
+  }
+  function applyDailyCareLayout() {
+    if (!isDailyCareLayout()) return;
+    var isHospital = serviceKey === 'hospital';
+    var p1 = document.getElementById('p1');
+    var needsModule = document.querySelector('.single-page-needs');
+    var addrModule = document.getElementById('addressModule');
+    var deptModule = document.getElementById('deptModule');
+    var timeModule = document.getElementById('timeModule');
+    /* 模块重排：护理需求、地址、[科室床位]、时间依次移入联系人之后 */
+    if (p1) {
+      var anchor = document.getElementById('contactModule');
+      [needsModule, addrModule].forEach(function (m) {
+        if (m && anchor) { p1.insertBefore(m, anchor.nextSibling); anchor = m; }
+      });
+      if (isHospital && deptModule && anchor) { p1.insertBefore(deptModule, anchor.nextSibling); anchor = deptModule; }
+      if (timeModule && anchor) p1.insertBefore(timeModule, anchor.nextSibling);
+    }
+    if (isHospital && deptModule) deptModule.style.display = '';
+    /* 住院/居家陪护：护理需求模块标题 */
+    var needsTitle = document.getElementById('needsTitle');
+    if (needsTitle) needsTitle.textContent = '护理需求';
+    /* 住院陪护：地址文案改为医院场景 */
+    if (isHospital) {
+      var locTitle = document.getElementById('locationTitle');
+      if (locTitle) locTitle.textContent = '选择医院';
+      var addrValue = document.getElementById('selectedAddressValue');
+      if (addrValue && addrValue.textContent === '请选择服务地址') addrValue.textContent = '请选择就诊医院';
+      var addrMeta = document.getElementById('selectedAddressMeta');
+      if (addrMeta && addrMeta.textContent === '医院或家') addrMeta.textContent = '选择就诊医院';
+      var fm = document.getElementById('fromMarker');
+      if (fm) fm.textContent = '医';
+    }
+    /* 天数步进替代次数 chips */
+    var cb = document.getElementById('countBlock');
+    if (cb) cb.style.display = 'none';
+    var dsr = document.getElementById('dayStepperRow');
+    if (dsr) {
+      dsr.style.display = 'flex';
+      document.getElementById('careDaysVal').textContent = parseInt(selectedCount, 10) || 1;
+    }
+    /* 日期标签改为开始日期 */
+    var dateLabel = document.querySelector('#datePickRow .field-label');
+    if (dateLabel) dateLabel.textContent = '开始日期';
+    /* 居家陪护：其他诉求必填，提示「如没有请填无」 */
+    if (!isHospital) {
+      var otherTaHome = document.getElementById('otherNeeds');
+      if (otherTaHome) {
+        var ogH = otherTaHome.closest('.need-group');
+        var olH = ogH && ogH.querySelector('.need-label');
+        if (olH) olH.innerHTML = '其他诉求 <span class="req">*</span>';
+        otherTaHome.placeholder = '请填写其他诉求，如没有请填"无"';
+      }
+    }
+    /* 重编序号 */
+    var nums = isHospital
+      ? [document.getElementById('patientInfoModule'), document.getElementById('contactModule'), needsModule, addrModule, deptModule, timeModule]
+      : [document.getElementById('patientInfoModule'), document.getElementById('contactModule'), needsModule, addrModule, timeModule];
+    nums.forEach(function (el, i) { var n = el && el.querySelector('.module-num'); if (n) n.textContent = String(i + 1); });
+  }
+  /* 陪护天数加减（商城购物步进器）：联动价格与时长摘要 */
+  window.changeCareDays = function (delta) {
+    if (!isDailyCareLayout()) return;
+    selectedCount = Math.max(1, Math.min(60, (parseInt(selectedCount, 10) || 1) + delta));
+    var val = document.getElementById('careDaysVal');
+    if (val) val.textContent = selectedCount;
+    updateTimePrice();
+  };
+
+  /* 接送服务乘车人数加减 */
+  var servicePax = 1;
+  window.changePax = function (delta) {
+    servicePax = Math.max(1, Math.min(9, (servicePax || 1) + delta));
+    var el = document.getElementById('paxVal');
+    if (el) el.textContent = servicePax;
+  };
+  function applyEscortLayout() {
+    if (!isEscortLayout()) return;
+    /* 联系电话紧跟服务对象；护理员由平台安排，隐藏 */
+    var p1 = document.getElementById('p1');
+    var contactModule = document.getElementById('contactModule');
+    var timeModule = document.getElementById('timeModule');
+    var addressModule = document.getElementById('addressModule');
+    var patientModule = document.getElementById('patientInfoModule');
+    if (p1 && contactModule && patientModule) p1.insertBefore(contactModule, patientModule.nextSibling);
+    /* 乘车人数：显示并插入联系电话之后 */
+    var paxModule = document.getElementById('paxModule');
+    if (paxModule) {
+      paxModule.style.display = '';
+      if (contactModule) p1.insertBefore(paxModule, contactModule.nextSibling);
+    }
+    var p3 = document.getElementById('p3');
+    var needsModuleEsc = document.querySelector('.single-page-needs');
+    /* 备注模块保持在末尾（note bar 前） */
+    if (p3 && needsModuleEsc) {
+      var nbEsc = p3.querySelector('.note-bar');
+      if (nbEsc) p3.insertBefore(needsModuleEsc, nbEsc); else p3.appendChild(needsModuleEsc);
+    }
+    var p2 = document.getElementById('p2');
+    if (p2) p2.style.display = 'none';
+    /* 联系电话：仅保留电话字段（组件切换单列，隐藏姓名项） */
+    var nameWrap = document.getElementById('contactName').closest('div');
+    if (nameWrap) nameWrap.style.display = 'none';
+    var contactFieldsEl = document.getElementById('contactFields');
+    if (contactFieldsEl) contactFieldsEl.classList.add('single');
+    var moduleTitle = document.querySelector('#contactModule .module-title span');
+    if (moduleTitle) moduleTitle.textContent = '联系电话';
+    var phoneLabel = document.getElementById('contactPhoneLabel');
+    if (phoneLabel) phoneLabel.textContent = '联系电话';
+    /* 护理需求 → 备注（选填） */
+    var needsTitle = document.getElementById('needsTitle');
+    if (needsTitle) needsTitle.textContent = '备注';
+    var otherTa = document.getElementById('otherNeeds');
+    if (otherTa) {
+      var otherGroup = otherTa.closest('.need-group');
+      var otherLbl = otherGroup && otherGroup.querySelector('.need-label');
+      if (otherLbl) otherLbl.innerHTML = '备注 <span style="color:var(--text3);font-weight:600">（选填）</span>';
+      otherTa.placeholder = '请填写备注（选填），如：需轮椅接送、担架抬运等';
+    }
+    /* 按视觉顺序重编模块序号：1接送人 2联系电话 3乘车人数 4时间 5地址 6备注 */
+    var nums = [document.querySelector('#patientInfoModule .module-num'), document.querySelector('#contactModule .module-num'), document.querySelector('#paxModule .module-num'), document.querySelector('#timeModule .module-num'), document.querySelector('#addressModule .module-num'), document.querySelector('.single-page-needs .module-num')];
+    nums.forEach(function (el, i) { if (el) el.textContent = String(i + 1); });
+    /* 支付摘要：「其他诉求」行改为「备注」 */
+    var payOtherKey = document.getElementById('payOtherNeedsKey');
+    if (payOtherKey) payOtherKey.textContent = '备注';
+  }
+
   function initService() {
     document.getElementById('servicePageTitle').textContent = service.name;
     document.getElementById('payService').textContent = service.name;
@@ -1905,8 +2519,11 @@
       '</div>';
     }).join('');
 
+    /* 联系人信息组件：统一姓名+电话字段界面 */
+    if (window.AKBContact) AKBContact.render(document.getElementById('contactFields'), { nameLabel: '联系人姓名', phoneLabel: '联系人电话' });
+    /* 接送类服务：就诊人称为「接送人」 */
     const isMedicalService = serviceKey === 'hospital' || serviceKey === 'visit';
-    const patientName = isMedicalService ? '就诊人' : '服务对象';
+    const patientName = isEscortLayout() ? '接送人' : (isMedicalService ? '就诊人' : '服务对象');
     document.getElementById('patientTitle').textContent = '选择' + patientName;
     document.getElementById('drawerPatientTitle').textContent = '选择' + patientName;
     document.querySelector('#patientDrawer .address-add').textContent = '＋ 新增' + patientName;
@@ -1958,9 +2575,10 @@
     const date = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
     const dateInput = document.getElementById('serviceDate');
     dateInput.value = date; dateInput.min = date;
+    document.getElementById('serviceTimeSlot').value = '';
     const isDaily = service.durationMode === 'daily';
     document.getElementById('serviceModeNote').textContent = isDaily ? '服务方式：24 小时/天' : '服务方式：按次服务';
-    document.getElementById('countLabel').textContent = isDaily ? '2. 选择服务天数' : '选择服务次数';
+    document.getElementById('countLabel').textContent = isDaily ? '选择服务天数' : '选择服务次数';
     /* 助浴仅提供 1 次 / 10 次两个选项；其他 session 服务保留 1/3/5/10 + 自定义 */
     const isBath = serviceKey === 'bath';
     let countGridHtml;
@@ -1980,13 +2598,40 @@
     document.getElementById('timeNoteText').textContent = isDaily ? '服务开始后如需调整，将按实际服务时长计算费用' : '单次服务完成后将自动核销对应次数';
     /* 陪诊服务（11 个产品）不选择服务次数，隐藏次数选择区 */
     document.getElementById('countBlock').style.display = serviceKey === 'visit' ? 'none' : '';
+    /* 乘车人数模块：默认隐藏并复位，仅接送服务在布局函数中显示 */
+    servicePax = 1;
+    var pmReset = document.getElementById('paxModule');
+    if (pmReset) pmReset.style.display = 'none';
+    var pvReset = document.getElementById('paxVal');
+    if (pvReset) pvReset.textContent = '1';
+    /* 接送类服务（三环内接送/机场接送/西安北站接送）专属布局与排序 */
+    applyEscortLayout();
+    /* 贵宾/优享陪诊专属布局：服务医院 → 就诊人 → 联系人 → 时间 → 备注 */
+    applyVipExamLayout();
+    applyExamBookingLayout();
+    /* 代看检查结果专属布局：就诊人 → 上传已有检查单 → 联系人 → 时间 → 地址 → 备注（必填） */
+    applyResultServiceLayout();
+    /* 代办住院/出院手续专属布局：就诊人 → 联系人 → 时间 → 地址 → 服务科室 → 备注 */
+    applyAdmDisServiceLayout();
+    /* 代取报告专属布局：就诊人 → 联系人 → 报告名称 → 时间 → 服务医院（选）·邮寄地址 → 备注 */
+    applyReportLayout();
+    /* 按天陪护（住院/居家）专属布局：就诊人 → 联系人 → 护理需求 → 地址 → [科室床位] → 时间（天数加减） */
+    applyDailyCareLayout();
     syncBathSessionsUI();
     document.getElementById('serviceDate').addEventListener('change', updateTimePrice);
     selectedDailyType = 'full';
     selectedCount = 1;
     isCustomCount = false;
     document.getElementById('customCountInput').value = 1;
-    document.getElementById('usePoints').checked = false;
+    document.getElementById('usePoints').checked = true;
+    /* 检查项目：仅代约检查显示 examModule 选项模块，其余服务（含旧输入框形态）一律隐藏 */
+    var examRow = document.getElementById('examInputRow');
+    if (examRow) examRow.style.display = 'none';
+    /* 按天陪护：重置后同步天数步进器显示 */
+    if (isDailyCareLayout()) {
+      var cv = document.getElementById('careDaysVal');
+      if (cv) cv.textContent = '1';
+    }
     updateTimePrice();
   }
 
@@ -2024,13 +2669,18 @@
     const otherNeeds = document.getElementById('otherNeeds').value.trim();
     document.getElementById('payOtherNeedsRow').style.display = otherNeeds ? '' : 'none';
     document.getElementById('payOtherNeeds').textContent = otherNeeds || '—';
+    document.getElementById('payPaxRow').style.display = isEscortLayout() ? '' : 'none';
+    if (isEscortLayout()) document.getElementById('payPaxVal').textContent = (parseInt(document.getElementById('paxVal').textContent, 10) || 1) + ' 人';
     const date = document.getElementById('serviceDate').value;
+    var slotSelSo = document.getElementById('serviceTimeSlot');
+    var slotTxtSo = (slotSelSo && slotSelSo.value) ? slotSelSo.options[slotSelSo.selectedIndex].text.split('（')[0] : '';
     if (redeemCard) {
-      document.getElementById('payDur').textContent = date + '（兑换卡核销 · 本次 ¥0 · 核销后剩余 ' + (redeemCard.total - redeemCard.used - 1) + ' 次）';
+      document.getElementById('payDur').textContent = date + (slotTxtSo ? ' ' + slotTxtSo : '') + '（兑换卡核销 · 本次 ¥0 · 核销后剩余 ' + (redeemCard.total - redeemCard.used - 1) + ' 次）';
     } else if (serviceKey === 'bath' && selectedCount === 10) {
-      document.getElementById('payDur').textContent = '共 10 次（八折）· 首次 ' + date;
+      var bookedList = bathSessions.filter(function (s) { return s.date; });
+      document.getElementById('payDur').textContent = bookedList.length ? '共 10 次（八折）· 已预约 ' + bookedList.length + ' 次 · 首次 ' + bookedList[0].date : '共 10 次（八折）· 下单后按次预约';
     } else {
-      document.getElementById('payDur').textContent = date + '（' + durationLabel() + '）';
+      document.getElementById('payDur').textContent = date + (slotTxtSo ? ' ' + slotTxtSo : '') + '（' + durationLabel() + '）';
     }
     if (pointsUsed) {
       const actualPoints = AKBPoints.spend(pointsUsed, service.name + '订单');
@@ -2054,7 +2704,7 @@
     document.getElementById('payBtnsNormal').style.display = isBath10Order ? 'none' : '';
     document.getElementById('payBtnsBath10').style.display = isBath10Order ? '' : 'none';
     if (isBath10Order) {
-      document.querySelector('.pay-sub').innerHTML = '订单已提交，<strong>首次服务已付款</strong><br/>剩余9次请在「我的-我的卡包」中预约兑换';
+      document.querySelector('.pay-sub').innerHTML = '订单已提交，' + (bathSessions.filter(function (s) { return s.date; }).length ? '已预约 ' + bathSessions.filter(function (s) { return s.date; }).length + ' 次，' : '') + '剩余' + (10 - bathSessions.filter(function (s) { return s.date; }).length) + '次请在「我的-我的卡包」中预约兑换';
     } else {
       document.querySelector('.pay-sub').innerHTML = '订单已提交，护理员将在<strong>30分钟内</strong>与您确认';
     }
@@ -2076,6 +2726,10 @@
     var patient = redeemCard ? { gender: redeemCard.patient.gender || '', age: redeemCard.patient.age || '' } : parseChineseIdCard(document.getElementById('patientIdNo').value);
     var count = selectedCount;
     var isBath10 = !redeemCard && serviceKey === 'bath' && selectedCount === 10;
+    var slotSel = document.getElementById('serviceTimeSlot');
+    var slotLabel = (slotSel && slotSel.value) ? (slotSel.options[slotSel.selectedIndex].text.split('（')[0]) : '';
+    var contactInput = document.getElementById('contactName');
+    var phoneInput = document.getElementById('contactPhone');
     var order = {
       id: orderNo,
       status: 'pending-service',
@@ -2088,7 +2742,7 @@
       person: patientName + '｜' + (patient.age || '?') + '岁｜' + (patient.gender || '?'),
       address: addr.detail || '—',
       addressKind: addr.addressType === 'hospital' ? '医院' : '家',
-      time: date + '（' + durationLabel() + '）',
+      time: date + (slotLabel ? ' ' + slotLabel : '') + '（' + durationLabel() + '）',
       nurse: selectedNurses[0] ? selectedNurses[0].name : '待分配',
       nursePhone: selectedNurses[0] ? (selectedNurses[0].phone || '') : '',
       role: '护理师｜' + service.name,
@@ -2103,67 +2757,85 @@
       serviceDate: date,
       addressId: addr.id || '',
       addressDetail: addr.detail || '',
-      contact: addr.contact || '',
-      phone: addr.phone || ''
+      contact: (contactInput && contactInput.value.trim()) || addr.contact || '',
+      phone: (phoneInput && phoneInput.value.trim()) || addr.phone || '',
+      examItem: isExamBookingLayout() ? (selectedExamItem === '其他检查' ? ((((document.getElementById('examOtherInput') || {}).value) || '').trim() || '其他检查') : selectedExamItem) : '',
+      examPhotos: (isResultServiceLayout() && examSlipUploader) ? examSlipUploader.get() : [],
+      serviceDept: isAdmDisServiceLayout() ? document.getElementById('serviceDeptInput').value.trim() : '',
+      reportName: isReportLayout() ? document.getElementById('reportNameInput').value.trim() : '',
+      ward: isHospitalLayout() ? document.getElementById('careDeptInput').value.trim() + ' ' + document.getElementById('careBedInput').value.trim() : '',
+      address2: dualAddr ? ((findAddress(selectedToAddressId) || {}).detail || '') : '',
+      note: document.getElementById('otherNeeds').value.trim(),
+      pax: isEscortLayout() ? (parseInt(document.getElementById('paxVal').textContent, 10) || 1) : 0
     };
     /* 上门助浴：支持双护理员，第二位写入 nurse2/nursePhone2 */
     if (selectedNurses[1]) {
       order.nurse2 = selectedNurses[1].name;
       order.nursePhone2 = selectedNurses[1].phone || '';
     }
-    /* 助浴 10 次套餐：生成 ①10次卡主订单（待服务）②首次 1 次预约订单 ③9 次兑换卡 */
+    /* 助浴 10 次套餐：不默认预约；仅用户主动添加的预约生成预约记录，剩余次数入兑换卡 */
     var firstOrder = null;
     if (isBath10) {
-      order.time = '共 10 次（八折）· 首次 ' + date;
-      /* 主订单按次预约记录（含首次） */
       var bookedSessions = bathSessions.filter(function (s) { return s.date; }).map(function (s, i) {
         var sAddr = findAddress(s.addressId) || addr;
-        return { seq: i + 1, date: s.date, time: s.time || '09:00-11:00', addressDetail: sAddr.detail || addr.detail || '', contact: sAddr.contact || addr.contact || patientName, phone: sAddr.phone || addr.phone || '' };
+        return { seq: i + 1, date: s.date, time: s.time || '09:00-11:00', addressDetail: sAddr.detail || addr.detail || '', contact: order.contact || addr.contact || patientName, phone: order.phone || addr.phone || '' };
       });
-      if (!bookedSessions.length) bookedSessions = [{ seq: 1, date: date, time: '09:00-11:00', addressDetail: addr.detail || '', contact: addr.contact || patientName, phone: addr.phone || '' }];
+      if (bookedSessions.length) {
+        order.time = '共 10 次（八折）· 已预约 ' + bookedSessions.length + ' 次 · 首次 ' + bookedSessions[0].date;
+        order.sessionSummary = '已预约 ' + bookedSessions.length + '/10 次 · 下次 ' + bookedSessions[0].date;
+      } else {
+        order.time = '共 10 次（八折）· 下单后按次预约';
+        order.sessionSummary = '未预约 · 可在订单详情或「我的-我的卡包」预约每次服务';
+      }
       order.sessions = bookedSessions;
-      order.sessionSummary = '已预约 ' + bookedSessions.length + '/10 次 · 下次 ' + bookedSessions[0].date;
-      /* ③ 9 次兑换卡（首次已随主订单占用 1 次） */
-      try {
-        var cards = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]');
-        if (!Array.isArray(cards)) cards = [];
-        cards.unshift({ id: 'CARD-' + orderNo, orderNo: orderNo, total: 9, used: 0, patient: { name: patientName, gender: patient.gender || '', age: patient.age || '' }, createdAt: Date.now() });
-        localStorage.setItem('ankebang_bath_cards', JSON.stringify(cards));
-      } catch (e) {}
-      /* ② 首次 1 次预约订单（随套餐已支付，实付 0） */
-      firstOrder = {
-        id: orderNo + '-01',
-        status: 'pending-service',
-        state: '待服务',
-        type: service.name,
-        project: service.name + '服务 · 套餐首次',
-        unit: String(getServicePrice()),
-        unitLabel: '/次',
-        quantity: 'x1次',
-        person: order.person,
-        address: order.address,
-        addressKind: order.addressKind,
-        time: bookedSessions[0].date + ' ' + bookedSessions[0].time,
-        nurse: order.nurse,
-        nursePhone: order.nursePhone,
-        role: order.role,
-        cert: order.cert,
-        years: order.years,
-        avatar: order.avatar,
-        basePrice: String(getServicePrice()),
-        amount: '0',
-        actions: ['cancel', 'call'],
-        careNeeds: order.careNeeds,
-        createdAt: Date.now(),
-        serviceDate: bookedSessions[0].date,
-        addressId: order.addressId,
-        addressDetail: order.addressDetail,
-        contact: order.contact,
-        phone: order.phone,
-        packOrderNo: orderNo,
-        note: '10次套餐首次服务 · 已随套餐支付'
-      };
-      if (order.nurse2) { firstOrder.nurse2 = order.nurse2; firstOrder.nursePhone2 = order.nursePhone2; }
+      order.serviceDate = bookedSessions.length ? bookedSessions[0].date : '';
+      /* 兑换卡：总次数 = 10 - 已随主订单预约的次数 */
+      var cardTotal = 10 - bookedSessions.length;
+      if (cardTotal > 0) {
+        try {
+          var cards = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]');
+          if (!Array.isArray(cards)) cards = [];
+          cards.unshift({ id: 'CARD-' + orderNo, orderNo: orderNo, total: cardTotal, used: 0, patient: { name: patientName, gender: patient.gender || '', age: patient.age || '' }, contact: order.contact || '', phone: order.phone || '', createdAt: Date.now() });
+          localStorage.setItem('ankebang_bath_cards', JSON.stringify(cards));
+          window.__lastBathCard = 'CARD-' + orderNo;
+        } catch (e) {}
+      }
+      /* 首次预约订单：仅当用户主动预约了首次时生成（随套餐已支付，实付 0） */
+      if (bookedSessions.length) {
+        firstOrder = {
+          id: orderNo + '-01',
+          status: 'pending-service',
+          state: '待服务',
+          type: service.name,
+          project: service.name + '服务 · 套餐首次',
+          unit: String(getServicePrice()),
+          unitLabel: '/次',
+          quantity: 'x1次',
+          person: order.person,
+          address: bookedSessions[0].addressDetail || order.address,
+          addressKind: order.addressKind,
+          time: bookedSessions[0].date + ' ' + bookedSessions[0].time,
+          nurse: order.nurse,
+          nursePhone: order.nursePhone,
+          role: order.role,
+          cert: order.cert,
+          years: order.years,
+          avatar: order.avatar,
+          basePrice: String(getServicePrice()),
+          amount: '0',
+          actions: ['cancel', 'call'],
+          careNeeds: order.careNeeds,
+          createdAt: Date.now(),
+          serviceDate: bookedSessions[0].date,
+          addressId: order.addressId,
+          addressDetail: order.addressDetail,
+          contact: order.contact,
+          phone: order.phone,
+          packOrderNo: orderNo,
+          note: '10次套餐首次服务 · 已随套餐支付'
+        };
+        if (order.nurse2) { firstOrder.nurse2 = order.nurse2; firstOrder.nursePhone2 = order.nursePhone2; }
+      }
     }
     /* 兑换卡核销：0 元订单 + 扣减一次 */
     if (redeemCard) {
@@ -2195,6 +2867,11 @@
   });
 
   /* ── 兑换卡模式：?card=CARD-ID ── */
+  /* 十次卡支付成功页「立即预约」：用刚生成的兑换卡进入预约表单 */
+  window.bookFromCard = function () {
+    var cid = window.__lastBathCard;
+    location.href = cid ? ('hospital-care.html?service=bath&card=' + encodeURIComponent(cid)) : 'my-cards.html';
+  };
   function applyRedeemMode() {
     if (!redeemCardId) return;
     var cards = [];
@@ -2209,22 +2886,95 @@
     /* 兑换卡核销：护理需求沿用首购信息，隐藏需求问卷与价格/积分抵扣卡（付费固定为 0） */
     var needsModule = document.querySelector('.single-page-needs');
     if (needsModule) needsModule.style.display = 'none';
+    var contactModule = document.getElementById('contactModule');
+    if (contactModule) contactModule.style.display = 'none';
     var pointsCk = document.getElementById('usePoints');
     if (pointsCk) { pointsCk.checked = false; pointsCk.disabled = true; }
     var pBtn = document.querySelector('#patientInfoModule .selector-trigger');
     if (pBtn) pBtn.onclick = function () { alert('兑换卡仅限首次购买时的服务对象使用'); };
+    /* 兑换锁定：服务对象不可选，去掉右侧箭头 */
+    var pArrow = document.querySelector('#patientInfoModule .selector-arrow');
+    if (pArrow) pArrow.style.display = 'none';
     var banner = document.createElement('div');
     banner.style.cssText = 'padding:10px 14px;border-radius:12px;background:linear-gradient(135deg,#1CD8B7,#0FA98C);color:#fff;font-size:12px;font-weight:700;line-height:1.5;box-shadow:0 4px 14px rgba(0,0,0,0.1);text-align:center';
     banner.textContent = '正在使用「上门助浴 10 次兑换卡」· 本次 ¥0 · 剩余 ' + (hit.total - hit.used) + ' 次 · 适用对象：' + hit.patient.name + '（锁定）';
     var bannerBox = document.getElementById('redeemBannerBox');
-    if (bannerBox) { bannerBox.appendChild(banner); bannerBox.style.display = ''; }
+    if (bannerBox) { bannerBox.innerHTML = ''; bannerBox.appendChild(banner); bannerBox.style.display = ''; }
+    /* 兑换模式：隐藏应付/实付金额与优惠行，按钮改为「立即预约」 */
+    var priceRow = document.getElementById('priceRow');
+    if (priceRow) priceRow.style.display = 'none';
     var actualPayRow = document.getElementById('actualPayRow');
-    if (actualPayRow) actualPayRow.style.display = '';
+    if (actualPayRow) actualPayRow.style.display = 'none';
+    /* 兑换模式：积分抵扣块（已移至底部栏）一并隐藏 */
+    var pointsCardRd = document.querySelector('.buy-only .points-card');
+    if (pointsCardRd) pointsCardRd.style.display = 'none';
+    var priceSave = document.getElementById('priceSave');
+    if (priceSave) priceSave.style.display = 'none';
+    var payBtn = document.getElementById('paySubmitBtn');
+    if (payBtn) payBtn.textContent = '立即预约';
     updatePatientSummary();
   }
 
+  /* ── 详情态「预约 · 使用次卡」：可用兑换卡选择 ── */
+  function getUsableCards() {
+    var cards = [];
+    try { cards = JSON.parse(localStorage.getItem('ankebang_bath_cards') || '[]'); } catch (e) {}
+    return (Array.isArray(cards) ? cards : []).filter(function (c) { return c.id && String(c.id).indexOf('CARD-') === 0 && (c.used || 0) < (c.total || 10); });
+  }
+  window.openCardPicker = function () {
+    var cards = getUsableCards();
+    if (!cards.length) { alert('暂无可用兑换卡，可在「我的-我的卡包」查看'); return; }
+    var box = document.getElementById('cardPickerList');
+    box.innerHTML = cards.map(function (c) {
+      var left = (c.total || 10) - (c.used || 0);
+      var p = c.patient || {};
+      return '<button type="button" onclick="pickCard(\'' + escapeHtml(c.id) + '\')" style="width:100%;text-align:left;border:1px solid #CFF5ED;background:#F7FEFC;border-radius:14px;padding:13px 14px;margin-bottom:10px;cursor:pointer;font:inherit">'
+        + '<div style="font-size:14px;font-weight:900;color:#172033">上门助浴 10 次兑换卡</div>'
+        + '<div style="font-size:12px;color:#6B7A90;margin-top:4px;font-weight:600">适用对象：' + escapeHtml(p.name || '—') + '（' + escapeHtml(p.gender || '') + ' · ' + escapeHtml(String(p.age || '?')) + '岁 · 锁定）</div>'
+        + '<div style="font-size:12px;color:#0FA98C;margin-top:4px;font-weight:800">剩余 ' + left + ' 次 · 卡号 ' + escapeHtml(c.id) + '</div>'
+        + '</button>';
+    }).join('');
+    fitOverlayToPhone('cardPickerDrawer');
+    document.getElementById('cardPickerDrawer').classList.add('show');
+  };
+  window.pickCard = function (id) {
+    redeemCardId = id;
+    closeDrawer('cardPickerDrawer');
+    enterBuyMode();
+    applyRedeemMode();
+  };
+
   initService();
   applyRedeemMode();
+  /* 非兑换模式：恢复服务对象箭头（兑换模式在 applyRedeemMode 中隐藏） */
+  if (!redeemCard) { var paRestore = document.querySelector('#patientInfoModule .selector-arrow'); if (paRestore) paRestore.style.display = ''; }
+  syncBathSessionsUI();
+  /* 积分抵扣块移至底部应付金额上方；需求卡内价格摘要行隐藏 */
+  (function () {
+    var pc = document.querySelector('.needs-price-card .points-card');
+    var pr = document.getElementById('priceRow');
+    if (pc && pr && pr.parentNode) { try { pr.parentNode.insertBefore(pc, pr); } catch (e) {} }
+    var ts = document.getElementById('timeSummary');
+    if (ts) ts.style.display = 'none';
+    var npc = document.getElementById('needsPriceCard');
+    if (npc) npc.style.display = 'none';
+  })();
+  /* 详情态：有可用兑换卡时显示「预约 · 使用次卡」入口；带卡参数进入时直接进入预约表单 */
+  (function () {
+    var btn = document.getElementById('cardBookBtn');
+    if (btn && serviceKey === 'bath' && getUsableCards().length) btn.style.display = '';
+    if (redeemCard && redeemCardId) { enterBuyMode(); applyRedeemMode(); }
+  })();
+  /* 联系人信息：本地缓存回填，减少重复填写 */
+  (function () {
+    try {
+      var saved = JSON.parse(localStorage.getItem('ankebang_contact_info') || 'null');
+      if (saved && saved.name && document.getElementById('contactName')) {
+        document.getElementById('contactName').value = saved.name;
+        document.getElementById('contactPhone').value = saved.phone || '';
+      }
+    } catch (e) {}
+  })();
   updateUI();
 </script>
 </body>

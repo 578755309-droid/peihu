@@ -120,3 +120,107 @@
     window.addEventListener('load', function () { setTimeout(function () { window.alert = toastAlert; }, 0); });
   }
 })();
+
+/* ── 联系人信息组件：联系人姓名 + 联系电话，统一各处表单界面 ──
+   用法：AKBContact.render(target, opts)
+   opts: { showName:false 隐藏姓名, nameLabel, namePlaceholder, nameId,
+           phoneLabel, phonePlaceholder, phoneId } */
+(function () {
+  'use strict';
+  var STYLE = [
+    '.akb-contact{display:grid;grid-template-columns:1fr 1fr;gap:10px}',
+    '.akb-contact.single{grid-template-columns:1fr}',
+    '.akb-contact-label{display:block;font-size:12px;color:#6B6880;font-weight:700;margin:0 0 6px;font-family:inherit}',
+    '.akb-contact-input{width:100%;height:44px;border:1.5px solid #EDE9F5;border-radius:12px;background:#F5F5F5;color:#1A1828;padding:0 12px;font:600 14px inherit;outline:none;transition:border-color .15s,background .15s;box-sizing:border-box;-webkit-appearance:none;appearance:none}',
+    '.akb-contact-input:focus{border-color:#1CD8B7;background:#fff}',
+    '.akb-contact-input::placeholder{color:#AEACC0;font-weight:500}'
+  ].join('\n');
+  window.AKBContact = {
+    render: function (target, opts) {
+      opts = opts || {};
+      var el = typeof target === 'string' ? document.querySelector(target) : target;
+      if (!el) return null;
+      var nameId = opts.nameId || 'contactName';
+      var phoneId = opts.phoneId || 'contactPhone';
+      var showName = opts.showName !== false;
+      if (!document.getElementById('akb-contact-style')) {
+        var st = document.createElement('style');
+        st.id = 'akb-contact-style';
+        st.textContent = STYLE;
+        document.head.appendChild(st);
+      }
+      el.classList.add('akb-contact');
+      el.classList.toggle('single', !showName);
+      el.innerHTML = (showName
+        ? '<div class="akb-contact-item"><label class="akb-contact-label" id="' + nameId + 'Label" for="' + nameId + '">' + (opts.nameLabel || '联系人姓名') + '</label>'
+          + '<input class="akb-contact-input" id="' + nameId + '" type="text" maxlength="20" autocomplete="name" placeholder="' + (opts.namePlaceholder || '请填写联系人姓名') + '" /></div>'
+        : '')
+        + '<div class="akb-contact-item"><label class="akb-contact-label" id="' + phoneId + 'Label" for="' + phoneId + '">' + (opts.phoneLabel || '联系电话') + '</label>'
+        + '<input class="akb-contact-input" id="' + phoneId + '" type="tel" maxlength="11" inputmode="numeric" autocomplete="tel" placeholder="' + (opts.phonePlaceholder || '请填写11位手机号') + '" /></div>';
+      return el;
+    }
+  };
+})();
+
+/* ── 上传图片组件：缩略图 + 添加按钮，自动等比压缩 ──
+   用法：var up = AKBImageUpload.render(target, { max: 3, label: '添加图片' })
+   up.get() 返回已选图片 dataURL 数组；点击缩略图移除 */
+(function () {
+  'use strict';
+  var STYLE = [
+    '.akb-upload{display:flex;gap:10px;flex-wrap:wrap}',
+    '.akb-upload-btn{width:72px;height:72px;border:1.5px dashed #EDE9F5;border-radius:12px;background:#FAFAFC;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#AEACC0;font-size:10px;font-weight:700;cursor:pointer;box-sizing:border-box;text-align:center}',
+    '.akb-upload-btn svg{width:20px;height:20px}',
+    '.akb-upload-thumb{width:72px;height:72px;border-radius:12px;object-fit:cover;border:1px solid #EDE9F5;cursor:pointer}'
+  ].join('\n');
+  window.AKBImageUpload = {
+    render: function (target, opts) {
+      opts = opts || {};
+      var el = typeof target === 'string' ? document.querySelector(target) : target;
+      if (!el) return null;
+      var max = opts.max || 3;
+      var photos = [];
+      if (!document.getElementById('akb-upload-style')) {
+        var st = document.createElement('style');
+        st.id = 'akb-upload-style';
+        st.textContent = STYLE;
+        document.head.appendChild(st);
+      }
+      el.classList.add('akb-upload');
+      var file = document.createElement('input');
+      file.type = 'file'; file.accept = 'image/*'; file.style.display = 'none';
+      el.appendChild(file);
+      function draw() {
+        Array.prototype.forEach.call(el.querySelectorAll('.akb-upload-thumb,.akb-upload-btn'), function (n) { n.remove(); });
+        photos.forEach(function (src, i) {
+          var img = document.createElement('img');
+          img.className = 'akb-upload-thumb'; img.src = src;
+          img.title = '点击移除';
+          img.onclick = function () { photos.splice(i, 1); draw(); };
+          el.insertBefore(img, file);
+        });
+        if (photos.length < max) {
+          var btn = document.createElement('div');
+          btn.className = 'akb-upload-btn';
+          btn.innerHTML = '<svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="#AEACC0" stroke-width="1.8" stroke-linecap="round"/></svg>' + (opts.label || '添加图片');
+          btn.onclick = function () { file.click(); };
+          el.insertBefore(btn, file);
+        }
+      }
+      file.onchange = function () {
+        var f = file.files && file.files[0];
+        if (!f) return;
+        if (window.akbFitImage) {
+          window.akbFitImage(f, function (dataUrl) { photos.push(dataUrl); draw(); });
+        } else {
+          var reader = new FileReader();
+          reader.onload = function (ev) { photos.push(ev.target.result); draw(); };
+          reader.readAsDataURL(f);
+        }
+        file.value = '';
+      };
+      draw();
+      return { get: function () { return photos.slice(); } };
+    }
+  };
+})();

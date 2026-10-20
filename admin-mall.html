@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="admin-shell.css" />
   <link rel="stylesheet" href="admin-catalog.css" />
   <link rel="stylesheet" href="admin-mall.css" />
+  <style>
+    .wk-tabs{display:inline-flex;background:#F3FDFA;border:1px solid #CFF5ED;border-radius:9px;padding:2px}
+    .wk-tab{border:0;background:none;padding:4px 11px;border-radius:7px;font:700 11px inherit;color:#7A8AA8;cursor:pointer}
+    .wk-tab.on{background:#1CD8B7;color:#fff}
+  </style>
   <script src="admin-mall-data.js"></script>
   <script defer src="admin-sidebar.js"></script>
 </head>
@@ -43,7 +48,7 @@
         <div class="mall-panel">
           <div class="mall-panel-hd">
             <div class="mall-panel-title"><span class="sec-dot"></span>近 7 天商城订单</div>
-            <span style="font-size:11px;color:#9AA7BA;font-weight:700">单位：单</span>
+            <span class="wk-tabs"><button class="wk-tab on" id="wkTabN" onclick="switchWkTab('n')">单数</button><button class="wk-tab" id="wkTabAmt" onclick="switchWkTab('amt')">金额</button></span>
           </div>
           <div class="mall-panel-bd"><div class="mall-bars" id="weekBars"></div></div>
         </div>
@@ -125,20 +130,45 @@
     }).join('');
   }
 
-  /* ── 近7天柱状图（演示数据） ── */
-  var WEEK = [
-    { d: '10/07', n: 4 }, { d: '10/08', n: 6 }, { d: '10/09', n: 5 }, { d: '10/10', n: 8 },
-    { d: '10/11', n: 7 }, { d: '10/12', n: 9 }, { d: '10/13', n: 3 }
-  ];
+  /* ── 近7天柱状图（按订单数据实时统计：单数 + 金额） ── */
+  var weekMode = 'n';
+  var WEEK = (function () {
+    var days = [];
+    var byDate = {};
+    for (var i = 6; i >= 0; i--) {
+      var dt = new Date(); dt.setDate(dt.getDate() - i);
+      var key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
+      var cell = { key: key, d: String(dt.getMonth() + 1).padStart(2, '0') + '/' + String(dt.getDate()).padStart(2, '0'), n: 0, amt: 0, today: i === 0 };
+      days.push(cell); byDate[key] = cell;
+    }
+    try {
+      M.getOrders().forEach(function (o) {
+        var c = byDate[o.date];
+        if (!c) return;
+        c.n++;
+        if (o.state !== '已取消') c.amt += Number(o.amount) || 0;
+      });
+    } catch (e) {}
+    return days;
+  })();
+  function amtLabel(v) { return v >= 10000 ? '¥' + (v / 10000).toFixed(1).replace(/\.0$/, '') + '万' : M.money(v); }
   function renderBars() {
-    var max = Math.max.apply(null, WEEK.map(function (w) { return w.n; }));
-    var today = M.today().slice(5);
+    var field = weekMode === 'n' ? 'n' : 'amt';
+    var max = Math.max.apply(null, WEEK.map(function (w) { return w[field]; })) || 1;
     document.getElementById('weekBars').innerHTML = WEEK.map(function (w) {
-      var h = Math.round(w.n / max * 150);
-      var isToday = w.d === today;
-      return '<div class="mall-bar-col"><span class="mall-bar-val">' + w.n + '</span><div class="mall-bar ' + (isToday ? 'today' : '') + '" style="height:' + h + 'px" title="' + w.d + '：' + w.n + ' 单"></div><span class="mall-bar-lbl">' + w.d + '</span></div>';
+      var v = w[field];
+      var h = Math.max(4, Math.round(v / max * 150));
+      var valTxt = weekMode === 'n' ? w.n : amtLabel(w.amt);
+      var tip = w.d + '：' + w.n + ' 单 · ' + M.money(w.amt);
+      return '<div class="mall-bar-col"><span class="mall-bar-val">' + valTxt + '</span><div class="mall-bar ' + (w.today ? 'today' : '') + '" style="height:' + h + 'px" title="' + tip + '"></div><span class="mall-bar-lbl">' + w.d + '</span></div>';
     }).join('');
   }
+  window.switchWkTab = function (mode) {
+    weekMode = mode;
+    document.getElementById('wkTabN').classList.toggle('on', mode === 'n');
+    document.getElementById('wkTabAmt').classList.toggle('on', mode === 'amt');
+    renderBars();
+  };
 
   /* ── 发货待办 ── */
   function renderTodo() {

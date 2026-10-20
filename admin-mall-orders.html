@@ -93,7 +93,7 @@
       <!-- 表格：列结构与旧版订单管理商城订单一致 -->
       <div class="table-wrap mall-table-wrap" data-ux-empty style="overflow:auto;max-height:calc(100vh - 320px);background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08)">
         <table class="table mall-table" style="min-width:2700px" data-sticky-left="2" data-sticky-right="2" data-sticky-min="2900">
-          <thead><tr><th>订单信息</th><th>商品</th><th>订单类型</th><th>收货人</th><th>收货地址</th><th>配送方式</th><th>下单时间</th><th>支付方式</th><th>应付金额</th><th>实付金额</th><th>积分抵扣</th><th>实收金额</th><th>支付完成时间</th><th>支付人</th><th>支付人电话</th><th>创建人</th><th>更新时间</th><th>备注</th><th>退款时间</th><th>状态</th><th>操作</th></tr></thead>
+          <thead><tr><th>订单信息</th><th>商品</th><th>订单类型</th><th>收货人</th><th>收货地址</th><th>配送方式</th><th>下单时间</th><th>支付方式</th><th>积分抵扣</th><th>应付金额</th><th>实付金额</th><th>实收金额</th><th>支付完成时间</th><th>支付人</th><th>支付人电话</th><th>创建人</th><th>更新时间</th><th>备注</th><th>退款时间</th><th>状态</th><th>操作</th></tr></thead>
           <tbody id="rows"></tbody>
         </table>
         <div class="empty-state" id="emptyState" style="display:none">暂无符合条件的订单</div>
@@ -301,9 +301,9 @@
       '<td><div class="delivery-type">' + esc(order.deliveryType) + '</div></td>' +
       '<td>' + esc(order.orderedAt) + '</td>' +
       '<td class="pay-cell">' + esc(pay.method) + '</td>' +
+      '<td class="pay-cell">' + esc(pay.deduct) + '</td>' +
       '<td class="service pay-cell">' + esc(order.amount) + '</td>' +
       '<td class="pay-cell">' + esc(pay.actual) + '</td>' +
-      '<td class="pay-cell">' + esc(pay.deduct) + '</td>' +
       '<td class="pay-cell">' + esc(pay.received) + '</td>' +
       '<td class="pay-cell">' + esc(pay.at) + '</td>' +
       '<td class="pay-cell">' + esc(raw.payer || order.receiver || '—') + '</td>' +
@@ -344,7 +344,7 @@
   window.exportOrders = function () {
     var list = M.getOrders().filter(function (o) { return current === 'all' || (STATE_TO_LEGACY[o.state] || o.state) === current; });
     M.exportCsv('商城订单列表.csv',
-      ['订单号', '下单时间', '订单类型', '用户', '联系方式', '收货地址', '配送方式', '商品明细', '商品分类', '件数', '支付方式', '应付金额', '实付金额', '积分抵扣', '实收金额', '支付完成时间', '支付人', '支付人电话', '创建人', '更新时间', '收货码', '状态', '来源', '分销员', '分销佣金', '备注'],
+      ['订单号', '下单时间', '订单类型', '用户', '联系方式', '收货地址', '配送方式', '商品明细', '商品分类', '件数', '支付方式', '积分抵扣', '应付金额', '实付金额', '实收金额', '支付完成时间', '支付人', '支付人电话', '创建人', '更新时间', '收货码', '状态', '来源', '分销员', '分销佣金', '备注'],
       list.map(function (o) {
         var c = M.distCommission(o);
         var pay = payOf(o);
@@ -352,7 +352,7 @@
         var cat = (M.itemCategory && firstItem.name) ? M.itemCategory(firstItem.name) : '';
         return [o.no, o.createdAt || o.date, o.orderType || '普通订单', o.userName, o.userPhone, o.address, o.deliveryLabel,
           o.items.map(function (i) { return i.name + ' x' + i.quantity; }).join('；'), cat,
-          o.quantity, pay.method, o.amount, pay.actual, pay.deduct, pay.received, pay.at, o.payer || o.userName, o.payerPhone || o.userPhone, o.creator || (o.source === 'mini' ? '用户自主下单' : '管理员'), o.updatedAt || o.createdAt || '', o.receiptCode, o.state, o.source === 'mini' ? '小程序实时单' : '后台',
+          o.quantity, pay.method, pay.deduct, o.amount, pay.actual, pay.received, pay.at, o.payer || o.userName, o.payerPhone || o.userPhone, o.creator || (o.source === 'mini' ? '用户自主下单' : '管理员'), o.updatedAt || o.createdAt || '', o.receiptCode, o.state, o.source === 'mini' ? '小程序实时单' : '后台',
           c ? c.name : '', c ? c.amount.toFixed(2) : '', o.note];
       }));
   };

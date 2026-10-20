@@ -131,7 +131,7 @@
             <button type="button" onclick="cmd('removeFormat')" title="清除格式">清除</button>
           </div>
           <div class="editor-area" id="editorArea" contenteditable="true" data-ph="在此输入资讯正文，可插入图片、设置标题与列表…"></div>
-          <input type="file" id="imgFile" accept="image/*" style="display:none" onchange="insertImageFile(this)">
+          <input type="file" id="imgFile" accept="image/*" multiple style="display:none" onchange="insertImageFile(this)">
         </div>
         <div class="field-tip">支持加粗、标题、列表、引用与图片（URL 或本地上传），内容以富文本保存。</div>
       </div>
@@ -205,10 +205,14 @@ window.clearCover=function(){setCovers([]);};
       cmd('insertHTML','<img src="'+String(url).replace(/"/g,'&quot;')+'" style="max-width:100%;height:auto">');
     };
     window.insertImageFile=function(input){
-      var file=input.files&&input.files[0];
-      if(!file)return;
-      window.akbFitImage(file,function(src){cmd('insertHTML','<img src="'+src+'" style="max-width:100%;height:auto">');toast('图片已插入正文');});
+      var files=[].slice.call(input.files||[]);
       input.value='';
+      if(!files.length)return;
+      var i=0;
+      (function next(){
+        if(i>=files.length)return;
+        window.akbFitImage(files[i++],function(src){cmd('insertHTML','<img src="'+src+'" style="max-width:100%;height:auto">');next();});
+      })();
     };
     window.renderLinkPreview=function(){
       var url=document.getElementById('fLink').value.trim();

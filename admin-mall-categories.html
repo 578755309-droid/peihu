@@ -244,7 +244,7 @@
             <button type="button" onclick="pCmd('removeFormat')" title="清除格式">清除</button>
           </div>
           <div class="rich-area" id="pDetailArea" contenteditable="true" data-ph="输入商品详情，可插入图片、设置标题与列表…"></div>
-          <input type="file" id="pDetailImgFile" accept="image/*" style="display:none" onchange="pInsertImageFile(this)" />
+          <input type="file" id="pDetailImgFile" accept="image/*" multiple style="display:none" onchange="pInsertImageFile(this)" />
         </div>
       </div>
       <div class="field" style="display:none">
@@ -279,10 +279,6 @@
       <div class="modal-title">预览效果</div>
       <button class="modal-close" onclick="closePreview()">&times;</button>
     </div>
-    <div style="display:flex;border-bottom:1px solid #CFF5ED;flex-shrink:0">
-      <button class="preview-tab active" id="tabList" onclick="switchPreviewTab('list')">列表页样式</button>
-      <button class="preview-tab" id="tabDetail" onclick="switchPreviewTab('detail')">详情页样式</button>
-    </div>
     <div id="previewContent" style="flex:1;overflow:auto;padding:24px;background: #F5F5F5">
       <!-- 预览内容渲染在这里 -->
     </div>
@@ -296,6 +292,28 @@
   .preview-status{height:28px;background:linear-gradient(135deg,#1CD8B7,#0FA98C);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
   .preview-nav{height:44px;display:flex;align-items:center;justify-content:center;background:#fff;border-bottom:1px solid #EDE9F5;position:relative;font-size:15px;font-weight:800;color:#172033}
   .preview-nav .back{position:absolute;left:12px;width:28px;height:28px;border-radius:8px;background:#DDF7F1;color:#1CD8B7;display:grid;place-items:center;font-size:18px;font-weight:800}
+  /* 预览-移动端详情页样式 */
+  .pvd-hero{position:relative;width:100%;padding-top:75%;background:linear-gradient(135deg,#DDF7F1,#D9CFF0);overflow:hidden}
+  .pvd-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .pvd-dots{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:5px;z-index:2}
+  .pvd-dots span{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.6)}
+  .pvd-dots span.on{width:16px;background:#fff}
+  .pvd-info{background:#fff;margin:10px 10px 0;border-radius:12px;padding:14px;box-shadow:0 2px 10px rgba(23,32,51,.05)}
+  .pvd-price-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .pvd-price-l em{font-style:normal;font-size:11px;color:#E94E4E;font-weight:800;margin-right:2px}
+  .pvd-price-l b{font-size:22px;color:#E94E4E;font-weight:900}
+  .pvd-price-l i{font-style:normal;font-size:11px;color:#E94E4E;font-weight:700;margin-left:1px}
+  .pvd-pts{margin-left:auto;font-size:11px;font-weight:800;color:#F59E0B}
+  .pvd-mypt{font-size:10px;color:#F59E0B;background:#FEF3C7;border-radius:10px;padding:2px 7px;font-weight:700}
+  .pvd-name{margin-top:9px;font-size:16px;font-weight:900;color:#172033}
+  .pvd-sub{margin-top:4px;font-size:12px;color:#9AA7BA;line-height:1.5}
+  .pvd-tabwrap{margin:10px 10px 14px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(23,32,51,.05)}
+  .pvd-tabs{display:flex;border-bottom:1px solid #EEF2F7}
+  .pvd-tabs span{flex:1;text-align:center;padding:12px 0;font-size:13px;font-weight:700;color:#9AA7BA;position:relative}
+  .pvd-tabs span.on{color:#172033;font-weight:900}
+  .pvd-tabs span.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:3px;border-radius:2px;background:#1CD8B7}
+  .pvd-detail{padding:14px;font-size:13px;line-height:1.8;color:#41536D;min-height:110px}
+  .pvd-detail img{max-width:100%;height:auto;border-radius:8px}
   .preview-body{padding:12px}
 .pv2-body{background:#F5F6FA;min-height:320px}
 .pv2-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(23,32,51,.06)}
@@ -655,10 +673,14 @@ window.toggleCategoryLayout=function(key){
     pCmd('insertHTML', '<img src="' + String(url).replace(/"/g, '&quot;') + '" style="max-width:100%;height:auto">');
   };
   window.pInsertImageFile = function (input) {
-    var file = input.files && input.files[0];
-    if (!file) return;
-    window.akbFitImage(file, function (src) { pCmd('insertHTML', '<img src="' + src + '" style="max-width:100%;height:auto">'); });
+    var files = [].slice.call(input.files || []);
     input.value = '';
+    if (!files.length) return;
+    var i = 0;
+    (function next() {
+      if (i >= files.length) return;
+      window.akbFitImage(files[i++], function (src) { pCmd('insertHTML', '<img src="' + src + '" style="max-width:100%;height:auto">'); next(); });
+    })();
   };
 
   function renderPoints(points) {
@@ -770,7 +792,6 @@ window.toggleCategoryLayout=function(key){
     var sales = document.getElementById('pManualSales').value || '0';
     var detail = document.getElementById('pDetailArea').innerHTML.trim() || '商品详情图文内容...';
     var cover = coverList && coverList[0] ? coverList[0] : '';
-    switchPreviewTab('list');
     document.getElementById('previewModal').classList.add('show');
     renderPreview(name, sub, price, sales, detail, cover);
   };
@@ -784,7 +805,6 @@ window.toggleCategoryLayout=function(key){
     var sales = ((p.manualSales || 0) + (p.actualSales || 0));
     var detail = p.detailHtml || '';
     var cover = (p.coverGallery && p.coverGallery.length) ? p.coverGallery[0] : (p.cover || '');
-    switchPreviewTab('list');
     document.getElementById('previewModal').classList.add('show');
     renderPreview(name, sub, price, sales, detail, cover);
   };
@@ -793,47 +813,20 @@ window.toggleCategoryLayout=function(key){
     document.getElementById('previewModal').classList.remove('show');
   };
 
-  window.switchPreviewTab = function(tab) {
-    document.getElementById('tabList').classList.toggle('active', tab === 'list');
-    document.getElementById('tabDetail').classList.toggle('active', tab === 'detail');
-    var name = document.getElementById('pName').value.trim() || '商品名称';
-    var sub = document.getElementById('pSub').value.trim() || '商品副标题描述';
-    var price = document.getElementById('pPrice').value || '0';
-    var sales = document.getElementById('pManualSales').value || '0';
-    var detail = document.getElementById('pDetailArea').innerHTML.trim() || '商品详情图文内容...';
-    var cover = coverList && coverList[0] ? coverList[0] : '';
-    renderPreview(name, sub, price, sales, detail, cover);
-  };
-
   function renderPreview(name, sub, price, sales, detail, cover) {
-    var isList = document.getElementById('tabList').classList.contains('active');
+    var escT=function(s){return String(s==null?'':s).replace(/</g,'&lt;');};
+    var safeDetail=(detail||'').replace(/<script[\s\S]*?<\/script>/gi,'');
     var html = '<div class="preview-phone">';
     html += '<div class="preview-status">9:41</div>';
-    if (isList) {
-      var pvSales=(function(n){n=Number(n)||0;return n>=10000?((n/10000).toFixed(1).replace(/\.0$/,'')+'万+'):String(n);})(sales);
-      html += '<div class="preview-nav">商城</div>';
-      html += '<div class="preview-body pv2-body">';
-      html += '<div class="pv2-card">';
-      html += '<div class="pv2-img">' + (cover ? '<img src="' + cover + '" alt="">' : '<span class="pv2-ph">封面图</span>') + '</div>';
-      html += '<div class="pv2-name">' + name.replace(/</g,'&lt;') + '</div>';
-      html += '<div class="pv2-sub">' + sub.replace(/</g,'&lt;') + '</div>';
-      html += '<div class="pv2-points"><span class="pv2-off">积分立减30%</span><span class="pv2-mypoints">我的积分30 ›</span></div>';
-      html += '<div class="pv2-foot"><span class="pv2-price">¥' + price + '</span><span class="pv2-qi">起</span><span class="pv2-sales">已售' + pvSales + '</span><span class="pv2-add">+</span></div>';
-      html += '</div></div>';
-    } else {
-      html += '<div class="preview-nav"><span class="back">‹</span>商品详情</div>';
-      html += '<div class="preview-detail-hero">';
-      html += '<div style="font-size:11px;opacity:.8">商品详情</div>';
-      html += '<div class="preview-detail-title">' + name.replace(/</g,'&lt;') + '</div>';
-      html += '<div class="preview-detail-desc">' + sub.replace(/</g,'&lt;') + '</div>';
-      html += '<div class="preview-detail-price"><span class="p">¥' + price + '</span><span class="s">已售 ' + sales + '</span></div>';
-      html += '</div>';
-      html += '<div class="preview-body">';
-      html += '<div class="preview-section">';
-      html += '<div class="preview-section-title">商品详情</div>';
-      html += '<div class="preview-section-content">' + (detail || '暂无详情').replace(/<script[\s\S]*?<\/script>/gi,'') + '</div>';
-      html += '</div></div>';
-    }
+    html += '<div class="preview-nav"><span class="back">‹</span>商品详情</div>';
+    html += '<div class="pvd-hero">' + (cover ? '<img src="' + cover + '" alt="">' : '') + '<div class="pvd-dots"><span class="on"></span><span></span><span></span></div></div>';
+    html += '<div class="pvd-info">';
+    html += '<div class="pvd-price-row"><span class="pvd-price-l"><em>抵扣后</em><b>¥' + escT(price) + '</b><i>起</i></span><span class="pvd-pts">积分立减30%</span><span class="pvd-mypt">我的积分30 ›</span></div>';
+    html += '<div class="pvd-name">' + escT(name) + '</div>';
+    html += '<div class="pvd-sub">' + escT(sub) + '</div>';
+    html += '</div>';
+    html += '<div class="pvd-tabwrap"><div class="pvd-tabs"><span>商品</span><span>评价</span><span class="on">详情</span></div>';
+    html += '<div class="pvd-detail">' + (safeDetail || '暂无详情') + '</div></div>';
     html += '</div>';
     document.getElementById('previewContent').innerHTML = html;
   }

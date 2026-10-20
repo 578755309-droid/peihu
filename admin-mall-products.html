@@ -184,7 +184,7 @@
             <button type="button" onclick="pCmd('removeFormat')" title="清除格式">清除</button>
           </div>
           <div class="rich-area" id="pDetailArea" contenteditable="true" data-ph="输入商品详情，可插入图片、设置标题与列表…"></div>
-          <input type="file" id="pDetailImgFile" accept="image/*" style="display:none" onchange="pInsertImageFile(this)" />
+          <input type="file" id="pDetailImgFile" accept="image/*" multiple style="display:none" onchange="pInsertImageFile(this)" />
         </div>
       </div>
       <div class="field" style="display:none">
@@ -440,10 +440,14 @@ window.clearCover=function(){setCovers([]);};
     pCmd('insertHTML', '<img src="' + String(url).replace(/"/g, '&quot;') + '" style="max-width:100%;height:auto">');
   };
   window.pInsertImageFile = function (input) {
-    var file = input.files && input.files[0];
-    if (!file) return;
-    window.akbFitImage(file, function (src) { pCmd('insertHTML', '<img src="' + src + '" style="max-width:100%;height:auto">'); });
+    var files = [].slice.call(input.files || []);
     input.value = '';
+    if (!files.length) return;
+    var i = 0;
+    (function next() {
+      if (i >= files.length) return;
+      window.akbFitImage(files[i++], function (src) { pCmd('insertHTML', '<img src="' + src + '" style="max-width:100%;height:auto">'); next(); });
+    })();
   };
 
   function renderPoints(points) {

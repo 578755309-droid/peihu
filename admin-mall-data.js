@@ -169,6 +169,40 @@
   };
   SEED_ORDERS.forEach(function (o) { var m = SEED_META[o.no]; if (m) { if (m.orderType) o.orderType = m.orderType; if (m.creator) o.creator = m.creator; } });
 
+  /* ── 种子订单日期滚动：以种子中最新日期为锚点，把种子订单整体平移到「今天」收尾，避免演示数据随时间过期 ── */
+  var SEED_ANCHOR = '2026-10-16';
+  function shiftStamp(s, days) {
+    if (!s || typeof s !== 'string') return s;
+    var m = /^(\d{4}-\d{2}-\d{2})([\sT].*)?$/.exec(s);
+    if (!m) return s;
+    var d = new Date(m[1].replace(/-/g, '/'));
+    if (isNaN(d)) return s;
+    d.setDate(d.getDate() + days);
+    var nd = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    return m[2] ? nd + m[2] : nd;
+  }
+  function dayDiff(a, b) { return Math.round((new Date(a.replace(/-/g, '/')) - new Date(b.replace(/-/g, '/'))) / 86400000); }
+  /* 把存储中仍是静态日期的种子订单平移到目标日期（今天 + 原始偏移），已平移过的自动跳过 */
+  function rollSeedDates(list) {
+    var changed = false;
+    list.forEach(function (o) {
+      var s = SEED_ORDERS.filter(function (x) { return x.no === o.no; })[0];
+      if (!s || !o.date) return;
+      var target = shiftStamp(SEED_ANCHOR, dayDiff(today(), SEED_ANCHOR) + dayDiff(s.date, SEED_ANCHOR));
+      if (o.date === target) return;
+      var delta = dayDiff(target, String(o.date).substring(0, 10));
+      if (!delta || isNaN(delta)) return;
+      var preDate = String(o.date).substring(0, 10);
+      ['date', 'createdAt', 'refundAppliedAt', 'refundAt'].forEach(function (k) { if (o[k]) o[k] = shiftStamp(o[k], delta); });
+      /* updatedAt / 支付时间仅在仍跟随原订单日期时平移，避免改动运营真实操作时间 */
+      if (o.updatedAt && String(o.updatedAt).substring(0, 10) === preDate) o.updatedAt = shiftStamp(o.updatedAt, delta);
+      if (o.pay && o.pay.at && String(o.pay.at).substring(0, 10) === preDate) o.pay.at = shiftStamp(o.pay.at, delta);
+      changed = true;
+    });
+    if (changed) write(ORDER_KEY, list);
+    return changed;
+  }
+
   /* ── 工具 ── */
   function clone(v) { return JSON.parse(JSON.stringify(v)); }
   function read(key, fallback) {
@@ -357,6 +391,7 @@
       if (!o.creator) o.creator = s.creator || (o.source === 'mini' ? '用户自主下单' : '管理员');
       if (!o.updatedAt) o.updatedAt = s.updatedAt || o.createdAt || o.date || '';
     });
+    rollSeedDates(list);
     return list;
   }
 

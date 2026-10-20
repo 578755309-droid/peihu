@@ -281,9 +281,9 @@
       var pay = o.pay || (paid ? { method: '微信支付', actual: M.money(o.amount), deduct: '¥0', received: M.money(o.amount), at: '' } : {});
       document.getElementById('paymentInfo').innerHTML =
         '<div class="payment-row"><span>支付方式</span><span>' + esc(pay.method || '—') + '</span></div>'
+        + '<div class="payment-row"><span>积分抵扣</span><span>' + esc(pay.deduct || '—') + '</span></div>'
         + '<div class="payment-row"><span>应付金额</span><span>' + M.money(o.amount) + '</span></div>'
         + '<div class="payment-row"><span>配送费</span><span>已含在商品售价内</span></div>'
-        + '<div class="payment-row"><span>积分抵扣</span><span>' + esc(pay.deduct || '—') + '</span></div>'
         + '<div class="payment-row"><span>实付金额</span><span>' + esc(pay.actual || '—') + '</span></div>'
         + (pay.at ? '<div class="payment-row"><span>支付完成时间</span><span>' + esc(pay.at) + '</span></div>' : '')
         + '<div class="payment-row"><span>支付状态</span><span>' + (paid ? '已支付' : (o.state === '支付中' ? '支付中' : '待支付')) + '</span></div>'

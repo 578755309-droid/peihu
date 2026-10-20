@@ -36,10 +36,10 @@
 .svc-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}.mall-metric{background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:18px 20px;display:flex;align-items:center;gap:15px;text-decoration:none;color:inherit;cursor:pointer;transition:transform .15s,box-shadow .15s}.mall-metric:hover{border-color:#1CD8B7;box-shadow:0 6px 20px rgba(28,216,183,.15);transform:translateY(-1px)}.mm-ico{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex-shrink:0}.mm-ico svg{width:23px;height:23px}.mm-val{font-size:24px;font-weight:900;color:#172033;line-height:1.1}.mm-lbl{font-size:12px;color:var(--text3);font-weight:700;margin-top:4px}.mm-foot{font-size:11px;font-weight:700;margin-top:5px}.mm-foot.up{color:#16A34A}.mm-foot.warn{color:#D97706}.mm-foot.danger{color:#DC2626}.mm-foot.muted{color:#9AA7BA}
 </style><script src="service-catalog.js"></script><script src="admin-points-data.js"></script><script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css"></head>
 <body><div class="layout"><aside class="sidebar"><div class="brand"><div class="brand-title">佑小邦</div><div class="brand-sub">运营管理后台</div></div></aside><main class="main"><header class="topbar"><div class="crumb"><span>业务管理</span><span>›</span><span class="current">分类服务管理</span></div><div class="top-actions"><span class="top-date">2026年4月12日 星期日</span><div class="top-av">管</div></div></header><section class="page"><div class="page-head"><div><h1 class="page-title">分类服务管理</h1><p class="page-sub">配置服务类型与二级服务项目，维护描述、排序及上下架状态</p></div><div class="actions"><button class="btn" onclick="openBatchPointsSvc()">批量设置积分</button><button class="btn" onclick="openCategoryModal()">+ 新增分类</button></div></div><div class="svc-metrics" id="svcMetrics"></div><div class="catalog-layout"><section class="panel"><div class="panel-head"><div><div class="panel-title">服务类型</div><div class="panel-note">前端核心服务入口</div></div></div><div class="category-list" id="categoryList"></div></section><button class="panel-collapse" onclick="toggleCategoryLayout('svcCatCollapsed')" title="收起/展开分类面板"><span class="arrow">▶</span></button><section class="panel"><div class="panel-head"><div><div class="panel-title" id="servicePanelTitle">服务项目</div><div class="panel-note" id="servicePanelNote"></div></div><span class="sel-chip" id="svcSelChip"><span id="svcSelChipText"></span><button onclick="clearSvcSelection()">清除</button></span><button class="btn" onclick="openServiceModal()">+ 新增项目</button></div><div class="filter"><span class="filter-label">筛选</span><select class="select" id="svcStatusFilter" onchange="render()"><option value="all">全部状态</option><option value="on">已上架</option><option value="off">已下架</option></select><select class="select" id="svcHotFilter" onchange="render()"><option value="all">全部服务</option><option value="1">仅热门</option><option value="0">非热门</option></select><input class="select" id="svcSearch" style="min-width:220px" placeholder="搜索服务名称 / 描述" oninput="render()"><span class="result">共 <strong id="svcCount">0</strong> 个项目</span></div><div class="table-wrap" style="overflow:auto;background:#fff;border:1px solid #CFF5ED;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,0.08)"><table class="table service-table" style="min-width:1080px" data-sticky-left="1" data-sticky-min="1200"><thead><tr><th>服务项目</th><th>服务描述</th><th>传染病名称</th><th>计价方式</th><th>已售</th><th>状态</th><th>排序</th><th>操作</th></tr></thead><tbody id="serviceTable"></tbody></table><div class="empty-state" id="emptyState" style="display:none">暂无服务项目，请先新增</div></div></section></div></section></main></div>
-<div class="modal-mask" id="serviceModal" onclick="if(event.target===this)closeServiceModal()"><div class="modal modal-wide"><div class="modal-head"><div class="modal-title" id="serviceModalTitle">新增服务项目</div><button class="modal-close" onclick="closeServiceModal()">×</button></div><div class="form-grid"><div class="inline-fields"><div class="field"><label>服务名称</label><input id="serviceName" placeholder="例如：贵宾陪诊"></div><div class="field"><label>排序</label><input id="serviceSort" type="number" min="1" value="1"></div></div><div class="field"><label>所属分类</label><select class="select" id="serviceCategory" style="width:100%" onchange="updateSvcPricing()"></select></div><div class="field"><label>简短描述</label><input id="serviceSummary" placeholder="在前端列表中展示的一句话描述"></div><div class="field" style="display:none"><label>服务详情</label><textarea id="serviceDescription" placeholder="填写服务内容、流程或注意事项"></textarea></div><div class="field" style="display:none"><label>传染病名称（当用户选择"有传染性疾病"时展示）</label><input id="serviceInfectionName" placeholder="例如：乙肝、肺结核等"></div><div class="field"><label>封面图（最多 5 张 · 拖拽排序）</label><div class="cover-uploader"><div class="cover-thumbs" id="svcCoverThumbs"></div><div class="cover-ops"><div><button type="button" class="btn" onclick="document.getElementById('svcCoverFile').click()">上传图片</button> <button type="button" class="btn" onclick="clearSvcCover()">清除</button></div><input type="file" id="svcCoverFile" accept="image/*" multiple style="display:none" onchange="onSvcCoverFile(this)"><input type="hidden" id="svcCover"><div class="field-tip">最多 5 张，本地上传自动压缩至 640px；拖动缩略图调整顺序，第 1 张为主封面（用户端展示主封面）。</div></div></div></div><div class="field"><label>服务详情图文（富文本，可上传图片、文字排版）</label><div class="rich-editor"><div class="rich-toolbar"><button type="button" onclick="svcCmd('bold')" title="加粗"><b>B</b></button><button type="button" onclick="svcCmd('italic')" title="斜体"><i>I</i></button><button type="button" onclick="svcCmd('underline')" title="下划线"><u>U</u></button><span class="sep"></span><button type="button" onclick="svcCmd('formatBlock','h2')" title="大标题">H2</button><button type="button" onclick="svcCmd('formatBlock','h3')" title="小标题">H3</button><button type="button" onclick="svcCmd('formatBlock','p')" title="正文">正文</button><span class="sep"></span><button type="button" onclick="svcCmd('insertUnorderedList')" title="无序列表">• 列表</button><button type="button" onclick="svcCmd('insertOrderedList')" title="有序列表">1. 列表</button><span class="sep"></span><button type="button" onclick="svcInsertImageUrl()" title="插入图片链接">图片URL</button><button type="button" onclick="document.getElementById('svcDetailImgFile').click()" title="上传本地图片">上传图片</button><span class="sep"></span><button type="button" onclick="svcCmd('removeFormat')" title="清除格式">清除</button></div><div class="rich-area" id="svcDetailArea" contenteditable="true" data-ph="输入服务详情图文，可插入图片、设置标题与列表…"></div><input type="file" id="svcDetailImgFile" accept="image/*" style="display:none" onchange="svcInsertImageFile(this)"></div></div><div class="pricing-section" id="svcPricingSection"><div class="pricing-title">定价规则配置</div><div style="font-size:11px;color:var(--text3);margin-bottom:8px">基础价：按自理状态（每日/每次）；加价项：特殊情况额外加收</div><div id="svcPricingModeDaily"><div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px">自理等级基础价（元/天）</div><div class="pricing-grid"><div class="pricing-item"><label>完全自理</label><input id="svcPrIndep" type="number" min="0"></div><div class="pricing-item"><label>半自理</label><input id="svcPrPartial" type="number" min="0"></div><div class="pricing-item"><label>完全失能</label><input id="svcPrDepend" type="number" min="0"></div></div></div><div id="svcPricingModeSession"><div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px">按次服务基础价（元/次）</div><div class="pricing-grid" style="grid-template-columns:1fr"><div class="pricing-item"><label>基础价格</label><input id="svcPrBase" type="number" min="0"></div></div><div style="font-size:11px;font-weight:700;color:var(--text2);margin:8px 0 6px">自理等级加价（元/次）</div><div class="pricing-grid"><div class="pricing-item"><label>完全自理</label><input id="svcPrIndepS" type="number" min="0"></div><div class="pricing-item"><label>半自理</label><input id="svcPrPartialS" type="number" min="0"></div><div class="pricing-item"><label>完全失能</label><input id="svcPrDependS" type="number" min="0"></div></div></div><div class="pricing-surcharge"><div class="pricing-item"><label>有管路加价（元/天或次）</label><input id="svcPrTube" type="number" min="0"></div><div class="pricing-item"><label>有传染病加价（元/天或次）</label><input id="svcPrInfect" type="number" min="0"></div><div class="pricing-item" style="display:none"><label>有皮肤破损加价（元/天或次）</label><input id="svcPrSkin" type="number" min="0"></div></div><div class="pricing-note">提示：设为 0 表示不加价。保存后立即生效，影响前端下单页面的实时报价。</div></div><div class="form-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="field"><label>实际已售（系统统计，只读）</label><input id="svcActualSales" type="number" readonly style="background:#F2FCF9" /></div><div class="field"><label>已售基数（可编辑）</label><input id="svcManualSales" type="number" min="0" step="1" /></div></div><div class="form-2col" id="statusRow" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="field"><label>状态</label><select class="select" id="serviceStatus" style="width:100%"><option value="on">上架</option><option value="off">下架</option></select></div></div></div><div class="modal-foot"><button class="btn" onclick="closeServiceModal()">取消</button><button class="btn" onclick="previewService()">预览</button><button class="btn btn-primary" onclick="saveServiceForm()">保存</button></div></div></div>
+<div class="modal-mask" id="serviceModal" onclick="if(event.target===this)closeServiceModal()"><div class="modal modal-wide"><div class="modal-head"><div class="modal-title" id="serviceModalTitle">新增服务项目</div><button class="modal-close" onclick="closeServiceModal()">×</button></div><div class="form-grid"><div class="inline-fields"><div class="field"><label>服务名称</label><input id="serviceName" placeholder="例如：贵宾陪诊"></div><div class="field"><label>排序</label><input id="serviceSort" type="number" min="1" value="1"></div></div><div class="field"><label>所属分类</label><select class="select" id="serviceCategory" style="width:100%" onchange="updateSvcPricing()"></select></div><div class="field"><label>简短描述</label><input id="serviceSummary" placeholder="在前端列表中展示的一句话描述"></div><div class="field" style="display:none"><label>服务详情</label><textarea id="serviceDescription" placeholder="填写服务内容、流程或注意事项"></textarea></div><div class="field" style="display:none"><label>传染病名称（当用户选择"有传染性疾病"时展示）</label><input id="serviceInfectionName" placeholder="例如：乙肝、肺结核等"></div><div class="field"><label>封面图（最多 5 张 · 拖拽排序）</label><div class="cover-uploader"><div class="cover-thumbs" id="svcCoverThumbs"></div><div class="cover-ops"><div><button type="button" class="btn" onclick="document.getElementById('svcCoverFile').click()">上传图片</button> <button type="button" class="btn" onclick="clearSvcCover()">清除</button></div><input type="file" id="svcCoverFile" accept="image/*" multiple style="display:none" onchange="onSvcCoverFile(this)"><input type="hidden" id="svcCover"><div class="field-tip">最多 5 张，本地上传自动压缩至 640px；拖动缩略图调整顺序，第 1 张为主封面（用户端展示主封面）。</div></div></div></div><div class="field"><label>服务详情图文（富文本，可上传图片、文字排版）</label><div class="rich-editor"><div class="rich-toolbar"><button type="button" onclick="svcCmd('bold')" title="加粗"><b>B</b></button><button type="button" onclick="svcCmd('italic')" title="斜体"><i>I</i></button><button type="button" onclick="svcCmd('underline')" title="下划线"><u>U</u></button><span class="sep"></span><button type="button" onclick="svcCmd('formatBlock','h2')" title="大标题">H2</button><button type="button" onclick="svcCmd('formatBlock','h3')" title="小标题">H3</button><button type="button" onclick="svcCmd('formatBlock','p')" title="正文">正文</button><span class="sep"></span><button type="button" onclick="svcCmd('insertUnorderedList')" title="无序列表">• 列表</button><button type="button" onclick="svcCmd('insertOrderedList')" title="有序列表">1. 列表</button><span class="sep"></span><button type="button" onclick="svcInsertImageUrl()" title="插入图片链接">图片URL</button><button type="button" onclick="document.getElementById('svcDetailImgFile').click()" title="上传本地图片">上传图片</button><span class="sep"></span><button type="button" onclick="svcCmd('removeFormat')" title="清除格式">清除</button></div><div class="rich-area" id="svcDetailArea" contenteditable="true" data-ph="输入服务详情图文，可插入图片、设置标题与列表…"></div><input type="file" id="svcDetailImgFile" accept="image/*" multiple style="display:none" onchange="svcInsertImageFile(this)"></div></div><div class="pricing-section" id="svcPricingSection"><div class="pricing-title">定价规则配置</div><div style="font-size:11px;color:var(--text3);margin-bottom:8px">基础价：按自理状态（每日/每次）；加价项：特殊情况额外加收</div><div id="svcPricingModeDaily"><div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px">自理等级基础价（元/天）</div><div class="pricing-grid"><div class="pricing-item"><label>完全自理</label><input id="svcPrIndep" type="number" min="0"></div><div class="pricing-item"><label>半自理</label><input id="svcPrPartial" type="number" min="0"></div><div class="pricing-item"><label>完全失能</label><input id="svcPrDepend" type="number" min="0"></div></div></div><div id="svcPricingModeSession"><div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px">按次服务基础价（元/次）</div><div class="pricing-grid" style="grid-template-columns:1fr"><div class="pricing-item"><label>基础价格</label><input id="svcPrBase" type="number" min="0"></div></div><div style="font-size:11px;font-weight:700;color:var(--text2);margin:8px 0 6px">自理等级加价（元/次）</div><div class="pricing-grid"><div class="pricing-item"><label>完全自理</label><input id="svcPrIndepS" type="number" min="0"></div><div class="pricing-item"><label>半自理</label><input id="svcPrPartialS" type="number" min="0"></div><div class="pricing-item"><label>完全失能</label><input id="svcPrDependS" type="number" min="0"></div></div></div><div class="pricing-surcharge"><div class="pricing-item"><label>有管路加价（元/天或次）</label><input id="svcPrTube" type="number" min="0"></div><div class="pricing-item"><label>有传染病加价（元/天或次）</label><input id="svcPrInfect" type="number" min="0"></div><div class="pricing-item" style="display:none"><label>有皮肤破损加价（元/天或次）</label><input id="svcPrSkin" type="number" min="0"></div></div><div class="pricing-note">提示：设为 0 表示不加价。保存后立即生效，影响前端下单页面的实时报价。</div></div><div class="form-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="field"><label>实际已售（系统统计，只读）</label><input id="svcActualSales" type="number" readonly style="background:#F2FCF9" /></div><div class="field"><label>已售基数（可编辑）</label><input id="svcManualSales" type="number" min="0" step="1" /></div></div><div class="form-2col" id="statusRow" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="field"><label>状态</label><select class="select" id="serviceStatus" style="width:100%"><option value="on">上架</option><option value="off">下架</option></select></div></div></div><div class="modal-foot"><button class="btn" onclick="closeServiceModal()">取消</button><button class="btn" onclick="previewService()">预览</button><button class="btn btn-primary" onclick="saveServiceForm()">保存</button></div></div></div>
 
 <!-- 服务预览弹窗 -->
-<div class="modal-mask" id="svcPreviewModal" onclick="if(event.target===this)closeSvcPreview()"><div class="modal" style="width:50vw;max-width:92vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden"><div class="modal-head"><div class="modal-title">预览效果</div><button class="modal-close" onclick="closeSvcPreview()">&times;</button></div><div style="display:flex;border-bottom:1px solid #CFF5ED;flex-shrink:0"><button class="preview-tab active" id="svcTabList" onclick="switchSvcPreviewTab('list')">列表页样式</button><button class="preview-tab" id="svcTabDetail" onclick="switchSvcPreviewTab('detail')">详情页样式</button></div><div id="svcPreviewContent" style="flex:1;overflow:auto;padding:24px;background: #F5F5F5"></div></div></div>
+<div class="modal-mask" id="svcPreviewModal" onclick="if(event.target===this)closeSvcPreview()"><div class="modal" style="width:50vw;max-width:92vw;max-height:90vh;display:flex;flex-direction:column;overflow:hidden"><div class="modal-head"><div class="modal-title">预览效果</div><button class="modal-close" onclick="closeSvcPreview()">&times;</button></div><div id="svcPreviewContent" style="flex:1;overflow:auto;padding:24px;background: #F5F5F5"></div></div></div>
 
 <style>
 .preview-tab{flex:1;padding:14px 0;border:0;background:none;font-size:14px;font-weight:700;color:#8f9bb0;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
@@ -48,6 +48,28 @@
 .preview-status{height:28px;background:linear-gradient(135deg,#1CD8B7,#0FA98C);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
 .preview-nav{height:44px;display:flex;align-items:center;justify-content:center;background:#fff;border-bottom:1px solid #EDE9F5;position:relative;font-size:15px;font-weight:800;color:#172033}
 .preview-nav .back{position:absolute;left:12px;width:28px;height:28px;border-radius:8px;background:#DDF7F1;color:#1CD8B7;display:grid;place-items:center;font-size:18px;font-weight:800}
+/* 预览-移动端详情页样式 */
+.pvd-hero{position:relative;width:100%;padding-top:75%;background:linear-gradient(135deg,#DDF7F1,#D9CFF0);overflow:hidden}
+.pvd-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.pvd-dots{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:5px;z-index:2}
+.pvd-dots span{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.6)}
+.pvd-dots span.on{width:16px;background:#fff}
+.pvd-info{background:#fff;margin:10px 10px 0;border-radius:12px;padding:14px;box-shadow:0 2px 10px rgba(23,32,51,.05)}
+.pvd-price-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pvd-price-l em{font-style:normal;font-size:11px;color:#E94E4E;font-weight:800;margin-right:2px}
+.pvd-price-l b{font-size:22px;color:#E94E4E;font-weight:900}
+.pvd-price-l i{font-style:normal;font-size:11px;color:#E94E4E;font-weight:700;margin-left:1px}
+.pvd-pts{margin-left:auto;font-size:11px;font-weight:800;color:#F59E0B}
+.pvd-mypt{font-size:10px;color:#F59E0B;background:#FEF3C7;border-radius:10px;padding:2px 7px;font-weight:700}
+.pvd-name{margin-top:9px;font-size:16px;font-weight:900;color:#172033}
+.pvd-sub{margin-top:4px;font-size:12px;color:#9AA7BA;line-height:1.5}
+.pvd-tabwrap{margin:10px 10px 14px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(23,32,51,.05)}
+.pvd-tabs{display:flex;border-bottom:1px solid #EEF2F7}
+.pvd-tabs span{flex:1;text-align:center;padding:12px 0;font-size:13px;font-weight:700;color:#9AA7BA;position:relative}
+.pvd-tabs span.on{color:#172033;font-weight:900}
+.pvd-tabs span.on::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:20px;height:3px;border-radius:2px;background:#1CD8B7}
+.pvd-detail{padding:14px;font-size:13px;line-height:1.8;color:#41536D;min-height:110px}
+.pvd-detail img{max-width:100%;height:auto;border-radius:8px}
 .svc-preview-list{padding:12px}
 .pv2-body{background:#F5F6FA;min-height:320px}
 #svcDetailArea img{max-width:100%;height:auto}
@@ -136,7 +158,7 @@ renderCovers();;
 
 window.svcCmd=function(command,arg){document.getElementById('svcDetailArea').focus();document.execCommand(command,false,arg||null);};
 window.svcInsertImageUrl=function(){var url=window.prompt('请输入图片链接（https://…）','https://');if(!url||url==='https://')return;window.svcCmd('insertHTML','<img src="'+String(url).replace(/"/g,'&quot;')+'" style="max-width:100%;height:auto">');};
-window.svcInsertImageFile=function(input){var file=input.files&&input.files[0];if(!file)return;window.akbFitImage(file,function(src){window.svcCmd('insertHTML','<img src="'+src+'" style="max-width:100%;height:auto">');});input.value='';};
+window.svcInsertImageFile=function(input){var files=[].slice.call(input.files||[]);input.value='';if(!files.length)return;var i=0;(function next(){if(i>=files.length)return;window.akbFitImage(files[i++],function(src){window.svcCmd('insertHTML','<img src="'+src+'" style="max-width:100%;height:auto">');next();});})();};
 </script><script>
 (function(){
   var modal=document.getElementById('serviceModal'), fields=modal&&modal.querySelector('.form-grid'); if(!fields)return;
@@ -152,7 +174,7 @@ window.svcInsertImageFile=function(input){var file=input.files&&input.files[0];i
   (function(){
     var P=window.AKBPointsAdmin;
     if(!P)return;
-    catalog.services.forEach(function(s){if(!s.pointsDeduct)s.pointsDeduct='follow';if(s.pointsCap==null||s.pointsCap==='')s.pointsCap=null;else s.pointsCap=Number(s.pointsCap);});
+    catalog.services.forEach(function(s){if(!s.pointsDeduct||s.pointsDeduct==='follow')s.pointsDeduct='on';if(s.pointsCap==null||s.pointsCap==='')s.pointsCap=null;else s.pointsCap=Number(s.pointsCap);});
 
     window.svcSelected={};window.svcViewIds=[];
     window.svcPointsCell=function(s){
@@ -199,7 +221,7 @@ window.svcInsertImageFile=function(input){var file=input.files&&input.files[0];i
       statusRow.insertAdjacentHTML('beforebegin','<div class="form-2col" style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div class="field"><label>积分抵扣</label><select class="select" id="svcPointsDeduct" style="width:100%"><option value="follow">跟随全局规则</option><option value="on">开启（可使用积分抵扣）</option><option value="off">关闭（不可使用积分抵扣）</option></select></div><div class="field"><label>抵扣上限（订单金额 %，留空跟随全局）</label><input id="svcPointsCap" type="number" min="1" max="100" placeholder="例如 10"></div></div>');
     }
     var oldOpen=window.openServiceModal;
-    window.openServiceModal=function(id){oldOpen(id);var s=id&&catalog.services.find(function(x){return x.id===id});document.getElementById('svcPointsDeduct').value=s?(s.pointsDeduct||'follow'):'follow';document.getElementById('svcPointsCap').value=s&&s.pointsCap!=null?s.pointsCap:'';};
+    window.openServiceModal=function(id){oldOpen(id);var s=id&&catalog.services.find(function(x){return x.id===id});document.getElementById('svcPointsDeduct').value=s?(s.pointsDeduct||'on'):'on';document.getElementById('svcPointsCap').value=s&&s.pointsCap!=null?s.pointsCap:'';};
     var oldSave=window.saveServiceForm;
     window.saveServiceForm=function(){
       var deduct=document.getElementById('svcPointsDeduct').value;
@@ -305,41 +327,24 @@ window.svcInsertImageFile=function(input){var file=input.files&&input.files[0];i
   }
   function esc(v){return String(v||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function renderSvcPreview(d){
-    var isList=document.getElementById('svcTabList').classList.contains('active');
+    var pvPrice=(d.priceVal!==undefined&&d.priceVal!==null&&d.priceVal!=='')?String(d.priceVal):'--';
+    var safeDetail=(d.detailHtml||'').replace(/<script[\s\S]*?<\/script>/gi,'');
     var html='<div class="preview-phone">';
     html+='<div class="preview-status">9:41</div>';
-    if(isList){
-      var pvSales=(function(n){n=Number(n)||0;return n>=10000?((n/10000).toFixed(1).replace(/\.0$/,'')+'万+'):String(n);})(d.sales);
-      var pvPrice=(d.priceVal!==undefined&&d.priceVal!==null&&d.priceVal!=='')?('¥'+d.priceVal):'¥--';
-      html+='<div class="preview-nav">陪护服务</div>';
-      html+='<div class="svc-preview-list pv2-body">';
-      html+='<div class="pv2-card">';
-      html+='<div class="pv2-img">'+(d.cover?'<img src="'+d.cover+'" alt="">':'<span class="pv2-ph">封面图</span>')+'</div>';
-      html+='<div class="pv2-name">'+esc(d.name)+'</div>';
-      html+='<div class="pv2-sub">'+esc(d.summary)+'</div>';
-      html+='<div class="pv2-points"><span class="pv2-off">积分立减30%</span><span class="pv2-mypoints">我的积分30 ›</span></div>';
-      html+='<div class="pv2-foot"><span class="pv2-price">'+pvPrice+'</span><span class="pv2-qi">起</span><span class="pv2-sales">已售'+pvSales+'</span><span class="pv2-add">+</span></div>';
-      html+='</div></div>';
-    }else{
-      html+='<div class="preview-nav"><span class="back">‹</span>服务详情</div>';
-      html+='<div class="svc-preview-detail-hero">';
-      html+='<div style="font-size:11px;opacity:.8">服务详情</div>';
-      html+='<div class="svc-preview-detail-title">'+esc(d.name)+'</div>';
-      html+='<div class="svc-preview-detail-desc">'+esc(d.summary)+'</div>';
-      html+='<div class="svc-preview-detail-price"><span class="p">查看价格</span><span class="s">在线预约</span></div>';
-      html+='</div>';
-      html+='<div class="svc-preview-list">';
-      html+='<div class="svc-preview-section">';
-      html+='<div class="svc-preview-section-title">服务详情</div>';
-      html+='<div class="svc-preview-section-content">'+(d.detailHtml?d.detailHtml.replace(/<script[\s\S]*?<\/script>/gi,''):'暂无详情')+'</div>';
-      html+='</div></div>';
-    }
+    html+='<div class="preview-nav"><span class="back">‹</span>服务详情</div>';
+    html+='<div class="pvd-hero">'+(d.cover?'<img src="'+d.cover+'" alt="">':'')+'<div class="pvd-dots"><span class="on"></span><span></span><span></span></div></div>';
+    html+='<div class="pvd-info">';
+    html+='<div class="pvd-price-row"><span class="pvd-price-l"><em>抵扣后</em><b>¥'+esc(pvPrice)+'</b><i>起</i></span><span class="pvd-pts">积分立减30%</span><span class="pvd-mypt">我的积分30 ›</span></div>';
+    html+='<div class="pvd-name">'+esc(d.name)+'</div>';
+    html+='<div class="pvd-sub">'+esc(d.summary)+'</div>';
+    html+='</div>';
+    html+='<div class="pvd-tabwrap"><div class="pvd-tabs"><span>商品</span><span>评价</span><span class="on">详情</span></div>';
+    html+='<div class="pvd-detail">'+(safeDetail||'暂无详情')+'</div></div>';
     html+='</div>';
     document.getElementById('svcPreviewContent').innerHTML=html;
   }
   window.previewService=function(){
     var d=getSvcFormData();
-    switchSvcPreviewTab('list');
     document.getElementById('svcPreviewModal').classList.add('show');
     renderSvcPreview(d);
   };
@@ -356,23 +361,11 @@ window.svcInsertImageFile=function(input){var file=input.files&&input.files[0];i
       priceVal:(s.price!=null?s.price:''),
       sales:((s.manualSales||0)+(typeof svcSalesMap!=='undefined'?(svcSalesMap[s.name]||0):0))
     };
-    switchSvcPreviewTab('list');
     document.getElementById('svcPreviewModal').classList.add('show');
     renderSvcPreview(d);
   };
   window.closeSvcPreview=function(){
     document.getElementById('svcPreviewModal').classList.remove('show');
-  };
-  window.switchSvcPreviewTab=function(tab){
-    document.getElementById('svcTabList').classList.toggle('active',tab==='list');
-    document.getElementById('svcTabDetail').classList.toggle('active',tab==='detail');
-    renderSvcPreview(getSvcFormData());
-  };
-})();
-</script>
-<script src="admin-batch-points.js"></script></body></html>
-    document.getElementById('svcTabDetail').classList.toggle('active',tab==='detail');
-    renderSvcPreview(getSvcFormData());
   };
 })();
 </script>
