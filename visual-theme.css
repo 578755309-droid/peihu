@@ -259,3 +259,36 @@ body[data-page="cart"] .cart-list,
 body[data-page="messages"] .msg-list {padding:var(--mobile-card-gap) var(--mobile-page-gutter)}
 body[data-page="messages"] .msg-item {margin-bottom:var(--mobile-card-gap)}
 body[data-page="nurses"] .nurse-list {padding-inline:var(--mobile-page-gutter)}
+
+
+/* Profile campaign: warm orange-red, cream CTA and a bespoke reward illustration. */
+body[data-page="profile"] .invite-banner {
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  min-height:154px;padding:18px 18px 17px;margin-top:var(--mobile-card-gap);
+  border-radius:12px;border:1px solid rgba(236,99,49,.2);
+  background:radial-gradient(ellipse at 98% 0%,rgba(255,218,139,.48),transparent 62%),linear-gradient(112deg,#D94429 0%,#EA572E 56%,#FA8846 100%);
+  box-shadow:0 6px 18px rgba(223,80,40,.13);text-decoration:none;isolation:isolate;
+}
+body[data-page="profile"] .invite-banner::before {
+  content:"";position:absolute;width:186px;height:186px;right:-70px;top:-112px;
+  border:1px solid rgba(255,238,211,.28);border-radius:50%;pointer-events:none;
+}
+body[data-page="profile"] .invite-banner::after {
+  content:"";position:absolute;width:218px;height:218px;right:-116px;bottom:-169px;
+  border:26px solid rgba(255,237,209,.09);border-radius:50%;pointer-events:none;
+}
+body[data-page="profile"] .invite-text {position:relative;z-index:1;min-width:0;flex:1;color:#fff}
+body[data-page="profile"] .invite-eyebrow {display:block;color:#FFE7CF;font-size:10px;line-height:15px;font-weight:500;letter-spacing:1px;margin-bottom:5px}
+body[data-page="profile"] .invite-title {font-size:22px;line-height:29px;font-weight:700;letter-spacing:.6px;color:#fff}
+body[data-page="profile"] .invite-sub {display:block;margin-top:4px;font-size:12px;line-height:18px;font-weight:400;color:#FFF2E7;opacity:1}
+body[data-page="profile"] .invite-cta {display:inline-flex;align-items:center;justify-content:center;gap:8px;height:30px;margin-top:12px;padding:0 12px;background:#FFF1D8;color:#A5361F;border:1px solid rgba(255,255,255,.75);border-radius:12px;font-size:12px;font-weight:600;box-shadow:0 3px 8px rgba(137,40,21,.12)}
+body[data-page="profile"] .invite-cta svg {width:15px;height:15px}
+body[data-page="profile"] .invite-art {position:relative;z-index:1;flex:0 0 136px;width:136px;height:132px;margin:-8px -6px -8px 0;pointer-events:none}
+body[data-page="profile"] .invite-art>svg {display:block;width:100%;height:100%}
+body[data-page="profile"] .invite-banner:active {filter:brightness(.97)}
+body[data-page="profile"] .invite-banner:focus-visible {outline:2px solid #AC321E;outline-offset:3px}
+@media(max-width:360px) {
+  body[data-page="profile"] .invite-banner {padding-inline:15px;gap:2px}
+  body[data-page="profile"] .invite-art {flex-basis:112px;width:112px;height:118px}
+  body[data-page="profile"] .invite-title {font-size:21px}
+}

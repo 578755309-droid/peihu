@@ -384,16 +384,44 @@
         </div>
       </div>
 
-      <!-- 邀请好友横幅 -->
-      <div class="invite-banner" onclick="location.href='invite-friends.html'">
+      <!-- 邀请好友活动 Banner -->
+      <a class="invite-banner" href="invite-friends.html" aria-label="邀请好友，邀请好友得积分">
         <div class="invite-text">
+          <span class="invite-eyebrow">好服务 · 一起分享</span>
           <div class="invite-title">邀请好友</div>
-          <div class="invite-sub">邀请好友得积分<svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="invite-sub">邀请好友得积分</div>
+          <span class="invite-cta">立即邀请<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h15m-6-5 5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </div>
-        <div class="invite-icon">
-          <svg viewBox="0 0 52 52" fill="none"><rect x="6" y="14" width="40" height="28" rx="4" fill="rgba(255,255,255,.15)"/><rect x="10" y="10" width="32" height="6" rx="2" fill="rgba(255,255,255,.2)"/><circle cx="18" cy="28" r="3" fill="rgba(255,255,255,.25)"/><circle cx="34" cy="28" r="3" fill="rgba(255,255,255,.25)"/><path d="M20 38h12" stroke="rgba(255,255,255,.3)" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="invite-art" aria-hidden="true">
+          <svg viewBox="0 0 156 150" fill="none" data-keep-svg>
+            <defs>
+              <linearGradient id="inviteGiftBody" x1="40" y1="64" x2="120" y2="136" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF5DF"/><stop offset="1" stop-color="#FFC985"/></linearGradient>
+              <linearGradient id="inviteGiftLid" x1="27" y1="65" x2="128" y2="84" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF9E9"/><stop offset="1" stop-color="#FFE1AF"/></linearGradient>
+              <linearGradient id="inviteCoin" x1="106" y1="20" x2="134" y2="52" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF4AC"/><stop offset="1" stop-color="#FFC553"/></linearGradient>
+            </defs>
+            <ellipse cx="79" cy="139" rx="53" ry="7" fill="#B52D22" opacity=".16"/>
+            <circle cx="86" cy="81" r="62" fill="#FFF2D8" opacity=".11"/>
+            <path d="M21 35l3-6 3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#FFE4A3"/>
+            <path d="m139 83 2-4 2 4 4 2-4 2-2 4-2-4-4-2 4-2z" fill="#FFF2D8"/>
+            <circle cx="124" cy="27" r="19" fill="#DF7E1D" opacity=".25"/>
+            <circle cx="121" cy="23" r="18" fill="url(#inviteCoin)" stroke="#FFF0B5" stroke-width="2"/>
+            <circle cx="121" cy="23" r="12" stroke="#E99C31" stroke-width="1.5"/>
+            <path d="m121 15 2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4-3.9-3.8 5.4-.8L121 15z" fill="#DB8826"/>
+            <g transform="rotate(-7 80 99)">
+              <rect x="35" y="77" width="90" height="57" rx="10" fill="url(#inviteGiftBody)"/>
+              <path d="M77 77h15v57H77z" fill="#F3814A"/>
+              <path d="M42 126h72" stroke="#FFEDCB" stroke-width="2" stroke-linecap="round"/>
+              <rect x="29" y="64" width="102" height="22" rx="7" fill="url(#inviteGiftLid)"/>
+              <path d="M76 64h16v22H76z" fill="#EA693A"/>
+              <path d="M81 64c-14-1-34-7-28-19 6-13 27 3 28 19z" fill="#FFE5BC" stroke="#FFF2D8" stroke-width="2"/>
+              <path d="M83 64c13-3 29-13 21-23-8-10-23 9-21 23z" fill="#FFC680" stroke="#FFF0CE" stroke-width="2"/>
+              <path d="M76 65c-8 13-11 24-9 34m21-34c8 10 16 15 25 16" stroke="#F47E45" stroke-width="7" stroke-linecap="round"/>
+            </g>
+            <circle cx="28" cy="102" r="4" fill="#FFE2A6"/>
+            <path d="m137 57 6-4m-93-31 3-7" stroke="#FFD2A2" stroke-width="3" stroke-linecap="round"/>
+          </svg>
         </div>
-      </div>
+      </a>
 
       <!-- 菜单 -->
       <div class="section">
