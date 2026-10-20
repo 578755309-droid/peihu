@@ -344,7 +344,7 @@
       <div class="pay-product"><div class="pay-thumb" id="payThumb"></div><div class="pay-info"><div class="pay-price-row"><span class="pay-discount-tag">抵扣后</span><span class="pay-price"><small>¥</small><span id="payPriceVal">0</span><small>起</small></span></div><div class="pay-pts-row"><span class="pay-pts-tag">积分立减30%</span><span class="pay-mypts">我的积分 30 ›</span></div><div class="pay-qty"><button onclick="payChangeQty(-1)">−</button><span id="payQty">1</span><button onclick="payChangeQty(1)">＋</button></div></div></div>
       <div class="pay-sec"><div class="pay-sec-label">收货地址</div><div class="pay-addr" onclick="openAddrDrawer()"><span id="payAddr">陕西省西安市莲湖区桃园北路888号（桃园北路与明堂路交叉路口）</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></div></div>
       <div class="pay-sec"><div class="pay-sec-label">配送方式</div><div class="pay-dlv-row"><button class="pay-dlv on" data-dlv="instant" onclick="paySetDelivery('instant',this)">立即送达</button><button class="pay-dlv" data-dlv="runner" onclick="paySetDelivery('runner',this)">跑腿送达</button><button class="pay-dlv" data-dlv="express" onclick="paySetDelivery('express',this)">快递送达</button></div></div>
-      <div class="pay-sec" style="border-bottom:0"><div class="pay-points-row"><span class="pay-points-txt">可抵 ¥30(30 积分)</span><button class="pay-toggle on" id="payToggle" onclick="payTogglePoints()"></button></div></div>
+      <div class="pay-sec" style="border-bottom:0"><div class="pay-points-row"><div><div style="font-size:14px;font-weight:600;margin-bottom:5px">积分抵扣</div><span class="pay-points-txt" id="payPointsHint" aria-live="polite">勾选后使用积分</span></div><button class="pay-toggle" role="switch" aria-checked="false" aria-label="使用积分抵扣" id="payToggle" onclick="payTogglePoints()"></button></div></div>
     </div>
     <button class="pay-confirm" id="payConfirmBtn" onclick="payConfirm()">立即支付 ¥0</button>
   </section></div>
@@ -410,16 +410,16 @@
   function renderAddrList(){var list=getMallAddresses();document.getElementById('addrList').innerHTML=list.length?list.map(function(a){return '<div class="addr-item'+(String(a.id)===String(payAddrId)?' sel':'')+'" onclick="selectPayAddr(\''+a.id+'\')"><div class="addr-radio"></div><div><div class="addr-detail">'+esc(a.detail)+'</div><div class="addr-sub">'+esc(a.contact||'')+(a.phone?' · '+esc(a.phone):'')+'</div></div></div>'}).join(''):'<div style="text-align:center;color:var(--text3);font-size:13px;padding:10px 0">暂无收货地址，请新增</div>'}
   function selectPayAddr(id){payAddrId=id;renderPayAddr();renderAddrList();closeOverlay('addrOverlay')}
   /* ── 立即支付弹窗 ── */
-  var payProduct=null, payQtyNum=1, payDelivery='instant', payUsePoints=true;
+  var payProduct=null, payQtyNum=1, payDelivery='instant', payUsePoints=false;
   var POINTS_DEDUCT=30, MY_POINTS=30;
   function buyNow(id){
     var p=PRODUCTS.find(function(item){return item.id===id});
     if(!p)return;
-    payProduct=p; payQtyNum=1; payDelivery='instant'; payUsePoints=true;
+    payProduct=p; payQtyNum=1; payDelivery='instant'; payUsePoints=false;
     closeOverlay('detailOverlay');
     document.getElementById('payThumb').innerHTML=productVisual(p);
     document.getElementById('payQty').textContent=payQtyNum;
-    document.getElementById('payToggle').classList.add('on');
+    document.getElementById('payToggle').classList.remove('on');
     document.querySelectorAll('.pay-dlv').forEach(function(b){b.classList.toggle('on',b.dataset.dlv==='instant')});
     renderPayAddr();
     payUpdatePrice();
@@ -430,7 +430,7 @@
   function paySetDelivery(v,btn){payDelivery=v;document.querySelectorAll('.pay-dlv').forEach(function(b){b.classList.toggle('on',b===btn)})}
   function payTogglePoints(){payUsePoints=!payUsePoints;document.getElementById('payToggle').classList.toggle('on',payUsePoints);payUpdatePrice()}
   function payCalcTotal(){var base=payProduct.price*payQtyNum;var deduct=payUsePoints?Math.min(POINTS_DEDUCT,base):0;return Math.max(0,base-deduct)}
-  function payUpdatePrice(){var t=payCalcTotal();document.getElementById('payPriceVal').textContent=t.toFixed(2);document.getElementById('payConfirmBtn').textContent='立即支付 ¥'+t.toFixed(2)}
+  function payUpdatePrice(){var t=payCalcTotal();var pts=Math.min(POINTS_DEDUCT,payProduct.price*payQtyNum);document.getElementById('payPointsHint').textContent=payUsePoints?'已抵 ¥'+pts+' · 使用 '+pts+' 积分':'可抵 ¥'+pts+' · 勾选后使用 '+pts+' 积分';document.getElementById('payToggle').setAttribute('aria-checked',String(payUsePoints));document.getElementById('payPriceVal').textContent=t.toFixed(2);document.getElementById('payConfirmBtn').textContent='立即支付 ¥'+t.toFixed(2)}
   function payConfirm(){
     if (!AKBConsent.require('mall-pay')) return;
     if(!payProduct)return;

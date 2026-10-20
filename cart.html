@@ -166,7 +166,7 @@
     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;color:var(--text2)">
       <input type="checkbox" id="pointsCheck" onchange="togglePoints(this)" style="width:16px;height:16px;accent-color:var(--purple)">
       <span style="font-weight:600;color:var(--text)">积分抵扣</span>
-      <span id="pointsInfo" style="flex:1;text-align:right;color:var(--text3)">可用积分 0</span>
+      <span id="pointsInfo" aria-live="polite" style="flex:1;text-align:right;color:var(--text3)">可用积分 0</span>
     </label>
   </div>
 
@@ -320,7 +320,7 @@
     document.getElementById('totalPrice').innerHTML = discount > 0 ? '<s style="font-size:14px;color:#AEACC0;font-weight:400">¥'+total+'</s> <b style="color:#E94E4E">¥'+finalPrice+'</b>' : '<b>¥'+total+'</b>';
     document.getElementById('pointsRow').style.display = items.length ? '' : 'none';
     var ptsBalance = window.AKBPoints ? window.AKBPoints.get().balance : 0;
-    document.getElementById('pointsInfo').textContent = '可用积分 '+ptsBalance+'，本单可抵扣 ¥'+getPointsDiscount(total);
+    document.getElementById('pointsInfo').textContent = '可用 '+ptsBalance+' 积分 · '+(usePoints?'已抵 ¥'+discount:'可抵 ¥'+Math.min(ptsBalance,Math.floor(total*0.3)));
     document.getElementById('pointsCheck').checked = usePoints;
     const btn = document.getElementById('checkoutBtn');
     btn.textContent = '结算('+count+')';

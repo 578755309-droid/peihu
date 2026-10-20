@@ -454,12 +454,12 @@
     .bath-session-addr-text.placeholder { color:var(--text3); }
     .bath-session-addbtn { width:100%; height:42px; margin-top:10px; border:1.5px dashed var(--purple-light); border-radius:12px; background:var(--purple-bg); color:var(--purple); font:700 13px inherit; cursor:pointer; }
     .time-summary { margin-top:12px; padding:11px 12px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:13px; font-weight:600; text-align:center; }
-    .points-card { margin-top:12px; padding:13px 14px; border:1.5px solid var(--border); border-radius:12px; background:#fff; }
+    .points-card { margin-top:12px; padding:14px; border:1px solid var(--border); border-radius:12px; background:linear-gradient(120deg,#fff,#f5fbf9); text-align:left; }
     .points-check { display:flex; align-items:center; gap:10px; cursor:pointer; }
     .points-check input { width:19px; height:19px; accent-color:var(--purple); flex-shrink:0; }
     .points-main { flex:1; font-size:14px; color:var(--text); font-weight:600; }
     .points-balance { font-size:13px; color:var(--text3); font-weight:600; }
-    .points-detail { margin:8px 0 0 29px; font-size:13px; color:var(--text2); }
+    .points-detail { margin:10px 0 0 29px; padding-top:10px; border-top:1px solid rgba(15,169,140,.09); font-size:12px; line-height:1.6; color:var(--text2); }
     .points-detail strong { color:var(--purple); font-size:14px; }
     .price-save { margin-top:2px; color:var(--green); font-size:13px; font-weight:600; text-align:center; }
     .address-list { display:grid; gap:10px; }
@@ -1054,7 +1054,7 @@
                 <span class="points-main">使用积分抵扣</span>
                 <span class="points-balance" id="pointsBalance">可用 0 积分</span>
               </label>
-              <div class="points-detail" id="pointsDetail">本单最多可抵 ¥0</div>
+              <div class="points-detail" id="pointsDetail" aria-live="polite">本单最多可抵 ¥0</div>
             </div>
           </div>
         </div>
@@ -1920,14 +1920,14 @@
     const discountTag = bath10Discount ? ' · 八折优惠' : '';
     document.getElementById('timeSummary').textContent = durationLabel() + discountTag + ' · ¥' + basePrice + '（¥' + unitPrice + (isDaily ? '/天' : '/次') + '）';
     document.getElementById('pointsBalance').textContent = '可用 ' + availablePoints + ' 积分';
-    document.getElementById('pointsDetail').innerHTML = usePoints ? '已使用 <strong>' + pointsUsed + ' 积分</strong>，优惠后 <strong>¥' + currentPrice + '</strong>' : '本单最多可抵 ¥' + maxDiscount + '（' + maxDiscount + ' 积分）';
+    document.getElementById('pointsDetail').innerHTML = !ready ? '选择服务时长后查看本单可抵金额' : !availablePoints ? '暂无可用积分，本单不抵扣' : usePoints ? '使用 ' + pointsUsed + ' 积分 · 本单已抵 <strong>¥' + pointsDiscount + '</strong>' : '本单可抵 <strong>¥' + maxDiscount + '</strong> · 勾选后使用 ' + maxDiscount + ' 积分';
     document.getElementById('priceLabel').textContent = '应付金额';
     document.getElementById('priceNum').textContent = '¥' + currentPrice;
     const save = document.getElementById('priceSave');
-    save.style.display = (usePoints || bath10Discount) ? '' : 'none';
+    save.style.display = (pointsDiscount > 0 || bath10Discount) ? '' : 'none';
     const saveParts = [];
     if (bath10Discount) saveParts.push('10次八折已减 ¥' + (rawTotal - basePrice));
-    if (usePoints) saveParts.push('积分已抵扣 ¥' + pointsDiscount);
+    if (pointsDiscount > 0) saveParts.push('积分已抵扣 ¥' + pointsDiscount);
     save.textContent = saveParts.join(' · ');
   }
 
