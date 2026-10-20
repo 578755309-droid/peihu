@@ -49,6 +49,10 @@
 
     .scroll-area { flex: 1; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
     .scroll-area::-webkit-scrollbar { display: none; }
+    .phone > .profile-header { position:sticky; top:0; z-index:40; flex-shrink:0; background:#0D8373; }
+    .phone > .scroll-area { min-height:0; padding-top:10px; }
+    body[data-page="profile"] .profile-header .hero { padding-bottom:16px; }
+    body[data-page="profile"] .stats-card { margin-top:0; }
 
     /* Status bar */
     .status-bar {
@@ -302,8 +306,7 @@
 <body data-surface="mobile" data-page="profile">
 <div class="frame">
   <div class="phone">
-    <div class="scroll-area">
-
+    <header class="profile-header" aria-label="个人信息">
       <!-- Status bar -->
       <div class="status-bar">
         <span>9:41</span>
@@ -341,6 +344,9 @@
         </div>
       </div>
 
+    </header>
+
+    <div class="scroll-area">
       <!-- Stats -->
       <div class="stats-card">
         <div class="stat-item" onclick="location.href='my-cards.html'">
