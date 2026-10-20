@@ -24,7 +24,7 @@
   });}
   const API={
     version:'3.5.22',components:{Icon},
-    toast(message,duration,options){const o=options||{};clearTimeout(toastTimer);state.toast={id:++sequence,message:String(message==null?'':message),icon:o.icon||'info'};toastTimer=setTimeout(()=>{state.toast=null;},Number(duration)>0?Number(duration):2200);},
+    toast(message,duration,options){const o=options||{};clearTimeout(toastTimer);state.toast={id:++sequence,message:String(message==null?'':message),icon:o.icon||'info'};toastTimer=setTimeout(()=>{state.toast=null;},Number(duration)>0?Number(duration):Math.min(6500,Math.max(2600,String(message||'').length*95)));},
     confirm(message,options){return request('confirm',message,options);},
     prompt(message,value,options){return request('prompt',message,Object.assign({value:value==null?'':value},options));},
     alert(message,options){return request('alert',message,options);},
@@ -92,12 +92,12 @@
     return()=>{const item=props.item,o=item.options,id='akb-dialog-title-'+item.id,msgId='akb-dialog-message-'+item.id;
       return h('div',{class:'akb-ui-layer akb-dialog-backdrop',onClick:event=>{if(event.target===event.currentTarget&&o.cancelOnBackdrop!==false)cancel();}},[
         h('section',{ref:panel,class:'akb-dialog',role:'dialog','aria-modal':'true','aria-labelledby':id,'aria-describedby':msgId,tabindex:-1},[
-          h('h2',{class:'akb-dialog-heading',id},[icon(o.danger?'warning':'info'),o.title||'提示']),
+          h('h2',{class:'akb-dialog-heading',id},[icon(o.danger?'warning':'info'),o.title||(item.kind==='confirm'?'请确认操作':item.kind==='prompt'?'填写信息':'温馨提示')]),
           h('div',{class:'akb-dialog-message',id:msgId},o.message||''),
           item.kind==='prompt'?h('input',{class:'akb-dialog-input',value:value.value,'aria-label':o.inputLabel||o.message||'请输入',placeholder:o.placeholder||'',autofocus:true,onInput:event=>{value.value=event.target.value;},onKeydown:event=>{if(event.key==='Enter'&&!event.isComposing){event.preventDefault();accept();}}}):null,
           h('div',{class:'akb-dialog-actions'},[
             item.kind!=='alert'?h('button',{type:'button',class:'akb-ui-button','data-act':'cancel',onClick:cancel},o.cancelText||'取消'):null,
-            h('button',{type:'button',class:['akb-ui-button',o.danger?'danger':'primary'],'data-act':'ok',onClick:accept},o.okText||'确认')])])]);};
+            h('button',{type:'button',class:['akb-ui-button',o.danger?'danger':'primary'],'data-act':'ok',onClick:accept},o.okText||(item.kind==='alert'?'知道了':'确认'))])])]);};
   }};
 
   function identify(svg){

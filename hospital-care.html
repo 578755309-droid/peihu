@@ -1311,12 +1311,12 @@
           </svg>
         </div>
         <div class="pay-title">支付成功</div>
-        <div class="pay-sub">订单已提交，护理员将在<strong>30分钟内</strong>与您确认</div>
+        <div class="pay-sub">订单已提交，请在订单详情中查看服务安排与联系信息</div>
       </div>
       <div class="pay-card">
         <div class="pay-row" id="payBath10Tip" style="display:none">
         <span class="pay-key">卡包提醒</span>
-        <span class="pay-val" style="color:var(--purple);font-weight:600">首次已付款，剩余9次请在「我的-我的卡包」中预约兑换</span>
+        <span class="pay-val" style="color:var(--purple);font-weight:600">套餐共10次，待预约次数可在「我的 → 我的卡包」中查看并预约</span>
       </div>
         <div class="pay-row">
           <span class="pay-key">服务类型</span>
@@ -1498,7 +1498,7 @@
     if (!isBath10Now) {
       var tpNoDate = !document.getElementById('serviceDate').value;
       var tpNoSlot = tpNeedsSlot() && !document.getElementById('serviceTimeSlot').value;
-      if (tpNoDate || tpNoSlot) { alert(serviceKey === 'bath' ? '请选择服务时间（日期和时间）' : '请选择服务日期'); openTimeSheet(); return; }
+      if (tpNoDate || tpNoSlot) { alert(serviceKey === 'bath' ? '请选择服务日期和时段' : '请选择服务日期'); openTimeSheet(); return; }
     }
     if (dualAddr) {
       if (isReportLayout()) {
@@ -1545,7 +1545,7 @@
     const name = document.getElementById('contactName').value.trim();
     const phone = document.getElementById('contactPhone').value.trim();
     if (!isEscortLayout() && !name) { alert('请填写联系人姓名'); document.getElementById('contactName').focus(); return false; }
-    if (!/^1[3-9]\d{9}$/.test(phone)) { alert('请填写正确的11位联系人手机号'); document.getElementById('contactPhone').focus(); return false; }
+    if (!/^1[3-9]\d{9}$/.test(phone)) { alert('请输入正确的11位联系人手机号码'); document.getElementById('contactPhone').focus(); return false; }
     try { localStorage.setItem('ankebang_contact_info', JSON.stringify({ name: name, phone: phone })); } catch (e) {}
     return true;
   }
@@ -1555,7 +1555,7 @@
     const patient = parseChineseIdCard(document.getElementById('patientIdNo').value);
     const condition = document.getElementById('patientCondition').value.trim();
     if (!name) { alert('请填写服务对象姓名'); document.getElementById('patientName').focus(); return false; }
-    if (!patient) { alert('请填写有效的18位身份证号'); document.getElementById('patientIdNo').focus(); return false; }
+    if (!patient) { alert('请输入有效的18位身份证号码'); document.getElementById('patientIdNo').focus(); return false; }
     if (!condition) { alert('请填写健康情况及服务需求'); document.getElementById('patientCondition').focus(); return false; }
     if (!selectedPatientId) {
       const patients = getSavedPatients();
@@ -2710,9 +2710,11 @@
     document.getElementById('payBtnsNormal').style.display = isBath10Order ? 'none' : '';
     document.getElementById('payBtnsBath10').style.display = isBath10Order ? '' : 'none';
     if (isBath10Order) {
-      document.querySelector('.pay-sub').innerHTML = '订单已提交，' + (bathSessions.filter(function (s) { return s.date; }).length ? '已预约 ' + bathSessions.filter(function (s) { return s.date; }).length + ' 次，' : '') + '剩余' + (10 - bathSessions.filter(function (s) { return s.date; }).length) + '次请在「我的-我的卡包」中预约兑换';
+      var bookedCount = bathSessions.filter(function (s) { return s.date; }).length;
+      document.querySelector('.pay-sub').textContent = '套餐购买成功，共10次服务' + (bookedCount ? '，已预约' + bookedCount + '次' : '，可按需预约');
+      document.querySelector('#payBath10Tip .pay-val').textContent = (10 - bookedCount > 0) ? '还有' + (10 - bookedCount) + '次待预约，请前往「我的 → 我的卡包」选择服务时间' : '10次服务均已预约，可在订单详情中查看服务安排';
     } else {
-      document.querySelector('.pay-sub').innerHTML = '订单已提交，护理员将在<strong>30分钟内</strong>与您确认';
+      document.querySelector('.pay-sub').innerHTML = '订单已提交，请在订单详情中查看服务安排与联系信息';
     }
     var orderNo = 'AKB-' + new Date().getFullYear() + '-' +
       String(Math.floor(Math.random() * 999999)).padStart(6, '0');
@@ -2885,7 +2887,7 @@
     /* 过滤旧测试卡（id 非 CARD- 开头） */
     cards = cards.filter(function (c) { return c.id && String(c.id).indexOf('CARD-') === 0; });
     var hit = cards.find(function (c) { return c.id === redeemCardId; }) || null;
-    if (!hit || (hit.used || 0) >= (hit.total || 10)) { alert('兑换卡不存在或次数已用完'); return; }
+    if (!hit || (hit.used || 0) >= (hit.total || 10)) { alert('当前兑换卡不可用或次数已用完，请前往「我的 → 我的卡包」查看其他卡片'); return; }
     redeemCard = hit;
     selectedCount = 1;
     document.getElementById('countBlock').style.display = 'none';
@@ -2929,7 +2931,7 @@
   }
   window.openCardPicker = function () {
     var cards = getUsableCards();
-    if (!cards.length) { alert('暂无可用兑换卡，可在「我的-我的卡包」查看'); return; }
+    if (!cards.length) { alert('暂无可用兑换卡，请前往「我的 → 我的卡包」查看卡片状态'); return; }
     var box = document.getElementById('cardPickerList');
     box.innerHTML = cards.map(function (c) {
       var left = (c.total || 10) - (c.used || 0);

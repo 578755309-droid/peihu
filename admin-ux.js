@@ -200,7 +200,7 @@
       var tbody = box.querySelector('tbody');
       var empty = box.querySelector('.empty-state,.empty');
       if (!tbody || !empty) return;
-      var defaultText = empty.textContent.trim() || '暂无数据';
+      var defaultText = empty.textContent.trim() || '暂无记录，新增后将在此显示';
       new MutationObserver(function () {
         if (tbody.rows.length > 0) { empty.style.display = 'none'; return; }
         var filterBox = null;
@@ -208,7 +208,7 @@
           if (!filterBox && !b.closest('.modal-mask')) filterBox = b;
         });
         if (filterBox && isFiltering(filterBox)) {
-          empty.innerHTML = '筛选无匹配结果<br><button type="button" class="ux-empty-clear">清除筛选</button>';
+          empty.innerHTML = '未找到符合条件的记录，请调整或清除筛选<br><button type="button" class="ux-empty-clear">清除筛选</button>';
           var b = empty.querySelector('.ux-empty-clear');
           if (b) b.addEventListener('click', function () {
             var r = filterBox.querySelector('.ux-reset');

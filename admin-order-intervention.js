@@ -237,7 +237,7 @@
     activeOrder = findOrder(no);
     if (!activeOrder) return;
     var actions = activeOrder.type === '商城订单' ? mallPlans(activeOrder.state) : (plans[activeOrder.state] || []);
-    if (!actions.length) { showToast('当前订单暂无可执行的人工介入操作'); return; }
+    if (!actions.length) { showToast('当前订单无需人工介入，可在订单详情中查看最新状态'); return; }
     var initAction = (preset && actions.indexOf(preset) > -1) ? preset : actions[0];
     document.getElementById('interventionOrderNo').textContent = '订单人工介入 · ' + activeOrder.no;
     document.getElementById('interventionOrder').innerHTML = '<b>' + activeOrder.type + ' · ' + activeOrder.item + '</b>　当前状态：' + activeOrder.state + '　用户：' + activeOrder.user;

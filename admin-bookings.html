@@ -341,7 +341,7 @@ function buildDemoData(){
 }
 function seedDemoData(){
   var existing=load();
-  if(existing.length>0){showConfirm('已有数据，确定覆盖生成演示数据？',function(){save(buildDemoData());render();});return;}
+  if(existing.length>0){showConfirm('生成示例数据将覆盖当前预约记录，覆盖后无法恢复。是否继续？',function(){save(buildDemoData());render();});return;}
   save(buildDemoData());render();
 }
 

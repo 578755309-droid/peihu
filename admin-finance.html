@@ -5,6 +5,8 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+  <script src="ui/dashboard-data.js"></script>
+  <script src="ui/dashboard.js"></script>
 <link rel="stylesheet" href="admin-shell.css">
 <meta charset="utf-8">
 
@@ -104,6 +106,7 @@
 <script defer src="admin-sidebar.js"></script>
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
+  <link rel="stylesheet" href="ui/dashboard.css" />
 </head>
 <body data-surface="admin" data-page="admin-finance">
 <div class="layout">
@@ -179,8 +182,8 @@
               <button class="ctab" onclick="switchChart(this,'mall')">商城营收</button>
             </div>
           </div>
-          <div class="chart-body"><canvas id="lineChart" width="1000" height="320"></canvas></div>
-          <div class="chart-legend">
+          <div class="chart-body"><div id="lineChart" class="dashboard-chart"></div></div>
+          <div class="chart-legend" hidden>
             <div class="legend-item"><div class="legend-dot" style="background:#1CD8B7"></div><span id="legendLabel">总营收（元）</span></div>
             <div class="legend-item" style="margin-left:auto"><span style="color:var(--green);font-weight:600;font-size:13px">↑ 周均增长 9.3%</span></div>
           </div>
@@ -318,50 +321,7 @@
     drawChart(T_MAP[mode]);
   }
   function drawChart(data){
-    var canvas = document.getElementById('lineChart');
-    var ctx = canvas.getContext('2d');
-    var W = canvas.width, H = canvas.height;
-    var PL = 60, PR = 24, PT = 28, PB = 52;
-    var cW = W - PL - PR, cH = H - PT - PB;
-    ctx.clearRect(0, 0, W, H);
-    var mn = Math.min.apply(null, data), mx = Math.max.apply(null, data);
-    var range = mx - mn || 1;
-    var vMin = mn - range * .12, vMax = mx + range * .18;
-    function xOf(i){ return PL + i / (data.length - 1) * cW; }
-    function yOf(v){ return PT + cH - (v - vMin) / (vMax - vMin) * cH; }
-    ctx.strokeStyle = '#EDE9F5'; ctx.lineWidth = 1;
-    for (var i = 0; i <= 4; i++){
-      var y = PT + i / 4 * cH;
-      ctx.beginPath(); ctx.moveTo(PL, y); ctx.lineTo(W - PR, y); ctx.stroke();
-      var val = vMax - i / 4 * (vMax - vMin);
-      ctx.fillStyle = '#AEACC0'; ctx.font = '20px system-ui'; ctx.textAlign = 'right';
-      ctx.fillText((val/1000).toFixed(0) + 'K', PL - 8, y + 7);
-    }
-    var grad = ctx.createLinearGradient(0, PT, 0, PT + cH);
-    grad.addColorStop(0, 'rgba(0,0,0,0.1)'); grad.addColorStop(1, 'rgba(0,0,0,0.1)');
-    ctx.beginPath(); ctx.moveTo(xOf(0), yOf(data[0]));
-    for (var j = 1; j < data.length; j++){
-      var cx = (xOf(j-1) + xOf(j)) / 2;
-      ctx.bezierCurveTo(cx, yOf(data[j-1]), cx, yOf(data[j]), xOf(j), yOf(data[j]));
-    }
-    ctx.lineTo(xOf(data.length-1), PT + cH); ctx.lineTo(xOf(0), PT + cH); ctx.closePath();
-    ctx.fillStyle = grad; ctx.fill();
-    ctx.beginPath(); ctx.moveTo(xOf(0), yOf(data[0]));
-    for (var k = 1; k < data.length; k++){
-      var cx2 = (xOf(k-1) + xOf(k)) / 2;
-      ctx.bezierCurveTo(cx2, yOf(data[k-1]), cx2, yOf(data[k]), xOf(k), yOf(data[k]));
-    }
-    ctx.strokeStyle = '#1CD8B7'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.stroke();
-    data.forEach(function(v, i){
-      var x = xOf(i), y2 = yOf(v);
-      ctx.beginPath(); ctx.arc(x, y2, 8, 0, Math.PI*2); ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fill();
-      ctx.beginPath(); ctx.arc(x, y2, 5, 0, Math.PI*2); ctx.fillStyle = '#1CD8B7'; ctx.fill();
-      ctx.beginPath(); ctx.arc(x, y2, 2.5, 0, Math.PI*2); ctx.fillStyle = '#fff'; ctx.fill();
-      ctx.fillStyle = '#1A1828'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText('¥' + (v/1000).toFixed(1) + 'K', x, y2 - 15);
-      ctx.fillStyle = '#AEACC0'; ctx.font = '19px system-ui';
-      ctx.fillText(DAYS[i], x, H - 12);
-    });
+    AKBDashboard.mountTrend('#lineChart',{labels:DAYS,values:data,unit:'currency',name:({total:'总营收',svc:'服务营收',mall:'商城营收'})[chartMode],color:({total:AKBDashboard.palette.teal,svc:AKBDashboard.palette.blue,mall:AKBDashboard.palette.amber})[chartMode]});
   }
   drawChart(T_TOTAL);
 

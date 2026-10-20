@@ -109,7 +109,7 @@
       });
       document.getElementById('cfCount').textContent=list.length;
       var rowsEl=document.getElementById('rows');
-      if(!list.length){rowsEl.innerHTML='<tr><td colspan="6"><div class="empty">暂无符合条件的签约记录</div></td></tr>';return;}
+      if(!list.length){rowsEl.innerHTML='<tr><td colspan="6"><div class="empty">未找到符合条件的签约记录，请调整筛选条件</div></td></tr>';return;}
       rowsEl.innerHTML=list.map(function(r){
         var signed=r.status==='已签署';
         return '<tr><td><span class="cell-main">'+esc(r.orderNo)+'</span><span class="cell-sub">合同编号 '+esc(r.contractNo)+'</span></td>'

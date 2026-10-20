@@ -261,7 +261,7 @@
       document.getElementById('udFCount').textContent = list.length;
       document.getElementById('udList').innerHTML = list.length ? list.map(function (r) {
         return '<div class="ud-row"><span class="t">' + P.esc(r.date) + '</span>' + r.tag + '<span class="d">' + P.esc(r.desc) + '</span><span class="p ' + (r.kind === 'earn' ? 'plus">+' : 'minus">-') + r.points + '</span></div>';
-      }).join('') : '<div class="ud-empty">暂无符合条件的记录</div>';
+      }).join('') : '<div class="ud-empty">未找到符合条件的记录，请调整筛选条件</div>';
     }
     document.getElementById('udFType').onchange = renderUdList;
     document.getElementById('udFStart').onchange = renderUdList;

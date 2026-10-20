@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('count').textContent = list.length;
     var rows = document.getElementById('rows');
     if (!list.length) {
-      rows.innerHTML = '<tr><td colspan="9"><div class="empty">暂无符合条件的评价</div></td></tr>';
+      rows.innerHTML = '<tr><td colspan="9"><div class="empty">未找到符合条件的评价，请调整筛选条件</div></td></tr>';
       return;
     }
     rows.innerHTML = list.map(function (r) {

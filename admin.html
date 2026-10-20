@@ -4,7 +4,9 @@
   <script src="vendor/vue.global.prod.js"></script>
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
-  <script src="common-ui.js"></script><link rel="stylesheet" href="admin-shell.css">
+  <script src="common-ui.js"></script>
+  <script src="ui/dashboard-data.js"></script>
+  <script src="ui/dashboard.js"></script><link rel="stylesheet" href="admin-shell.css">
   <meta charset="utf-8" />
 
   <meta name="viewport" content="width=1280" />
@@ -302,6 +304,7 @@
 <link rel="stylesheet" href="admin-mall.css" />
 <script defer src="admin-sidebar.js"></script>  <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
+  <link rel="stylesheet" href="ui/dashboard.css" />
 </head>
 <body data-surface="admin" data-page="admin">
 <div class="admin-layout">
@@ -502,9 +505,9 @@
             </div>
           </div>
           <div class="chart-body">
-            <canvas id="lineChart" width="1000" height="380"></canvas>
+            <div id="lineChart" class="dashboard-chart"></div>
           </div>
-          <div class="chart-legend">
+          <div class="chart-legend" hidden>
             <div class="legend-item">
               <div class="legend-dot" style="background:#1CD8B7"></div>
               <span id="legendLabel">订单数量</span>
@@ -624,7 +627,7 @@
 
         <div class="table-footer">
           <span id="todayOrderFooter">显示第 1–6 条，共 6 条</span>
-          <button class="bill-link" onclick="alert('账单明细功能开发中')">
+          <button class="bill-link" onclick="alert('当前页面暂不支持账单明细查询，请前往财务看板查看汇总')">
             <svg viewBox="0 0 13 13" fill="none"><rect x="1.5" y="1" width="10" height="11" rx="2" stroke="#fff" stroke-width="1.3"/><path d="M4 4h5M4 7h5M4 10h3" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></svg>
             查看账单明细
           </button>
@@ -660,67 +663,7 @@
   }
 
   function drawChart(data) {
-    const canvas = document.getElementById('lineChart');
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
-    const PL = 60, PR = 24, PT = 28, PB = 52;
-    const cW = W - PL - PR, cH = H - PT - PB;
-    ctx.clearRect(0, 0, W, H);
-
-    const mn = Math.min(...data), mx = Math.max(...data);
-    const range = mx - mn || 1;
-    const vMin = mn - range * .12, vMax = mx + range * .18;
-    const xOf = i => PL + i / (data.length - 1) * cW;
-    const yOf = v => PT + cH - (v - vMin) / (vMax - vMin) * cH;
-
-    /* grid */
-    ctx.strokeStyle = '#EDE9F5'; ctx.lineWidth = 1;
-    for (let i = 0; i <= 4; i++) {
-      const y = PT + i / 4 * cH;
-      ctx.beginPath(); ctx.moveTo(PL, y); ctx.lineTo(W - PR, y); ctx.stroke();
-      const val = vMax - i / 4 * (vMax - vMin);
-      ctx.fillStyle = '#AEACC0'; ctx.font = '20px system-ui'; ctx.textAlign = 'right';
-      ctx.fillText(chartMode === 'orders' ? Math.round(val) : (val/1000).toFixed(0)+'K', PL - 8, y + 7);
-    }
-
-    /* fill */
-    const grad = ctx.createLinearGradient(0, PT, 0, PT + cH);
-    grad.addColorStop(0, 'rgba(0,0,0,0.1)');
-    grad.addColorStop(1, 'rgba(0,0,0,0.1)');
-    ctx.beginPath();
-    ctx.moveTo(xOf(0), yOf(data[0]));
-    for (let i = 1; i < data.length; i++) {
-      const cx = (xOf(i-1) + xOf(i)) / 2;
-      ctx.bezierCurveTo(cx, yOf(data[i-1]), cx, yOf(data[i]), xOf(i), yOf(data[i]));
-    }
-    ctx.lineTo(xOf(data.length-1), PT + cH);
-    ctx.lineTo(xOf(0), PT + cH);
-    ctx.closePath();
-    ctx.fillStyle = grad; ctx.fill();
-
-    /* line */
-    ctx.beginPath();
-    ctx.moveTo(xOf(0), yOf(data[0]));
-    for (let i = 1; i < data.length; i++) {
-      const cx = (xOf(i-1) + xOf(i)) / 2;
-      ctx.bezierCurveTo(cx, yOf(data[i-1]), cx, yOf(data[i]), xOf(i), yOf(data[i]));
-    }
-    ctx.strokeStyle = '#1CD8B7'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.stroke();
-
-    /* dots + labels */
-    data.forEach((v, i) => {
-      const x = xOf(i), y = yOf(v);
-      ctx.beginPath(); ctx.arc(x, y, 8, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fill();
-      ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2);
-      ctx.fillStyle = '#1CD8B7'; ctx.fill();
-      ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI*2);
-      ctx.fillStyle = '#fff'; ctx.fill();
-      ctx.fillStyle = '#1A1828'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText(chartMode === 'orders' ? v : '¥'+(v/1000).toFixed(1)+'K', x, y - 15);
-      ctx.fillStyle = '#AEACC0'; ctx.font = '19px system-ui';
-      ctx.fillText(DAYS[i], x, H - 12);
-    });
+    AKBDashboard.mountTrend('#lineChart',{labels:DAYS,values:data,unit:chartMode==='orders'?'count':'currency',name:chartMode==='orders'?'订单数量':'收入额',color:chartMode==='orders'?AKBDashboard.palette.teal:AKBDashboard.palette.blue});
   }
 
   drawChart(ORDERS);

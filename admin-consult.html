@@ -252,7 +252,7 @@ window.clearCover=function(){setCovers([]);};
       });
       document.getElementById('csCount').textContent=list.length;
       var rows=document.getElementById('rows');
-      if(!list.length){rows.innerHTML='<tr><td colspan="6"><div class="empty">暂无符合条件的资讯内容</div></td></tr>';return;}
+      if(!list.length){rows.innerHTML='<tr><td colspan="6"><div class="empty">未找到符合条件的资讯，请调整筛选条件</div></td></tr>';return;}
       rows.innerHTML=list.map(function(item){
         var summary=item.mode==='link'?esc(item.link):esc(stripHtml(item.content).slice(0,42)||'（无正文）');
         return '<tr><td>'+(item.cover?'<img src="'+item.cover+'" style="width:48px;height:32px;object-fit:cover;border-radius:12px;vertical-align:middle;margin-right:9px" alt="">':'')+'<span style="display:inline-block;vertical-align:middle"><span class="cell-main">'+esc(item.name)+'</span><span class="cell-sub">'+esc(item.title)+(item.sub?' · '+esc(item.sub):'')+'</span></span></td>'

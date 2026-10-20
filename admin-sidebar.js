@@ -5,6 +5,7 @@
     if(shared)document.head.appendChild(shared);
     var side=document.querySelector('.sidebar'); if(!side)return;
     var file=(location.pathname.split('/').pop()||'admin.html').toLowerCase();
+    if(file.indexOf('.')===-1)file+='.html';
     currentActive=file==='admin.html'?'dashboard':file.indexOf('admin-ops')>-1?'ops':file.indexOf('admin-finance')>-1?'finance':file.indexOf('ux-monitor')>-1?'ux-monitor':file.indexOf('agreement')>-1?'agreement':file.indexOf('admin-mall-order')>-1?'mall-orders':file.indexOf('admin-mall-products')>-1?'mall-products':file.indexOf('admin-mall-categories')>-1?'mall-categories':file.indexOf('admin-mall-distribution')>-1?'mall-dist':file==='admin-mall.html'?'mall-dashboard':file.indexOf('message-templates')>-1?'msg-templates':file.indexOf('bookings')>-1?'bookings':file.indexOf('service-categories')>-1?'catalog':file==='admin-points.html'?'points':file.indexOf('points-users')>-1?'points-users':file.indexOf('points-earn')>-1?'points-earn':file.indexOf('points-spend')>-1?'points-spend':file.indexOf('points-invite')>-1?'points-invite':file.indexOf('contract')>-1?'contracts':file.indexOf('consult')>-1?'consult':file.indexOf('feedback')>-1?'feedback':file.indexOf('order')>-1?'orders':file.indexOf('caregiver')>-1?'caregivers':file.indexOf('user')>-1?'users':'';
     side.innerHTML='<div class="sb-logo"><div class="sb-logo-title">佑小邦</div><div class="sb-logo-sub">运营管理后台 v2.1</div></div>'+
       '<nav class="sb-nav"><div class="sb-section-lbl">概览</div>'+item('ops','运营看板','admin-ops.html','<path d="M2 14l4-5 3.5 3L15 5"/><path d="M11 5h4v4"/>')+item('finance','财务看板','admin-finance.html','<circle cx="9" cy="9" r="7.2"/><path d="M6 6l3 3.6L12 6M9 9.6V14M6.6 10.4h4.8M6.6 12.6h4.8"/>')+
@@ -37,6 +38,38 @@
     if(file==='admin-caregiver-detail.html') initCaregiverOrderRecords();
     if(file==='admin-caregiver-detail.html') initCaregiverProfile();
     initTerminalLinks();
+    initSidebarGroups(side);
+  }
+  /* Vue sidebar groups preserve the generated links, badge counts and current route. */
+  function initSidebarGroups(side){
+    if(!window.Vue)return;
+    var nav=side.querySelector('.sb-nav');if(!nav)return;
+    var groups=[],group=null;
+    Array.prototype.forEach.call(nav.children,function(node){
+      if(node.classList.contains('sb-section-lbl')){
+        group={id:'section-'+groups.length,title:node.textContent,html:'',active:false,badge:0};groups.push(group);
+      }else if(group){
+        if(node.classList.contains('active')){group.active=true;node.setAttribute('aria-current','page');}
+        var badge=node.querySelector('.nav-badge,.badge');if(badge)group.badge+=Number(badge.textContent)||0;
+        group.html+=node.outerHTML;
+      }
+    });
+    var saved={};try{var parsed=JSON.parse(localStorage.getItem('akb_sidebar_groups_v1')||'{}');if(parsed&&typeof parsed==='object'&&!Array.isArray(parsed))saved=parsed;}catch(error){}
+    var open=Vue.reactive({});groups.forEach(function(g){open[g.id]=g.active||saved[g.id]!==false;});
+    Vue.createApp({name:'AdminSidebarGroups',setup:function(){
+      function toggle(g){open[g.id]=!open[g.id];try{localStorage.setItem('akb_sidebar_groups_v1',JSON.stringify(open));}catch(error){}}
+      return function(){return Vue.h(Vue.Fragment,null,groups.map(function(g){
+        return Vue.h('section',{key:g.id,class:['sb-group',{'is-open':open[g.id],'has-current':g.active}]},[
+          Vue.h('button',{type:'button',class:'sb-group-toggle','aria-expanded':String(open[g.id]),'aria-controls':'sb-'+g.id,onClick:function(){toggle(g);}},[
+            Vue.h('span',{class:'sb-group-name'},g.title),
+            !open[g.id]&&g.badge?Vue.h('span',{class:'sb-group-badge'},String(g.badge)):null,
+            Vue.h('svg',{viewBox:'0 0 16 16',class:'sb-group-chevron','aria-hidden':'true',fill:'none'},[Vue.h('path',{d:'m4 6 4 4 4-4',stroke:'currentColor','stroke-width':1.5,'stroke-linecap':'round','stroke-linejoin':'round'})])]),
+          Vue.h('div',{id:'sb-'+g.id,class:'sb-group-collapse','aria-hidden':String(!open[g.id]),inert:!open[g.id]?'':null},[
+            Vue.h('div',{class:'sb-group-links',innerHTML:g.html})])]);
+      }));};
+    }}).mount(nav);
+    nav.setAttribute('aria-label','后台主导航');
+    if(window.AKBUI)window.AKBUI.refresh();
   }
   function initTerminalLinks(){
     var topbar=document.querySelector('.topbar');

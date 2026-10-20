@@ -5,6 +5,8 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+  <script src="ui/dashboard-data.js"></script>
+  <script src="ui/dashboard.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=1280" />
   <title>商城概览 · 佑小邦运营后台</title>
@@ -20,6 +22,7 @@
   <script defer src="admin-sidebar.js"></script>
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
+  <link rel="stylesheet" href="ui/dashboard.css" />
 </head>
 <body data-surface="admin" data-page="admin-mall">
 <div class="layout">
@@ -50,13 +53,13 @@
       <div class="mall-metrics" id="metricCards"></div>
 
       <div class="mall-split">
-        <!-- 近7天订单 -->
+        <!-- 近7天应收趋势 -->
         <div class="mall-panel">
           <div class="mall-panel-hd">
-            <div class="mall-panel-title"><span class="sec-dot"></span>近 7 天商城订单</div>
-            <span class="wk-tabs"><button class="wk-tab on" id="wkTabN" onclick="switchWkTab('n')">单数</button><button class="wk-tab" id="wkTabAmt" onclick="switchWkTab('amt')">金额</button></span>
+            <div class="mall-panel-title"><span class="sec-dot"></span>近7天应收趋势</div>
+            <span class="db-chart-badge">应收金额 · 元</span>
           </div>
-          <div class="mall-panel-bd"><div class="mall-bars" id="weekBars"></div></div>
+          <div class="mall-panel-bd mall-trend-body"><div class="dashboard-chart" id="weekBars"></div></div>
         </div>
 
         <!-- 待办 -->
@@ -136,45 +139,16 @@
     }).join('');
   }
 
-  /* ── 近7天柱状图（按订单数据实时统计：单数 + 金额） ── */
-  var weekMode = 'n';
-  var WEEK = (function () {
-    var days = [];
-    var byDate = {};
-    for (var i = 6; i >= 0; i--) {
-      var dt = new Date(); dt.setDate(dt.getDate() - i);
-      var key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0');
-      var cell = { key: key, d: String(dt.getMonth() + 1).padStart(2, '0') + '/' + String(dt.getDate()).padStart(2, '0'), n: 0, amt: 0, today: i === 0 };
-      days.push(cell); byDate[key] = cell;
-    }
-    try {
-      M.getOrders().forEach(function (o) {
-        var c = byDate[o.date];
-        if (!c) return;
-        c.n++;
-        if (o.state !== '已取消') c.amt += Number(o.amount) || 0;
-      });
-    } catch (e) {}
-    return days;
-  })();
-  function amtLabel(v) { return v >= 10000 ? '¥' + (v / 10000).toFixed(1).replace(/\.0$/, '') + '万' : M.money(v); }
-  function renderBars() {
-    var field = weekMode === 'n' ? 'n' : 'amt';
-    var max = Math.max.apply(null, WEEK.map(function (w) { return w[field]; })) || 1;
-    document.getElementById('weekBars').innerHTML = WEEK.map(function (w) {
-      var v = w[field];
-      var h = Math.max(4, Math.round(v / max * 150));
-      var valTxt = weekMode === 'n' ? w.n : amtLabel(w.amt);
-      var tip = w.d + '：' + w.n + ' 单 · ' + M.money(w.amt);
-      return '<div class="mall-bar-col"><span class="mall-bar-val">' + valTxt + '</span><div class="mall-bar ' + (w.today ? 'today' : '') + '" style="height:' + h + 'px" title="' + tip + '"></div><span class="mall-bar-lbl">' + w.d + '</span></div>';
-    }).join('');
+  /* 按下单日统计应收：只读原有商城订单，金额口径见图表说明。 */
+  function renderReceivableTrend() {
+    var rows=AKBDashboardData.receivableWeek(M.getOrders());
+    AKBDashboard.mountTrend('#weekBars',{
+      labels:rows.map(function(row){return row.label;}),
+      values:rows.map(function(row){return row.amount;}),
+      unit:'currency',name:'应收金额',color:AKBDashboard.palette.teal,
+      summaryLabel:'近7天应收合计',note:'含待付款；剔除已取消及已退款金额'
+    });
   }
-  window.switchWkTab = function (mode) {
-    weekMode = mode;
-    document.getElementById('wkTabN').classList.toggle('on', mode === 'n');
-    document.getElementById('wkTabAmt').classList.toggle('on', mode === 'amt');
-    renderBars();
-  };
 
   /* ── 发货待办 ── */
   function renderTodo() {
@@ -247,10 +221,11 @@
       }));
   };
 
-  function renderAll() { renderMetrics(); renderTodo(); renderLatest(); }
+  function renderAll() { renderMetrics(); renderReceivableTrend(); renderTodo(); renderLatest(); }
   window.AKBRefreshMallPage = renderAll;
 
-  renderMetrics(); renderBars(); renderTodo(); renderLatest(); renderRank(); renderShare();
+  renderMetrics(); renderReceivableTrend(); renderTodo(); renderLatest(); renderRank(); renderShare();
+  window.addEventListener('storage',function(event){if(!event.key||['akb_admin_mall_orders','ankebang_mall_orders'].indexOf(event.key)>-1)renderAll();});
 })();
 </script>
 <script src="admin-mall-ship.js"></script>

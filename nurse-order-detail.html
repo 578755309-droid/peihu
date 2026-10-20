@@ -25,7 +25,7 @@
   const params=new URLSearchParams(location.search);if(params.get('mode')==='submit'){document.getElementById('orderState').textContent='待完成';}
   function renderTasks(){document.getElementById('taskGroups').innerHTML=GROUPS.map(group=>`<div class="task-group"><div class="task-group-title"><i></i>${group.title}</div><div class="task-list">${group.items.map(item=>`<label class="task-item"><input type="checkbox" onchange="updateProgress()"/>${item}</label>`).join('')}</div></div>`).join('');updateProgress();}
   function updateProgress(){const all=[...document.querySelectorAll('.task-item input')],done=all.filter(input=>input.checked).length,total=all.length;document.getElementById('taskCount').textContent=`${done} / ${total} 已完成`;document.getElementById('progressText').textContent=Math.round(done/total*100)+'%';document.getElementById('progressBar').style.width=Math.max(4,Math.round(done/total*100))+'%';}
-  function submitRecord(){const done=document.querySelectorAll('.task-item input:checked').length;if(!done){showToast('请先勾选已完成的护理任务');return}document.getElementById('orderState').textContent='待客户确认';showToast('护理记录已提交，等待客户确认');}
+  function submitRecord(){const done=document.querySelectorAll('.task-item input:checked').length;if(!done){showToast('请至少勾选一项已完成的护理任务后再提交');return}document.getElementById('orderState').textContent='待客户确认';showToast('护理记录已提交，等待客户确认');}
   function showToast(text){ return window.AKBUI.toast(text,2200); }
   renderTasks();
   const taskSection = [...document.querySelectorAll('.section-card')].find(section => section.textContent.includes('护理任务清单'));

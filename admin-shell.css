@@ -31,3 +31,32 @@ body{min-width:1100px;height:100vh;overflow:hidden}
 .top-av,.tb-av{width:36px!important;height:36px!important;border-radius:12px !important;background:var(--admin-blue)!important;color:#fff!important}
 .sb-nav{overflow-y:auto!important}.sb-nav::-webkit-scrollbar{display:none}.sb-logo-title{line-height:1.2!important}.sb-user{min-height:72px!important}.sb-uname{font-size:13px!important;font-weight:600!important;color:#fff!important}.sb-urole{font-size:11px!important;color:rgba(255,255,255,.4)!important}
 @media(max-width:900px){.sidebar{width:190px!important}.main{margin-left:190px!important}}
+
+/* Vue sidebar group navigation. Keep the original 220px application shell. */
+.sidebar .sb-logo{padding:23px 22px 20px!important;background:linear-gradient(130deg,rgba(28,216,183,.05),transparent)}
+.sidebar .sb-logo-title{font-size:20px!important;font-weight:600!important;letter-spacing:1px}
+.sidebar .sb-logo-sub{font-size:10px!important;font-weight:400!important;letter-spacing:.5px;margin-top:7px!important;color:#7494a4!important}
+.sidebar .sb-nav{padding:12px 0 18px!important;scrollbar-width:thin;scrollbar-color:rgba(160,190,200,.2) transparent}
+.sidebar .sb-nav::-webkit-scrollbar{display:block;width:4px}.sidebar .sb-nav::-webkit-scrollbar-thumb{background:rgba(160,190,200,.2);border-radius:12px}
+.sb-group{margin-bottom:9px}
+.sidebar .sb-group-toggle{display:flex;align-items:center;gap:8px;width:calc(100% - 24px);min-height:35px;margin:0 12px 3px;padding:7px 10px;border:0;border-radius:12px;background:transparent;color:#7896a5;cursor:pointer;font-family:inherit;text-align:left;transition:background .18s,color .18s}
+.sidebar .sb-group-toggle:hover{background:rgba(255,255,255,.045);color:#bed3dc}
+.sb-group-name{flex:1;font-size:11px;font-weight:500;letter-spacing:.8px}
+.sb-group-chevron{width:14px;height:14px;flex:0 0 14px;transform:rotate(-90deg);transition:transform .22s ease;opacity:.75}
+.sb-group.is-open .sb-group-chevron{transform:rotate(0)}
+.sb-group.has-current .sb-group-name{color:#99c4cc}
+.sb-group-badge{min-width:18px;height:18px;padding:0 5px;border-radius:12px;background:rgba(233,78,78,.18);color:#ffada8;font-size:10px;line-height:18px;text-align:center}
+.sb-group-collapse{display:grid;grid-template-rows:0fr;transition:grid-template-rows .24s cubic-bezier(.2,.7,.2,1);visibility:hidden}
+.sb-group.is-open .sb-group-collapse{grid-template-rows:1fr;visibility:visible}
+.sb-group-links{overflow:hidden;min-height:0}
+.sidebar .sb-group-links .nav-link{min-height:40px;margin:3px 10px!important;padding:10px 14px!important;gap:10px!important;color:#abc1cc!important;font-weight:400!important;font-size:13px!important;transition:background .18s,color .18s,box-shadow .18s}
+.sidebar .sb-group-links .nav-link svg{width:18px!important;height:18px!important;flex:0 0 18px!important;opacity:.8}
+.sidebar .sb-group-links .nav-link:hover{background:rgba(124,189,187,.085)!important;color:#e3f4f3!important}
+.sidebar .sb-group-links .nav-link.active{background:linear-gradient(100deg,rgba(28,216,183,.18),rgba(28,216,183,.07))!important;color:#effffc!important;box-shadow:inset 2px 0 #61dfc4!important;font-weight:600!important;border:1px solid rgba(84,207,183,.1)}
+.sidebar .sb-group-links .nav-link.active svg{opacity:1;color:#7de9d3}
+.sidebar .sb-group-links .nav-badge{font-size:10px!important;background:#e85f5a!important;min-width:18px!important;height:17px!important;font-weight:500!important}
+.sidebar .sb-group-toggle:focus-visible,.sidebar .sb-group-links .nav-link:focus-visible{outline:2px solid #61dfc4;outline-offset:1px}
+.sidebar .sb-user{padding:15px 18px!important;background:rgba(0,0,0,.06)}
+.sidebar .sb-av{background:rgba(93,205,185,.12)!important;border:1px solid rgba(93,205,185,.12);color:#bde8df!important;font-weight:500!important}
+.sidebar .sb-uname{font-size:12px!important;font-weight:500!important}.sidebar .sb-urole{font-size:10px!important;font-weight:400!important;color:#6e8f9f!important}
+@media(prefers-reduced-motion:reduce){.sb-group-collapse,.sb-group-chevron,.sidebar .sb-group-toggle,.sidebar .sb-group-links .nav-link{transition:none!important}}
