@@ -5,6 +5,7 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+<script src="nurse-certification-state.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>护理员申请认证 · 护理员端</title>
@@ -91,31 +92,27 @@
   var KEY='akbNurseApplications';
   var SKILLS=['住院陪护','居家陪护','陪诊服务','上门助浴'];
   var CERT_TYPES=['护士证','毕业证','健康证'];
-  function seedApp(){
-    return {status:'审核中',submittedAt:'2026-04-18',reviewedAt:'',rejectReason:'',caregiverId:'',
-      name:'陈小红',phone:'13712345566',gender:'女',idNo:'110101199203104428',age:'34',workYears:'6',
-      employmentType:'personal',companyName:'',area:'北京市朝阳区',skills:['住院陪护','陪诊服务'],
-      certs:[{type:'护士证',certNo:'NRS-2023-04512',image:'',imageName:'护士证.jpg',fileName:'护士证扫描件.pdf',fileSize:102400},
-             {type:'毕业证',certNo:'',image:'',imageName:'',fileName:'',fileSize:0},
-             {type:'健康证',certNo:'',image:'',imageName:'',fileName:'',fileSize:0}]};
-  }
   function validApp(raw){return !!(raw&&typeof raw==='object'&&typeof raw.status==='string'&&raw.name);}
-  function readApp(){try{var raw=JSON.parse(localStorage.getItem(KEY)||'null');if(validApp(raw)){if(!Array.isArray(raw.certs))raw.certs=[];if(!Array.isArray(raw.skills))raw.skills=[];return raw;}if(raw===null||raw===undefined){var s=seedApp();localStorage.setItem(KEY,JSON.stringify(s));return s;}return null;}catch(e){return null;}}
+  function readApp(){return AKBNurseCertification.read();}
   function saveApp(){localStorage.setItem(KEY,JSON.stringify(app));}
   var app=readApp();
   var editMode=false;
+  var draft=null;
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function showToast(t){ return window.AKBUI.toast(t,2200); }
   function badgeClass(st){return st==='审核通过'?'approved':(st==='审核驳回'?'rejected':'pending');}
-  function parseIdNo(value){if(!/^\d{17}[\dXx]$/.test(value))return null;var birth=value.slice(6,14),d=new Date(birth.slice(0,4)+'-'+birth.slice(4,6)+'-'+birth.slice(6,8));if(isNaN(d.getTime()))return null;var today=new Date(),age=today.getFullYear()-d.getFullYear()-((today.getMonth()<d.getMonth()||(today.getMonth()===d.getMonth()&&today.getDate()<d.getDate()))?1:0);return {age:age,gender:Number(value.charAt(16))%2===1?'男':'女'};}
+  function parseIdNo(value){if(!/^\d{17}[\dXx]$/.test(value))return null;var y=Number(value.slice(6,10)),m=Number(value.slice(10,12)),day=Number(value.slice(12,14)),d=new Date(y,m-1,day),now=new Date();if(d.getFullYear()!==y||d.getMonth()!==m-1||d.getDate()!==day||d>now)return null;var age=now.getFullYear()-y-((now.getMonth()<d.getMonth()||(now.getMonth()===d.getMonth()&&now.getDate()<day))?1:0);return {age:age,gender:Number(value.charAt(16))%2?'男':'女'};}
   /* 证书上传暂存 */
   var certData=[],certPending={idx:-1,kind:''};
   function defaultCerts(){return CERT_TYPES.map(function(t){return {type:t,certNo:'',image:'',imageName:'',fileName:'',fileSize:0};});}
   function syncCertFromApp(){certData=defaultCerts().map(function(c){var hit=((app&&app.certs)||[]).find(function(x){return x.type===c.type;});return hit?{type:c.type,certNo:hit.certNo||'',image:hit.image||'',imageName:hit.imageName||'',fileName:hit.fileName||'',fileSize:hit.fileSize||0}:c;});}
   function pickCert(i,kind){certPending={idx:i,kind:kind};var input=document.getElementById('certFile');input.accept=kind==='image'?'image/*':'image/*,.pdf,.doc,.docx';input.click();}
+  function captureDraft(){var get=function(id){return (document.getElementById(id)||{}).value||'';};if(!document.getElementById('fName'))return;draft={name:get('fName'),phone:get('fPhone'),gender:get('fGender'),idNo:get('fIdNo'),age:get('fAge'),workYears:get('fYears'),employmentType:get('fEmploy'),companyName:get('fCompany'),area:get('fArea'),skills:Array.from(document.querySelectorAll('#skillGrid .skill-chip.on')).map(el=>el.textContent)};}
   function onCertFileChange(){
+    captureDraft();
     var file=this.files&&this.files[0];this.value='';
     if(!file||certPending.idx<0)return;
+    if(file.size>5*1024*1024){showToast('文件不能超过5MB，请压缩后重试');return;}
     var rec=certData[certPending.idx];if(!rec)return;
     if(certPending.kind==='image'){
       rec.imageName=file.name;rec.fileSize=file.size;
@@ -125,21 +122,21 @@
   }
   /* 表单 */
   function buildForm(bannerHtml){
-    var a=app||{};
+    var a=draft||app||{};
     var skillsArr=Array.isArray(a.skills)?a.skills:[];
-    syncCertFromApp();
+    if(!certData.length)syncCertFromApp();
     var certsArr=certData;
     var html='<form class="form" onsubmit="submitApp(event)" novalidate>'+(bannerHtml||'');
     html+='<div class="form-sec">基础信息</div>';
     html+='<div class="field" data-f="name"><label>姓名<span class="req">*</span></label><input id="fName" value="'+esc(a.name||'')+'" placeholder="请输入真实姓名"><div class="err">请填写姓名</div></div>';
     html+='<div class="field" data-f="phone"><label>手机号<span class="req">*</span></label><input id="fPhone" type="tel" maxlength="11" inputmode="numeric" value="'+esc(a.phone||'')+'" placeholder="请输入11位手机号"><div class="err">请填写正确的11位手机号</div></div>';
     html+='<div class="field" data-f="gender"><label>性别<span class="req">*</span></label><select id="fGender"><option'+(a.gender==='女'?' selected':'')+'>女</option><option'+(a.gender==='男'?' selected':'')+'>男</option></select></div>';
-    html+='<div class="field" data-f="idNo"><label>身份证号<span class="req">*</span></label><input id="fIdNo" maxlength="18" value="'+esc(a.idNo||'')+'" placeholder="用于身份认证，自动识别年龄与性别" oninput="onIdNoInput()"><div class="err">请输入18位身份证号</div></div>';
+    html+='<div class="field" data-f="idNo"><label>身份证号<span class="req">*</span></label><input id="fIdNo" maxlength="18" value="'+esc(a.idNo||'')+'" placeholder="用于身份认证，自动识别年龄与性别" oninput="onIdNoInput()"><div class="err">请输入有效身份证号，年龄需在18至70岁之间</div></div>';
     html+='<div class="field"><label>年龄</label><input id="fAge" type="number" min="18" max="70" value="'+esc(a.age||'')+'" placeholder="自动识别或填写"></div>';
-    html+='<div class="field" data-f="workYears"><label>工龄<span class="req">*</span></label><input id="fYears" type="number" min="0" max="50" value="'+esc(a.workYears||'')+'" placeholder="例如：5"><div class="err">请填写工龄</div></div>';
+    html+='<div class="field" data-f="workYears"><label>工龄<span class="req">*</span></label><input id="fYears" type="number" min="0" max="50" value="'+esc(a.workYears||'')+'" placeholder="例如：5"><div class="err">工龄需为0至50之间的整数</div></div>';
     html+='<div class="form-sec">认证与服务</div>';
     html+='<div class="field"><label>人员类型<span class="req">*</span></label><select id="fEmploy" onchange="onEmployChange()"><option value="self"'+(a.employmentType==='self'?' selected':'')+'>自营</option><option value="personal"'+(!a.employmentType||a.employmentType==='personal'?' selected':'')+'>个人</option><option value="enterprise"'+(a.employmentType==='enterprise'?' selected':'')+'>企业</option></select></div>';
-    html+='<div class="field" id="fCompanyField" style="display:'+(a.employmentType==='enterprise'?'':'none')+'"><label>入驻企业单位</label><input id="fCompany" value="'+esc(a.companyName||'')+'" placeholder="企业人员入驻的企业/单位名称"></div>';
+    html+='<div class="field" data-f="company" id="fCompanyField" style="display:'+(a.employmentType==='enterprise'?'':'none')+'"><label>入驻企业单位<span class="req">*</span></label><input id="fCompany" value="'+esc(a.companyName||'')+'" placeholder="企业人员入驻的企业/单位名称"></div>';
     html+='<div class="field" data-f="area"><label>服务区域<span class="req">*</span></label><input id="fArea" value="'+esc(a.area||'北京市朝阳区')+'" placeholder="请输入服务区域"><div class="err">请填写服务区域</div></div>';
     html+='<div class="field" data-f="skills"><label>服务技能<span class="req">*</span></label><div class="skill-grid" id="skillGrid">'+SKILLS.map(function(s){return '<div class="skill-chip'+(skillsArr.indexOf(s)>-1?' on':'')+'" onclick="toggleSkill(this)">'+s+'</div>';}).join('')+'</div><div class="err">请至少选择一项服务技能</div></div>';
     html+='<div class="form-sec">资质证书</div>';
@@ -177,7 +174,7 @@
   function statusCard(){
     var st=app.status;
     var cfg={
-      '审核中':{cls:'pending',label:'审核中',title:'申请已提交，等待平台审核',desc:'平台将在 1-3 个工作日内完成审核，审核结果将通过消息通知您。'},
+      '审核中':{cls:'pending',label:'审核中',title:'申请已提交，等待平台审核',desc:'请耐心等待平台审核，可在本页或个人中心查看审核结果。'},
       '审核通过':{cls:'approved',label:'审核通过',title:'恭喜，你的护理员认证已通过',desc:'你的档案已在平台生效，可在服务中展示。如需修改资料，修改后将重新提交审核。'},
       '审核驳回':{cls:'rejected',label:'审核驳回',title:'认证申请未通过',desc:'请根据驳回原因修改资料后重新提交。'}
     }[st];
@@ -191,8 +188,8 @@
   function render(){
     var box=document.getElementById('app');
     if(!app){
-      box.innerHTML='<section class="card status-card"><div class="status-head"><span class="section-title">认证状态</span><span class="status-badge pending">未提交</span></div><div class="status-desc">你还提交过认证申请<br>完善基础资料、认证与服务能力后提交，平台审核通过即可成为平台护理员。</div></section><section class="card" id="formCard">'+buildForm('')+'</section>';
-      syncCertFromApp();bindFileInput();return;
+      box.innerHTML='<section class="card status-card"><div class="status-head"><span class="section-title">认证状态</span><span class="status-badge pending">未认证</span></div><div class="status-desc">你还没有提交认证申请<br>完善基础资料、认证与服务能力后提交，平台审核通过即可成为平台护理员。</div></section><section class="card" id="formCard">'+buildForm('')+'</section>';
+      bindFileInput();return;
     }
     var html=statusCard();
     if(app.status==='审核中'){
@@ -219,7 +216,7 @@
     b.hidden=!b.hidden;
     if(window.event&&window.event.target)window.event.target.textContent=b.hidden?'查看资料':'收起资料';
   };
-  window.startEdit=function(){editMode=true;syncCertFromApp();render();window.scrollTo(0,0);};
+  window.startEdit=function(){draft=null;editMode=true;syncCertFromApp();render();window.scrollTo(0,0);};
   /* 表单交互 */
   window.onIdNoInput=function(){var v=document.getElementById('fIdNo').value.trim();var p=parseIdNo(v);if(p){document.getElementById('fAge').value=p.age;document.getElementById('fGender').value=p.gender;}};
   window.onEmployChange=function(){var v=document.getElementById('fEmploy').value;document.getElementById('fCompanyField').style.display=v==='enterprise'?'':'none';if(v!=='enterprise')document.getElementById('fCompany').value='';};
@@ -238,6 +235,7 @@
   }
   window.submitApp=function(ev){
     ev.preventDefault();
+    var latest=readApp();if(latest&&latest.status==='审核中'){showToast('认证申请正在审核，请勿重复提交');return;}
     var name=document.getElementById('fName').value.trim();
     var phone=document.getElementById('fPhone').value.trim();
     var gender=document.getElementById('fGender').value;
@@ -251,28 +249,32 @@
     Array.prototype.forEach.call(document.querySelectorAll('.field.invalid'),function(f){f.classList.remove('invalid');});
     var ok=true;
     if(!name){markInvalid('name');ok=false;}
-    if(!/^1\d{10}$/.test(phone)){markInvalid('phone');ok=false;}
-    if(!/^\d{17}[\dXx]$/.test(idNo)){markInvalid('idNo');ok=false;}
-    if(years===''){markInvalid('workYears');ok=false;}
+    if(!/^1[3-9]\d{9}$/.test(phone)){markInvalid('phone');ok=false;}
+    var parsedId=parseIdNo(idNo);if(!parsedId||parsedId.age<18||parsedId.age>70){markInvalid('idNo');ok=false;}else{age=String(parsedId.age);gender=parsedId.gender;}
+    if(years===''||!Number.isInteger(Number(years))||Number(years)<0||Number(years)>50){markInvalid('workYears');ok=false;}
+    if(employ==='enterprise'&&!company){markInvalid('company');ok=false;}
     if(!area){markInvalid('area');ok=false;}
     if(!skills.length){markInvalid('skills');ok=false;}
     if(!ok){showToast('请完善标红的必填项');return;}
     var wasApproved=app&&app.status==='审核通过';
     var base=app||{caregiverId:''};
     app=Object.assign({},base,{
-      status:'审核中',rejectReason:'',reviewedAt:'',
+      status:'审核中',hasApprovedCertification:wasApproved||base.hasApprovedCertification===true,rejectReason:'',reviewedAt:'',
       submittedAt:new Date().toISOString().slice(0,10),
       name:name,phone:phone,gender:gender,idNo:idNo,
       age:age||'',workYears:years,
       employmentType:employ,companyName:company,area:area,skills:skills,
       certs:certData.map(function(c){return {type:c.type,certNo:(c.certNo||'').trim(),image:c.image||'',imageName:c.imageName||'',fileName:c.fileName||'',fileSize:c.fileSize||0};})
     });
-    saveApp();
-    editMode=false;
+    try{saveApp();}catch(e){app=latest;showToast('申请未保存，请减少材料大小后重试');return;}
+    draft=null;editMode=false;
     render();
     window.scrollTo(0,0);
     showToast(wasApproved?'已保存，资料重新提交审核':'认证申请已提交');
   };
+  function refreshApplication(){var latest=readApp();if(JSON.stringify(latest)!==JSON.stringify(app)){app=latest;editMode=false;draft=null;certData=[];render();}}
+  window.addEventListener('storage',function(e){if(e.key===KEY||e.key===null)refreshApplication();});
+  window.addEventListener('focus',refreshApplication);
   render();
 </script>
 </body>

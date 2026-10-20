@@ -5,6 +5,7 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+<script src="nurse-certification-state.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>护理员工作台</title>
@@ -694,6 +695,7 @@
   /* ── Status toggle ── */
   let isIdle = true;
   function toggleStatus() {
+    if(!AKBNurseCertification.require())return;
     isIdle = !isIdle;
     const pill = document.getElementById('statusPill');
     const txt  = document.getElementById('statusText');
@@ -706,6 +708,7 @@
 
   /* ── Accept / Reject ── */
   function acceptOrder() {
+    if(!AKBNurseCertification.require())return;
     document.getElementById('pendingCard').style.display = 'none';
     document.getElementById('noOrder').style.display = 'block';
     secs = -1;

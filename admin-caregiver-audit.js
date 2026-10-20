@@ -83,7 +83,7 @@
   window.approveApp = function (name) {
     var apps = readApps();
     var app = apps.find(function (a) { return a.name === name; });
-    if (!app) return;
+    if (!app || app.status !== '审核中') return;
     var today = new Date().toISOString().slice(0, 10);
     var record = {
       name: app.name, phone: app.phone, skills: app.skills || [], state: 'on',
@@ -94,26 +94,29 @@
       certs: (app.certs || []).map(function (c) { return { type: c.type, certNo: c.certNo || '', imageName: c.imageName || '', image: c.image || '', fileName: c.fileName || '', fileSize: c.fileSize || 0 }; })
     };
     var saved;
-    try { saved = JSON.parse(sessionStorage.getItem('akbNewCaregivers') || '[]'); if (!Array.isArray(saved)) saved = []; } catch (e) { saved = []; }
+    try { saved = JSON.parse(sessionStorage.getItem('akbNewCaregivers') || localStorage.getItem('akbNewCaregivers') || '[]'); if (!Array.isArray(saved)) saved = []; } catch (e) { saved = []; }
     if (app.caregiverId) {
       /* 再次审核通过：更新已有档案 */
       var hit = saved.find(function (x) { return x.id === app.caregiverId; });
-      if (hit) Object.assign(hit, record);
+      if (hit) Object.assign(hit, record);else saved.push(Object.assign({id:app.caregiverId,rating:'—',orders:0},record));
       if (typeof DATA !== 'undefined') {
         var dHit = DATA.find(function (x) { return x.id === app.caregiverId; });
         if (dHit) Object.assign(dHit, record);
       }
       record.id = app.caregiverId;
     } else {
-      record.id = 'N' + String(1006 + saved.length);
+      var used=saved.concat(typeof DATA!=='undefined'?DATA:[]).map(function(r){return parseInt(String(r.id).replace(/^N/,''),10)||0;});
+      record.id='N'+String(Math.max.apply(null,[1005].concat(used))+1);
       record.rating = '—'; record.orders = 0;
       saved.push(record);
       app.caregiverId = record.id;
       if (typeof DATA !== 'undefined' && !DATA.some(function (item) { return item.id === record.id; })) DATA.push(record);
     }
     sessionStorage.setItem('akbNewCaregivers', JSON.stringify(saved));
+    localStorage.setItem('akbNewCaregivers', JSON.stringify(saved));
     sessionStorage.setItem('akbCaregiverDraft', JSON.stringify(record));
     app.status = '审核通过';
+    app.hasApprovedCertification=true;
     app.reviewedAt = today;
     writeApps(apps);
     if (typeof render === 'function') render();
@@ -129,7 +132,7 @@
     if (!reason) { alert('请填写驳回原因'); input && input.focus(); return; }
     var apps = readApps();
     var app = apps.find(function (a) { return a.name === rejectTarget; });
-    if (!app) return;
+    if (!app || app.status !== '审核中') return;
     app.status = '审核驳回';
     app.rejectReason = reason;
     app.reviewedAt = new Date().toISOString().slice(0, 10);
@@ -137,7 +140,8 @@
     rejectTarget = '';
     renderCaregiverAudit();
     refreshBadge();
-    if (window.showActionResult) showActionResult('已驳回', app.name + ' 的认证申请已驳回，护理员端将收到驳回原因通知。');
+    if (window.showActionResult) showActionResult('已驳回', app.name + ' 的认证申请已驳回，护理员端可查看驳回原因并重新提交。');
   };
+  window.addEventListener('storage',function(e){if(e.key===KEY||e.key===null){refreshBadge();if(document.getElementById('cgAuditMask').classList.contains('show'))renderCaregiverAudit();}});
   refreshBadge();
 })();
