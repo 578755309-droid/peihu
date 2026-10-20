@@ -404,6 +404,17 @@
       <!-- 菜单 -->
       <div class="section">
         <div class="menu-card">
+          <div class="menu-item" onclick="switchToNurse()">
+            <div class="menu-ico green">
+              <svg viewBox="0 0 20 20" fill="none">
+                <path d="M10 2.5l6 2.8v4.2c0 4-2.4 6.9-6 8.5-3.6-1.6-6-4.5-6-8.5V5.3z" stroke="#22C55E" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M7.2 10l2 2 3.6-3.8" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="menu-text"><div class="menu-name">切换到陪护端</div><div class="menu-sub" id="nurseRoleSub">查看接单与工作台</div></div>
+            <span id="nurseRoleChip" style="font-size:12px;font-weight:700">—</span>
+            <div class="menu-arrow"><svg viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="#AEACC0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
           <div class="menu-item" onclick="location.href='addresses.html'">
             <div class="menu-ico blue"><img class="design-icon" src="assets/design/address.svg" width="48" height="48" alt="" aria-hidden="true" /></div>
             <div class="menu-text"><div class="menu-name">常用地址</div></div>
@@ -469,9 +480,40 @@
 </div><!-- .frame -->
 
 <script src="points-store.js"></script>
+<script src="nurse-certification-state.js"></script>
 <script>
   /* 积分 */
   document.getElementById('profilePointsNum').textContent = AKBPoints.get().balance;
+  /* 切换到陪护端：已有陪护员身份直接进入，否则走认证流程 */
+  window.switchToNurse = function () {
+    var s = window.AKBNurseCertification ? AKBNurseCertification.summary() : { effective: false, label: '未认证' };
+    if (s.effective) { location.href = 'nurse-home.html'; return; }
+    location.href = 'nurse-certification.html';
+  };
+  (function () {
+    var chip = document.getElementById('nurseRoleChip');
+    var sub = document.getElementById('nurseRoleSub');
+    if (!chip) return;
+    var s = window.AKBNurseCertification ? AKBNurseCertification.summary() : { effective: false, label: '未认证', app: null };
+    if (s.effective) {
+      chip.textContent = '已认证';
+      chip.style.color = '#0FA98C';
+      sub.textContent = s.app && s.app.caregiverId ? '工号 ' + s.app.caregiverId + ' · 进入工作台' : '进入工作台';
+    } else if (s.app && s.app.status === '审核中') {
+      chip.textContent = '审核中';
+      chip.style.color = '#D97706';
+      sub.textContent = '认证通过后即可进入';
+    } else if (s.app && s.app.status === '审核驳回') {
+      chip.textContent = '未通过';
+      chip.style.color = '#EF4444';
+      sub.textContent = '查看原因并重新提交';
+    } else {
+      chip.textContent = '去认证';
+      chip.style.color = '#6B6880';
+      sub.textContent = '填写资料申请成为护理员';
+    }
+  })();
+
   /* 卡包剩余次数 */
   (function () {
     try {
