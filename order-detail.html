@@ -5,6 +5,8 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+<script src="service-order-fields.js"></script>
+<link rel="stylesheet" href="ui/service-order-view.css" />
   <meta charset="utf-8" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -94,7 +96,7 @@
     return {
       no:o.id,type:o.type,project:o.project,
       desc:o.type==='上门助浴'?'上门提供安全、舒适的助浴服务（按次预约）':'专业照护服务',
-      state:o.state,stateDesc:o.state==='待服务'?'护理员已接单，按预约时间上门服务':o.state==='退款处理中'?'退款申请已提交，平台将在 1-3 个工作日内审核':o.state==='已退款'?'退款已完成，款项已原路退回':'订单进行中',stateColor:o.status,
+      state:o.state,stateDesc:o.state==='待服务'?(o.nurse&&o.nurse!=='待分配'?'服务人员已安排，请按预约时间等候服务':'订单已提交，等待安排服务'):o.state==='退款处理中'?'退款申请已提交，平台将在 1-3 个工作日内审核':o.state==='已退款'?'退款已完成，款项已原路退回':'订单进行中',stateColor:o.status,
       location:o.addressKind==='家'?patientName+'家':(o.address||'').split('｜')[0],
       locationType:o.addressKind==='医院'?'医院':'家庭',
       address:o.address||'',contact:(o.contact||patientName)+(o.phone?' · '+o.phone:''),
@@ -183,5 +185,6 @@
   function appendPatientNeeds(){const box=document.querySelector('.patient-box');if(!box)return;const infectiousDisplay=careNeed.infectious==='有'&&careNeed.infectiousName?careNeed.infectious+'（'+careNeed.infectiousName+'）':careNeed.infectious;box.insertAdjacentHTML('beforeend','<div class="patient-needs"><div class="patient-need"><span class="patient-need-label">患者自理等级</span><span class="patient-need-value">'+esc(careNeed.selfCare)+'</span></div><div class="patient-need"><span class="patient-need-label">有无管路</span><span class="patient-need-value">'+esc(careNeed.tubes)+'</span></div><div class="patient-need"><span class="patient-need-label">有无传染性疾病</span><span class="patient-need-value">'+esc(infectiousDisplay)+'</span></div><div class="patient-need"><span class="patient-need-label">有无皮肤破损</span><span class="patient-need-value">'+esc(careNeed.skinBreak)+'</span></div></div>')}
   render();appendPatientNeeds();renderActions();
 </script>
+<script src="ui/service-order-view.js"></script>
 </body>
 </html>

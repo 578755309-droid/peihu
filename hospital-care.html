@@ -5,6 +5,7 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+  <script src="service-order-fields.js"></script>
   <script src="ui/consent-data.js"></script>
   <script src="ui/consent.js"></script>
   <link rel="stylesheet" href="ui/consent.css" />
@@ -2794,6 +2795,37 @@
       note: document.getElementById('otherNeeds').value.trim(),
       pax: isEscortLayout() ? (parseInt(document.getElementById('paxVal').textContent, 10) || 1) : 0
     };
+    /* Snapshot only the information applicable to this service; keep legacy fields compatible. */
+    var linkedOrder = redeemCard && AKBServiceOrderFields.read(redeemCard.orderNo);
+    var inherited = linkedOrder ? AKBServiceOrderFields.normalize(linkedOrder) : null;
+    var savedPatient = getSavedPatients().find(function(p){return String(p.id)===String(selectedPatientId);}) || {};
+    var patientSnapshot = {
+      name: patientName, gender: patient.gender || '', age: patient.age,
+      idMasked: AKBServiceOrderFields.mask(redeemCard ? (inherited && inherited.patient.idMasked) : document.getElementById('patientIdNo').value),
+      condition: redeemCard ? ((inherited && inherited.patient.condition) || '') : (document.getElementById('patientCondition').value.trim() || savedPatient.condition || '')
+    };
+    var careApplies = ['hospital','home','bath'].indexOf(serviceKey) !== -1;
+    if (redeemCard) {
+      order.careNeeds = inherited ? inherited.careNeeds : {};
+      order.contact = redeemCard.contact || (inherited && inherited.contact) || '';
+      order.phone = redeemCard.phone || (inherited && inherited.phone) || '';
+      order.note = (inherited && inherited.note) || '';
+    } else if (!careApplies) { order.careNeeds = {}; }
+    var fromAddrSnapshot = dualAddr ? findAddress(selectedFromAddressId) : addr;
+    var toAddrSnapshot = dualAddr ? findAddress(selectedToAddressId) : null;
+    function addressSnapshot(a,label){a=a||{};return {label:label,detail:a.detail||'',contact:a.contact||'',phone:a.phone||'',type:a.addressType||''};}
+    order.serviceKey = serviceKey;
+    order.visitServiceId = visitServiceId || '';
+    order.patientSnapshot = patientSnapshot;
+    order.patientCondition = patientSnapshot.condition;
+    order.serviceDetails = {
+      schemaVersion:1,projectId:serviceKey==='visit'?(visitServiceId||'visit'):serviceKey,
+      patient:patientSnapshot,contact:order.contact,phone:order.phone,date:date,timeSlot:slotLabel,time:order.time,
+      dailyType:service.durationMode==='daily'?selectedDailyType:'',
+      careNeeds:careApplies?order.careNeeds:{},
+      addresses:dualAddr?[addressSnapshot(fromAddrSnapshot,dualAddr.from.label),addressSnapshot(toAddrSnapshot,dualAddr.to.label)]:[addressSnapshot(addr,isVipExamLayout()||isHospitalLayout()?'服务医院':'服务地址')],
+      department:order.serviceDept,ward:order.ward,examItem:order.examItem,examPhotos:order.examPhotos,reportName:order.reportName,pax:order.pax,note:order.note
+    };
     /* 上门助浴：支持双护理员，第二位写入 nurse2/nursePhone2 */
     if (selectedNurses[1]) {
       order.nurse2 = selectedNurses[1].name;
@@ -2858,9 +2890,14 @@
           addressDetail: order.addressDetail,
           contact: order.contact,
           phone: order.phone,
+          serviceDetails: order.serviceDetails, patientSnapshot: order.patientSnapshot, patientCondition: order.patientCondition, serviceKey: order.serviceKey,
           packOrderNo: orderNo,
-          note: '10次套餐首次服务 · 已随套餐支付'
+          note: order.note, systemNote: '10次套餐首次服务 · 已随套餐支付'
         };
+        firstOrder.serviceDetails=JSON.parse(JSON.stringify(order.serviceDetails));
+        firstOrder.serviceDetails.addresses=[{label:'服务地址',detail:bookedSessions[0].addressDetail,contact:bookedSessions[0].contact,phone:bookedSessions[0].phone}];
+        firstOrder.serviceDetails.date=bookedSessions[0].date;
+        firstOrder.serviceDetails.time=bookedSessions[0].date+' '+bookedSessions[0].time;
         if (order.nurse2) { firstOrder.nurse2 = order.nurse2; firstOrder.nursePhone2 = order.nursePhone2; }
       }
     }

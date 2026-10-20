@@ -227,6 +227,9 @@
     var quantity=isDaily?('x'+qty+'天'):order.quantity;
     var time=order.unitLabel==='/天'?(date+' 08:00 至 '+renewShiftDate(date,qty-1)+' 20:00'):(date+' 08:00');
     var draft={id:'AKB-R'+String(Date.now()).slice(-8),type:order.type,project:order.project,unit:order.unit,unitLabel:order.unitLabel,quantity:quantity,person:order.person,address:addr,addressKind:order.addressKind,time:time,nurse:order.nurse,nursePhone:order.nursePhone,role:order.role,cert:order.cert,years:order.years,avatar:order.avatar,originalAmount:amt%1?amt.toFixed(2):String(amt),amount:amt%1?amt.toFixed(2):String(amt),orderType:'续费订单',renewFrom:renewNo,createdAt:Date.now(),source:'renew'};
+    var original=AKBServiceOrderFields.read(renewNo);
+    if(original){['serviceDetails','patientSnapshot','patientCondition','serviceKey','visitServiceId','careNeeds','contact','phone','examItem','examPhotos','reportName','serviceDept','ward','address2','note','pax'].forEach(function(k){if(original[k]!==undefined)draft[k]=JSON.parse(JSON.stringify(original[k]));});if(draft.serviceDetails){draft.serviceDetails.date=date;draft.serviceDetails.time=time;if(draft.serviceDetails.addresses&&draft.serviceDetails.addresses[0])draft.serviceDetails.addresses[0].detail=addr;}}
+    draft.serviceDate=date;
     renewPay={order:draft,usePoints:true};
     ensureRenewPayDom();
     renderRenewPay();
