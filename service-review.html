@@ -5,6 +5,8 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+<script src="review-order-seeds.js"></script>
+<script src="review-store.js"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>服务评价 · 佑小邦</title>
@@ -128,25 +130,21 @@
 <script>
   /* 简单的服务封面（内联 SVG，离线可用） */
   function coverSvg(bg,fg,label){var svg='<svg xmlns="http://www.w3.org/2000/svg" width="108" height="108"><rect width="108" height="108" rx="14" fill="'+bg+'"/><circle cx="84" cy="22" r="26" fill="'+fg+'" opacity=".18"/><text x="54" y="58" font-size="15" font-weight="bold" text-anchor="middle" fill="'+fg+'" font-family="sans-serif">'+label+'</text><path d="M34 78h40v14H34z" fill="'+fg+'" opacity=".25"/></svg>';return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)}
-  var COVERS={default:coverSvg('#E7F7EF','#16965A','陪护服务'),bath:coverSvg('#EAF3FF','#397EBA','上门助浴'),clinic:coverSvg('#FFF3E1','#C17A24','陪诊服务')};
-  var DATA={
-    'AKB-2026-022301':{service:'基础版-陪护',meta:'护理员张秀英 · 住院陪护',years:3,cover:COVERS.default},
-    'AKB-2026-040318':{service:'上门助浴服务',meta:'护理员陈护理师 · 上门助浴',years:5,cover:COVERS.bath}
-  };
-  var no=new URLSearchParams(location.search).get('no')||'AKB-2026-022301';
-  var data=DATA[no]||DATA['AKB-2026-022301'];
-  document.getElementById('serviceName').textContent=data.service;
-  document.getElementById('serviceMeta').textContent=data.meta;
+  var COVERS={default:coverSvg('#E7F7EF','#16965A','陪护服务'),mall:coverSvg('#FFF0F0','#D94646','商城商品'),bath:coverSvg('#EAF3FF','#397EBA','上门助浴'),clinic:coverSvg('#FFF3E1','#C17A24','陪诊服务')};
+  var params=new URLSearchParams(location.search),orderKind=params.get('kind')==='mall'?'mall':'service';
+  var no=params.get('no')||'AKB-2026-022301',order=AKBReviews.find(orderKind,no);
+  var category=AKBReviews.type(order,orderKind),profile=AKBReviews.profile(category);
+  var data={service:orderKind==='mall'?(order&&order.product):(order&&(order.project||order.type)),meta:orderKind==='mall'?(order&&order.desc):[order&&order.nurse,order&&order.type].filter(Boolean).join(' · '),cover:order&&order.image||COVERS[category==='mall'?'mall':category==='visit'?'clinic':category==='bath'?'bath':'default']};
+  document.querySelector('.nav-title').textContent=profile.title;document.title=profile.title+' · 佑小邦';
+  document.getElementById('serviceName').textContent=data.service||'未找到订单';
+  document.getElementById('serviceMeta').textContent=data.meta||'';
   document.getElementById('serviceCover').src=data.cover;
-
-  var DIMS=[
-    {key:'punctual',label:'服务守时'},
-    {key:'professional',label:'照护专业度'},
-    {key:'patience',label:'耐心与沟通'},
-    {key:'responsibility',label:'责任心与细心'},
-    {key:'manner',label:'个人素养与习惯'}
-  ];
-  var TAG_OPTIONS=['服务态度好','有耐心','有亲和力','专业细致','响应及时','照护周到'];
+  document.getElementById('serviceCover').alt=orderKind==='mall'?'商品图片':'服务封面';
+  document.getElementById('reviewText').placeholder=profile.placeholder;
+  document.querySelector('.success-desc').textContent=profile.thanks;
+  document.querySelector('.back-order').onclick=function(){location.href='orders.html'+(orderKind==='mall'?'?type=mall':'');};
+  var DIMS=profile.dims.map(function(d){return {key:d[0],label:d[1]};});
+  var TAG_OPTIONS=profile.tags;
   var MAX_IMGS=6;
   var dimScores={}, pickedTags=[], reviewImages=[];
 
@@ -154,7 +152,7 @@
   document.getElementById('dimBox').innerHTML=DIMS.map(function(d){
     return '<div class="dim-row"><span class="dim-label">'+d.label+'</span><div class="dim-stars" data-dim="'+d.key+'">'+[1,2,3,4,5].map(function(n){return '<button type="button" class="dim-star" data-n="'+n+'" onclick="setDim(\''+d.key+'\','+n+')">★</button>'}).join('')+'</div></div>';
   }).join('');
-  function setDim(key,n){dimScores[key]=n;document.querySelectorAll('.dim-stars[data-dim="'+key+'"] .dim-star').forEach(function(s){s.classList.toggle('on',Number(s.dataset.n)<=n)});document.getElementById('error').textContent=''}
+  function setDim(key,n){if(!DIMS.some(function(d){return d.key===key;})||!Number.isInteger(n)||n<1||n>5)return;dimScores[key]=n;document.querySelectorAll('.dim-stars[data-dim="'+key+'"] .dim-star').forEach(function(s){s.classList.toggle('on',Number(s.dataset.n)<=n)});document.getElementById('error').textContent=''}
   window.setDim=setDim;
 
   /* 渲染快捷标签 */
@@ -174,7 +172,7 @@
     files.forEach(function(file){
       if(reviewImages.length>=MAX_IMGS)return;
       var reader=new FileReader();
-      reader.onload=function(ev){compress(ev.target.result,function(dataUrl){reviewImages.push(dataUrl);renderImgs()})};
+      reader.onload=function(ev){compress(ev.target.result,function(dataUrl){if(reviewImages.length<MAX_IMGS){reviewImages.push(dataUrl);renderImgs()}})};
       reader.readAsDataURL(file);
     });
     imgInput.value='';
@@ -199,39 +197,18 @@
   }
   window.removeImg=function(i){reviewImages.splice(i,1);renderImgs()};
 
-  function readRatings(){try{const value=JSON.parse(localStorage.getItem('akb_service_ratings_v2')||'{}');return value&&typeof value==='object'?value:{};}catch(error){return {};}}
-  function starStr(score){const filled=Math.max(0,Math.min(5,Math.round(score)));return '★'.repeat(filled)+'☆'.repeat(5-filled)}
-  function composite(userScore){const care=Math.min(5,3.8+data.years*.2);return Number((4.8*.3+care*.3+userScore*.4).toFixed(1))}
-
-  function nowStr(){var d=new Date();function p(n){return String(n).padStart(2,'0')}return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())}
-
+  function showSaved(saved){
+    document.getElementById('reviewForm').classList.add('hidden');document.getElementById('success').classList.add('show');
+    document.getElementById('successScore').textContent=profile.score+' '+(saved.stars||AKBReviews.stars(saved.total))+' · '+saved.total+' 分';
+    var old=document.getElementById('savedReview');if(old)old.remove();var box=document.createElement('div');box.id='savedReview';box.style.cssText='text-align:left;margin-top:18px;font-size:13px;line-height:1.8;overflow-wrap:anywhere';
+    var app=Vue.createApp({render:function(){return Vue.h('div',null,[...(saved.dimensionLabels||(saved.dimensions&&saved.dimensions.professional!=null?AKBReviews.profile('care').dims.map(function(d){return {key:d[0],label:d[1]};}):DIMS)).map(function(d){return Vue.h('div',{class:'dim-row'},[Vue.h('span',null,d.label),Vue.h('span',{style:'color:#EBAF26'},AKBReviews.stars((saved.dimensions||{})[d.key]))]);}),Vue.h('p',{style:'white-space:pre-wrap'},saved.text||''),Vue.h('p',{style:'color:#718195'},(saved.tags||[]).join(' · ')),Vue.h('div',{style:'display:flex;gap:8px;flex-wrap:wrap'},(saved.images||[]).map(function(src){return Vue.h('img',{src:src,alt:'评价图片',style:'width:80px;height:80px;object-fit:cover;border-radius:12px'});} ))]);}});document.getElementById('successScore').after(box);app.mount(box);
+  }
   function submitReview(){
     var error=document.getElementById('error');
-    var missing=DIMS.filter(function(d){return !dimScores[d.key]});
-    if(missing.length){error.textContent='请完成全部 5 项星级评分';return}
-    var text=document.getElementById('reviewText').value.trim();
-    if(!text){error.textContent='请填写文字评价';document.getElementById('reviewText').focus();return}
-    var values=DIMS.map(function(d){return dimScores[d.key]});
-    var userScore=Math.round(values.reduce(function(a,b){return a+b},0)/values.length);
-    var total=composite(userScore);
-    var ratings=readRatings();
-    ratings[no]={
-      userScore:userScore,total:total,stars:starStr(total),text:text,
-      dimensions:dimScores,tags:pickedTags,images:reviewImages,
-      service:data.service,meta:data.meta,cover:data.cover,
-      createdAt:nowStr()
-    };
-    localStorage.setItem('akb_service_ratings_v2',JSON.stringify(ratings));
-    document.getElementById('reviewForm').classList.add('hidden');
-    document.getElementById('success').classList.add('show');
-    document.getElementById('successScore').textContent='综合陪护星级 '+ratings[no].stars+' · '+total+' 分';
+    try{var saved=AKBReviews.submit(orderKind,no,{dimensions:dimScores,text:document.getElementById('reviewText').value,tags:pickedTags,images:reviewImages,cover:data.cover});showSaved(saved);}catch(e){error.textContent=e.name==='QuotaExceededError'?'评价未保存，请减少图片后重试':e.message;}
   }
-
-  var saved=readRatings()[no];
-  if(saved){
-    document.getElementById('reviewForm').classList.add('hidden');
-    document.getElementById('success').classList.add('show');
-    document.getElementById('successScore').textContent='综合陪护星级 '+(saved.stars||starStr(saved.total))+' · '+saved.total+' 分';
-  }
+  var saved=AKBReviews.read()[no];
+  if(saved&&!saved.deleted)showSaved(saved);
+  else if(!AKBReviews.eligible(order)||saved&&saved.deleted){document.getElementById('error').textContent=saved&&saved.deleted?'该订单的评价已处理，不能重复提交':'仅已完成的订单可以评价';document.querySelector('.submit').disabled=true;}
 </script>
 </body></html>

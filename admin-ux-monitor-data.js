@@ -147,12 +147,13 @@
   function realServiceRecords() {
     var out = [];
     var list = read(RATING_KEY);
+    if (list && !Array.isArray(list) && typeof list === 'object') list=Object.keys(list).map(function(no){return Object.assign({orderNo:no},list[no]);});
     if (!Array.isArray(list)) return out;
     list.forEach(function (r, i) {
-      if (!r || !r.text) return;
+      if (!r || !r.text || r.deleted || r.hidden) return;
       out.push({
-        id: 'REAL-svc-' + i,
-        source: 'service',
+        id: 'REAL-review-' + (r.orderNo||r.no||i),
+        source: r.kind==='mall'?'mall':'service',
         userId: r.userId || ('REAL-U' + i),
         userName: r.user || r.userName || '匿名客户',
         userPhone: r.userPhone || '—',

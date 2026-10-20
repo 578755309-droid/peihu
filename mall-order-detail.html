@@ -5,6 +5,8 @@
   <script src="ui/icons.js"></script>
   <script src="ui/vue-ui.js"></script>
   <script src="common-ui.js"></script>
+<script src="review-order-seeds.js"></script>
+<script src="review-store.js"></script>
   <script src="ui/consent-data.js"></script>
   <script src="ui/consent.js"></script>
   <link rel="stylesheet" href="ui/consent.css" />
@@ -80,7 +82,7 @@
     if(st==='payment'||order.state==='待付款'){html='<button class="op-btn" onclick="cancelOrder()">取消订单</button><button class="op-btn primary" onclick="payNow()">立即支付</button>'}
     else if(st==='shipping'||order.state==='待发货'){html='<button class="op-btn" onclick="remindShip()">提醒发货</button>'}
     else if(st==='receiving'||order.state==='待收货'){html='<button class="op-btn primary" onclick="confirmReceiptBar()">确认收货</button>'}
-    else if(st==='done'||order.state==='已完成'){html='<button class="op-btn primary" onclick="rebuy()">再次购买</button>'}
+    else if(st==='done'||order.state==='已完成'){html='<button class="op-btn" onclick="location.href=\'service-review.html?kind=mall&no='+encodeURIComponent(order.id)+'\'">'+(AKBReviews.has(order.id)?'查看评价':'商品评价')+'</button><button class="op-btn primary" onclick="rebuy()">再次购买</button>'}
     bar.innerHTML=html;bar.hidden=!html;var old=document.getElementById('mall-detail-consent');if(old)old.remove();if(st==='payment'||order.state==='待付款'){var wrap=document.createElement('div');wrap.id='mall-detail-consent';bar.parentNode.insertBefore(wrap,bar);AKBConsent.mountBefore(wrap,'mall','mall-detail',true);}else{AKBConsent.reset('mall-detail');var consent=document.getElementById('consent-mall-detail');if(consent)consent.closest('.akb-consent').remove();}}
   function saveOrder(order,patch){let saved=[];try{saved=JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');if(!Array.isArray(saved))saved=[]}catch(e){}const i=saved.findIndex(function(x){return x.id===order.id});if(i>=0){Object.assign(saved[i],patch)}else{saved.unshift(Object.assign({},order,patch))}localStorage.setItem('ankebang_mall_orders',JSON.stringify(saved))}
   function cancelOrder(){const o=getOrder();if(!o)return;saveOrder(o,{status:'cancel',state:'已取消',note:'用户取消订单'});render();showToast('订单已取消')}
