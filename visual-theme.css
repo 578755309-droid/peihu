@@ -292,3 +292,72 @@ body[data-page="profile"] .invite-banner:focus-visible {outline:2px solid #AC321
   body[data-page="profile"] .invite-art {flex-basis:112px;width:112px;height:118px}
   body[data-page="profile"] .invite-title {font-size:21px}
 }
+
+/* Figma 2026-10-12: shared brand, transaction and campaign semantics. */
+:root {
+  --color-brand: #1CD8B7;
+  --color-brand-strong: #0FA98C;
+  --color-brand-soft: #DDF7F1;
+  --color-payment: var(--color-commerce);
+  --color-payment-end: #D83F49;
+  --color-payment-gradient: linear-gradient(125deg,#F36B60,var(--color-payment) 65%,var(--color-payment-end));
+  --color-campaign: #FF8C35;
+  --color-campaign-end: #F5BF40;
+}
+/* Filled 48px service symbols and 28px order states share the same green ramp. */
+body[data-page="home"] .cat-ico {background:transparent!important;border:0;box-shadow:none}
+body[data-page="home"] .cat-ico .design-icon {display:block;width:48px;height:48px;object-fit:contain}
+body[data-page="profile"] .shortcut-ico {background:transparent;box-shadow:none}
+body[data-page="profile"] .shortcut-ico .design-icon {display:block;width:30px;height:30px;object-fit:contain}
+body[data-page="profile"] .menu-ico:has(.design-icon) {background:transparent}
+body[data-page="profile"] .menu-ico .design-icon {display:block;width:28px;height:28px;object-fit:contain}
+/* Continuous brand background: the SVG halftone is decorative and never covers controls. */
+body[data-page="home"] .service-header,
+body[data-page="mall"] .service-header {
+  background-image:url('assets/design/header-texture.svg'),linear-gradient(115deg,#087D70,#168D78 72%,#31A88A);
+  background-position:center top;background-size:cover;background-repeat:no-repeat;
+}
+body:is([data-page="home"],[data-page="mall"]) .service-header :is(.status-bar,.status-bar span,.status-right,.home-brand,.city-pill,.top-tab) {color:#fff!important}
+body:is([data-page="home"],[data-page="mall"]) .service-header .city-pill svg {color:#fff}
+body:is([data-page="home"],[data-page="mall"]) .service-header .city-pill svg :is(path,circle) {stroke:currentColor;fill:none}
+body:is([data-page="home"],[data-page="mall"]) .service-header .top-tab.on::after {background:#fff}
+body:is([data-page="home"],[data-page="mall"]) .service-header .top-avatar {background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);color:#fff}
+body[data-page="profile"] .hero {background-image:url('assets/design/header-texture.svg'),linear-gradient(115deg,#087D70,#229C83)!important;background-size:cover}
+body[data-page="profile"] .status-bar {background:#0D8373!important}
+body[data-page="profile"] .status-bar span,body[data-page="profile"] .status-right {color:#fff!important}
+body[data-page="profile"] .status-right svg [fill="#fff"] {fill:#fff}
+body[data-page="profile"] .status-right svg [stroke="#fff"] {stroke:#fff}
+/* Home service poster: all copy remains live HTML; illustration scales independently. */
+body[data-page="home"] .banner {position:relative;overflow:hidden;grid-template-columns:minmax(0,1fr) 90px;min-height:140px;background:linear-gradient(112deg,#E1F8EF,#F4FCF7)!important;padding:16px;align-items:center}
+body[data-page="home"] .banner-left {position:relative;z-index:1}
+body[data-page="home"] .banner-title {font-size:15px;line-height:1.5;max-width:235px}
+body[data-page="home"] .banner-illu {position:absolute;right:-16px;bottom:0;width:138px;height:111px;background:transparent;opacity:.95}
+body[data-page="home"] .care-poster-art {width:138px;height:111px;object-fit:contain;display:block}
+body[data-page="home"] .banner-arrow {position:relative;grid-column:2;grid-row:1;align-self:start;z-index:2;margin:0;width:78px;height:30px;border-radius:12px;background:linear-gradient(115deg,var(--color-brand),var(--color-brand-strong));font-size:12px}
+/* Orange campaign banner and matching sharable invitation page. */
+body[data-page="profile"] .invite-banner {min-height:134px;background:linear-gradient(115deg,#F47B36,#FFA63D 70%,#F5C84D);box-shadow:0 6px 18px rgba(226,125,35,.12)}
+body[data-page="profile"] .invite-art {flex:0 0 142px;width:142px;height:112px;margin:0 -9px 0 0}
+body[data-page="profile"] .invite-rewards-art {display:block;width:160px;height:104px;object-fit:contain;max-width:none;margin-left:-8px}
+body[data-page="profile"] .invite-cta {color:#A94D18;background:#FFF4DB;border:0;box-shadow:none;margin-top:9px}
+body[data-page="invite-friends"] .poster {position:relative;overflow:hidden;background:radial-gradient(ellipse at 80% 18%,#FFE7A0 0,transparent 55%),linear-gradient(145deg,#F57932,#FFAA35 60%,#F4BB43);color:#612A10;border:1px solid #FFD07B;box-shadow:0 8px 24px rgba(210,119,32,.12);padding:22px 18px}
+body[data-page="invite-friends"] .poster-mark {width:auto;height:auto;margin:0 0 10px;background:transparent;color:#71350F;font-size:11px;font-weight:600;letter-spacing:1px}
+body[data-page="invite-friends"] .poster h2 {font-size:24px;line-height:1.4;color:#fff;text-shadow:0 2px 0 rgba(147,63,14,.15)}
+body[data-page="invite-friends"] .poster p {font-size:13px;color:#71350F}
+body[data-page="invite-friends"] .campaign-art {height:150px;margin:0 auto -10px;max-width:270px;pointer-events:none}
+body[data-page="invite-friends"] .campaign-art-img {display:block;width:100%;height:100%;object-fit:contain}
+body[data-page="invite-friends"] .qr-wrap {position:relative;margin:10px auto 14px;box-shadow:0 6px 18px rgba(147,63,14,.1)}
+body[data-page="invite-friends"] .invite-code {color:#71350F}
+body[data-page="invite-friends"] .invite-code strong {color:#612A10}
+body[data-page="invite-friends"] .copy-btn {background:rgba(255,255,255,.75);color:#8B3A16;border:1px solid rgba(255,255,255,.6)}
+body[data-page="invite-friends"] .share {background:linear-gradient(115deg,#F17A35,#F3AF36);box-shadow:0 5px 12px rgba(226,125,35,.15)}
+/* Red marks purchase/payment actions; non-transaction service navigation stays green. */
+body[data-surface="mobile"] :is(#paySubmitBtn,#payConfirmBtn,#akbPayBtn,#orderPayBtn,.pay-confirm,.checkout-btn,button[onclick*="enterBuyMode"],.act-btn[onclick*="'pay'"],.action-btn[onclick*="'pay'"]) {
+  background:var(--color-payment-gradient)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 4px 12px var(--color-commerce-shadow)!important;
+}
+body[data-surface="mobile"] :is(.price-num,.svc-price,.svc-tile-price,.mall-product-price,.pay-price,.pay-amount,.product-price,.row-value.strong,.fee-total strong,.akb-pay-final .val,#payAmt,#payPriceVal) {color:var(--color-payment)!important;font-variant-numeric:tabular-nums}
+body[data-surface="mobile"] :is(#paySubmitBtn,#payConfirmBtn,.checkout-btn):disabled {opacity:.45;box-shadow:none!important}
+@media(max-width:359px){body[data-page="home"] .banner {grid-template-columns:minmax(0,1fr) 76px;padding:14px 12px}body[data-page="home"] .banner-title {font-size:14px}body[data-page="profile"] .invite-art {flex-basis:116px;width:116px}body[data-page="profile"] .invite-rewards-art {width:136px;height:96px}}
+
+body[data-page="order-detail"] .primary[onclick*="订单页完成支付"] {background:var(--color-payment-gradient)!important;color:#fff!important;border-color:transparent!important}
+
+body[data-page="profile"] :is(.hero-name,.hero-id-inline,.hero-arrow,.hero-top-actions svg) {color:#fff}

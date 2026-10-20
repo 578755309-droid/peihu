@@ -1,12 +1,12 @@
-/* Original 24px shopping UI icons: rounded 1.75px strokes, no brand assets. */
+/* Shared 24px interface icons: rounded 1.75px strokes; paired with assets/design filled illustrations. */
 (function (global) {
   'use strict';
   const paths = {
-    home:'M3 10.5 12 3l9 7.5V21h-6v-7H9v7H3z',
-    service:'M6 4h12v17H6z M9 2v4m6-4v4M6 9h12m-9 4h6m-6 4h4',
+    home:'M3.5 10.5 12 3.5l8.5 7v9a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1v-9Z',
+    service:'M7 4h10a2 2 0 0 1 2 2v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a2 2 0 0 1 2-2Zm2-2v4m6-4v4M5 10h14m-10 4h6m-6 4h4',
     cart:'M3 4h2l2 12h12l2-9H6m3 13h.01M18 20h.01',
-    bag:'M4 7h16l-1 14H5L4 7zm4 1V6a4 4 0 0 1 8 0v2',
-    message:'M4 4h16v13h-8l-5 4v-4H4z M8 9h8m-8 4h5',
+    bag:'M6 7h12a2 2 0 0 1 2 2l-1 11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1L4 9a2 2 0 0 1 2-2Zm2 1V6a4 4 0 0 1 8 0v2',
+    message:'M6 4h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-6l-5 3v-3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3Zm2 5h8m-8 4h5',
     user:'M8 7a4 4 0 1 0 8 0 4 4 0 0 0-8 0z M4 21a8 8 0 0 1 16 0',
     location:'M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 0 1 14 0z M9.5 10a2.5 2.5 0 1 0 5 0 2.5 2.5 0 0 0-5 0',
     left:'m15 5-7 7 7 7', right:'m9 5 7 7-7 7', down:'m5 9 7 7 7-7', up:'m5 15 7-7 7 7',
