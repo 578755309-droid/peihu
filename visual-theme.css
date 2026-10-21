@@ -419,7 +419,9 @@ body[data-page^="nurse-"] .scroll:has(> .content){padding-top:0!important}
 body[data-surface] textarea.akb-remark{display:block;flex:1 1 100%;width:100%!important;min-height:100px;height:auto;padding:var(--remark-padding)!important;margin-top:8px!important;border:1px solid transparent!important;border-radius:var(--remark-radius)!important;background:var(--remark-background)!important;box-shadow:none!important;color:var(--text,#252831);font-family:inherit;font-size:14px!important;line-height:1.6;resize:vertical;box-sizing:border-box}
 body[data-surface] textarea.akb-remark::placeholder{color:var(--remark-placeholder)!important;font-weight:400}
 body[data-surface] textarea.akb-remark:focus{outline:none;border-color:var(--purple,#1CD8B7)!important;background:var(--remark-background)!important}
-.akb-remark-count{flex:0 0 100%;width:100%;box-sizing:border-box;padding:5px 2px 8px;text-align:right;font-size:12px;line-height:18px;color:var(--remark-placeholder,#9AA0AA);font-variant-numeric:tabular-nums}
+.akb-remark-wrap{position:relative;display:block;flex:1 1 100%;width:100%;min-width:0;box-sizing:border-box}
+body[data-surface] .akb-remark-wrap > textarea.akb-remark{padding-bottom:34px!important;resize:none}
+.akb-remark-count{position:absolute;right:12px;bottom:10px;z-index:1;padding:0;text-align:right;font-size:12px;line-height:18px;color:var(--remark-placeholder,#9AA0AA);font-variant-numeric:tabular-nums;pointer-events:none}
 .akb-remark-count.at-limit{color:var(--text2,#6B7280)}
 
 /* Amounts already appear in the points choice and payment action. */

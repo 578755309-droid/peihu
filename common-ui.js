@@ -41,8 +41,10 @@
   function enhance(el){
     if(el.dataset.remarkReady||!isRemark(el))return;
     el.dataset.remarkReady='true';el.classList.add('akb-remark');el.maxLength=LIMIT;
+    var wrap=document.createElement('div');wrap.className='akb-remark-wrap';
+    el.parentNode.insertBefore(wrap,el);wrap.appendChild(el);
     var count=document.createElement('div');count.className='akb-remark-count';
-    count.id='remark-count-'+(++serial);el.insertAdjacentElement('afterend',count);
+    count.id='remark-count-'+(++serial);wrap.appendChild(count);
     el.setAttribute('aria-describedby',((el.getAttribute('aria-describedby')||'')+' '+count.id).trim());
     function sync(){count.textContent=el.value.length+' / '+LIMIT;count.classList.toggle('at-limit',el.value.length>=LIMIT);}
     function input(e){if(e&&e.isComposing)return;if(el.value.length>LIMIT)el.value=el.value.slice(0,LIMIT);sync();}
