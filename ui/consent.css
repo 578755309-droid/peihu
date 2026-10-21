@@ -2,7 +2,7 @@
 
 /* All checkout agreements follow the primary action, without an extra card. */
 .akb-consent{margin:8px 0 0;padding:0;border:0;background:transparent;box-shadow:none}
-.akb-consent-row{align-items:center;gap:6px;line-height:1.6}
+.akb-consent-row{align-items:center;justify-content:center;gap:6px;line-height:1.6}
 .akb-consent input[type="checkbox"]{appearance:none!important;-webkit-appearance:none!important;display:block;box-sizing:border-box;flex:0 0 18px;width:18px;min-width:18px;height:18px;margin:0;border:1.5px solid #CDD3DA!important;border-radius:50%!important;background:#fff;background-position:center!important;background-repeat:no-repeat!important;background-size:14px 14px!important;cursor:pointer;position:static!important;transform:none!important}
 .akb-consent input[type="checkbox"]:checked{border-color:var(--purple,#0FA98C)!important;background-color:var(--purple,#0FA98C)!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='m5 10 3.2 3.2L15 6.5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")!important}
 .akb-consent input[type="checkbox"]::before,.akb-consent input[type="checkbox"]::after{content:none!important}

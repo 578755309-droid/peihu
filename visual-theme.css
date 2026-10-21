@@ -425,6 +425,14 @@ body[data-surface] textarea.akb-remark:focus{outline:none;border-color:var(--pur
 /* Amounts already appear in the points choice and payment action. */
 .mui-points-note{display:none!important}
 
+/* Checkout footers: 12px above the points row and between points and action. */
+:root{--checkout-points-gap:12px}
+body[data-page="hospital-care"] .nav-bar{padding-top:var(--checkout-points-gap)!important}
+body[data-page="hospital-care"] .nav-bar .buy-only > .points-card{margin:0 0 var(--checkout-points-gap)!important;padding:0!important;background:transparent!important}
+body[data-page="hospital-care"] .nav-bar .buy-only > .points-card .mui-points{padding:0!important}
+body[data-surface="mobile"] .pay-sheet .pay-scroll > .pay-sec:has(.mui-points){padding-top:var(--checkout-points-gap)!important;padding-bottom:0!important}
+body[data-surface="mobile"] .pay-sheet .pay-confirm{margin-top:var(--checkout-points-gap)!important}
+
 /* 贵宾、优享陪诊：三张连续卡片，保留原控件与校验。 */
 body[data-page="hospital-care"] .vip-form-layout > .vip-form-card,
 body[data-page="hospital-care"] .vip-form-layout > #examModule{margin:0 10px 10px!important;padding:18px 16px!important}
