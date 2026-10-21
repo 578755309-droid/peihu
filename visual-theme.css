@@ -424,3 +424,17 @@ body[data-surface] textarea.akb-remark:focus{outline:none;border-color:var(--pur
 
 /* Amounts already appear in the points choice and payment action. */
 .mui-points-note{display:none!important}
+
+/* 贵宾、优享陪诊：三张连续卡片，保留原控件与校验。 */
+body[data-page="hospital-care"] .vip-form-layout > .vip-form-card,
+body[data-page="hospital-care"] .vip-form-layout > #examModule{margin:0 10px 10px!important;padding:18px 16px!important}
+body[data-page="hospital-care"] .vip-form-heading{display:flex;align-items:center;gap:9px;margin:0 0 16px;font-size:16px;line-height:1.4;font-weight:700;color:var(--text)}
+body[data-page="hospital-care"] .vip-form-heading::before{content:"";width:4px;height:19px;flex:none;border-radius:12px;background:var(--purple)}
+body[data-page="hospital-care"] .vip-form-card > .module{margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+body[data-page="hospital-care"] .vip-form-card > .module + .module{margin-top:18px!important;padding-top:16px!important;border-top:1px solid var(--border)!important}
+body[data-page="hospital-care"] .vip-form-card .module-title{margin-bottom:10px!important;font-size:13px!important;font-weight:600!important;color:var(--text2)!important}
+body[data-page="hospital-care"] .vip-form-card .module-title::before{display:none!important}
+body[data-page="hospital-care"] #vipBookingCard > .single-page-needs .module-title{margin-bottom:0!important}
+body[data-page="hospital-care"] #vipBookingCard .single-page-needs .need-group{margin-top:0!important}
+body[data-page="hospital-care"] #p3 > #needsPriceCard{margin:0 10px 10px!important;padding:0 14px;background:#fff;border-radius:12px;box-shadow:var(--sh)}
+body[data-page="hospital-care"] #p3 > #needsPriceCard .points-card{margin-top:0;padding:0}

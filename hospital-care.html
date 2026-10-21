@@ -2162,7 +2162,7 @@
     return serviceKey === 'visit' && ESCORT_LAYOUT_KEYS.indexOf(visitServiceId) !== -1;
   }
 
-  /* ── 贵宾/优享陪诊专属布局：服务医院 → 检查项目 → 就诊人 → 联系人 → 服务时间 → 备注（选填） ── */
+  /* 贵宾/优享陪诊：三个信息卡片，沿用原字段和选择逻辑。 */
   var VIP_EXAM_KEYS = ['vip', 'premium'];
   let selectedExamItem = '';
   function isVipExamLayout() {
@@ -2177,12 +2177,26 @@
     var examModule = document.getElementById('examModule');
     var needsModule = document.querySelector('.single-page-needs');
     var p3 = document.getElementById('p3');
-    /* 模块重排：服务医院移到 p1 最前 */
-    if (p1 && patientModule && addrModule) {
-      p1.insertBefore(addrModule, patientModule);
+    var contactModule = document.getElementById('contactModule');
+    var timeModule = document.getElementById('timeModule');
+    var basicCard = document.createElement('section');
+    basicCard.className = 'module vip-form-card';
+    basicCard.id = 'vipBasicCard';
+    basicCard.innerHTML = '<h2 class="vip-form-heading">基础就诊信息</h2>';
+    var bookingCard = document.createElement('section');
+    bookingCard.className = 'module vip-form-card';
+    bookingCard.id = 'vipBookingCard';
+    bookingCard.innerHTML = '<h2 class="vip-form-heading">预约与联系信息</h2>';
+    if (p1 && addrModule && patientModule && examModule && timeModule && contactModule && needsModule) {
+      p1.insertBefore(basicCard, p1.firstElementChild);
+      basicCard.append(addrModule, patientModule);
+      p1.append(examModule, bookingCard);
+      bookingCard.append(timeModule, contactModule, needsModule);
+      p1.classList.add('vip-form-layout');
+      /* 抵扣计算和按钮仍在表单下方，价格卡保持原有 ID 与事件。 */
+      var priceCard = document.getElementById('needsPriceCard');
+      if (priceCard && p3) p3.insertBefore(priceCard, p3.querySelector('.note-bar'));
     }
-    /* 复用已有检查项目，放在服务医院之后、就诊人之前。 */
-    if (p1 && patientModule && examModule) p1.insertBefore(examModule, patientModule);
     if (examModule) examModule.style.display = '';
     /* 服务医院：复用地址选择器，文案改为医院场景 */
     var locTitle = document.getElementById('locationTitle');
@@ -2193,11 +2207,6 @@
     if (addrMeta && addrMeta.textContent === '医院或家') addrMeta.textContent = '选择就诊医院';
     var fromMarker = document.getElementById('fromMarker');
     if (fromMarker) fromMarker.textContent = '医';
-    /* 备注模块移到服务时间之后 */
-    if (p3 && needsModule) {
-      var noteBar = p3.querySelector('.note-bar');
-      if (noteBar) p3.insertBefore(needsModule, noteBar); else p3.appendChild(needsModule);
-    }
     /* 护理需求 → 备注（选填） */
     var needsTitle = document.getElementById('needsTitle');
     if (needsTitle) needsTitle.textContent = '备注';
@@ -2208,8 +2217,7 @@
       if (ol) ol.innerHTML = '备注 <span style="color:var(--text3);font-weight:600">（选填）</span>';
       otherTa.placeholder = '请填写备注（选填），如：行动不便、需要轮椅等';
     }
-    /* 按视觉顺序重编序号（服务医院 → 检查项目 → 就诊人 → 联系人 → 时间 → 备注） */
-    var nums = [addrModule, examModule, patientModule, document.getElementById('contactModule'), document.getElementById('timeModule'), needsModule];
+    var nums = [addrModule, patientModule, examModule, timeModule, contactModule, needsModule];
     nums.forEach(function (el, i) { var n = el && el.querySelector('.module-num'); if (n) n.textContent = String(i + 1); });
   }
   /* ── 代约检查：复用检查项目模块，保留原有布局 ── */
