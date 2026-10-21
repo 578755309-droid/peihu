@@ -37,7 +37,7 @@
 <script>
   const STATUS=[['all','全部'],['pending-confirm','待确认'],['pending-start','待上岗'],['in-progress','服务中'],['pending-complete','待完成'],['completed','已完成'],['cancelled','已取消']];
   const identity=AKBNurseCertification.read();
-  const ORDERS=(AKBNurseCertification.effective(identity)&&identity.caregiverId==='AKB-N-00234'?window.AKBNurseOrderSeeds:[]).map(function(o){return Object.assign({},o);});
+  const ORDERS=(AKBNurseCertification.effective(identity)?window.AKBNurseOrderSeeds:[]).map(function(o){return Object.assign({},o);});
   AKBServiceOrderFields.list().filter(AKBNurseCertification.matchesOrder).forEach(function(o){const m=AKBServiceOrderFields.normalize(o),status=({'待服务':'pending-start','服务中':'in-progress','待完成':'pending-complete','已完成':'completed','已取消':'cancelled'})[o.state];if(!status||ORDERS.some(s=>s.id===o.id))return;const care={};Object.keys(m.careNeeds).forEach(k=>{care[k]=AKBServiceOrderFields.labels[k]?.[m.careNeeds[k]]||m.careNeeds[k];});ORDERS.unshift({id:o.id,status,state:o.state,name:m.patient.name,meta:[m.patient.gender,m.patient.age!==''?m.patient.age+'岁':'',m.patient.condition].filter(Boolean).join(' · '),type:m.projectName,place:m.addresses.map(a=>a.detail).filter(Boolean).join(' → '),time:m.time,income:o.nurseIncome||o.nurseFee||'待结算',avatar:(m.patient.name||'服').charAt(0),careNeeds:care,showNeeds:['hospital','home','bath'].includes(m.projectId),extras:AKBServiceOrderFields.summary(o,'nurse'),actions:['detail']});});
   let current=new URLSearchParams(location.search).get('status')||'all';
   function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}

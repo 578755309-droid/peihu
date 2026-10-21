@@ -467,3 +467,5 @@ body[data-page="hospital-care"] .vip-form-card #tpRow{border-bottom:1px solid va
 body[data-page="hospital-care"] .vip-form-card .vip-time-label{display:block;flex:0 0 auto;min-width:var(--mui-label-w,92px);max-width:42%;font-size:14px;font-weight:400;color:var(--mui-text,#252831);line-height:1.4}
 body[data-page="hospital-care"] .vip-form-card #tpTriggerVal{flex:1;min-width:0;font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 body[data-page="hospital-care"] .vip-form-card #tpRow .selector-arrow{width:auto;margin-left:auto;font-size:20px}
+/* 联系人行与大卡片内其他行（时间/地址/服务对象）同一起点：去掉组件默认的 16px 横向内边距 */
+body[data-page="hospital-care"] .vip-form-card .akb-contact-item{padding-left:0!important;padding-right:0!important}
