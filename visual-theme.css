@@ -437,10 +437,10 @@ body[data-surface="mobile"] .pay-sheet .pay-scroll > .pay-sec:has(.mui-points){p
 body[data-surface="mobile"] .pay-sheet .pay-confirm{margin-top:var(--checkout-points-gap)!important}
 
 /* 贵宾、优享陪诊：三张连续卡片，保留原控件与校验。 */
-/* 大卡片外层：统一清掉 .module 基类的灰底 / 圆角 / 阴影 —— 不管父容器是谁都命中 */
+/* 大卡片外层：保留 .module 基类的白卡背景 + 圆角 + 阴影，只调 margin/padding —— 不管父容器是谁都命中 */
 body[data-page="hospital-care"] .vip-form-card.module,
 body[data-page="hospital-care"] .vip-form-card,
-body[data-page="hospital-care"] #examModule{margin:0 10px 10px!important;padding:18px 16px!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+body[data-page="hospital-care"] #examModule{margin:0 10px 10px!important;padding:18px 16px!important}
 body[data-page="hospital-care"] .vip-form-heading{display:flex;align-items:center;gap:9px;margin:0 0 16px;font-size:16px;line-height:1.4;font-weight:700;color:var(--text)}
 body[data-page="hospital-care"] .vip-form-heading::before{content:"";width:4px;height:19px;flex:none;border-radius:12px;background:var(--purple)}
 body[data-page="hospital-care"] .vip-form-card > .module{margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
