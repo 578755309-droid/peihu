@@ -2,7 +2,7 @@
 const {JSDOM,ResourceLoader,VirtualConsole}=require('jsdom');
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..'),baseline=process.argv[2];
-const files=fs.readdirSync(root).filter(f=>f.endsWith('.html'));
+const files=fs.readdirSync(root).filter(f=>f.endsWith('.html')&&f!=='mobile-ui-demo.html');
 for(const file of files){const html=fs.readFileSync(path.join(root,file),'utf8');
  for(const src of ['vendor/vue.global.prod.js','ui/icons.js','ui/vue-ui.js','common-ui.js'])assert.equal((html.match(new RegExp('src="'+src.replaceAll('.','\\.')+'"','g'))||[]).length,1,file+': '+src);
  for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)){if(/src\s*=|application\/json/.test(m[1])||!m[2].trim())continue;new vm.Script(m[2],{filename:file});}

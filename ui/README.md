@@ -112,3 +112,14 @@ const sheet = MobileUI.sheet({ title: '选择时间', html: '<div class="mui-lis
 ```
 
 兼容层把既有 `.field`、`.form-row`、`.f-input`、`.akb-contact`、`.submit` 等类映射到新规范，因此存量页面无需改结构、字段 ID 与业务脚本保持不变。示例见 `mobile-ui-demo.html`。新增表单应优先使用 `mui-` 类。
+
+### Figma care components
+`care-components.js` exports `AKBCareComponents`: AssetIcon, CategoryGrid, ServiceCard,
+BookingBanner, BookingDialog, DetailTabs, FeaturePanels (Vue 3 Options API).
+Load after Vue and the page's business scripts, with `care-components.css` last.
+CategoryGrid takes `items[{key,label,href}]`; ServiceCard takes `item{key,name,sub,price,sales,image,href}`
+(price is trusted internal markup). BookingBanner emits `book`; BookingDialog takes `open` and emits
+`close`/`confirm`; DetailTabs takes `modelValue` and emits `update:modelValue`.
+Adapters preserve existing routes, catalog sales, booking persistence and detail/checkout logic.
+Figma sources: 49:24400, 81:5777, 49:24765 and 91:8342. Icons are original vector exports;
+photographs and illustration retain their original raster format. All assets are local.

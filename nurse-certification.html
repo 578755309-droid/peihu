@@ -223,6 +223,7 @@
         html+='<section class="card"><div class="card-head"><span class="section-title">申请资料</span><button class="card-action" onclick="startEdit()">修改并重新提交</button></div>'+buildSummary()+'</section>';
       }
     }
+    if(AKBNurseCertification.effective(app))html+='<a class="submit role-approved-entry" href="nurse-home.html">进入陪护端</a>';
     box.innerHTML=html;
     bindFileInput();
   }

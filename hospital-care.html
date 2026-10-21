@@ -704,6 +704,7 @@
   <link rel="stylesheet" href="ui/vue-ui.css" />
   <link rel="stylesheet" href="ui/card-carousel.css" />
   <link rel="stylesheet" href="ui/mobile-ui.css">
+  <link rel="stylesheet" href="ui/care-components.css" />
 </head>
 <body data-surface="mobile" data-page="hospital-care">
 <div class="frame">
@@ -881,13 +882,13 @@
           <!-- Nurse cards -->
           <div class="nurse-list" id="nurseList0">
 
-            <!-- 李桂芳 -->
-            <div class="nurse-card sel" onclick="selNurse(this)" data-phone="13811223344">
+            <!-- 示例护理员 A -->
+            <div class="nurse-card sel" onclick="selNurse(this)" data-phone="">
               <div class="nc-hd">
                 <div class="nc-avatar" style="background:linear-gradient(140deg,#7B3FBE,#AA7AE0)">李</div>
                 <div class="nc-right">
                   <div class="nc-row1">
-                    <span class="nc-name">李桂芳</span>
+                    <span class="nc-name">示例护理员 A</span>
                     <span class="nc-title">高级护理师</span>
                     <span class="nc-sep">|</span>
                     <span class="nc-dept">住院专护</span>
@@ -919,13 +920,13 @@
               </div>
             </div>
 
-            <!-- 张秀英 -->
-            <div class="nurse-card" onclick="selNurse(this)" data-phone="13922334455">
+            <!-- 示例护理员 B -->
+            <div class="nurse-card" onclick="selNurse(this)" data-phone="">
               <div class="nc-hd">
                 <div class="nc-avatar" style="background:linear-gradient(140deg,#1A9896,#38CFC7)">张</div>
                 <div class="nc-right">
                   <div class="nc-row1">
-                    <span class="nc-name">张秀英</span>
+                    <span class="nc-name">示例护理员 B</span>
                     <span class="nc-title">中级护理师</span>
                     <span class="nc-sep">|</span>
                     <span class="nc-dept">术后康复</span>
@@ -957,13 +958,13 @@
               </div>
             </div>
 
-            <!-- 王美玲 -->
-            <div class="nurse-card" onclick="selNurse(this)" data-phone="13733445566">
+            <!-- 示例护理员 C -->
+            <div class="nurse-card" onclick="selNurse(this)" data-phone="">
               <div class="nc-hd">
                 <div class="nc-avatar" style="background:linear-gradient(140deg,#C75510,#F4A030)">王</div>
                 <div class="nc-right">
                   <div class="nc-row1">
-                    <span class="nc-name">王美玲</span>
+                    <span class="nc-name">示例护理员 C</span>
                     <span class="nc-title">高级护理师</span>
                     <span class="nc-sep">|</span>
                     <span class="nc-dept">重症陪护</span>
@@ -1684,8 +1685,8 @@
   const ADDRESS_KEY = 'ankebang_saved_addresses';
   const PATIENT_KEY = 'ankebang_saved_patients';
   const fallbackAddresses = [
-    { id: 1, detail: '北京市朝阳区望京街道 88 号 2 单元 1602', contact: '张女士', phone: '138****2468', addressType: 'home' },
-    { id: 2, detail: '北京市朝阳区建国路 66 号 北京协和医院东院区', contact: '张女士', phone: '138****2468', addressType: 'hospital' }
+    { id: 1, detail: '示例居家地址（请添加实际地址）', contact: '示例联系人', phone: '', addressType: 'home' },
+    { id: 2, detail: '示例医院地址（请添加实际地址）', contact: '示例联系人', phone: '', addressType: 'hospital' }
   ];
   function getSavedAddresses() {
     try {
@@ -1699,8 +1700,8 @@
   function setSavedAddresses(list) { localStorage.setItem(ADDRESS_KEY, JSON.stringify(list)); }
 
   const fallbackPatients = [
-    { id: 'P1001', name: '张爷爷', idNo: '110101195803180013', condition: '骨折术后恢复期，需协助翻身、起身及日常照护' },
-    { id: 'P1002', name: '李女士', idNo: '110101197204080026', condition: '慢性病住院观察，需协助日常照护' }
+    { id: 'P1001', name: '示例服务对象 A', idNo: '', condition: '请填写实际照护需求' },
+    { id: 'P1002', name: '示例服务对象 B', idNo: '', condition: '请填写实际照护需求' }
   ];
   let selectedPatientId = '';
   let isCreatingPatient = false;
@@ -3047,5 +3048,6 @@
   })();
   updateUI();
 </script>
+<script src="ui/care-components.js"></script>
 </body>
 </html>

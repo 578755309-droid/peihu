@@ -1,0 +1,79 @@
+/* Figma 49:24400 / 81:5777 / 49:24765. Shared 12px corners, 10px page rhythm. */
+body[data-page="home"] .service-header{background:linear-gradient(112deg,#6de3cc,#d6fff1);box-shadow:none;background-image:url('../assets/figma/header-shape.svg'),linear-gradient(112deg,#6de3cc,#d6fff1);background-size:cover}
+body[data-page="home"] .status-bar,body[data-page="home"] .top-bar,body[data-page="home"] .top-tabs{background:transparent!important;box-shadow:none;border:0}
+body[data-page="home"] .status-bar{height:44px;padding:10px 22px;font-size:14px}
+body[data-page="home"] .top-bar{height:44px;padding:0 12px!important}
+body[data-page="home"] .city-pill{background:none;padding:0;font-size:13px;color:#222}
+body[data-page="home"] .home-brand{font-size:17px;font-weight:600;color:#171b1a}
+body[data-page="home"] .top-tabs{height:36px;gap:32px;padding:0 14px}
+body[data-page="home"] .top-tab{padding:5px 0 8px;font-size:14px;font-weight:500;color:#646e69}
+body[data-page="home"] .top-tab.on{font-size:14px;color:#151b18}
+body[data-page="home"] .top-tab.on:after{width:28px;height:3px;background:#10b891;bottom:3px}
+body[data-page="home"] .scroll-area{background:#f6f7fb}
+body[data-page="home"] .care-categories{margin:10px 10px 0;padding:12px 4px!important;border-radius:12px;background:#fff;gap:0}
+body[data-page="home"] .cat-item{padding:0;gap:4px;text-decoration:none}
+.care-asset-icon{display:block;width:48px;height:48px;object-fit:contain}
+body[data-page="home"] .cat-lbl{font-size:13px;font-weight:400;line-height:20px;color:#333}
+body[data-page="home"] .care-booking-banner{width:calc(100% - 20px);margin:10px;padding:16px 12px;min-height:87px;border:0;box-shadow:none;gap:10px;text-align:left;font-family:inherit;background:radial-gradient(ellipse at 85% 100%,#b6f4df,transparent 65%),linear-gradient(105deg,#e4fff7,#c9f9e9);border-radius:12px}
+.care-booking-banner .banner-title,.care-booking-banner .banner-sub{display:block}
+body[data-page="home"] .care-booking-banner .banner-title{font-size:14px;line-height:21px;font-weight:700}
+body[data-page="home"] .care-booking-banner .banner-sub{font-size:11px;line-height:18px;color:#458571;margin-top:5px}
+.care-banner-action{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:84px;height:32px;background:linear-gradient(100deg,#ffb132,#ff8b18);color:white;border-radius:12px;font-size:12px;font-weight:600}
+.care-banner-action svg{width:16px;height:16px}
+body[data-page="home"] .svc-sec{padding:0 10px!important}
+body[data-page="home"] .svc-sec-title{display:none}
+body[data-page="home"] .svc-tile-grid{gap:10px!important}
+body[data-page="home"] .care-service-card{text-decoration:none;box-shadow:0 4px 16px #1d725408;border:0;background:white;border-radius:12px;overflow:hidden}
+body[data-page="home"] .svc-tile-img{height:100px;padding:0!important;border-radius:0}
+body[data-page="home"] .svc-tile-body{padding:8px!important}
+body[data-page="home"] .svc-tile-name{font-size:14px;line-height:21px;font-weight:600}
+body[data-page="home"] .svc-tile-sub{font-size:12px;line-height:18px;margin-top:0;color:#999}
+body[data-page="home"] .svc-tile-meta{margin-top:6px;gap:4px;justify-content:space-between}
+body[data-page="home"] .svc-tile-price{font-size:16px;line-height:22px;color:var(--color-commerce)}
+body[data-page="home"] .svc-tile-price small{font-size:10px}
+body[data-page="home"] .svc-tile-sales{font-size:10px;color:#999}
+body[data-page="home"] .svc-tile-pts{margin-top:4px;gap:4px;flex-wrap:wrap}
+body[data-page="home"] .svc-tile-pts .pts-tag{font-size:10px;padding:1px 4px;border-radius:3px}
+body[data-page="home"] .svc-tile-pts .pts-link{font-size:10px;font-weight:400}
+body[data-page="home"] .consult-sec{margin:10px;padding:12px!important;background:#fff;border-radius:12px}
+body[data-page="home"] .consult-title{font-size:16px}.consult-title:before{display:none!important}
+body[data-page="home"] .consult-item{padding:10px 0;box-shadow:none;border-radius:0;border-bottom:1px solid #f5f5f5}
+body[data-page="home"] .consult-item-title{font-size:14px;font-weight:400;color:#444}
+body[data-page="home"] .consult-item-cover{flex-basis:120px;width:120px;height:80px;border-radius:8px}
+body[data-page="home"] .nav-lbl{font-size:10px;font-weight:400}
+.care-booking-mask{position:fixed;inset:0;background:#0009;z-index:1200;display:grid;place-items:center;padding:90px 24px 70px}
+.care-booking-dialog{position:relative;width:327px;max-width:100%;background:#fff;border-radius:12px;padding:150px 20px 24px;text-align:center;box-shadow:0 24px 80px #001b2426}
+.care-booking-art{position:absolute;inset:0 0 auto;height:150px;border-radius:12px 12px 0 0;background:linear-gradient(#adf5e3,#edfff9 75%,white)}
+.care-booking-art img{position:absolute;width:250px;height:auto;left:50%;bottom:0;transform:translateX(-50%);object-fit:contain}
+.care-booking-dialog h2{font-size:17px;line-height:26px;margin:0 0 10px;color:#222;font-weight:600}
+.care-booking-dialog p{font-size:13px;color:#888;line-height:21px;margin:0 0 22px}
+.care-booking-confirm{width:100%;height:44px;border:0;border-radius:12px;background:linear-gradient(95deg,#21d5ac,#0dbb8f);color:#fff;font-size:15px;font-family:inherit;cursor:pointer}
+.care-booking-close{position:absolute;bottom:-56px;left:calc(50% - 16px);width:32px;height:32px;border:1px solid #fff9;border-radius:50%;background:transparent;color:#fff;display:grid;place-items:center;cursor:pointer}
+.care-booking-close svg{width:24px;height:24px}
+body[data-page="hospital-care"] .hero-img{padding-top:100%;background:#e9f8f4}
+body[data-page="hospital-care"] .svc-info{margin:0!important;padding:14px 12px!important;border-radius:0;box-shadow:none;display:flex;flex-direction:column;gap:6px}
+body[data-page="hospital-care"] .svc-price-row{order:-2;margin:0}
+body[data-page="hospital-care"] .svc-title{font-size:14px;line-height:21px;font-weight:600}
+body[data-page="hospital-care"] .svc-sub{font-size:12px;line-height:19px;color:#999;margin:0}
+body[data-page="hospital-care"] .svc-price{font-size:22px;color:var(--color-commerce)}
+body[data-page="hospital-care"] .svc-badges{margin-top:0}
+body[data-page="hospital-care"] .svc-tab-card{margin:10px 0 0!important;border-radius:0;box-shadow:none}
+body[data-page="hospital-care"] .dtabs:has(.care-detail-tabs){display:block;border:0}
+body[data-page="hospital-care"] .care-detail-tabs{display:flex;border-bottom:1px solid #f5f5f5}
+body[data-page="hospital-care"] .care-detail-tabs .dtab{padding:12px 0;font-size:14px;font-weight:400;color:#999}
+body[data-page="hospital-care"] .care-detail-tabs .dtab.on{color:#19bf97;font-weight:600}
+body[data-page="hospital-care"] .care-detail-tabs .dtab.on:after{width:24px;background:#19bf97}
+body[data-page="hospital-care"] .svc-detail{padding:16px 12px}
+body[data-page="hospital-care"] .svc-detail h3{font-size:14px}
+body[data-page="hospital-care"] .svc-detail li{font-size:13px;line-height:24px}
+.care-feature-panels img{display:block;width:100%;height:auto}
+@media(prefers-reduced-motion:reduce){.care-service-card,.care-booking-banner{transition:none!important}}
+body[data-page="home"] .care-service-card .svc-tile-sub{min-height:0;white-space:nowrap;display:block;line-height:18px;overflow:hidden;text-overflow:ellipsis}
+body[data-page="home"] .care-service-card .svc-tile-body{min-height:0}
+body[data-page="hospital-care"] .phone:not(.buy-mode) .scroll-area{position:relative}
+body[data-page="hospital-care"] .phone:not(.buy-mode) .navbar{position:absolute;top:44px;left:0;right:0;z-index:3;background:transparent;box-shadow:none;border:0}
+body[data-page="hospital-care"] .phone:not(.buy-mode) .navbar .nav-title{opacity:0}
+body[data-page="hospital-care"] .phone:not(.buy-mode) .status-bar{position:absolute;inset:0 0 auto;z-index:3;background:transparent}
+body[data-page="hospital-care"] .review-score-star{color:var(--color-commerce)!important}
+body[data-page="hospital-care"] .phone:not(.buy-mode) .navbar{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body[data-page="hospital-care"] .phone:not(.buy-mode) .navbar .back-btn{background:#ffffffb3!important;width:32px;height:32px;backdrop-filter:blur(8px)}

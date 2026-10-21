@@ -375,3 +375,8 @@ body[data-page="profile"] :is(.hero-name,.hero-id-inline,.hero-arrow,.hero-top-a
 [data-checkout-summary] {display:none!important}
 body[data-page="cart"] .checkout-btn {flex:1;min-width:0;white-space:nowrap;padding-inline:14px;font-variant-numeric:tabular-nums}
 body[data-surface="mobile"] :is(#paySubmitBtn,#payConfirmBtn,#akbPayBtn,#orderPayBtn) {font-variant-numeric:tabular-nums}
+
+.role-switch-entry {color:var(--text);text-decoration:none}
+.role-switch-entry .menu-ico {color:var(--color-brand-strong)}
+.role-back-entry {display:flex;align-items:center;justify-content:center;gap:10px;margin:10px;padding:15px;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--color-brand-strong);font-size:14px;font-weight:600;text-decoration:none}
+.role-approved-entry {text-align:center;text-decoration:none;line-height:46px}
