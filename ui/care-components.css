@@ -77,3 +77,8 @@ body[data-page="hospital-care"] .phone:not(.buy-mode) .status-bar{position:absol
 body[data-page="hospital-care"] .review-score-star{color:var(--color-commerce)!important}
 body[data-page="hospital-care"] .phone:not(.buy-mode) .navbar{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 body[data-page="hospital-care"] .phone:not(.buy-mode) .navbar .back-btn{background:#ffffffb3!important;width:32px;height:32px;backdrop-filter:blur(8px)}
+/* Announcements are a flat list; exclude shared glass-card borders and shadows. */
+body[data-page="home"] .consult-sec,
+body[data-page="home"] .consult-list{border:0!important;box-shadow:none!important;outline:0}
+body[data-page="home"] .consult-item{border:0!important;border-bottom:1px solid #f2f3f5!important;background:transparent!important;box-shadow:none!important}
+body[data-page="home"] .consult-item:last-child{border-bottom:0!important}
