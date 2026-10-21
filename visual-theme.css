@@ -430,6 +430,7 @@ body[data-surface] textarea.akb-remark:focus{outline:none;border-color:var(--pur
 body[data-page="hospital-care"] .nav-bar{padding-top:var(--checkout-points-gap)!important}
 body[data-page="hospital-care"] .nav-bar .buy-only > .points-card{margin:0 0 var(--checkout-points-gap)!important;padding:0!important;background:transparent!important}
 body[data-page="hospital-care"] .nav-bar .buy-only > .points-card .mui-points{padding:0!important}
+body[data-page="hospital-care"] .nav-bar .buy-only > .btn-row > .btn-primary{margin-top:0!important}
 body[data-surface="mobile"] .pay-sheet .pay-scroll > .pay-sec:has(.mui-points){padding-top:var(--checkout-points-gap)!important;padding-bottom:0!important}
 body[data-surface="mobile"] .pay-sheet .pay-confirm{margin-top:var(--checkout-points-gap)!important}
 
