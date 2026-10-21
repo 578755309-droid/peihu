@@ -1081,7 +1081,7 @@
           </div>
           <div class="time-grid">
             <div id="datePickRow" style="display:none"><input class="field-input" id="serviceDate" type="date" /></div>
-            <div id="tpRow" onclick="openTimeSheet()" style="cursor:pointer"><div class="selector-trigger"><span id="tpTriggerVal">请选择服务时间</span><span class="selector-arrow">›</span></div></div>
+            <div id="tpRow" role="button" tabindex="0" aria-label="选择服务时间" onclick="openTimeSheet()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openTimeSheet()}" style="cursor:pointer"><div class="selector-trigger"><span class="vip-time-label" aria-hidden="true">服务时间</span><span id="tpTriggerVal">请选择服务时间</span><span class="selector-arrow">›</span></div></div>
             <div class="day-stepper-row" id="dayStepperRow" style="display:none">
               <span class="field-label">陪护天数</span>
               <div class="day-stepper">
