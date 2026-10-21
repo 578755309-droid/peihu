@@ -421,3 +421,6 @@ body[data-surface] textarea.akb-remark::placeholder{color:var(--remark-placehold
 body[data-surface] textarea.akb-remark:focus{outline:none;border-color:var(--purple,#1CD8B7)!important;background:var(--remark-background)!important}
 .akb-remark-count{flex:0 0 100%;width:100%;box-sizing:border-box;padding:5px 2px 8px;text-align:right;font-size:12px;line-height:18px;color:var(--remark-placeholder,#9AA0AA);font-variant-numeric:tabular-nums}
 .akb-remark-count.at-limit{color:var(--text2,#6B7280)}
+
+/* Amounts already appear in the points choice and payment action. */
+.mui-points-note{display:none!important}
