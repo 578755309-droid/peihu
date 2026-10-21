@@ -380,3 +380,33 @@ body[data-surface="mobile"] :is(#paySubmitBtn,#payConfirmBtn,#akbPayBtn,#orderPa
 .role-switch-entry .menu-ico {color:var(--color-brand-strong)}
 .role-back-entry {display:flex;align-items:center;justify-content:center;gap:10px;margin:10px;padding:15px;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--color-brand-strong);font-size:14px;font-weight:600;text-decoration:none}
 .role-approved-entry {text-align:center;text-decoration:none;line-height:46px}
+
+/* Mobile spacing contract: page gutters and adjacent card gaps are exactly 10px.
+   Containers own gutters; cards inside padded lists never add a second margin. */
+body[data-surface="mobile"] :is(.service-card-grid,.svc-tile-grid,.product-grid,.patient-list,.nurse-list,.hospital-list,.card-list,.order-list,.order-list-v2,.queue-grid,.work-queue,.stats-grid,.quick-grid,.info-grid,.info-chips,.redeem-carousel-rail){gap:var(--mobile-card-gap)!important}
+body[data-surface="mobile"] .phone > :is(.scroll,.content,.list),
+body[data-surface="mobile"] .phone > .scroll-area > :is(.content,.list),
+body[data-surface="mobile"] .scroll > .content{padding-inline:var(--mobile-page-gutter)!important;gap:var(--mobile-card-gap)!important}
+body[data-surface="mobile"] :is(.content,.list,.card-list,.order-list,.order-list-v2) > :is(.card,.order-card,.order-card-v2,.mall-order-card,.pending-card,.queue-card,.tl-card,.section,.section-card,.form-card,.state-card,.info-card,.detail-card,.summary-card,.address-card,.patient-card,.hospital-card,.nurse-card){margin-inline:0!important}
+body[data-page="orders"] .order-list-v2{padding:10px 10px 92px!important;gap:10px!important}
+body[data-page="orders"] .order-list-v2 > .order-card{margin:0!important}
+body[data-page^="nurse-"] .content{padding-inline:10px!important;gap:10px!important}
+body[data-page^="nurse-"] .content > :is(.section,.card,.order-card,.pending-card,.home-schedule-section){margin:0!important}
+body[data-surface="mobile"] .scroll > :is(.card,.section-card,.state-card,.form-card,.summary-card,.detail-card,.info-card,.address-card,.patient-card,.reward-card,.sign-card,.signed-card){margin-inline:0!important;margin-block:0!important}
+body[data-surface="mobile"] .scroll > :is(.card,.section-card,.state-card,.form-card,.summary-card,.detail-card,.info-card,.address-card,.patient-card,.reward-card,.sign-card,.signed-card) + :is(.card,.section-card,.state-card,.form-card,.summary-card,.detail-card,.info-card,.address-card,.patient-card,.reward-card,.sign-card,.signed-card){margin-top:10px!important}
+body[data-page="profile"] .scroll-area > .section,
+body[data-page="profile"] .phone > .section,
+body[data-page="nurse-detail"] .section{margin:10px 10px 0!important}
+body[data-page="profile"] .role-switch-entry,body[data-page="nurse-profile"] .role-back-entry{margin-top:10px!important}
+body[data-page="mall"] :is(.category-row,.product-section){padding-inline:10px!important}
+body[data-page="mall"] .product-section + .product-section{margin-top:10px!important}
+body[data-page="cart"] .cart-list{padding-inline:10px!important;gap:10px!important}
+body[data-page="cart"] .cart-item{margin-inline:0!important;margin-bottom:10px!important}
+body[data-page="hospital-care"] .content{padding-inline:0!important}
+body[data-page="hospital-care"] .module{margin:0 10px 10px!important}
+body[data-surface="mobile"] .scroll:has(> .content){padding-inline:0!important}
+body[data-surface="mobile"] .scroll > :is(.patient-list,.nurse-list,.hospital-list,.card-list){padding-inline:0!important}
+body[data-page="nurses"] .scroll-area > .nurse-list{padding-inline:10px!important}
+body[data-page="nurse-home"] #certificationGuide{margin:0!important}
+body[data-page^="nurse-"] .content{padding-top:10px!important}
+body[data-page^="nurse-"] .scroll:has(> .content){padding-top:0!important}
