@@ -27,7 +27,7 @@
   rows.push({title:'服务地址',rows:m.addresses.map((a,i)=>row('address.'+i,a.label||'服务地址',[a.detail,a.contact,a.phone].filter(Boolean).join(' · ')))});
   if(isCare)rows.push({title:'护理需求',rows:['independence','tube','infection','skinBreak'].map((k,i)=>row('care.'+k,['自理能力','管路','传染性疾病','皮肤破损'][i],(labels[k][m.careNeeds[k]]||m.careNeeds[k]||'未填写')+(k==='infection'&&m.careNeeds.infectionName?'（'+m.careNeeds.infectionName+'）':'')))});
   if(m.sessions.length)rows.push({title:'按次预约明细',rows:m.sessions.map((s,i)=>row('session.'+i,'第'+(s.seq||i+1)+'次',[s.date,s.time,s.addressDetail,s.contact,s.phone].filter(Boolean).join(' · ')))});
-  if(o.nurse||o.nurse2)rows.push({title:'服务人员',rows:[row('nurse','护理员',[o.nurse,o.nursePhone].filter(Boolean).join(' · ')),...(o.nurse2?[row('nurse2','第二位护理员',[o.nurse2,o.nursePhone2].filter(Boolean).join(' · '))]:[])]});
+  if(!['待支付','待付款'].includes(o.state)&&o.status!=='payment'&&(o.nurse||o.nurse2))rows.push({title:'服务人员',rows:[row('nurse','护理员',[o.nurse,o.nursePhone].filter(Boolean).join(' · ')),...(o.nurse2?[row('nurse2','第二位护理员',[o.nurse2,o.nursePhone2].filter(Boolean).join(' · '))]:[])]});
   if(m.cardId)rows.push({title:'兑换信息',rows:[row('cardId','使用兑换卡',m.cardId)]});
   if(m.consent)rows.push({title:'知情同意确认',rows:[row('consent.name','同意书',m.consent.name),row('consent.version','确认版本',m.consent.version),row('consent.acceptedAt','确认时间',m.consent.acceptedAt)]});
   return rows;
