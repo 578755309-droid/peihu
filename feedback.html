@@ -16,6 +16,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC"
 .frame{display:flex;justify-content:center;min-height:100vh;background:#F5F5F5}
 .phone{width:100%;max-width:430px;display:flex;flex-direction:column;background:var(--purple-bg);min-height:100vh}
 @media(min-width:520px){.frame{align-items:flex-start;padding:20px 0 40px}.phone{height:900px;min-height:unset;border-radius:12px;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,0.1),0 2px 8px rgba(0,0,0,.06)}}
+@media(min-width:520px){.phone{height:calc(100vh - 60px);min-height:560px}}
 .scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .scroll-area::-webkit-scrollbar{display:none}
 .topbar{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
@@ -60,6 +61,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC"
 .rec-reply{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--purple-light);font-size:13px;line-height:1.6;color:var(--text2)}
 .rec-reply b{color:var(--purple-dark)}
 .rec-empty{text-align:center;color:var(--text3);font-size:13px;font-weight:600;padding:24px 0 30px}
+/* 保留全局行式表单样式，仅补充字段之间的间距 */
+body[data-page="feedback"] .card{overflow:hidden}
+body[data-page="feedback"] .field{display:flex!important;flex-wrap:wrap;align-items:center;gap:6px 12px!important;min-height:0!important;padding:12px 16px!important;background:#fff!important;border:0!important;border-bottom:1px solid var(--border)!important;border-radius:0!important;margin:0!important}
+body[data-page="feedback"] .field:last-child{border-bottom:0!important;padding-bottom:14px!important}
+body[data-page="feedback"] .field>.field-label{flex:1 1 100%;margin:0 0 2px!important;font-size:14px;font-weight:600;line-height:1.4;color:var(--text)}
+body[data-page="feedback"] .field>select,
+body[data-page="feedback"] .field>input[type=text],
+body[data-page="feedback"] .field>input[type=tel],
+body[data-page="feedback"] .field>textarea{flex:1 1 100%!important;width:100%!important;height:auto!important;min-height:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;font-size:14px!important;line-height:1.65;color:var(--text)}
+body[data-page="feedback"] .field>textarea{min-height:84px!important;padding:2px 0 6px!important;resize:none}
+body[data-page="feedback"] .field>.chips{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:8px}
+body[data-page="feedback"] .field>.upload-row{flex:1 1 100%;display:flex;gap:10px;flex-wrap:wrap}
+/* 关联订单、联系方式：标签与控件同一行 */
+body[data-page="feedback"] .field.field-inline{flex-wrap:nowrap!important;gap:12px!important}
+body[data-page="feedback"] .field.field-inline>.field-label{flex:0 0 auto!important;margin:0!important;white-space:nowrap}
+body[data-page="feedback"] .field.field-inline>select,
+body[data-page="feedback"] .field.field-inline>input[type=tel]{flex:1 1 auto!important;width:auto!important;min-width:0;text-align:right}
+.fb-footer{display:flex;align-items:center;gap:10px;flex-shrink:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--border);box-shadow:0 -6px 18px rgba(0,0,0,.05)}
+.rec-link{display:flex;align-items:center;gap:5px;flex-shrink:0;border:0;background:none;padding:8px 2px;font:600 13px inherit;color:var(--text2);cursor:pointer;white-space:nowrap}
+.rec-link svg{width:18px;height:18px;color:var(--purple-dark)}
+.rec-link:active{color:var(--purple-dark)}
+body[data-page="feedback"] .fb-footer .submit-btn{flex:1;width:auto!important;height:46px;margin:0!important;border-radius:10px}
 </style>
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
@@ -78,8 +101,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC"
   <div class="scroll-area">
     <!-- 业务问题表单 -->
     <div class="card" id="bizForm">
-      <div class="field">
-        <div class="field-label">关联订单<span class="opt">选填，便于快速定位</span></div>
+      <div class="field field-inline">
+        <div class="field-label">关联订单</div>
         <select id="bizOrder"><option value="">不关联订单</option></select>
       </div>
       <div class="field">
@@ -95,11 +118,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC"
         <div class="upload-row" id="bizPhotos"></div>
         <input type="file" accept="image/*" id="bizFile" style="display:none">
       </div>
-      <div class="field">
+      <div class="field field-inline">
         <div class="field-label">联系方式<span class="req">*</span></div>
         <input type="tel" id="bizContact" placeholder="请输入手机号，便于客服与您联系" maxlength="11">
       </div>
-      <button class="submit-btn" onclick="submitFeedback('业务问题')">提交反馈</button>
     </div>
     <!-- 系统问题表单 -->
     <div class="card" id="sysForm" style="display:none">
@@ -120,15 +142,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC"
         <div class="upload-row" id="sysPhotos"></div>
         <input type="file" accept="image/*" id="sysFile" style="display:none">
       </div>
-      <div class="field">
+      <div class="field field-inline">
         <div class="field-label">联系方式<span class="req">*</span></div>
         <input type="tel" id="sysContact" placeholder="请输入手机号，便于客服与您联系" maxlength="11">
       </div>
-      <button class="submit-btn" onclick="submitFeedback('系统问题')">提交反馈</button>
     </div>
-    <!-- 我的反馈记录 -->
-    <div class="sec-title">我的反馈记录</div>
-    <div id="recList"></div>
+    <!-- 我的反馈记录：默认隐藏，点击底部「反馈记录」后展示 -->
+    <div id="recSection" style="display:none">
+      <div class="sec-title" id="recTitle">我的反馈记录</div>
+      <div id="recList"></div>
+    </div>
+  </div>
+  <div class="fb-footer">
+    <button class="rec-link" onclick="toggleRecords()" aria-label="查看我的反馈记录" aria-expanded="false" aria-controls="recSection">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="12" height="13.5" rx="2.5"/><path d="M7.5 7.5h5M7.5 10.5h5M7.5 13.5h3"/></svg>
+      <span>反馈记录</span>
+    </button>
+    <button class="submit-btn" onclick="submitCurrent()">提交反馈</button>
   </div>
 </div></div>
 <script>
@@ -158,6 +188,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC"
     var cat=el.dataset.cat;
     document.getElementById('bizForm').style.display=cat==='业务问题'?'':'none';
     document.getElementById('sysForm').style.display=cat==='系统问题'?'':'none';
+  };
+  /* 底部固定操作栏：按当前标签提交对应表单 */
+  window.submitCurrent=function(){
+    var act=document.querySelector('.fb-tab.act');
+    window.submitFeedback(act&&act.dataset.cat?act.dataset.cat:'业务问题');
+  };
+  /* 反馈记录默认收起，点击底部按钮展开并定位 */
+  window.toggleRecords=function(){
+    var section=document.getElementById('recSection');
+    var btn=document.querySelector('.rec-link');
+    var show=section.style.display==='none';
+    section.style.display=show?'':'none';
+    if(btn)btn.setAttribute('aria-expanded',show?'true':'false');
+    if(show){var title=document.getElementById('recTitle');if(title)title.scrollIntoView({behavior:'smooth',block:'start'});}
   };
 
   /* 关联订单下拉：合并服务订单与商城订单 */

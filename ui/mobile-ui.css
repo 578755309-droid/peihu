@@ -180,3 +180,96 @@
 
 /* ---------- ⑩ 结算区吸底：滚动容器内的底部操作栏固定于底部 ---------- */
 .scroll-area > .nav-bar{position:sticky;bottom:0;z-index:20;box-shadow:0 -8px 24px rgba(29,33,41,.08)}
+
+/* ---------- ⑪ 护理端主题：对齐移动端设计规范 ---------- */
+/* 主色由旧紫色统一为青绿；页面底色、文字、分隔线、卡片阴影与圆角同步 */
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]){
+  --purple:#1CD8B7;--purple-dark:#0FA98C;--purple-light:#DDF7F1;--purple-bg:#f0f3f5;
+  --card:#fff;--text:#1D2129;--text2:#4E5969;--text3:#86909C;--border:#F0F1F4;
+  --r-lg:14px;--r-md:10px;--r-sm:8px;--sh:0 1px 2px rgba(29,33,41,.04);
+  color:var(--mui-text);
+}
+
+/* 顶部栏：白底细分隔线；首页/我的保留青绿沉浸式状态栏 */
+body[data-page="nurse-home"] .status-bar,body[data-page="nurse-profile"] .status-bar{background:var(--mui-primary)!important;color:#fff!important}
+body[data-page="nurse-home"] .status-bar span,body[data-page="nurse-home"] .status-right,body[data-page="nurse-profile"] .status-bar span,body[data-page="nurse-profile"] .status-right{color:#fff!important}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .navbar{background:var(--mui-surface);border-bottom:1px solid var(--mui-line)}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .nav-title{font-size:17px;font-weight:600;color:var(--mui-text)}
+body[data-page="nurse-home"] .hero,body[data-page="nurse-profile"] .hero{background:linear-gradient(160deg,#1CD8B7 0%,#0FA98C 100%)}
+body[data-page="nurse-home"] .nurse-av-lg,body[data-page="nurse-profile"] .avatar{background:linear-gradient(140deg,#7FE9D4,#1CD8B7)}
+
+/* 卡片：14px 圆角 + 轻描边阴影 */
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .order-card,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .pending-card,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .schedule-card,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .queue-card,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .qa-item,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .section,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .card,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .section-card,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .empty,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .hero-card,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .tf-modal,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .photo-sheet{border-radius:var(--mui-radius)}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .hero-card{box-shadow:0 6px 18px rgba(15,169,140,.18)}
+
+/* 内部信息块与标签 */
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .info-cell,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .info-chip,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .care-needs,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .care-need,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .plan-note,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .hero-cell,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .profile-cell,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .time-chip,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .vital-item,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .qf-chip,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .notice{border-radius:var(--mui-radius-sm)}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .state,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .service-tag,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .pending-badge,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .status-pill,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .tl-tag,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .order-chip,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .status-badge,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .chip,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .tag,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .pat-tag,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .nid-badge{border-radius:6px}
+
+/* 按钮：10px 圆角，主操作统一青绿渐变 */
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .action,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn-accept,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn-transfer,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn-start,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn-end,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn-back,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .submit-btn,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .share-btn,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .tf-submit,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .tf-cancel,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .photo-confirm,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .photo-cancel,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .report-btn{border-radius:var(--mui-radius-sm)}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn-accept,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn-start:not(.done){background:linear-gradient(135deg,#1CD8B7,#0FA98C);box-shadow:0 6px 16px rgba(28,216,183,.25)}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn-accept,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn-transfer,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn-back{height:46px;font-size:15px}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .action{height:34px;font-size:12px}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .btn{height:40px;font-size:13px}
+
+/* 列表与标题排版 */
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .menu{min-height:var(--mui-row-h);padding:10px 16px;border-bottom:1px solid var(--mui-line)}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .menu-name{font-size:15px;font-weight:500;color:var(--mui-text)}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .menu-desc{font-size:12px;color:var(--mui-text3)}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .section-title,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .sec-title{font-size:15px;font-weight:600;color:var(--mui-text)}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .sec-more,
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .section-action{font-size:12px;color:var(--mui-text3)}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .status-tabs{background:var(--mui-surface);border-bottom:1px solid var(--mui-line);top:56px}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .status-tab{font-size:12px;font-weight:600}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .bottom-nav{background:var(--mui-surface);border-top:1px solid var(--mui-line)}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .nav-lbl{font-size:11px}
+:is(body[data-page^="nurse-"],body[data-page="daily-report"],body[data-page="submit-report"]) .report-banner{background:linear-gradient(135deg,#E8FBF7,#DDF7F1)}

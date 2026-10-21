@@ -121,6 +121,17 @@
     table.classList.add('caregiver-list-table');
     table.querySelector('thead tr').innerHTML='<th>头像</th><th>陪护员</th><th>手机号</th><th>认证状态</th><th>工龄</th><th>人员类型</th><th>入驻企业</th><th>服务技能</th><th>服务评分</th><th>累计订单</th><th>在岗状态</th><th>操作</th>';
     var labels={on:'在岗',leave:'休息',off:'停用'};
+    /* 从已建档的陪护员记录同步认证状态，审核后无需刷新页面即可回显 */
+    function syncStoredProfiles(){
+      try{
+        var stored=JSON.parse(sessionStorage.getItem('akbNewCaregivers')||localStorage.getItem('akbNewCaregivers')||'[]');
+        if(!Array.isArray(stored))return;
+        var classes={'审核通过':'approved','审核中':'reviewing','审核驳回':'rejected','未提交':'unsubmitted'};
+        stored.forEach(function(caregiver){
+          caregiverProfiles[caregiver.id]={avatar:(caregiver.name||'陪').slice(0,1),name:caregiver.name,phone:caregiver.phone,certification:caregiver.certification||'未提交',certificationClass:classes[caregiver.certification]||'unsubmitted',workYears:caregiver.workYears||'—',employmentType:caregiver.employmentType||'full-time',companyName:caregiver.companyName||'',skills:caregiver.skills||[]};
+        });
+      }catch(error){}
+    }
     function renderCaregivers(){
       var stateSelect=document.getElementById('state');
       var skillSelect=document.getElementById('skill');
@@ -137,11 +148,14 @@
         var etLabel=cgEtLabel(et);
         var etClass=cgEtClass(et);
         var company=profile.companyName||caregiver.companyName||'';
-        return '<tr><td>'+(caregiver.photo?'<img class="cg-avatar" style="object-fit:cover" src="'+caregiver.photo+'" alt="">':'<div class="cg-avatar">'+profile.avatar+'</div>')+'</td><td><div class="cg-name">'+caregiver.name+'</div><div class="cg-id">档案编号 '+caregiver.id+'</div></td><td>'+caregiver.phone+'</td><td><span class="cg-cert '+profile.certificationClass+'">'+profile.certification+'</span></td><td>'+profile.workYears+'</td><td><span class="state '+etClass+'">'+etLabel+'</span></td><td>'+(company||'<span style="color:#8F9BB0">—</span>')+'</td><td>'+caregiver.skills.join('、')+'</td><td class="rating">★ '+caregiver.rating+'</td><td>'+caregiver.orders+' 单</td><td><span class="state '+caregiver.state+'">'+labels[caregiver.state]+'</span></td><td><div class="ops"><button onclick="location.href=\'admin-caregiver-detail.html?id='+caregiver.id+'\'">查看档案</button><button onclick="alert(\'编辑陪护员\')">编辑</button></div></td></tr>';
+        var auditBtn=(profile.certification==='审核中'||profile.certification==='审核驳回')?'<button class="cg-audit-entry" onclick="openCaregiverAuditFor(\''+caregiver.name+'\',\''+caregiver.id+'\',\''+profile.certification+'\')">审核</button>':'';
+        return '<tr><td>'+(caregiver.photo?'<img class="cg-avatar" style="object-fit:cover" src="'+caregiver.photo+'" alt="">':'<div class="cg-avatar">'+profile.avatar+'</div>')+'</td><td><div class="cg-name">'+caregiver.name+'</div><div class="cg-id">档案编号 '+caregiver.id+'</div></td><td>'+caregiver.phone+'</td><td><span class="cg-cert '+profile.certificationClass+'">'+profile.certification+'</span></td><td>'+profile.workYears+'</td><td><span class="state '+etClass+'">'+etLabel+'</span></td><td>'+(company||'<span style="color:#8F9BB0">—</span>')+'</td><td>'+caregiver.skills.join('、')+'</td><td class="rating">★ '+caregiver.rating+'</td><td>'+caregiver.orders+' 单</td><td><span class="state '+caregiver.state+'">'+labels[caregiver.state]+'</span></td><td><div class="ops"><button onclick="location.href=\'admin-caregiver-detail.html?id='+caregiver.id+'\'">查看档案</button><button onclick="alert(\'编辑陪护员\')">编辑</button>'+auditBtn+'</div></td></tr>';
       }).join('');
     }
     document.getElementById('state').onchange=renderCaregivers;
     document.getElementById('skill').onchange=renderCaregivers;
+    window.refreshCaregiverTable=function(){syncStoredProfiles();renderCaregivers();};
+    syncStoredProfiles();
     renderCaregivers();
   }
   function initCaregiverProfile(){

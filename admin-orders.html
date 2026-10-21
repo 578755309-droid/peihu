@@ -279,12 +279,48 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
 
     /* ── 派单弹窗 ── */
     var CAREGIVERS = [
-      { id:'N1001', name:'张阿姨', phone:'138****2468', skills:['住院陪护','居家陪护'] },
-      { id:'N1002', name:'李师傅', phone:'139****8572', skills:['陪诊服务'] },
-      { id:'N1003', name:'王阿姨', phone:'186****3016', skills:['上门助浴','居家陪护'] },
-      { id:'N1004', name:'赵姐', phone:'133****6420', skills:['住院陪护'] },
-      { id:'N1005', name:'陈阿姨', phone:'177****9183', skills:['居家陪护'] }
+      { id:'N1001', name:'张阿姨', phone:'138****2468', skills:['住院陪护','居家陪护'], certification:'审核通过', workYears:'6年' },
+      { id:'N1002', name:'李师傅', phone:'139****8572', skills:['陪诊服务'], certification:'审核通过', workYears:'4年' },
+      { id:'N1003', name:'王阿姨', phone:'186****3016', skills:['上门助浴','居家陪护'], certification:'审核中', workYears:'3年' },
+      { id:'N1004', name:'赵姐', phone:'133****6420', skills:['住院陪护'], certification:'审核驳回', workYears:'2年' },
+      { id:'N1005', name:'陈阿姨', phone:'177****9183', skills:['居家陪护'], certification:'未提交', workYears:'1年' }
     ];
+    /* 派单名单：仅认证审核通过的陪护员；后台新审核通过的档案自动并入 */
+    function dispatchCaregivers() {
+      var list = CAREGIVERS.map(function (c) { return Object.assign({}, c); });
+      var stored = [];
+      ['localStorage', 'sessionStorage'].forEach(function (store) {
+        try {
+          var arr = JSON.parse(window[store].getItem('akbNewCaregivers') || '[]');
+          if (Array.isArray(arr)) arr.forEach(function (cg) {
+            if (!cg || !cg.name) return;
+            if (!stored.some(function (x) { return (cg.id && x.id === cg.id) || x.name === cg.name; })) stored.push(cg);
+          });
+        } catch (e) {}
+      });
+      stored.forEach(function (cg) {
+        var hit = list.find(function (x) { return (cg.id && x.id === cg.id) || x.name === cg.name; });
+        if (hit) {
+          hit.name = cg.name || hit.name;
+          hit.phone = cg.phone || hit.phone;
+          if (cg.skills && cg.skills.length) hit.skills = cg.skills;
+          hit.certification = cg.certification || hit.certification;
+          hit.workYears = cg.workYears || hit.workYears;
+          hit.certs = cg.certs || hit.certs;
+        } else {
+          list.push({ id: cg.id, name: cg.name, phone: cg.phone, skills: cg.skills || [], certification: cg.certification || '未提交', workYears: cg.workYears || '', certs: cg.certs || [] });
+        }
+      });
+      return list.filter(function (c) { return c.certification === '审核通过'; }).map(function (c) {
+        var years = parseInt(String(c.workYears || '').replace(/[^0-9]/g, ''), 10) || 3;
+        var skill = (c.skills && c.skills[0]) || '陪护服务';
+        return Object.assign({}, c, {
+          role: (years >= 5 ? '高级护理师' : '护理师') + '｜' + skill,
+          cert: '持证上岗',
+          yearsText: years + '年经验'
+        });
+      });
+    }
     function showToast(msg){ return window.AKBUI.toast(msg,2200); }
     var dispatchOrderNo = '';
     var isBathOrder = false;
@@ -296,10 +332,11 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
       var list = document.getElementById('dispatchList');
       var inputType = isBathOrder ? 'checkbox' : 'radio';
       var selectLabel = isBathOrder ? '选择护理员（最多 2 人）' : '选择护理员';
-      list.innerHTML = '<div style="font-size:12px;color:#9AA7BA;font-weight:600;margin-bottom:8px">'+selectLabel+'</div>' + CAREGIVERS.map(function(c){
+      var pool = dispatchCaregivers();
+      list.innerHTML = '<div style="font-size:12px;color:#9AA7BA;font-weight:600;margin-bottom:8px">'+selectLabel+'</div>' + (pool.length ? pool.map(function(c){
         var match = order.type && c.skills.indexOf(order.type) >= 0;
-        return '<label class="dispatch-item'+(match?' match':'')+'" onclick="onDispatchItemClick(this)"><input type="'+inputType+'" name="dispatchNurse" value="'+c.id+'" data-name="'+c.name+'" data-phone="'+c.phone+'"><div class="dispatch-info"><div class="dispatch-name">'+c.name+(match?'<span class="dispatch-tag">匹配</span>':'')+'</div><div class="dispatch-sub">'+c.phone+' · '+c.skills.join('、')+'</div></div></label>';
-      }).join('');
+        return '<label class="dispatch-item'+(match?' match':'')+'" onclick="onDispatchItemClick(this)"><input type="'+inputType+'" name="dispatchNurse" value="'+c.id+'" data-name="'+c.name+'" data-phone="'+c.phone+'" data-role="'+c.role+'" data-cert="'+c.cert+'" data-years="'+c.yearsText+'" data-avatar="'+c.name.charAt(0)+'"><div class="dispatch-info"><div class="dispatch-name">'+c.name+(match?'<span class="dispatch-tag">匹配</span>':'')+'</div><div class="dispatch-sub">'+c.phone+' · '+c.skills.join('、')+' · '+c.yearsText+'</div></div></label>';
+      }).join('') : '<div style="padding:18px 0;text-align:center;font-size:12px;color:#9AA7BA;font-weight:600">暂无认证通过的陪护员，请先在陪护员管理中完成审核</div>');
       document.getElementById('dispatchOverlay').style.display = 'flex';
     };
     window.onDispatchItemClick = function(label) {
@@ -319,6 +356,10 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
       if (order) {
         order.nurse = checked[0].dataset.name;
         order.nursePhone = checked[0].dataset.phone;
+        order.nurseId = checked[0].value;
+        order.role = checked[0].dataset.role;
+        order.cert = checked[0].dataset.cert;
+        order.years = checked[0].dataset.years;
         if (isBathOrder && checked.length > 1) {
           order.nurse2 = checked[1].dataset.name;
           order.nursePhone2 = checked[1].dataset.phone;
@@ -326,7 +367,7 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
           delete order.nurse2; delete order.nursePhone2;
         }
       }
-      /* 同步到 localStorage */
+      /* 同步到 localStorage：陪护员身份信息随订单保存，用户端订单详情据此展示 */
       try {
         var saved = JSON.parse(localStorage.getItem('ankebang_service_orders')||'[]');
         if (Array.isArray(saved)) {
@@ -334,6 +375,10 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
           if (idx>=0) {
             saved[idx].nurse = checked[0].dataset.name;
             saved[idx].nursePhone = checked[0].dataset.phone;
+            saved[idx].nurseId = checked[0].value;
+            saved[idx].role = checked[0].dataset.role;
+            saved[idx].cert = checked[0].dataset.cert;
+            saved[idx].years = checked[0].dataset.years;
             if (isBathOrder && checked.length > 1) {
               saved[idx].nurse2 = checked[1].dataset.name;
               saved[idx].nursePhone2 = checked[1].dataset.phone;
@@ -341,6 +386,22 @@ function exportOrders(){const rows=[['订单号','下单时间','服务类型','
               delete saved[idx].nurse2; delete saved[idx].nursePhone2;
             }
             saved[idx].avatar = checked[0].dataset.name.charAt(0);
+            localStorage.setItem('ankebang_service_orders', JSON.stringify(saved));
+          } else if (order) {
+            /* 后台自有订单首次派单：落库用户端订单表，用户端订单详情可展示该陪护员 */
+            var svc = serviceProfiles[dispatchOrderNo] || {};
+            var first = checked[0].dataset;
+            saved.push({
+              id: dispatchOrderNo, type: order.type,
+              project: svc.project || order.item || order.type,
+              person: svc.patient || order.user || '服务对象',
+              address: svc.address || '', addressKind: svc.addressType || '家',
+              time: order.time, amount: String(order.amount || '').replace(/[^0-9.]/g, ''),
+              state: order.state, quantity: '', contact: order.user || '', phone: order.userPhone || '',
+              nurse: first.name, nursePhone: first.phone, nurseId: checked[0].value,
+              role: first.role, cert: first.cert, years: first.years, avatar: first.avatar,
+              source: 'admin', createdAt: Date.now()
+            });
             localStorage.setItem('ankebang_service_orders', JSON.stringify(saved));
           }
         }
