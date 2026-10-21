@@ -126,6 +126,16 @@
 .field>.labels{flex:1 1 auto}
 .field .up-btn{border:1px solid var(--mui-line-strong);background:#fff;color:var(--mui-text2);border-radius:16px;height:30px;padding:0 12px;font-size:12px}
 
+/* ⑤ 选择器卡片：选择医院 / 就诊人 / 地址等（通用组件，所有页面复用） */
+.selector-trigger{width:100%;min-height:74px;padding:12px 13px;display:flex;align-items:center;gap:11px;border:1.5px solid var(--mui-line-strong);border-radius:var(--mui-radius-sm);background:#FCFBFE;color:var(--mui-text);text-align:left;font-family:inherit;cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
+.selector-trigger:hover{border-color:#D3BEEB}
+.selector-trigger:active{background:var(--mui-line);border-color:var(--mui-primary);box-shadow:0 0 0 3px rgba(0,0,0,0.1)}
+.selector-marker{width:38px;height:38px;border-radius:12px;background:#EADBFF;color:#7C4DD8;display:grid;place-items:center;flex-shrink:0;font-size:16px;font-weight:700}
+.selector-copy{min-width:0;flex:1;overflow:hidden}
+.selector-value{display:block;max-width:100%;font-size:14px;color:var(--mui-text);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.selector-meta{display:block;max-width:100%;margin-top:4px;font-size:13px;font-weight:400;color:var(--mui-text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.selector-arrow{width:24px;color:#9B91AC;font-size:25px;line-height:1;font-weight:400;text-align:center}
+
 /* ② .form-row 行式（服务下单/服务对象/退款等） */
 .form-row{display:flex!important;flex-wrap:wrap;align-items:center;gap:0 12px;min-height:var(--mui-row-h);margin:0!important;padding:0 var(--mui-pad)!important;border-bottom:1px solid var(--mui-line);background:var(--mui-surface)}
 .form-row:last-child{border-bottom:0}
@@ -166,9 +176,9 @@
 /* ---------- ⑨ 积分抵扣行（两行文案 + 橙色圆形勾选） ---------- */
 .mui-points{position:relative;display:flex;align-items:center;gap:12px;width:100%;padding:12px 0;border:0;background:transparent;font-family:inherit;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .mui-points input[type=checkbox]{position:absolute;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}
-.mui-points-main{flex:1;min-width:0;display:block}
-.mui-points-title{display:block;font-size:12px;line-height:1.4;color:var(--mui-text3);font-weight:500}
-.mui-points-val{display:block;margin-top:3px;font-size:13px;line-height:1.4;color:var(--mui-warn);font-weight:600}
+.mui-points-main{flex:1;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mui-points-title{display:block;font-size:12px;line-height:1.4;color:var(--mui-text3);font-weight:500;flex-shrink:0}
+.mui-points-val{display:block;font-size:13px;line-height:1.4;color:var(--mui-warn);font-weight:600;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mui-points-num{font-size:17px;font-weight:700;margin:0 1px;color:var(--mui-warn)}
 .mui-points-sub{color:var(--mui-text2);font-weight:600;font-size:13px}
 .mui-points-check{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid #D8DDE4;background:#fff;position:relative;transition:background .15s,border-color .15s}

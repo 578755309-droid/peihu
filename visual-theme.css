@@ -437,31 +437,33 @@ body[data-surface="mobile"] .pay-sheet .pay-scroll > .pay-sec:has(.mui-points){p
 body[data-surface="mobile"] .pay-sheet .pay-confirm{margin-top:var(--checkout-points-gap)!important}
 
 /* 贵宾、优享陪诊：三张连续卡片，保留原控件与校验。 */
-body[data-page="hospital-care"] .vip-form-layout > .vip-form-card,
-body[data-page="hospital-care"] .vip-form-layout > #examModule{margin:0 10px 10px!important;padding:18px 16px!important}
+/* 大卡片外层：统一清掉 .module 基类的灰底 / 圆角 / 阴影 —— 不管父容器是谁都命中 */
+body[data-page="hospital-care"] .vip-form-card.module,
+body[data-page="hospital-care"] .vip-form-card,
+body[data-page="hospital-care"] #examModule{margin:0 10px 10px!important;padding:18px 16px!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
 body[data-page="hospital-care"] .vip-form-heading{display:flex;align-items:center;gap:9px;margin:0 0 16px;font-size:16px;line-height:1.4;font-weight:700;color:var(--text)}
 body[data-page="hospital-care"] .vip-form-heading::before{content:"";width:4px;height:19px;flex:none;border-radius:12px;background:var(--purple)}
 body[data-page="hospital-care"] .vip-form-card > .module{margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
-body[data-page="hospital-care"] .vip-form-card > .module + .module{margin-top:18px!important;padding-top:16px!important;border-top:1px solid var(--border)!important}
-body[data-page="hospital-care"] #vipBasicCard .selector-trigger{min-height:54px;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
-body[data-page="hospital-care"] #vipBasicCard .selector-trigger:hover,
-body[data-page="hospital-care"] #vipBasicCard .selector-trigger:active{border:0!important;background:transparent!important;box-shadow:none!important}
+body[data-page="hospital-care"] .vip-form-card > .module + .module{margin-top:0!important;padding-top:0!important;border-top:0!important}
+/* 大卡片内所有 selector-trigger 与贵宾陪诊一致：无边框、透明背景、无阴影 */
+body[data-page="hospital-care"] .vip-form-card .selector-trigger{min-height:54px;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+body[data-page="hospital-care"] .vip-form-card .selector-trigger:hover,
+body[data-page="hospital-care"] .vip-form-card .selector-trigger:active{border:0!important;background:transparent!important;box-shadow:none!important}
+/* 大卡片内子模块的子标题（module-title）清掉，退化成行式字段 */
 body[data-page="hospital-care"] .vip-form-card .module-title{margin-bottom:10px!important;font-size:13px!important;font-weight:600!important;color:var(--text2)!important}
 body[data-page="hospital-care"] .vip-form-card .module-title::before{display:none!important}
+/* 时间 / 联系人 / 备注 三个子模块完全隐藏其 module-title（贵宾陪诊 + 所有其他服务） */
+body[data-page="hospital-care"] .vip-form-card > #timeModule .module-title,
+body[data-page="hospital-care"] .vip-form-card > #contactModule .module-title,
+body[data-page="hospital-care"] .vip-form-card > .single-page-needs .module-title{display:none!important}
+/* 贵宾陪诊特殊：备注区上留 12px 顶部 padding */
+body[data-page="hospital-care"] #vipBookingCard > .single-page-needs{padding-top:12px!important}
 body[data-page="hospital-care"] #vipBookingCard > .single-page-needs .module-title{margin-bottom:0!important}
 body[data-page="hospital-care"] #vipBookingCard .single-page-needs .need-group{margin-top:0!important}
 body[data-page="hospital-care"] #p3 > #needsPriceCard{margin:0 10px 10px!important;padding:0 14px;background:#fff;border-radius:12px;box-shadow:var(--sh)}
 body[data-page="hospital-care"] #p3 > #needsPriceCard .points-card{margin-top:0;padding:0}
-
-/* In the three-card escort form, time uses the same field-row rhythm as contact. */
-.vip-time-label{display:none}
-body[data-page="hospital-care"] #vipBookingCard > #timeModule .module-title,
-body[data-page="hospital-care"] #vipBookingCard > #contactModule .module-title,
-body[data-page="hospital-care"] #vipBookingCard > .single-page-needs .module-title{display:none!important}
-body[data-page="hospital-care"] #vipBookingCard > .module + .module{margin-top:0!important;padding-top:0!important;border-top:0!important}
-body[data-page="hospital-care"] #vipBookingCard #tpRow{border-bottom:1px solid var(--mui-line,#E9EBEF)}
-body[data-page="hospital-care"] #vipBookingCard #tpRow .selector-trigger{display:flex;align-items:center;gap:12px;min-height:var(--mui-row-h,54px);padding:0 var(--mui-pad,14px);border:0;border-radius:0;background:transparent;box-shadow:none}
-body[data-page="hospital-care"] #vipBookingCard .vip-time-label{display:block;flex:0 0 auto;min-width:var(--mui-label-w,92px);max-width:42%;font-size:14px;font-weight:400;color:var(--mui-text,#252831);line-height:1.4}
-body[data-page="hospital-care"] #vipBookingCard #tpTriggerVal{flex:1;min-width:0;font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-body[data-page="hospital-care"] #vipBookingCard #tpRow .selector-arrow{width:auto;margin-left:auto;font-size:20px}
-body[data-page="hospital-care"] #vipBookingCard > .single-page-needs{padding-top:12px!important}
+/* 行式服务时间统一 */
+body[data-page="hospital-care"] .vip-form-card #tpRow{border-bottom:1px solid var(--mui-line,#E9EBEF)}
+body[data-page="hospital-care"] .vip-form-card .vip-time-label{display:block;flex:0 0 auto;min-width:var(--mui-label-w,92px);max-width:42%;font-size:14px;font-weight:400;color:var(--mui-text,#252831);line-height:1.4}
+body[data-page="hospital-care"] .vip-form-card #tpTriggerVal{flex:1;min-width:0;font-size:14px;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-page="hospital-care"] .vip-form-card #tpRow .selector-arrow{width:auto;margin-left:auto;font-size:20px}
