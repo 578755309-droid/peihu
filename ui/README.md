@@ -67,6 +67,48 @@ DOM 验证覆盖确认取消、排队、输入、重复开关、焦点恢复、�
 
 `nurse-certification-state.js` 以现有 `akbNurseApplications` 为准，无申请时显示未认证，访问页面不生成申请。首次审核期间不允许接单；已通过的认证在资料更新审核期间继续有效（`hasApprovedCertification`），后台驳回更新时仍保留原档案。个人中心、首页和认证页通过 storage/focus 事件读取最新结果。上传材料的重新渲染保留正在填写的表单及证书；待审核不重复提交，后台仅处理审核中申请。
 
-审核通过档案同时保存在现有 sessionStorage 和 localStorage，重开页面及更新审核保留原 caregiverId，不重复建档。旧认证记录不清除。证件附件沿用现有图片/文件信息方式，不增加新的必传证件政策；5MB文件大小、身份证日期与现有18–70岁范围、0–50年工龄和企业名称进行校验。本地流程未接入真实账号认证、服务端材料存储或跨设备审核通知。
+审核通过档案同时保存在现有 sessionStorage 和 localStorage，重开页面及更新审核保留原 caregiverId，不重复建档。旧认证记录不清除。证件附件沿用现有图片/文件信息方式；护士证、毕业证、健康证为必填材料（每证图片或文件至少一项），首次申请与后台新增档案均校验，编辑历史档案不强制；5MB文件大小、身份证日期与现有18–70岁范围、0–50年工龄和企业名称进行校验。本地流程未接入真实账号认证、服务端材料存储或跨设备审核通知。
 
 验证：`node tests/certification.test.cjs`，覆盖首次申请、上传保留输入、审核中、驳回重提、通过、重新审核与持久化档案。
+
+
+### 移动端组件库（行式表单）
+
+`ui/mobile-ui.css` + `ui/mobile-ui.js` 定义用户端与护理员端统一的表单视觉：浅灰页面（`--mui-bg`）+ 白色列表卡（`.mui-list` / `.mui-form`）+ 52px 行高 + 92px 左侧标签 + 无边框输入 + 细分隔线。已通过 `<link>` 接入全部移动端表单页。
+
+```html
+<div class="mui-form">
+  <div class="mui-row" data-required>
+    <label class="mui-label">姓名<span class="mui-req">*</span></label>
+    <input class="mui-input" name="name" placeholder="请输入名称">
+    <div class="mui-error">请输入姓名</div>
+  </div>
+</div>
+```
+
+组件：`.mui-row`（基础行）、`.mui-row--stack`（标签在上，用于文本域/多选/上传）、`.mui-input/.mui-select/.mui-textarea/.mui-value/.mui-arrow`、`.mui-chips/.mui-chip`、`.mui-switch`、`.mui-radio-check`、`.mui-upload`、`.mui-btn`（primary/ghost/danger/block）、`.mui-price`、`.mui-back`、`.mui-toast`、`.mui-sheet`。
+
+返回按钮为黑色图标、无底色（40px 触控区，按下仅有 6% 黑色水波纹）：
+
+```html
+<button class="mui-back" aria-label="返回">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+</button>
+```
+
+```js
+MobileUI.back({ mount: '#header', href: 'home.html' }); // 创建并插入到容器首位
+MobileUI.back({ text: '返回', onClick: goBack });        // 带文字 / 自定义行为
+```
+
+图标定义同步新增 `AKBIcons.back`。存量页面的 `.back`、`.back-btn` 由兼容层统一改为透明底 + 黑色描边，无需改标记。
+
+```js
+MobileUI.form('#orderForm').values();               // 读取
+MobileUI.form('#orderForm').set({ name: '张三' });   // 回填
+MobileUI.form('#orderForm').validate();              // 校验必填并滚动定位
+MobileUI.toast('已保存');
+const sheet = MobileUI.sheet({ title: '选择时间', html: '<div class="mui-list">…</div>' });
+```
+
+兼容层把既有 `.field`、`.form-row`、`.f-input`、`.akb-contact`、`.submit` 等类映射到新规范，因此存量页面无需改结构、字段 ID 与业务脚本保持不变。示例见 `mobile-ui-demo.html`。新增表单应优先使用 `mui-` 类。

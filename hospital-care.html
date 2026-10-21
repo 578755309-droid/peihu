@@ -454,13 +454,8 @@
     .bath-session-addr-text.placeholder { color:var(--text3); }
     .bath-session-addbtn { width:100%; height:42px; margin-top:10px; border:1.5px dashed var(--purple-light); border-radius:12px; background:var(--purple-bg); color:var(--purple); font:700 13px inherit; cursor:pointer; }
     .time-summary { margin-top:12px; padding:11px 12px; border-radius:12px; background:var(--purple-light); color:var(--purple-dark); font-size:13px; font-weight:600; text-align:center; }
-    .points-card { margin-top:12px; padding:14px; border:1px solid var(--border); border-radius:12px; background:linear-gradient(120deg,#fff,#f5fbf9); text-align:left; }
-    .points-check { display:flex; align-items:center; gap:10px; cursor:pointer; }
-    .points-check input { width:19px; height:19px; accent-color:var(--purple); flex-shrink:0; }
-    .points-main { flex:1; font-size:14px; color:var(--text); font-weight:600; }
-    .points-balance { font-size:13px; color:var(--text3); font-weight:600; }
-    .points-detail { margin:10px 0 0 29px; padding-top:10px; border-top:1px solid rgba(15,169,140,.09); font-size:12px; line-height:1.6; color:var(--text2); }
-    .points-detail strong { color:var(--purple); font-size:14px; }
+    .points-card { margin-top:12px; padding:0 14px; border-radius:12px; background:#fff; text-align:left; }
+    .points-card .mui-points { padding:12px 0; }
     .price-save { margin-top:2px; color:var(--green); font-size:13px; font-weight:600; text-align:center; }
     .address-list { display:grid; gap:10px; }
     .address-card { display:flex; align-items:flex-start; gap:10px; border:2px solid var(--border); border-radius:12px; padding:12px; cursor:pointer; }
@@ -708,6 +703,7 @@
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
   <link rel="stylesheet" href="ui/card-carousel.css" />
+  <link rel="stylesheet" href="ui/mobile-ui.css">
 </head>
 <body data-surface="mobile" data-page="hospital-care">
 <div class="frame">
@@ -1047,12 +1043,15 @@
           <div class="needs-price-card" id="needsPriceCard">
             <div class="time-summary" id="timeSummary">24 小时/天 · 1 天 · 预计 ¥300</div>
             <div class="points-card">
-              <label class="points-check" for="usePoints">
+              <label class="mui-points" for="usePoints">
                 <input id="usePoints" type="checkbox" onchange="togglePoints()" />
-                <span class="points-main">使用积分抵扣</span>
-                <span class="points-balance" id="pointsBalance">可用 0 积分</span>
+                <span class="mui-points-main">
+                  <span class="mui-points-title">积分抵扣</span>
+                  <span class="mui-points-val" id="pointsBalance">暂无可抵积分</span>
+                </span>
+                <span class="mui-points-check" aria-hidden="true"></span>
               </label>
-              <div class="points-detail" id="pointsDetail" aria-live="polite">本单最多可抵 ¥0</div>
+              <div class="mui-points-note" id="pointsDetail" aria-live="polite">暂无可用积分，本单不抵扣</div>
             </div>
           </div>
         </div>
@@ -1916,8 +1915,10 @@
     document.getElementById('priceRow').style.display = ready ? '' : 'none';
     const discountTag = bath10Discount ? ' · 八折优惠' : '';
     document.getElementById('timeSummary').textContent = durationLabel() + discountTag + ' · ¥' + basePrice + '（¥' + unitPrice + (isDaily ? '/天' : '/次') + '）';
-    document.getElementById('pointsBalance').textContent = '可用 ' + availablePoints + ' 积分';
-    document.getElementById('pointsDetail').innerHTML = !ready ? '选择服务时长后查看本单可抵金额' : !availablePoints ? '暂无可用积分，本单不抵扣' : usePoints ? '使用 ' + pointsUsed + ' 积分 · 本单已抵 <strong>¥' + pointsDiscount + '</strong>' : '本单可抵 <strong>¥' + maxDiscount + '</strong> · 勾选后使用 ' + maxDiscount + ' 积分';
+    document.getElementById('pointsBalance').innerHTML = availablePoints
+      ? '可抵 <span class="mui-points-num">¥' + maxDiscount + '</span><span class="mui-points-sub">(' + maxDiscount + ' 积分)</span>'
+      : '暂无可抵积分';
+    document.getElementById('pointsDetail').innerHTML = !ready ? '选择服务时长后查看本单可抵金额' : !availablePoints ? '暂无可用积分，本单不抵扣' : usePoints ? '使用 ' + pointsUsed + ' 积分 · 本单已抵 ¥' + pointsDiscount : '勾选后使用 ' + maxDiscount + ' 积分';
     document.getElementById('priceLabel').textContent = '应付金额';
     document.getElementById('priceNum').textContent = '¥' + currentPrice;
     document.getElementById('paySubmitBtn').textContent = ready ? '立即支付 ¥' + currentPrice : '立即支付';

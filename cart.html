@@ -107,11 +107,6 @@
     .pay-dlv.on{border-color:#1CD8B7;color:#0FA98C;background:#DDF7F1}
     .pay-dlv.on:after{content:'✓';position:absolute;right:6px;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:12px;background:#1CD8B7;color:#fff;font-size:11px;display:grid;place-items:center}
     .pay-points-row{display:flex;align-items:center;justify-content:space-between}
-    .pay-points-txt{font-size:13px;color:#FF6A1F;font-weight:600}
-    .pay-toggle{width:40px;height:22px;border-radius:12px;background:#E5E0EF;border:0;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
-    .pay-toggle:after{content:'';position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:12px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);transition:left .2s}
-    .pay-toggle.on{background:#1CD8B7}
-    .pay-toggle.on:after{left:20px}
     .pay-confirm{width:calc(100% - 32px);height:46px;margin:10px 16px calc(14px + env(safe-area-inset-bottom));flex-shrink:0;border:0;border-radius:12px;background:linear-gradient(135deg,#1CD8B7,#0FA98C);color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
     .pay-confirm:active{opacity:.88}
 
@@ -144,6 +139,7 @@
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
+  <link rel="stylesheet" href="ui/mobile-ui.css">
 </head>
 <body data-surface="mobile" data-page="cart">
 <div class="frame"><div class="phone">
@@ -166,11 +162,14 @@
   </div>
 
   <!-- 积分抵扣行 -->
-  <div id="pointsRow" style="display:none;flex-shrink:0;background:#fff;padding:10px 14px;border-top:1px solid var(--border)">
-    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;color:var(--text2)">
-      <input type="checkbox" id="pointsCheck" onchange="togglePoints(this)" style="width:16px;height:16px;accent-color:var(--purple)">
-      <span style="font-weight:600;color:var(--text)">积分抵扣</span>
-      <span id="pointsInfo" aria-live="polite" style="flex:1;text-align:right;color:var(--text3)">可用积分 0</span>
+  <div id="pointsRow" style="display:none;flex-shrink:0;background:#fff;padding:0 16px;border-top:1px solid var(--border)">
+    <label class="mui-points" for="pointsCheck">
+      <input type="checkbox" id="pointsCheck" onchange="togglePoints(this)">
+      <span class="mui-points-main">
+        <span class="mui-points-title">积分抵扣</span>
+        <span class="mui-points-val" id="pointsInfo" aria-live="polite">暂无可抵积分</span>
+      </span>
+      <span class="mui-points-check" aria-hidden="true"></span>
     </label>
   </div>
 
@@ -337,7 +336,10 @@
     document.getElementById('totalPrice').innerHTML = discount > 0 ? '<s style="font-size:14px;color:#AEACC0;font-weight:400">¥'+total+'</s> <b style="color:#FF6A1F">¥'+finalPrice+'</b>' : '<b>¥'+total+'</b>';
     document.getElementById('pointsRow').style.display = items.length ? '' : 'none';
     var ptsBalance = window.AKBPoints ? window.AKBPoints.get().balance : 0;
-    document.getElementById('pointsInfo').textContent = '可用 '+ptsBalance+' 积分 · '+(usePoints?'已抵 ¥'+discount:'可抵 ¥'+Math.min(ptsBalance,Math.floor(total*0.3)));
+    var maxPts = Math.min(ptsBalance, Math.floor(total*0.3));
+    document.getElementById('pointsInfo').innerHTML = ptsBalance
+      ? '可抵 <span class="mui-points-num">¥'+maxPts+'</span><span class="mui-points-sub">('+maxPts+' 积分)</span>'
+      : '暂无可抵积分';
     document.getElementById('pointsCheck').checked = usePoints;
     const btn = document.getElementById('checkoutBtn');
     btn.textContent = '结算（'+count+'） ¥'+(finalPrice%1?finalPrice.toFixed(2):finalPrice);
@@ -386,7 +388,9 @@
     }).join('');
     var addrSec='<div class="pay-sec"><div class="pay-sec-label">收货地址</div><div class="pay-addr" onclick="openAddrDrawer()"><span id="payAddr">请选择收货地址</span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></div></div>';
     var dlvSec='<div class="pay-sec"><div class="pay-sec-label">配送方式</div><div class="pay-dlv-row"><button class="pay-dlv on" data-dlv="instant" onclick="paySetDelivery(\'instant\',this)">立即送达</button><button class="pay-dlv" data-dlv="runner" onclick="paySetDelivery(\'runner\',this)">跑腿送达</button><button class="pay-dlv" data-dlv="express" onclick="paySetDelivery(\'express\',this)">快递送达</button></div></div>';
-    var ptsSec='<div class="pay-sec" style="border-bottom:0"><div class="pay-points-row"><span class="pay-points-txt">可抵 ¥'+discount+'（'+discount+' 积分）</span><button class="pay-toggle '+(usePoints?'on':'')+'" id="payToggle" onclick="payTogglePoints()"></button></div></div>';
+    var ptsBalance=window.AKBPoints?window.AKBPoints.get().balance:0;
+    var maxPts=Math.min(ptsBalance,Math.floor(total*0.3));
+    var ptsSec='<div class="pay-sec" style="border-bottom:0"><button type="button" class="mui-points '+(usePoints?'on':'')+'" id="payToggle" role="switch" aria-checked="'+usePoints+'" aria-label="使用积分抵扣" onclick="payTogglePoints()"><span class="mui-points-main"><span class="mui-points-title">积分抵扣</span><span class="mui-points-val">'+(ptsBalance?'可抵 <span class="mui-points-num">¥'+maxPts+'</span><span class="mui-points-sub">('+maxPts+' 积分)</span>':'暂无可抵积分')+'</span></span><span class="mui-points-check" aria-hidden="true"></span></button></div>';
     document.getElementById('payBody').innerHTML=productHtml+addrSec+dlvSec+ptsSec;
     document.getElementById('payConfirmBtn').textContent='立即支付 ¥'+finalPrice.toFixed(2);
   }

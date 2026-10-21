@@ -42,24 +42,8 @@
     if(file==='admin-caregivers.html') initCaregiverManagement();
     if(file==='admin-caregiver-detail.html') initCaregiverOrderRecords();
     if(file==='admin-caregiver-detail.html') initCaregiverProfile();
-    initModuleTabs();
     initTerminalLinks();
     initSidebarGroups(side);
-  }
-  /* 模块 tab 行：参考后台设计稿第二行导航，按侧栏分组渲染当前模块的兄弟页面 */
-  function initModuleTabs(){
-    var page=document.querySelector('.page');if(!page||document.querySelector('.module-tabs'))return;
-    var GROUPS=[
-      {lbl:'概览',tabs:[['ops','运营看板','admin-ops.html'],['finance','财务看板','admin-finance.html']]},
-      {lbl:'业务管理',tabs:[['dashboard','业务概览','admin.html'],['orders','订单管理','admin-orders.html'],['caregivers','陪护员管理','admin-caregivers.html'],['users','用户管理','admin-users.html'],['catalog','服务管理','admin-service-categories.html'],['bookings','预约管理','admin-bookings.html']]},
-      {lbl:'商城管理',tabs:[['mall-dashboard','商城概览','admin-mall.html'],['mall-categories','商品管理','admin-mall-categories.html'],['mall-orders','商城订单','admin-mall-orders.html'],['mall-dist','分销管理','admin-mall-distribution.html']]},
-      {lbl:'积分管理',tabs:[['points','积分概览','admin-points.html'],['points-users','用户积分','admin-points-users.html'],['points-earn','积分获取规则','admin-points-earn.html'],['points-spend','积分消耗规则','admin-points-spend.html'],['points-invite','邀请奖励规则','admin-points-invite.html']]},
-      {lbl:'其他',tabs:[['ux-monitor','用户体验监测','admin-ux-monitor.html'],['msg-templates','消息模板','admin-message-templates.html'],['consult','资讯内容','admin-consult.html'],['agreement','协议管理','admin-agreements.html'],['comments','评论管理','admin-comments.html'],['feedback','意见反馈','admin-feedback.html']]}
-    ];
-    var cur=GROUPS.find(function(g){return g.tabs.some(function(t){return t[0]===currentActive;});});
-    if(!cur)return;
-    var html='<div class="module-tabs"><span class="mt-lbl">'+cur.lbl+'</span>'+cur.tabs.map(function(t){return '<a href="'+t[2]+'"'+(t[0]===currentActive?' class="on"':'')+'>'+t[1]+'</a>';}).join('')+'</div>';
-    page.insertAdjacentHTML('afterbegin',html);
   }
   /* Vue sidebar groups preserve the generated links, badge counts and current route. */
   function initSidebarGroups(side){
@@ -125,7 +109,7 @@
     if(document.getElementById('caregiver-profile-style'))return;
     var style=document.createElement('style');
     style.id='caregiver-profile-style';
-    style.textContent='.caregiver-list-scroll{overflow-x:auto!important;overflow-y:hidden!important}.caregiver-list-table{min-width:1180px}.caregiver-list-table th{white-space:nowrap}.caregiver-list-table td{white-space:nowrap}.caregiver-list-table .cg-avatar{width:36px;height:36px;border-radius:12px;background:#DDF7F1;color:#1CD8B7;display:grid;place-items:center;font-weight:700}.caregiver-list-table .cg-profile{display:flex;gap:10px;align-items:center}.caregiver-list-table .cg-name{color:#172033;font-weight:600}.caregiver-list-table .cg-id{color:#8F9BB0;font-size:10px;margin-top:2px}.cg-cert{display:inline-flex;align-items:center;padding:5px 9px;border-radius:12px;font-size:11px;font-weight:600}.cg-cert.approved{color:#16A34A;background:#DCFCE7}.cg-cert.reviewing{color:#D97706;background:#FEF3C7}.cg-cert.rejected{color:#DC2626;background:#FEE2E2}.cg-cert.unsubmitted{color:#657087;background:#E4FAF4}.identity .profile-cert{margin-left:6px}.identity .profile-cert.cg-cert{vertical-align:middle}.identity .side-row .cg-cert{padding:4px 8px}.state.biz{background:#C9F4EA;color:#1CD8B7}.skill-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0 2px}.skill-tag{padding:4px 10px;border-radius:12px;background:#E4FAF4;color:#1CD8B7;font-size:11px;font-weight:600}';
+    style.textContent='.caregiver-list-scroll{overflow-x:auto!important;overflow-y:hidden!important}.caregiver-list-table{min-width:1180px}.caregiver-list-table th{white-space:nowrap}.caregiver-list-table td{white-space:nowrap}.caregiver-list-table .cg-avatar{width:36px;height:36px;border-radius:6px;background:#DDF7F1;color:#1CD8B7;display:grid;place-items:center;font-weight:700}.caregiver-list-table .cg-profile{display:flex;gap:10px;align-items:center}.caregiver-list-table .cg-name{color:#172033;font-weight:600}.caregiver-list-table .cg-id{color:#8F9BB0;font-size:10px;margin-top:2px}.cg-cert{display:inline-flex;align-items:center;padding:5px 9px;border-radius:6px;font-size:11px;font-weight:600}.cg-cert.approved{color:#16A34A;background:#DCFCE7}.cg-cert.reviewing{color:#D97706;background:#FEF3C7}.cg-cert.rejected{color:#DC2626;background:#FEE2E2}.cg-cert.unsubmitted{color:#657087;background:#E4FAF4}.identity .profile-cert{margin-left:6px}.identity .profile-cert.cg-cert{vertical-align:middle}.identity .side-row .cg-cert{padding:4px 8px}.state.biz{background:#C9F4EA;color:#1CD8B7}.skill-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0 2px}.skill-tag{padding:4px 10px;border-radius:6px;background:#E4FAF4;color:#1CD8B7;font-size:11px;font-weight:600}';
     document.head.appendChild(style);
   }
   function initCaregiverManagement(){

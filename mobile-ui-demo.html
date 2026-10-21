@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>移动端组件库 · 安科邦</title>
+<link rel="stylesheet" href="ui/mobile-ui.css">
+<style>
+  html,body{margin:0;padding:0;background:#F2F3F5;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+  body{max-width:480px;margin:0 auto;padding-bottom:40px}
+  .demo-hd{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid #F0F1F4;padding:14px 16px}
+  .demo-hd h1{margin:0;font-size:17px;font-weight:600;color:#1D2129}
+  .demo-hd p{margin:4px 0 0;font-size:12px;color:#86909C}
+  .demo-sec{padding:0 12px;margin-top:14px}
+  .demo-sec>.mui-section-title{padding:0 4px 8px}
+  .demo-note{padding:8px 16px 12px;font-size:12px;color:#86909C;line-height:1.6}
+</style>
+</head>
+<body class="mui-page">
+
+<div class="demo-hd">
+  <h1>移动端组件库 Mobile UI Kit</h1>
+  <p>行式表单规范 · 用户端 / 护理员端通用</p>
+</div>
+
+<!-- 0. 返回按钮 -->
+<div class="demo-sec">
+  <div class="mui-section-title">返回按钮</div>
+  <div class="mui-form">
+    <div style="display:flex;align-items:center;gap:10px;height:56px;padding:0 16px 0 8px">
+      <button type="button" class="mui-back" aria-label="返回"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg></button>
+      <span style="font-size:15px;font-weight:600;color:#1D2129">服务详情</span>
+    </div>
+  </div>
+  <div class="demo-note">黑色图标、无底色。也可用 <code>MobileUI.back({ mount: '.header', href: 'home.html' })</code> 动态创建。</div>
+</div>
+
+<!-- 1. 表单行 -->
+<div class="demo-sec">
+  <div class="mui-section-title">表单 · 基础行</div>
+  <form class="mui-form" id="demoForm" onsubmit="return false">
+    <div class="mui-row" data-required>
+      <label class="mui-label">姓名<span class="mui-req">*</span></label>
+      <input class="mui-input" name="name" placeholder="请输入名称">
+      <div class="mui-error">请输入姓名</div>
+    </div>
+    <div class="mui-row">
+      <label class="mui-label">手机号</label>
+      <input class="mui-input" name="phone" type="tel" placeholder="请输入手机号">
+    </div>
+    <div class="mui-row">
+      <label class="mui-label">服务类型</label>
+      <select class="mui-select" name="type">
+        <option>住院陪护</option>
+        <option>居家陪护</option>
+        <option>陪诊服务</option>
+      </select>
+    </div>
+    <div class="mui-row mui-row--stack">
+      <label class="mui-label">备注说明</label>
+      <textarea class="mui-textarea" name="remark" placeholder="请输入补充说明"></textarea>
+      <span class="mui-counter">0/200</span>
+    </div>
+    <div class="mui-row">
+      <label class="mui-label">服务时间</label>
+      <span class="mui-value">2026-10-22 09:00</span>
+      <svg class="mui-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+    </div>
+  </form>
+  <div class="demo-note">必填行使用 data-required 或 .mui-req 标记，校验失败时整行标红并显示 .mui-error。</div>
+</div>
+
+<!-- 2. 选择类 -->
+<div class="demo-sec">
+  <div class="mui-section-title">选择 · 胶囊 / 开关 / 单选</div>
+  <div class="mui-form">
+    <div class="mui-row mui-row--stack">
+      <label class="mui-label">服务技能<span class="mui-req">*</span></label>
+      <div class="mui-chips">
+        <button type="button" class="mui-chip is-on">住院陪护</button>
+        <button type="button" class="mui-chip">居家陪护</button>
+        <button type="button" class="mui-chip">陪诊服务</button>
+      </div>
+    </div>
+    <div class="mui-row">
+      <label class="mui-label">积分抵扣</label>
+      <span class="mui-value mui-value--muted">可用 120 积分</span>
+      <button type="button" class="mui-switch is-on" aria-label="积分抵扣"><i></i></button>
+    </div>
+    <div class="mui-row is-checked">
+      <label class="mui-label">默认地址</label>
+      <span class="mui-value">北京市朝阳区建国路 66 号</span>
+      <span class="mui-radio-check"></span>
+    </div>
+  </div>
+</div>
+
+<!-- 3. 上传 -->
+<div class="demo-sec">
+  <div class="mui-section-title">上传 · 图片</div>
+  <div class="mui-form">
+    <div class="mui-row mui-row--stack">
+      <label class="mui-label">证件照片<span class="mui-req">*</span></label>
+      <div class="mui-upload">
+        <div class="mui-upload-item">
+          <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=medical%20certificate%20document%20on%20white%20background&image_size=square" alt="已上传">
+          <button type="button" class="mui-upload-del">×</button>
+        </div>
+        <button type="button" class="mui-upload-add">+ 上传</button>
+      </div>
+      <div class="mui-hint">支持 JPG / PNG，单张不超过 5MB</div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. 按钮 -->
+<div class="demo-sec">
+  <div class="mui-section-title">按钮</div>
+  <div class="mui-form" style="padding:16px">
+    <button class="mui-btn mui-btn--primary mui-btn--block" onclick="MobileUI.toast('已保存')">主要按钮</button>
+    <div style="height:10px"></div>
+    <button class="mui-btn mui-btn--ghost mui-btn--block" onclick="MobileUI.sheet({title:'选择服务时间',html:'&lt;div class=\'mui-list\'&gt;&lt;div class=\'mui-row\'&gt;&lt;span class=\'mui-value\'&gt;10-22 09:00&lt;/span&gt;&lt;/div&gt;&lt;div class=\'mui-row\'&gt;&lt;span class=\'mui-value\'&gt;10-22 14:00&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;'})">次要按钮 · 底部弹层</button>
+    <div style="height:10px"></div>
+    <button class="mui-btn mui-btn--danger mui-btn--block">危险操作</button>
+  </div>
+</div>
+
+<!-- 5. 价格 -->
+<div class="demo-sec">
+  <div class="mui-section-title">价格</div>
+  <div class="mui-form">
+    <div class="mui-row">
+      <label class="mui-label">订单金额</label>
+      <span class="mui-value mui-price">¥298.00</span>
+    </div>
+    <div class="mui-row">
+      <label class="mui-label">积分抵扣</label>
+      <span class="mui-value">-¥30.00</span>
+    </div>
+    <div class="mui-row">
+      <label class="mui-label">实付金额</label>
+      <span class="mui-value mui-price">¥268.00</span>
+    </div>
+  </div>
+</div>
+
+<!-- 6. 校验示例 -->
+<div class="demo-sec">
+  <div class="mui-section-title">表单 API</div>
+  <div class="mui-form" style="padding:16px">
+    <button class="mui-btn mui-btn--primary mui-btn--block" onclick="submitDemo()">校验并读取表单值</button>
+  </div>
+</div>
+
+<script src="ui/mobile-ui.js"></script>
+<script>
+  function submitDemo() {
+    var form = MobileUI.form('#demoForm');
+    if (!form.validate()) { MobileUI.toast('请先完善必填项'); return; }
+    MobileUI.toast(JSON.stringify(form.values()));
+  }
+  document.querySelectorAll('.mui-chip').forEach(function (chip) {
+    chip.addEventListener('click', function () { chip.classList.toggle('is-on'); });
+  });
+  document.querySelectorAll('.mui-switch').forEach(function (sw) {
+    sw.addEventListener('click', function () { sw.classList.toggle('is-on'); });
+  });
+</script>
+</body>
+</html>

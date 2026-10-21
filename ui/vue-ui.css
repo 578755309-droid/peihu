@@ -13,7 +13,7 @@
 .akb-dialog-message{margin-top:12px;font-size:14px;line-height:1.7;color:var(--text2,#707682);white-space:pre-wrap;overflow-wrap:anywhere;text-align:center}
 .akb-dialog-input{display:block;width:100%;height:44px;margin-top:16px;padding:0 12px;border:1px solid var(--border,#e6e9ee);border-radius:var(--ui-radius);background:#f7f9fa;color:var(--text,#252831);font:inherit;font-size:14px}
 .akb-dialog-actions{display:flex;gap:10px;margin-top:24px}
-.akb-ui-button{flex:1;min-width:0;min-height:44px;padding:10px 14px;border:1px solid var(--border,#e6e9ee);border-radius:var(--ui-radius);background:#f5f7f8;color:var(--text2,#707682);font-family:inherit;font-size:14px;font-weight:600;line-height:1.5;cursor:pointer;transition:filter var(--ui-duration),transform var(--ui-duration)}
+.akb-ui-button{flex:1;min-width:0;min-height:44px;padding:10px 14px;border:1px solid var(--border,#e6e9ee);border-radius:10px;background:#f5f7f8;color:var(--text2,#707682);font-family:inherit;font-size:14px;font-weight:600;line-height:1.5;cursor:pointer;transition:filter var(--ui-duration),transform var(--ui-duration)}
 .akb-ui-button.primary{background:linear-gradient(135deg,var(--ui-brand),var(--ui-brand-dark));border-color:transparent;color:#fff;box-shadow:0 4px 10px rgba(15,169,140,.14)}
 .akb-ui-button.danger{background:var(--ui-danger);border-color:transparent;color:#fff}
 .akb-ui-button:active{transform:scale(.98);filter:brightness(.97)}
