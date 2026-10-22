@@ -17,41 +17,13 @@
    const no=document.querySelector('.nurse-no');if(no)no.textContent=s.effective?[(a.caregiverId?'工号 '+a.caregiverId:'已认证'),(a.skills||[]).join(' / ')].filter(Boolean).join(' · '):s.label;
    // Legacy demo tasks belong only to their explicit caregiver, never a newly approved applicant.
    if(!s.effective||a.caregiverId!=='AKB-N-00234'){
-    const pending=document.getElementById('pendingCard');
-    const empty=document.getElementById('noOrder');
-    let values=[0,0,0],next=null;
-    if(s.effective){
-     let orders=[];try{orders=JSON.parse(localStorage.getItem('ankebang_service_orders')||'[]');}catch(e){}
-     const own=Array.isArray(orders)?orders.filter(C.matchesOrder):[];
-     /* 与“我的订单”页共用同一套示例订单，认证通过的护理员工作台也有数据 */
-     const seeds=(w.AKBNurseOrderSeeds||[]).map(o=>Object.assign({},o));
-     const pool=own.length?own:seeds;
-     const count=states=>pool.filter(o=>states.indexOf(o.state)>=0).length;
-     values=[count(['待服务','待上岗']),count(['服务中']),count(['待完成'])];
-     next=pool.find(o=>o.state==='待确认')||pool.find(o=>o.state==='待服务')||null;
-    }
+    const pending=document.getElementById('pendingCard');if(pending)pending.style.display='none';
+    const empty=document.getElementById('noOrder');if(empty){empty.style.display='block';empty.textContent=s.effective?'暂无新订单':'认证通过后即可接单';}
+    document.querySelector('.home-schedule-section')?.setAttribute('hidden','');
+    let orders=[];try{orders=JSON.parse(localStorage.getItem('ankebang_service_orders')||'[]');}catch(e){}
+    const own=Array.isArray(orders)?orders.filter(C.matchesOrder):[];
+    const values=[own.filter(o=>o.state==='待服务').length,own.filter(o=>o.state==='服务中').length,own.filter(o=>o.state==='待完成').length];
     document.querySelectorAll('.work-queue .queue-value').forEach((el,i)=>{el.textContent=values[i]||0;});
-    if(pending&&empty){
-     pending.style.display=next?'':'none';
-     empty.style.display=next?'none':'block';
-     empty.textContent=s.effective?'暂无新订单':'认证通过后即可接单';
-    }
-    if(next&&pending){
-     pending.dataset.orderId=next.id||'';
-     const set=(sel,v)=>{const el=pending.querySelector(sel);if(el&&v!=null)el.textContent=v;};
-     set('.patient-av',(next.avatar||next.name||'护').charAt(0));
-     set('.patient-name',next.name||'服务对象');
-     set('.patient-meta',next.meta||'');
-     set('.patient-tag',next.type||'陪护服务');
-     const place=String(next.place||''),parts=place.split('·');
-     const chips=pending.querySelectorAll('.info-chip .chip-val');
-     if(chips[0])chips[0].textContent=parts[0].trim()||'—';
-     if(chips[1])chips[1].textContent=parts[1]?parts[1].trim():'—';
-     if(chips[2])chips[2].textContent=String(next.time||'').replace(/^今日\s*/,'')||'—';
-     if(chips[3])chips[3].textContent=next.income||'—';
-     const needs=next.careNeeds||{},needVals=pending.querySelectorAll('.care-need-value');
-     ['independence','tube','infection'].forEach((k,i)=>{if(needVals[i]&&needs[k]!=null)needVals[i].textContent=needs[k];});
-    }
    }
   }
   // Account information must not fall back to the old sample caregiver.

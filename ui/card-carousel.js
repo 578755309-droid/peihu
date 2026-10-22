@@ -14,7 +14,7 @@
         h('div',{class:'redeem-slide-top'},[h('strong',null,'上门助浴 10 次兑换卡'),h('span',{class:'redeem-slide-status'},c.id===state.selected?'当前使用':'选择此卡')]),
         h('div',{class:'redeem-slide-patient'},'适用对象：'+(p.name||'—')+'（'+[p.gender,p.age!=null?p.age+'岁':''].filter(Boolean).join(' · ')+'）'),
         h('div',{class:'redeem-slide-lock'},'仅限首次购买时的服务对象使用'),
-        h('div',{class:'redeem-slide-balance'},[h('span',null,'剩余 '),h('b',null,String(remaining)),h('span',null,' 次')]),
+        h('div',{class:'redeem-slide-balance'},[h('span',{class:'ck-balance-copy'},[h('span',null,'剩余 '),h('b',null,String(remaining)),h('span',null,' 次')]),h('img',{class:'ck-bath-art',src:'assets/checkout-figma/6053ab0524243ecd.svg',width:140.384613,height:107.988167,alt:''})]),
         h('div',{class:'redeem-slide-number'},'卡号 '+c.id)
       ]);})),
       h('div',{class:'redeem-carousel-controls'},[h('span',{class:'redeem-carousel-hint'},state.cards.length>1?'左右滑动切换兑换卡':'当前可用兑换卡'),h('div',{class:'redeem-carousel-pager'},[h('button',{type:'button',disabled:current()===0,'aria-label':'上一张兑换卡',onClick:()=>choose(current()-1,true)},'‹'),h('span',{'aria-live':'polite'},(current()+1)+' / '+state.cards.length),h('button',{type:'button',disabled:current()===state.cards.length-1,'aria-label':'下一张兑换卡',onClick:()=>choose(current()+1,true)},'›')])])
