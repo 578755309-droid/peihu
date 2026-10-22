@@ -57,12 +57,12 @@ body[data-page="hospital-care"] .checkout-sync .ck-card>.module{margin:0!importa
 body[data-surface="mobile"] .checkout-sync .navbar .nav-title{font-weight:500!important}
 .checkout-sync .ck-card .module-title::before{display:none!important}
 body[data-surface] .checkout-sync .ck-remark textarea.akb-remark{flex:1 1 auto!important;min-height:0!important;height:54px!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;resize:none!important;font-size:14px!important}
-.checkout-sync.buy-mode .ck-footer{position:static!important;bottom:auto;z-index:auto;background:#fff!important;padding:12px 16px!important}
+.checkout-sync.buy-mode .ck-footer{position:sticky!important;bottom:0;z-index:5;background:#fff!important;padding:12px 16px!important}
 .checkout-sync .ck-footer #paySubmitBtn{box-shadow:none!important;font-weight:500!important;background:linear-gradient(90deg,#f36b60 0%,#ff6a1f 50%,#d83f49 100%)!important}
 .checkout-sync .ck-footer .mui-points-main{justify-content:flex-start!important}.checkout-sync .ck-footer .mui-points-num{font-size:13px!important;font-weight:500!important;margin:0!important}.checkout-sync .ck-footer .mui-points-sub{font-size:13px!important;font-weight:500!important;color:#ff6a1f!important}
 .checkout-sync .ck-footer #usePoints{pointer-events:auto!important;order:1}.checkout-sync .ck-footer .mui-points-check{display:none!important}
 .checkout-sync .ck-card #patientInfoModule>.module-title{margin:0 0 10px!important}
-.checkout-sync.buy-mode .scroll-area>.buy-only{flex:1 0 auto!important}.checkout-sync.buy-mode .scroll-area{flex:1 0 auto!important}
+.checkout-sync.buy-mode .scroll-area>.buy-only{flex:1 0 auto!important}.checkout-sync.buy-mode .scroll-area{flex:1 1 auto!important;min-height:0!important}
 .checkout-sync.buy-mode .scroll-area::after{display:none!important}
 .checkout-sync .ck-footer .akb-consent-row>div{flex-wrap:nowrap!important}
 .checkout-sync .ck-product-info{height:101px;min-height:101px}.checkout-sync .ck-product-quantity{min-height:22px;flex-shrink:0}.checkout-sync[data-checkout-service="bath"] .ck-product-info{height:117px;min-height:117px}.checkout-sync .ck-product-quantity .day-stepper button,.checkout-sync .ck-product-quantity .day-stepper span{height:20px;line-height:20px}
@@ -83,3 +83,16 @@ body[data-surface] .checkout-sync .ck-remark textarea.akb-remark{flex:1 1 auto!i
 /* Keep the original white check vector above its source circle. */
 .checkout-sync .ck-footer #usePoints:checked{background-image:url('../assets/checkout-figma/check-glyph.svg'),url('../assets/checkout-figma/d689b691e12d8903.svg')!important;background-size:11px 9px,20px 20px!important;background-position:center,center!important;background-repeat:no-repeat!important}
 .checkout-sync .akb-consent-row input[type="checkbox"]:checked{background-image:url('../assets/checkout-figma/check-glyph.svg'),url('../assets/checkout-figma/559d17683c734568.svg')!important;background-size:11px 9px,20px 20px!important;background-position:center,center!important;background-repeat:no-repeat!important}
+
+/* 详情态底栏：只保留带金额的单一购买按钮，点击进入确认订单；积分、应付金额与协议只在确认订单页显示。 */
+.checkout-sync:not(.buy-mode) .ck-footer{position:sticky!important;bottom:0;z-index:5}
+.checkout-sync:not(.buy-mode) .ck-footer .detail-only .btn-primary{display:none!important}
+.checkout-sync:not(.buy-mode) .ck-footer>.buy-only>.points-card,
+.checkout-sync:not(.buy-mode) .ck-footer>.buy-only>.ck-checkout-points,
+.checkout-sync:not(.buy-mode) .ck-footer>.buy-only>.akb-consent,
+.checkout-sync:not(.buy-mode) .ck-footer :is(#priceRow,#actualPayRow,#priceSave){display:none!important}
+.checkout-sync:not(.buy-mode) .ck-footer>.buy-only>.btn-row{margin:0}
+
+/* 协议行按内容高度参与底栏布局，避免溢出底栏在滚动到底时露出灰色留白。 */
+.checkout-sync .ck-footer .akb-consent{flex:0 0 auto!important;height:auto!important;min-height:0!important;width:100%!important}
+.checkout-sync .ck-footer>.buy-only{align-items:stretch!important}
