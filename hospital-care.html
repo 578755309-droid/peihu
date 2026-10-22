@@ -697,6 +697,7 @@
   <link rel="stylesheet" href="ui/card-carousel.css" />
   <link rel="stylesheet" href="ui/mobile-ui.css">
   <link rel="stylesheet" href="ui/care-components.css" />
+  <link rel="stylesheet" href="ui/checkout-design.css" />
 </head>
 <body data-surface="mobile" data-page="hospital-care">
 <div class="frame">
@@ -1480,14 +1481,16 @@
   }
 
   function nextStep() {
+    if (document.getElementById('payOverlay').classList.contains('show')) return;
     if (!redeemCard && !selectedPatientId) { alert('请先选择或新增' + patientDisplayName()); return; }
     if (!redeemCard && !validatePatientInfo()) return;
-    if (!redeemCard && !validateContactInfo()) return;
+    if (!validateContactInfo()) return;
     if (!isEscortLayout() && !validateCareNeeds()) return;
     if (serviceKey === 'home' && !document.getElementById('otherNeeds').value.trim()) { alert('请填写其他诉求（如没有请填"无"）'); document.getElementById('otherNeeds').focus(); return; }
-    if (isResultServiceLayout() && !document.getElementById('otherNeeds').value.trim()) { alert('请填写备注'); document.getElementById('otherNeeds').focus(); return; }
-    if (hasExamSelection() && !selectedExamItem) { alert('请选择检查项目'); document.getElementById('examModule').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    if (hasExamSelection() && !document.getElementById('examOtherInput').value.trim()) { alert('请填写检查项目'); document.getElementById('examOtherInput').focus(); return; }
+    if (isMedicineLayout() && !document.getElementById('medicineNameInput').value.trim()) { alert('请填写药品名称'); document.getElementById('medicineNameInput').focus(); return; }
     if (isReportLayout() && !document.getElementById('reportNameInput').value.trim()) { alert('请填写报告名称'); document.getElementById('reportNameInput').focus(); return; }
+    if (isAdmDisServiceLayout() && !document.getElementById('serviceDeptInput').value.trim()) { alert('请填写所在科室'); document.getElementById('serviceDeptInput').focus(); return; }
     if (isHospitalLayout() && (!document.getElementById('careDeptInput').value.trim() || !document.getElementById('careBedInput').value.trim())) { alert('请填写科室与床位号'); document.getElementById('careDeptInput').focus(); return; }
     const isBath10Now = !redeemCard && serviceKey === 'bath' && selectedCount === 10;
     const hasBookedSessions = isBath10Now && bathSessions.filter(function (s) { return s.date; }).length > 0;
@@ -1540,7 +1543,6 @@
   function validateContactInfo() {
     const name = document.getElementById('contactName').value.trim();
     const phone = document.getElementById('contactPhone').value.trim();
-    if (!isEscortLayout() && !name) { alert('请填写联系人姓名'); document.getElementById('contactName').focus(); return false; }
     if (!/^1[3-9]\d{9}$/.test(phone)) { alert('请输入正确的11位联系人手机号码'); document.getElementById('contactPhone').focus(); return false; }
     try { localStorage.setItem('ankebang_contact_info', JSON.stringify({ name: name, phone: phone })); } catch (e) {}
     return true;
@@ -1617,7 +1619,7 @@
     discharge:      { name:'代办出院手续', price:300 },
     'ring-pickup':  { name:'三环内接/送患者', price:150, dualAddress:{ from:{ label:'上车地址', type:'any', marker:'接' }, to:{ label:'送达地址', type:'any', marker:'送' } } },
     airport:        { name:'机场接/送患者', price:380, dualAddress:{ from:{ label:'接机地址', type:'any', marker:'接' }, to:{ label:'送达地址', type:'any', marker:'送' } } },
-    report:         { name:'代取报告', price:89, dualAddress:{ from:{ label:'服务医院（选填）', type:'hospital', marker:'医' }, to:{ label:'邮寄地址', type:'home', marker:'寄' } } },
+    report:         { name:'代取报告', price:89, dualAddress:{ from:{ label:'取报告地址', type:'hospital', marker:'取' }, to:{ label:'送达地址', type:'home', marker:'送' } } },
     station:        { name:'西安北站接送患者', price:200, dualAddress:{ from:{ label:'接站地址', type:'any', marker:'接' }, to:{ label:'送达地址', type:'any', marker:'送' } } }
   };
   const selectedVisitService = VISIT_SERVICE_CONFIG[visitServiceId] || null;
@@ -1839,9 +1841,10 @@
     if (!phone || !overlay) return;
     const rect = phone.getBoundingClientRect();
     overlay.style.left = Math.round(rect.left) + 'px';
-    overlay.style.top = Math.round(rect.top) + 'px';
+    const visibleTop = Math.max(0, rect.top);
+    overlay.style.top = Math.round(visibleTop) + 'px';
     overlay.style.width = Math.round(rect.width) + 'px';
-    overlay.style.height = Math.round(rect.height) + 'px';
+    overlay.style.height = Math.max(0, Math.round(Math.min(rect.bottom, window.innerHeight) - visibleTop)) + 'px';
   }
   function openAddressDrawer(slot) { addressDrawerSlot = slot || (dualAddr ? 'from' : ''); renderOrderAddresses(); fitOverlayToPhone('addressDrawer'); document.getElementById('addressDrawer').classList.add('show'); }
   function openPatientDrawer() { renderPatients(); fitOverlayToPhone('patientDrawer'); document.getElementById('patientDrawer').classList.add('show'); }
@@ -2184,7 +2187,7 @@
   function isVipExamLayout() {
     return serviceKey === 'visit' && VIP_EXAM_KEYS.indexOf(visitServiceId) !== -1;
   }
-  function hasExamSelection() { return isVipExamLayout() || isExamBookingLayout(); }
+  function hasExamSelection() { return isExamBookingLayout(); }
   function applyVipExamLayout() {
     if (!isVipExamLayout()) return;
     var p1 = document.getElementById('p1');
@@ -2731,8 +2734,15 @@
   }
 
   /* ── Submit ── */
+  function redeemConsentSnapshot() {
+    if (!redeemCard) return null;
+    var purchase = AKBServiceOrderFields.read(redeemCard.orderNo);
+    var previous = purchase && purchase.consent;
+    var current = AKBConsentData.get('bath');
+    return previous && previous.acceptedAt && current && current.status === 'on' && previous.version === current.version && previous.content === current.content ? previous : null;
+  }
   function submitOrder() {
-    if (!AKBConsent.require('service')) return;
+    if (!redeemConsentSnapshot() && !AKBConsent.require('service')) { document.querySelector('.phone').classList.add('ck-consent-needed'); return; }
     /* populate summary */
     if (dualAddr) {
       const fromAddr = findAddress(selectedFromAddressId);
@@ -2844,16 +2854,21 @@
       avatar: selectedNurses[0] ? selectedNurses[0].name.charAt(0) : '待',
       actions: ['cancel', 'call'],
       careNeeds: { independence: careNeeds.independence, tube: careNeeds.tube, infection: careNeeds.infection, skinBreak: careNeeds.skinBreak, infectionName: careNeeds.infection === 'has' ? document.getElementById('infectionName').value.trim() : '' },
-      consent: AKBConsent.snapshot('service'),
+      consent: redeemConsentSnapshot() || AKBConsent.snapshot('service'),
       createdAt: Date.now(),
       serviceDate: date,
       addressId: addr.id || '',
       addressDetail: addr.detail || '',
       contact: (contactInput && contactInput.value.trim()) || addr.contact || '',
       phone: (phoneInput && phoneInput.value.trim()) || addr.phone || '',
-      examItem: hasExamSelection() ? (selectedExamItem === '其他检查' ? ((((document.getElementById('examOtherInput') || {}).value) || '').trim() || '其他检查') : selectedExamItem) : '',
+      examItem: hasExamSelection() ? document.getElementById('examOtherInput').value.trim() : '',
+      medicineName: isMedicineLayout() ? document.getElementById('medicineNameInput').value.trim() : '',
+      medicinePhotos: isMedicineLayout() && window.AKBCheckoutDesign ? AKBCheckoutDesign.medicinePhotos() : [],
+      startAt: isDailyCareLayout() && document.getElementById('serviceStartAt') ? document.getElementById('serviceStartAt').value : '',
+      endAt: isDailyCareLayout() && document.getElementById('serviceEndAt') ? document.getElementById('serviceEndAt').value : '',
+      bed: isHospitalLayout() ? document.getElementById('careBedInput').value.trim() : '',
       examPhotos: (isResultServiceLayout() && examSlipUploader) ? examSlipUploader.get() : [],
-      serviceDept: isAdmDisServiceLayout() ? document.getElementById('serviceDeptInput').value.trim() : '',
+      serviceDept: isHospitalLayout() ? document.getElementById('careDeptInput').value.trim() : (isAdmDisServiceLayout() || isVipExamLayout()) ? document.getElementById('serviceDeptInput').value.trim() : '',
       reportName: isReportLayout() ? document.getElementById('reportNameInput').value.trim() : '',
       ward: isHospitalLayout() ? document.getElementById('careDeptInput').value.trim() + ' ' + document.getElementById('careBedInput').value.trim() : '',
       address2: dualAddr ? ((findAddress(selectedToAddressId) || {}).detail || '') : '',
@@ -2873,7 +2888,7 @@
     if (redeemCard) {
       order.careNeeds = inherited ? inherited.careNeeds : {};
       order.contact = redeemCard.contact || (inherited && inherited.contact) || '';
-      order.phone = redeemCard.phone || (inherited && inherited.phone) || '';
+      order.phone = document.getElementById('contactPhone').value.trim() || redeemCard.phone || (inherited && inherited.phone) || '';
       order.note = (inherited && inherited.note) || '';
     } else if (!careApplies) { order.careNeeds = {}; }
     var fromAddrSnapshot = dualAddr ? findAddress(selectedFromAddressId) : addr;
@@ -2881,15 +2896,16 @@
     function addressSnapshot(a,label){a=a||{};return {label:label,detail:a.detail||'',contact:a.contact||'',phone:a.phone||'',type:a.addressType||''};}
     order.serviceKey = serviceKey;
     order.visitServiceId = visitServiceId || '';
+    if (order.startAt && order.endAt) order.time = order.startAt.replace('T',' ') + ' 至 ' + order.endAt.replace('T',' ');
     order.patientSnapshot = patientSnapshot;
     order.patientCondition = patientSnapshot.condition;
     order.serviceDetails = {
-      schemaVersion:1,projectId:serviceKey==='visit'?(visitServiceId||'visit'):serviceKey,
+      schemaVersion:2,projectId:serviceKey==='visit'?(visitServiceId||'visit'):serviceKey,
       patient:patientSnapshot,contact:order.contact,phone:order.phone,date:date,timeSlot:slotLabel,time:order.time,
       dailyType:service.durationMode==='daily'?selectedDailyType:'',
       careNeeds:careApplies?order.careNeeds:{},
-      addresses:dualAddr?[addressSnapshot(fromAddrSnapshot,dualAddr.from.label),addressSnapshot(toAddrSnapshot,dualAddr.to.label)]:[addressSnapshot(addr,isVipExamLayout()||isHospitalLayout()?'服务医院':'服务地址')],
-      department:order.serviceDept,ward:order.ward,examItem:order.examItem,examPhotos:order.examPhotos,reportName:order.reportName,pax:order.pax,note:order.note
+      addresses:dualAddr?[addressSnapshot(fromAddrSnapshot,dualAddr.from.label),addressSnapshot(toAddrSnapshot,dualAddr.to.label)]:[addressSnapshot(addr,serviceKey==='visit'||isHospitalLayout()?'服务医院':serviceKey==='home'?'家庭地址':'服务地址')],
+      department:order.serviceDept,bed:order.bed,ward:order.ward,startAt:order.startAt,endAt:order.endAt,medicineName:order.medicineName,medicinePhotos:order.medicinePhotos,examItem:order.examItem,examPhotos:order.examPhotos,reportName:order.reportName,pax:order.pax,note:order.note
     };
     /* 上门助浴：支持双护理员，第二位写入 nurse2/nursePhone2 */
     if (selectedNurses[1]) {
@@ -2948,7 +2964,7 @@
           amount: '0',
           actions: ['cancel', 'call'],
           careNeeds: order.careNeeds,
-          consent: AKBConsent.snapshot('service'),
+          consent: redeemConsentSnapshot() || AKBConsent.snapshot('service'),
       createdAt: Date.now(),
           serviceDate: bookedSessions[0].date,
           addressId: order.addressId,
@@ -3114,5 +3130,6 @@
   updateUI();
 </script>
 <script src="ui/care-components.js"></script>
+<script src="ui/checkout-design.js"></script>
 </body>
 </html>
