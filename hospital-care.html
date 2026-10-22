@@ -2669,35 +2669,38 @@
       if (isVipExamLayout()) return; /* 贵宾/优享陪诊已有专属 vip-form-card，跳过 */
       var pid = function(id){ return document.getElementById(id); };
       var needs = document.querySelector('.single-page-needs');
-      var card1 = { title:'基础信息',   modules:[pid('patientInfoModule'), pid('contactModule')] };
-      var card2 = { title:'服务安排',   modules:[pid('addressModule'),    pid('timeModule')] };
+      /* 统一分组：服务对象与服务地址同卡；联系人、联系电话、服务时间同卡；其余说明单独成卡 */
+      var card1 = { title:'基础信息',   modules:[pid('patientInfoModule'), pid('addressModule')] };
+      var card2 = { title:'联系与时间', modules:[pid('contactModule'),    pid('timeModule')] };
       var card3 = { title:'其他说明',   modules:[needs] };
       if (isDailyCareLayout()) {
-        card1.title = isHospitalLayout() ? '就诊人与联系人' : '服务对象与联系人';
-        card2.title = isHospitalLayout() ? '护理与床位'    : '照护与地址';
-        card2.modules = [needs, pid('addressModule')].concat(isHospitalLayout() ? [pid('deptModule')] : []).filter(Boolean);
-        card3.modules = [pid('timeModule')]; card3.title = '陪护时间';
+        card1.title = isHospitalLayout() ? '就诊人与医院' : '服务对象与地址';
+        card1.modules = [pid('patientInfoModule'), pid('addressModule')].concat(isHospitalLayout() ? [pid('deptModule')] : []).filter(Boolean);
+        card2.title = '联系与时间';
+        card2.modules = [pid('contactModule'), pid('timeModule')].filter(Boolean);
+        card3.title = '护理需求';
+        card3.modules = [needs].filter(Boolean);
       } else if (isBathLayout()) {
-        card1.title = '基础信息'; card1.modules = [pid('patientInfoModule'), pid('contactModule')];
-        card2.title = '上门安排'; card2.modules = [pid('addressModule'), pid('timeModule')];
+        card1.title = '服务对象与地址'; card1.modules = [pid('patientInfoModule'), pid('addressModule')].filter(Boolean);
+        card2.title = '联系与时间';     card2.modules = [pid('contactModule'), pid('timeModule')].filter(Boolean);
       } else if (isEscortLayout()) {
-        card1.title = '乘车人信息'; card1.modules = [pid('patientInfoModule'), pid('contactModule')];
-        card2.title = '接送安排';   card2.modules = [pid('paxModule'), pid('addressModule'), pid('timeModule')].filter(Boolean);
+        card1.title = '乘车人与地址';   card1.modules = [pid('patientInfoModule'), pid('paxModule'), pid('addressModule')].filter(Boolean);
+        card2.title = '联系与时间';     card2.modules = [pid('contactModule'), pid('timeModule')].filter(Boolean);
       } else if (isExamBookingLayout()) {
-        card1.title = '就诊与检查'; card1.modules = [pid('patientInfoModule'), pid('examModule')];
-        card2.title = '预约信息';   card2.modules = [pid('contactModule'), pid('addressModule'), pid('timeModule')].filter(Boolean);
+        card1.title = '就诊对象与检查'; card1.modules = [pid('patientInfoModule'), pid('examModule'), pid('addressModule')].filter(Boolean);
+        card2.title = '联系与时间';     card2.modules = [pid('contactModule'), pid('timeModule')].filter(Boolean);
       } else if (isResultServiceLayout()) {
-        card1.title = '检查信息';   card1.modules = [pid('patientInfoModule'), pid('examSlipModule')].filter(Boolean);
-        card2.title = '联系与时间'; card2.modules = [pid('contactModule'), pid('timeModule'), pid('addressModule')].filter(Boolean);
+        card1.title = '就诊对象与检查'; card1.modules = [pid('patientInfoModule'), pid('examSlipModule'), pid('addressModule')].filter(Boolean);
+        card2.title = '联系与时间';     card2.modules = [pid('contactModule'), pid('timeModule')].filter(Boolean);
       } else if (isAdmDisServiceLayout()) {
-        card1.title = '服务对象';   card1.modules = [pid('patientInfoModule')];
-        card2.title = '住院/出院安排'; card2.modules = [pid('contactModule'), pid('addressModule'), pid('serviceDeptModule'), pid('timeModule')].filter(Boolean);
+        card1.title = '服务对象与医院'; card1.modules = [pid('patientInfoModule'), pid('addressModule'), pid('serviceDeptModule')].filter(Boolean);
+        card2.title = '联系与时间';     card2.modules = [pid('contactModule'), pid('timeModule')].filter(Boolean);
       } else if (isReportLayout()) {
-        card1.title = '取件信息';   card1.modules = [pid('patientInfoModule'), pid('reportNameModule')].filter(Boolean);
-        card2.title = '配送安排';   card2.modules = [pid('contactModule'), pid('timeModule'), pid('addressModule')].filter(Boolean);
+        card1.title = '取件人与地址';   card1.modules = [pid('patientInfoModule'), pid('reportNameModule'), pid('addressModule')].filter(Boolean);
+        card2.title = '联系与时间';     card2.modules = [pid('contactModule'), pid('timeModule')].filter(Boolean);
       } else if (isMedicineLayout()) {
-        card1.title = '取药信息';   card1.modules = [pid('patientInfoModule'), pid('addressModule')];
-        card2.title = '配送安排';   card2.modules = [pid('contactModule'), pid('timeModule')].filter(Boolean);
+        card1.title = '取药人与地址';   card1.modules = [pid('patientInfoModule'), pid('addressModule')].filter(Boolean);
+        card2.title = '联系与时间';     card2.modules = [pid('contactModule'), pid('timeModule')].filter(Boolean);
       }
       applyGroupCards([card1, card2, card3].filter(function(g){ return g && g.modules.some(function(m){ return !!m; }); }));
     })();
