@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
   <link rel="stylesheet" href="ui/mobile-ui.css">
+<script src="youkang-store.js"></script>
 </head>
 <body data-surface="mobile" data-page="patients">
 <div class="frame"><div class="phone">
@@ -69,5 +70,6 @@
   function closeOnBackdrop(event, id) { if (event.target === document.getElementById(id)) document.getElementById(id).classList.remove('show'); }
   render();
 </script>
+<script src="youkang-bridge.js"></script>
 </body>
 </html>

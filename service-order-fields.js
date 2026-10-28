@@ -1,7 +1,7 @@
 /* Canonical service form snapshot and read-only field presentation shared by all three surfaces. */
 (function(w){
  'use strict';
- const projects={hospital:'住院陪护',home:'居家陪护',bath:'上门助浴',vip:'贵宾陪诊',premium:'优享陪诊',medicine:'代买药','exam-booking':'代约检查',result:'代看检查结果',admission:'代办住院手续',discharge:'代办出院手续','ring-pickup':'三环内接/送患者',airport:'机场接/送患者',report:'代取报告',station:'西安北站接送患者'};
+ const projects={'health-check':'体检服务',hospital:'住院陪护',home:'居家陪护',bath:'上门助浴',vip:'贵宾陪诊',premium:'优享陪诊',medicine:'代买药','exam-booking':'代约检查',result:'代看检查结果',admission:'代办住院手续',discharge:'代办出院手续','ring-pickup':'三环内接/送患者',airport:'机场接/送患者',report:'代取报告',station:'西安北站接送患者'};
  const labels={independence:{independent:'完全自理',partial:'半自理',dependent:'完全失能'},tube:{none:'无',has:'有'},infection:{none:'无',has:'有'},skinBreak:{none:'无',has:'有'}};
  const escort=['ring-pickup','airport','station'];
  function mask(id){const v=String(id||'');return v.length===18?v.slice(0,6)+'********'+v.slice(-4):v;}

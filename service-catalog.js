@@ -3,8 +3,10 @@
     {id:'hospital',name:'住院陪护',sort:1,status:'on',description:'住院期间的专业陪护与生活照料'},
     {id:'home',name:'居家陪护',sort:2,status:'on',description:'提供居家场景的日常照护服务'},
     {id:'visit',name:'陪诊服务',sort:3,status:'on',description:'覆盖挂号、就诊、检查及取报告等服务'},
+    {id:'health-check',name:'体检服务',sort:5,status:'on',description:'佑康・绿通卡，固定体检、专人陪诊与绿通代约'},
     {id:'bath',name:'上门助浴',sort:4,status:'on',description:'上门提供安全、舒适的助浴服务'}
   ],services:[
+    {id:'youkang-green-card',category:'health-check',name:'佑康・绿通卡',summary:'交大一附院体检套餐 + 专人陪诊 + 绿通代约',description:'套餐售价1698元，付款后预约，卡片有效期2年。',price:1698,status:'on',sort:1,href:'youkang.html'},
     {id:'hospital-care',category:'hospital',name:'住院陪护',summary:'住院期间的专业陪护与生活照料',description:'住院期间提供专业陪护与生活照料，按自理等级计费，特殊情况额外加收。',status:'on',sort:1,
       pricingRules:{mode:'daily',independence:{independent:300,partial:400,dependent:500},tubeExtra:50,infectionExtra:200}},
     {id:'home-care',category:'home',name:'居家陪护',summary:'居家场景的日常照护服务',description:'提供居家场景的日常照护服务，按自理等级计费，特殊情况额外加收。',status:'on',sort:1,

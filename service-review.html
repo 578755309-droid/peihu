@@ -78,6 +78,7 @@
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
   <link rel="stylesheet" href="ui/mobile-ui.css">
+<script src="youkang-store.js"></script>
 </head>
 <body data-surface="mobile" data-page="service-review">
 <div class="frame"><div class="phone">
@@ -212,4 +213,5 @@
   if(saved&&!saved.deleted)showSaved(saved);
   else if(!AKBReviews.eligible(order)||saved&&saved.deleted){document.getElementById('error').textContent=saved&&saved.deleted?'该订单的评价已处理，不能重复提交':'仅已完成的订单可以评价';document.querySelector('.submit').disabled=true;}
 </script>
+<script src="youkang-bridge.js"></script>
 </body></html>

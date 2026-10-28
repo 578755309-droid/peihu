@@ -48,6 +48,7 @@
   </style>
 <script defer src="admin-sidebar.js"></script><link rel="stylesheet" href="modal-scroll.css">  <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
+<script src="youkang-store.js"></script>
 </head>
 <body data-surface="admin" data-page="admin-users">
 <div class="layout">
@@ -85,6 +86,7 @@
     {id:'U10005',avatar:'刘',nickname:'安心陪诊',realName:'刘芳',gender:'女',age:34,phone:'177****9183',registered:'2026-02-22',status:'enabled',inviter:'暖心小王'},
     {id:'U10006',avatar:'孙',nickname:'乐享晚年',realName:'孙建国',gender:'男',age:68,phone:'158****5509',registered:'2026-01-19',status:'enabled',inviter:'—'}
   ];
+  if(window.AKBYoukang){AKBYoukang.state().users.forEach(u=>{if(!USERS.some(old=>old.id===u.id))USERS.push({id:u.id,avatar:u.name.charAt(0),nickname:u.name,realName:u.name,gender:'—',age:'—',phone:'—',registered:new Date().toISOString().slice(0,10),status:'enabled',inviter:u.inviterId?(AKBYoukang.state().users.find(x=>x.id===u.inviterId)?.name||u.inviterId):'—'});});}
   let editingId='';
   const statusText={enabled:'正常',disabled:'已禁用'};
   function escapeHtml(value){return String(value).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
@@ -98,5 +100,6 @@
   function exportUsers(){const rows=[['头像','昵称','真实姓名','性别','年龄','手机号','注册时间','状态','邀请人'],...filteredUsers().map(u=>[u.avatar,u.nickname,u.realName,u.gender,u.age,u.phone,u.registered,statusText[u.status],u.inviter])];const csv=String.fromCharCode(0xFEFF)+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join(String.fromCharCode(13,10));const blob=new Blob([csv],{type:'application/vnd.ms-excel;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='用户列表.xls';a.click();URL.revokeObjectURL(a.href);}
   document.getElementById('timeFilter').addEventListener('change',render);document.getElementById('statusFilter').addEventListener('change',render);document.getElementById('kwFilter').addEventListener('input',render);render();
 </script>
+<script src="youkang-bridge.js"></script>
 </body>
 </html>

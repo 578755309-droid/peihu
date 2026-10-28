@@ -17,6 +17,7 @@
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
+<script src="youkang-store.js"></script>
 </head>
 <body data-surface="mobile" data-page="addresses"><div class="frame"><div class="phone">
   <div class="status-bar"><span>9:41</span><div class="status-right"><span>▮▮▮</span><span>▰</span></div></div>
@@ -35,4 +36,5 @@
   function setDefault(id){const list=data().map(a=>({...a,isDefault:String(a.id)===String(id)}));save(list);render()}
   async function removeAddress(id){if(!await showConfirm('确认删除该地址？'))return;let list=data().filter(a=>String(a.id)!==String(id));if(list.length&&!list.some(a=>a.isDefault))list[0].isDefault=true;save(list);render()}
   render();
-</script></body></html>
+</script><script src="youkang-bridge.js"></script>
+</body></html>

@@ -15,6 +15,7 @@
   </style>
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
+<script src="youkang-store.js"></script>
 </head>
 <body data-surface="mobile" data-page="nurse-detail">
 <div class="frame"><div class="phone">
@@ -33,5 +34,6 @@
   const id=new URLSearchParams(location.search).get('id')||'liguifang';const nurse=NURSES[id]||NURSES.liguifang;
   document.getElementById('avatar').textContent=nurse.avatar;document.getElementById('avatar').style.background=nurse.color;document.getElementById('name').textContent=nurse.name;document.getElementById('role').textContent=nurse.role;document.getElementById('rating').textContent=nurse.rating;document.getElementById('orders').textContent=nurse.orders;document.getElementById('years').textContent=nurse.years;document.getElementById('rate').textContent=nurse.rate;document.getElementById('availability').textContent=nurse.availability;document.getElementById('intro').textContent=nurse.intro;document.getElementById('skills').innerHTML=nurse.skills.map(function(skill,i){return '<span class="chip '+(i===1?'blue':i===2?'green':'')+'">'+skill+'</span>';}).join('');
 </script>
+<script src="youkang-bridge.js"></script>
 </body>
 </html>

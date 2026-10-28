@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
   <link rel="stylesheet" href="ui/mobile-ui.css">
+<script src="youkang-store.js"></script>
 </head>
 <body data-surface="mobile" data-page="nurse-profile-edit">
   <div class="frame"><div class="phone"><main class="scroll">
@@ -24,5 +25,6 @@
     <section class="content"><article class="section"><div class="section-head">基本资料</div><form class="form" onsubmit="saveProfile(event)"><div class="field"><label for="name">姓名</label><input id="name" value="李桂芳" /></div><div class="field"><label for="age">年龄</label><input id="age" type="number" value="38" /></div><div class="field"><label for="specialty">擅长陪护类型</label><input id="specialty" value="住院专护 / 术后护理" /></div><div class="field"><label for="years">从业年限</label><input id="years" value="5 年" /></div><div class="field"><label for="intro">自我介绍</label><textarea id="intro">从业 5 年，持证上岗，擅长术后康复与老年患者住院陪护，重视沟通和护理细节。</textarea></div><button class="save" type="submit">保存资料</button></form><div class="hint">资料提交后将用于服务档案展示，平台审核中的资质信息请在资质管理中维护。</div></article></section>
   </main></div></div><div class="toast" id="toast"></div>
   <script>function saveProfile(event){event.preventDefault();const toast=document.getElementById('toast');toast.textContent='资料已保存';toast.classList.add('show');setTimeout(()=>location.href='nurse-profile.html',900)}</script>
+<script src="youkang-bridge.js"></script>
 </body>
 </html>

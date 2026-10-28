@@ -31,6 +31,7 @@
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
   <link rel="stylesheet" href="ui/mobile-ui.css">
+<script src="youkang-store.js"></script>
 </head>
 <body data-surface="mobile" data-page="mall-order-detail">
 <div class="frame"><div class="phone">
@@ -98,5 +99,6 @@
   async function applyRefund(type){const order=getOrder();if(!order)return;if(type==='instant'){if(!await showConfirm('确认申请退款？该订单尚未发货，退款将原路退回。'))return;let saved=[];try{saved=JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');if(!Array.isArray(saved))saved=[]}catch(e){}const idx=saved.findIndex(function(item){return item.id===order.id});if(idx>=0){saved[idx].status='cancel';saved[idx].state='已退款';saved[idx].refundState='已退款';saved[idx].refundType='instant';saved[idx].refundAt=new Date().toISOString().slice(0,16).replace('T',' ');saved[idx].note='未发货，用户申请退款，系统自动退款完成'}else{const updated=Object.assign({},order,{status:'cancel',state:'已退款',refundState:'已退款',refundType:'instant',refundAt:new Date().toISOString().slice(0,16).replace('T',' '),note:'未发货，用户申请退款，系统自动退款完成'});saved.unshift(updated)}localStorage.setItem('ankebang_mall_orders',JSON.stringify(saved));render();showToast('退款成功，金额将原路退回')}else{const reason=(document.getElementById('refundReason')||{}).value||'其他';const remark=(document.getElementById('refundRemark')||{}).value||'';let saved=[];try{saved=JSON.parse(localStorage.getItem('ankebang_mall_orders')||'[]');if(!Array.isArray(saved))saved=[]}catch(e){}const idx=saved.findIndex(function(item){return item.id===order.id});if(idx>=0){saved[idx].status='refund';saved[idx].state='退款/售后';saved[idx].refundState='待审核';saved[idx].refundType='manual';saved[idx].refundReason=reason;saved[idx].refundRemark=remark;saved[idx].refundPhotos=refundPhotos;saved[idx].refundAppliedAt=new Date().toISOString().slice(0,16).replace('T',' ');saved[idx].note='已发货，用户申请退货退款：'+reason+(remark?'（'+remark+'）':'')}else{const updated=Object.assign({},order,{status:'refund',state:'退款/售后',refundState:'待审核',refundType:'manual',refundReason:reason,refundRemark:remark,refundPhotos:refundPhotos,refundAppliedAt:new Date().toISOString().slice(0,16).replace('T',' '),note:'已发货，用户申请退货退款：'+reason+(remark?'（'+remark+'）':'')});saved.unshift(updated)}localStorage.setItem('ankebang_mall_orders',JSON.stringify(saved));closeRefundModal();render();showToast('退货申请已提交，等待客服审核')}}
   render();initRefundPhotos();updateReceiptPanel();
 </script>
+<script src="youkang-bridge.js"></script>
 </body>
 </html>

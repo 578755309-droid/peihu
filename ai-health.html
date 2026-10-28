@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
   <link rel="stylesheet" href="ui/mobile-ui.css">
+<script src="youkang-store.js"></script>
 </head>
 <body data-surface="mobile" data-page="ai-health">
 <div class="frame"><div class="phone">
@@ -65,5 +66,6 @@
   function ask(question){appendMessage('user',question);setTimeout(function(){appendMessage('bot',answerFor(question))},180)}
   function sendQuestion(){const input=document.getElementById('question'),question=input.value.trim();if(!question)return;input.value='';ask(question)}
 </script>
+<script src="youkang-bridge.js"></script>
 </body>
 </html>

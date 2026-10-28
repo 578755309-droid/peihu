@@ -107,6 +107,7 @@
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
   <link rel="stylesheet" href="ui/dashboard.css" />
+<script src="youkang-store.js"></script>
 </head>
 <body data-surface="admin" data-page="admin-finance">
 <div class="layout">
@@ -381,5 +382,6 @@
     mall.exportCsv('财务对账_' + mall.today().replace(/-/g,'') + '.csv', ['业务线','资金状态','订单数','金额(元)','说明'], rows);
   }
 </script>
+<script src="youkang-bridge.js"></script>
 </body>
 </html>

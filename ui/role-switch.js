@@ -22,7 +22,7 @@
     document.querySelector('.home-schedule-section')?.setAttribute('hidden','');
     let orders=[];try{orders=JSON.parse(localStorage.getItem('ankebang_service_orders')||'[]');}catch(e){}
     const own=Array.isArray(orders)?orders.filter(C.matchesOrder):[];
-    const values=[own.filter(o=>o.state==='待服务').length,own.filter(o=>o.state==='服务中').length,own.filter(o=>o.state==='待完成').length];
+    const values=[own.filter(o=>o.state==='待服务').length,own.filter(o=>o.state==='服务中'||o.state==='待完成').length,own.filter(o=>o.state==='服务中'||o.state==='待完成').length];
     document.querySelectorAll('.work-queue .queue-value').forEach((el,i)=>{el.textContent=values[i]||0;});
    }
   }
