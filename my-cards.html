@@ -61,21 +61,45 @@
   <link rel="stylesheet" href="visual-theme.css" />
   <link rel="stylesheet" href="ui/vue-ui.css" />
 <script src="youkang-store.js"></script>
-</head>
+<style>
+    body[data-page="my-cards"]{height:100vh;height:100dvh;overflow:hidden}
+    body[data-page="my-cards"] .frame{height:100vh;height:100dvh;min-height:0;padding:20px 0}
+    body[data-page="my-cards"] .phone{height:min(900px,calc(100vh - 40px));height:min(900px,calc(100dvh - 40px));min-height:0}
+    body[data-page="my-cards"] .topbar{padding:14px 16px;min-height:58px}
+    body[data-page="my-cards"] .topbar-title{color:var(--text);flex:1;text-align:center}
+    body[data-page="my-cards"] .topbar::after{content:'';width:32px}
+    body[data-page="my-cards"] .back{background:#e3f5ed;color:#0c8d69}
+    #youkangCards .empty{background:#fff;border-radius:12px;padding:54px 18px}
+    @media(max-width:519px){body[data-page="my-cards"] .frame{padding:0}body[data-page="my-cards"] .phone{height:100vh;height:100dvh}}
+    .wallet-tabs{display:flex;gap:8px;background:#fff;padding:12px 14px;border-bottom:1px solid #edf1ef;flex-shrink:0}
+    .wallet-tabs button{flex:1;min-height:44px;border:0;border-radius:9px;background:#f3f7f5;font:600 15px inherit;color:#83948e;cursor:pointer}
+    .wallet-tabs button[aria-selected="true"]{background:#dff4ed;color:#087e69;box-shadow:inset 0 0 0 1px #c7eadd}
+    [role="tabpanel"][hidden]{display:none!important}.phone>.topbar{flex-shrink:0}.scroll-area{min-height:0}
+    .green-card .bath-card-main{background:linear-gradient(130deg,#195d4e,#368e72)}
+    .green-card .bath-card-patient{padding-right:65px;font-weight:400;font-size:12px}
+    .green-card .bath-card-count{top:18px;bottom:auto}.green-card .bath-card-count b{font-size:15px!important}
+  </style><link rel="stylesheet" href="wellness-wallet.css"></head>
 <body data-surface="mobile" data-page="my-cards">
 <div class="frame">
   <div class="phone">
-    <div class="scroll-area">
       <div class="topbar">
         <button class="back" type="button" onclick="history.length>1?history.back():location.href='profile.html'">‹</button>
         <span class="topbar-title">我的卡包</span>
       </div>
+      <div class="wallet-tabs" role="tablist" aria-label="卡片类型">
+        <button id="bathCardTab" type="button" role="tab" aria-selected="true" aria-controls="bathCardPanel" onclick="switchCardTab('bath')">助浴卡</button>
+        <button id="greenCardTab" type="button" role="tab" aria-selected="false" aria-controls="greenCardPanel" onclick="switchCardTab('green')" tabindex="-1">绿通卡</button>
+      </div>
+    <div class="scroll-area"><div class="wallet-intro"><span>CARE WITH LOVE</span><h1>把安心，留给家人</h1><p>悉心照护与健康礼遇，都在这里</p></div>
+      <section id="bathCardPanel" role="tabpanel" aria-labelledby="bathCardTab">
       <div class="head">
-        <div class="head-title">兑换卡</div>
-        <div class="head-sub">购买上门助浴 10 次套餐后自动生成，按次免费兑换</div>
+        <div class="head-title">我的助浴卡</div>
+        <div class="head-sub">购买套餐后生成 · 按次兑换</div>
       </div>
       <div class="list" id="cardList"></div>
-    </div>
+      </section>
+      <section id="greenCardPanel" role="tabpanel" aria-labelledby="greenCardTab" hidden><div class="list" id="youkangCards"></div></section>
+    <p class="wallet-footer">♡ 用心守护 · 温暖相伴</p></div>
   </div>
 </div>
 <script>
@@ -106,20 +130,29 @@
       var total=c.total||10, used=c.used||0, left=Math.max(0,total-used);
       var done=left<=0;
       var p=c.patient||{};
-      return '<div class="bath-card'+(done?' used':'')+'">'+
-        '<div class="bath-card-main">'+
-          '<span class="bath-card-tag">上门助浴 · 兑换卡</span>'+
-          '<div class="bath-card-name">10 次助浴兑换卡</div>'+
-          '<div class="bath-card-patient">适用对象：'+esc(p.name||'—')+'（'+(p.gender||'')+' · '+(p.age||'?')+'岁 · 锁定）</div>'+
-          '<div class="bath-card-count"><b>'+left+'</b><span>剩余次数 / 共 '+total+' 次</span></div>'+
-        '</div>'+
+      return '<article class="bath-card'+(done?' used':'')+'">'+
+        '<div class="bath-card-main"><div class="wallet-card-top"><span class="bath-card-tag">上门助浴</span><span class="wallet-card-kind">兑 换 卡</span></div><div class="wallet-bath-scene"><div class="wallet-bath-copy">'+
+          '<div class="bath-card-name">'+total+' 次助浴兑换卡</div>'+
+          '<div class="bath-card-patient">适用对象：'+esc(p.name||'—')+'（'+esc(p.gender||'')+' · '+esc(p.age||'?')+'岁）</div>'+
+          '<p class="wallet-card-restriction">仅限首次购买时的服务对象使用</p>'+
+          '<div class="bath-card-count"><span>剩余</span><b>'+left+'</b><span>次 / 共 '+total+' 次</span></div></div><div class="wallet-bath-art"><img src="assets/checkout-figma/6053ab0524243ecd.svg" width="138" height="108" alt="长者安心沐浴插画"></div>'+
+        '</div></div>'+
         '<div class="bath-card-foot">'+
-          '<div class="bath-card-meta"><div class="bath-card-no">卡号 '+esc(c.id)+'</div><div class="bath-card-progress"><i style="width:'+Math.round(left/total*100)+'%"></i></div></div>'+
-          (done?'<button class="use-btn" type="button" disabled>已用完</button>':'<button class="use-btn" type="button" onclick="useCard(\''+esc(c.id)+'\')">去使用</button>')+
+          '<div class="bath-card-meta"><div class="bath-card-no">卡号</div><div class="bath-card-no">'+esc(c.id)+'</div></div>'+
+          (done?'<button class="use-btn" type="button" disabled>已用完</button>':'<button class="use-btn" type="button" onclick="useCard(\''+esc(c.id)+'\')">去使用 <span aria-hidden="true">›</span></button>')+
         '</div>'+
-      '</div>';
+      '</article>';
     }).join('');
   }
+  function switchCardTab(tab,updateUrl=true){
+    var green=tab==='green';
+    ['bath','green'].forEach(function(key){var active=(key==='green')===green,btn=document.getElementById(key+'CardTab'),panel=document.getElementById(key+'CardPanel');btn.setAttribute('aria-selected',String(active));btn.tabIndex=active?0:-1;panel.hidden=!active;});
+    if(updateUrl){var url=new URL(location.href);url.searchParams.set('tab',green?'green':'bath');history.replaceState(null,'',url);}
+    document.querySelector('.scroll-area').scrollTop=0;
+  }
+  document.querySelector('.wallet-tabs').addEventListener('keydown',function(e){if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();var green=e.key==='End'||(e.key!=='Home'&&document.getElementById('bathCardTab').getAttribute('aria-selected')==='true');switchCardTab(green?'green':'bath');document.getElementById(green?'greenCardTab':'bathCardTab').focus();}});
+  window.addEventListener('popstate',function(){switchCardTab(new URLSearchParams(location.search).get('tab'),false);});
+  switchCardTab(new URLSearchParams(location.search).get('tab'),false);
   render();
 </script>
 <script src="youkang-bridge.js"></script>

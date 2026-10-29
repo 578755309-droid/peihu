@@ -60,7 +60,7 @@
   <link rel="stylesheet" href="ui/vue-ui.css" />
 <script src="nurse-certification-state.js"></script><script src="service-order-fields.js"></script><script src="nurse-order-seeds.js"></script><script src="nurse-workflow.js"></script>
 <script src="youkang-store.js"></script>
-</head>
+<link rel="stylesheet" href="nurse-design.css"><script src="nurse-design.js"></script></head>
 <body data-surface="mobile" data-page="nurse-messages">
 <div class="frame"><div class="phone">
   <div class="scroll-area">
@@ -73,15 +73,9 @@
       </div>
     </div>
 
-    <div class="top-bar"><h1>消息</h1></div>
+    <div class="top-bar"><button type="button" class="nurse-message-back" onclick="switchCat('all')" hidden aria-label="返回消息分类">‹</button><span id="messageUnread" class="nurse-message-unread"></span><h1>消息</h1></div>
 
-    <div class="cat-tabs">
-      <div class="cat-tab on" data-cat="all" onclick="switchCat('all')">全部</div>
-      <div class="cat-tab" data-cat="system" onclick="switchCat('system')">系统消息</div>
-      <div class="cat-tab" data-cat="order" onclick="switchCat('order')">订单消息</div>
-    </div>
-
-    <div class="msg-list" id="msgList"></div>
+<div class="msg-list" id="msgList"></div>
     <div style="height:72px"></div>
   </div>
 
@@ -96,7 +90,7 @@
     own.forEach(o=>MESSAGES.order.push({name:'订单动态',time:o.createdAt?String(o.createdAt).slice(0,10):'订单提醒',preview:(o.type||'服务订单')+' · '+AKBNurseWorkflow.read(o.id).state,unread:0,orderId:o.id}));
   }
 
-  let currentCat = 'all';
+  let currentCat = ['order','system'].includes(new URLSearchParams(location.search).get('category'))?new URLSearchParams(location.search).get('category'):'all';
 
   function iconFor(type){
     if(type==='system') return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V5l8-3z"/></svg>';
@@ -104,6 +98,11 @@
   }
 
   function render(){
+    const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const header=document.querySelector('.top-bar h1'),back=document.querySelector('.nurse-message-back'),unread=document.getElementById('messageUnread');
+    if(header)header.textContent=currentCat==='all'?'消息':currentCat==='order'?'订单消息':'系统消息';if(back)back.hidden=currentCat==='all';
+    if(unread){unread.textContent='未读('+Object.values(MESSAGES).flat().reduce((n,m)=>n+(m.unread||0),0)+')';unread.hidden=currentCat!=='all';}
+    if(currentCat==='all'){document.getElementById('msgList').innerHTML=['order','system'].map(type=>{const messages=MESSAGES[type],latest=messages[0],count=messages.reduce((n,m)=>n+(m.unread||0),0);return '<button type="button" class="msg-item nurse-category-message" onclick="switchCat(\''+type+'\')"><span class="msg-avatar '+type+'">'+iconFor(type)+'</span><span class="msg-body"><span class="msg-row"><span class="msg-name">'+(type==='order'?'订单消息':'系统消息')+'</span><span class="msg-time">'+safe(latest?.time||'')+'</span></span><span class="msg-preview">'+safe(latest?.preview||(type==='order'?'暂无新的订单消息':'认证与平台通知'))+'</span></span>'+(count?'<span class="badge">'+count+'</span>':'')+'</button>';}).join('');return;}
     let list = [];
     if(currentCat==='all'){
       list = [...MESSAGES.system.map(m=>({...m,type:'system'})), ...MESSAGES.order.map(m=>({...m,type:'order'}))];
@@ -133,7 +132,7 @@
     render();
   }
 
-  function openNurseMessage(index){const m=currentNurseMessages[index];if(!m)return;AKBUI.alert({title:m.name,message:m.preview});}
+  function openNurseMessage(index){const m=currentNurseMessages[index];if(!m)return;if(m.orderId){location.href=(AKBYoukang.state().orders.some(o=>o.id===m.orderId)?'nurse-youkang.html?order=':'nurse-order-detail.html?id=')+encodeURIComponent(m.orderId);return;}AKBUI.alert({title:m.name,message:m.preview});}
   render();
 </script>
 <script src="youkang-bridge.js"></script>

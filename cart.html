@@ -141,7 +141,16 @@
   <link rel="stylesheet" href="ui/vue-ui.css" />
   <link rel="stylesheet" href="ui/mobile-ui.css">
 <script src="youkang-store.js"></script>
-</head>
+<style>
+    /* Checkout sheets cover the cart navigation; only their content scrolls. */
+    body[data-page="cart"] .phone > .overlay{z-index:80}
+    body[data-page="cart"] #addrOverlay{z-index:90}
+    body[data-page="cart"] #successOverlay{z-index:100}
+    body[data-page="cart"] #payOverlay .pay-sheet{max-height:calc(100% - 16px);max-height:min(88dvh,calc(100% - 16px));min-height:0}
+    body[data-page="cart"] #payOverlay .pay-scroll{min-height:0;overscroll-behavior:contain}
+    body[data-page="cart"] #payOverlay .pay-confirm{flex-shrink:0;margin-bottom:8px}
+    body[data-page="cart"] #payOverlay .akb-consent{flex:0 0 auto;margin:0;padding:0 16px max(14px,env(safe-area-inset-bottom))}
+  </style></head>
 <body data-surface="mobile" data-page="cart">
 <div class="frame"><div class="phone">
   <div class="scroll-area">
@@ -510,4 +519,5 @@
     </div>
   </div>
 </div></div>
+</body>
 </html>

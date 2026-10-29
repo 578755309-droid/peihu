@@ -407,6 +407,11 @@
       <!-- 菜单 -->
       <div class="section">
         <div class="menu-card">
+          <a class="menu-item" id="myPromotion" href="youkang.html?view=promotion&amp;from=profile" style="text-decoration:none;color:inherit">
+            <div class="menu-ico green"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true" data-keep-svg><path d="M4 10v4h4l9 4V6l-9 4H4zM8 14l2 6h3l-2-5M20 9v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+            <div class="menu-text"><div class="menu-name">我的推广</div><div class="menu-sub">推广业绩与绿通卡奖励</div></div>
+            <div class="menu-arrow" aria-hidden="true">›</div>
+          </a>
           <div class="menu-item" onclick="location.href='patients.html'">
             <div class="menu-ico blue"><img class="design-icon" src="assets/design/patient.svg" width="48" height="48" alt="" aria-hidden="true" /></div>
             <div class="menu-text"><div class="menu-name">常用就诊人</div></div>
@@ -535,8 +540,10 @@
         if (!Array.isArray(cards)) return;
       }
       cards = cards.filter(function (c) { return c.id && String(c.id).indexOf('CARD-') === 0; });
-      var total = cards.length;
+      var healthCards = window.AKBYoukang ? AKBYoukang.state().cards.filter(function(c){return c.userId===AKBYoukang.currentId();}) : [];
+      var total = cards.length + healthCards.length;
       var left = cards.reduce(function (sum, c) { return sum + Math.max(0, (c.total || 10) - (c.used || 0)); }, 0);
+      left += healthCards.filter(function(c){return c.status==='可预约' && new Date(c.expiresAt)>new Date();}).length;
       document.getElementById('cardCountSub').textContent = total + '张卡包 · ' + left + '次服务';
     } catch (e) {}
   })();

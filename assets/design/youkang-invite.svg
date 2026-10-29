@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">把健康与安心分享给重要的人</title><desc id="desc">翡翠绿通卡、金色赠礼与温暖陪伴的原创矢量插图</desc>
+<defs>
+ <linearGradient id="yi-card" x1="179" y1="100" x2="444" y2="305" gradientUnits="userSpaceOnUse"><stop stop-color="#55CEAC"/><stop offset=".45" stop-color="#1B9E7F"/><stop offset="1" stop-color="#14614F"/></linearGradient>
+ <linearGradient id="yi-rim" x1="141" y1="75" x2="498" y2="340" gradientUnits="userSpaceOnUse"><stop stop-color="#F6EAC3"/><stop offset=".5" stop-color="#CBAA64"/><stop offset="1" stop-color="#FBEAC3"/></linearGradient>
+ <linearGradient id="yi-gift" x1="438" y1="194" x2="551" y2="326" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF2CF"/><stop offset="1" stop-color="#E7C17D"/></linearGradient>
+ <linearGradient id="yi-white" x1="76" y1="188" x2="183" y2="345" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF"/><stop offset="1" stop-color="#E6F1EC"/></linearGradient>
+ <linearGradient id="yi-leaf" x1="86" y1="194" x2="113" y2="318" gradientUnits="userSpaceOnUse"><stop stop-color="#A3D8AD"/><stop offset="1" stop-color="#41896C"/></linearGradient>
+ <radialGradient id="yi-halo"><stop stop-color="#D2EEE1" stop-opacity=".9"/><stop offset="1" stop-color="#D2EEE1" stop-opacity="0"/></radialGradient>
+ <filter id="yi-shadow" x="-30%" y="-40%" width="170%" height="200%"><feDropShadow dx="0" dy="15" stdDeviation="14" flood-color="#15523F" flood-opacity=".16"/></filter>
+ <filter id="yi-soft" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="8"/></filter>
+ <clipPath id="yi-clip"><rect x="174" y="101" width="302" height="184" rx="24"/></clipPath>
+</defs>
+<ellipse cx="322" cy="220" rx="268" ry="175" fill="url(#yi-halo)"/>
+<ellipse cx="326" cy="340" rx="226" ry="20" fill="#71AD92" fill-opacity=".13" filter="url(#yi-soft)"/>
+<path d="M91 292C55 276 50 243 56 218C84 225 99 249 91 292Z" fill="url(#yi-leaf)"/><path d="M97 281C83 239 94 204 122 188C136 224 123 257 97 281Z" fill="#9BCDA0"/><path d="M103 318C104 272 125 251 151 252C147 290 126 310 103 318Z" fill="#74B392"/><path d="M102 332L94 256M94 282L70 248M101 305L129 279" stroke="#49866C" stroke-width="2" stroke-linecap="round"/>
+<path d="M126 149C153 109 208 78 254 81" stroke="#AFD8C5" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 8"/><path d="M443 89C490 103 516 134 527 167" stroke="#AFD8C5" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 8"/>
+<g transform="rotate(-10 315 192)" filter="url(#yi-shadow)"><rect x="161" y="89" width="314" height="190" rx="25" fill="url(#yi-rim)"/><rect x="164" y="92" width="308" height="184" rx="23" fill="#FFF9EA"/><path d="M189 115H276" stroke="#C3AD78" stroke-width="3" stroke-linecap="round"/><path d="M189 128H243" stroke="#DACCA7" stroke-width="2" stroke-linecap="round"/></g>
+<g transform="rotate(6 325 195)" filter="url(#yi-shadow)"><rect x="172" y="99" width="306" height="188" rx="26" fill="url(#yi-rim)"/><rect x="174" y="101" width="302" height="184" rx="24" fill="url(#yi-card)"/>
+<g clip-path="url(#yi-clip)"><path d="M355 73C318 131 359 181 416 182C473 183 514 240 482 296" stroke="#BAE7D4" stroke-opacity=".17" stroke-width="28"/><circle cx="455" cy="104" r="84" stroke="#C4EDD9" stroke-opacity=".14"/><circle cx="455" cy="104" r="68" stroke="#C4EDD9" stroke-opacity=".14"/><path d="M176 240C227 208 267 218 308 247C353 278 407 290 475 249V289H174L176 240Z" fill="#7ED7B3" fill-opacity=".1"/></g>
+<circle cx="212" cy="139" r="15" fill="#E6F5DC" fill-opacity=".17"/><path d="M212 132V146M205 139H219" stroke="#F9EDC6" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M242 135H331M242 144H302" stroke="#CDE8D8" stroke-opacity=".65" stroke-width="3" stroke-linecap="round"/>
+<rect x="199" y="182" width="36" height="29" rx="6" fill="#D8C392"/><path d="M212 183V210M224 183V210M200 193H233M200 202H233" stroke="#A28C59" stroke-opacity=".6"/>
+<path d="M253 190H335M253 203H311" stroke="#F1E7C1" stroke-opacity=".7" stroke-width="5" stroke-linecap="round"/>
+<path d="M201 245H225M239 245H263M277 245H301M315 245H339" stroke="#DDEDDD" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/>
+<circle cx="414" cy="225" r="32" fill="#DDF5E4" fill-opacity=".08" stroke="#E2D3A2" stroke-opacity=".5"/>
+<path d="M399 224L409 234L429 214" stroke="#F4E7BE" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g filter="url(#yi-shadow)"><rect x="428" y="239" width="112" height="92" rx="12" fill="url(#yi-gift)"/><rect x="422" y="226" width="124" height="28" rx="8" fill="#FFEDC3"/><path d="M480 226V331" stroke="#DAA963" stroke-width="17"/><path d="M485 225C455 223 449 204 459 197C469 190 485 209 485 225Z" fill="#EAC885" stroke="#CF9F5D" stroke-width="2"/><path d="M485 225C510 221 520 202 510 196C498 189 485 209 485 225Z" fill="#F8E3AA" stroke="#CF9F5D" stroke-width="2"/><path d="M438 264V313" stroke="#FFFCED" stroke-opacity=".6" stroke-width="3" stroke-linecap="round"/></g>
+<g filter="url(#yi-shadow)"><rect x="108" y="237" width="104" height="101" rx="18" fill="url(#yi-white)"/><rect x="121" y="253" width="78" height="9" rx="4.5" fill="#E4EFE9"/><path d="M161 279V310M145 294H177" stroke="#40AF8D" stroke-width="9" stroke-linecap="round"/><rect x="138" y="229" width="44" height="17" rx="8.5" fill="#7DBB9D"/></g>
+<g stroke="#CDAB6A" stroke-width="2.5" stroke-linecap="round"><path d="M508 103V119M500 111H516"/><path d="M129 160V172M123 166H135"/><path d="M569 252V264M563 258H575"/></g>
+<circle cx="379" cy="64" r="5" fill="#E6C78B"/><circle cx="79" cy="185" r="4" fill="#A8C9B2"/><circle cx="556" cy="186" r="6" stroke="#D7B473" stroke-width="2"/><circle cx="249" cy="325" r="4" fill="#8BBF9E"/>
+<path d="M280 349C315 357 356 355 385 345" stroke="#7EAC91" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/>
+</svg>

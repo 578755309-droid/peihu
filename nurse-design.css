@@ -1,0 +1,119 @@
+/* Caregiver adaptation: Figma 215:17753, native HTML/JS and existing state modules. */
+@import url('assets/checkout-fonts/noto.css');
+body[data-page^="nurse-"]{--n-brand:#1bc4a8;--n-bg:#f6f7fb;--n-ink:#333;--n-muted:#8c8c8c;--n-line:#f0f2f5;height:100vh;height:100dvh;overflow:hidden;font-family:'Noto Sans SC','PingFang SC',sans-serif;font-size:14px;background:#edf1f4!important;color:var(--n-ink)}
+body[data-page^="nurse-"] .frame{height:100vh;height:100dvh;min-height:0;padding:20px 0;background:#edf1f4!important}
+body[data-page^="nurse-"] .phone{max-width:375px;width:100%;height:min(812px,calc(100vh - 40px));height:min(812px,calc(100dvh - 40px));min-height:0;position:relative;overflow:hidden;border-radius:28px;background:var(--n-bg)!important;display:flex;flex-direction:column}
+body[data-page^="nurse-"] .phone>:is(.scroll,.scroll-area){min-height:0;flex:1;overflow:auto;background:var(--n-bg);padding-bottom:0}
+body[data-page^="nurse-"] .status-bar{height:44px;min-height:44px;padding:12px 32px 8px;background:transparent;font-size:13px;font-weight:600;flex-shrink:0}
+body[data-page^="nurse-"] .navbar{min-height:44px;height:44px;padding:6px 16px;border:0;background:#f0f4f6;position:sticky;top:0;z-index:12;box-shadow:none}
+body[data-page^="nurse-"] .nav-title{font-size:16px;font-weight:500}.navbar .nav-ph{width:36px}
+body[data-page^="nurse-"] .back-btn{background:transparent;border:0;width:24px;height:30px;color:#333;border-radius:0;box-shadow:none}
+body[data-page^="nurse-"] .back-btn svg{width:20px;height:20px;stroke:#333}
+body[data-page^="nurse-"] .bottom-nav{position:relative;z-index:30!important;min-height:82px;flex-shrink:0;background:#fff!important;border:0;box-shadow:none!important;padding:8px 0 21px!important;display:flex;justify-content:space-around}
+body[data-page^="nurse-"] .bottom-nav::after{content:'';position:absolute;bottom:9px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:9px;background:#1d2129;opacity:.22}
+body[data-page^="nurse-"] .nav-item{flex:1;padding:0;gap:3px;text-decoration:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+body[data-page^="nurse-"] .nav-item .nav-ico{width:22px;height:22px;stroke:#b7c6dc}
+body[data-page^="nurse-"] .nav-item .nav-lbl{font-size:10px;font-weight:400;color:#aebbd0}
+body[data-page^="nurse-"] .nav-item:is(.active,.act) .nav-ico{stroke:var(--n-brand)}
+body[data-page^="nurse-"] .nav-item:is(.active,.act) .nav-lbl{color:#748494}
+body[data-page^="nurse-"] :is(.content,.nurse-content){padding:10px;gap:10px;display:flex;flex-direction:column}
+body[data-page^="nurse-"] :is(.order-card,.section,.card,.section-card,.schedule-card,.queue-card){box-shadow:none;border:0;border-radius:12px;background:#fff}
+body[data-page^="nurse-"] :is(.action.primary,.action.green,.btn-accept,.primary-btn,.photo-confirm){background:linear-gradient(110deg,#29b6a3,#14ceb2)!important;color:#fff;border:0;box-shadow:none}
+/* Home: compact green header and one actionable order, as in the design. */
+body[data-page="nurse-home"] .phone>.scroll-area{background:linear-gradient(110deg,#1eabc0,#14d0a9) top/100% 165px no-repeat,var(--n-bg)}
+body[data-page="nurse-home"] .status-bar{color:#fff}
+body[data-page="nurse-home"] .status-right svg{color:#fff;fill:currentColor}
+body[data-page="nurse-home"] .hero{padding:5px 10px 7px;background:transparent!important;border-radius:0;min-height:44px;margin:0}
+body[data-page="nurse-home"] .hero::before,body[data-page="nurse-home"] .hero::after{display:none}
+body[data-page="nurse-home"] .hero-top{display:flex;align-items:center;gap:8px;justify-content:space-between;height:35px}
+body[data-page="nurse-home"] .hero-brand{font-size:16px;font-weight:600;letter-spacing:0;color:#fff;margin-right:auto}
+body[data-page="nurse-home"] .nurse-identity-redundant{display:none}
+body[data-page="nurse-home"] .notif-btn{width:26px;height:28px;background:transparent;box-shadow:none;margin:0;order:2}
+body[data-page="nurse-home"] #statusPill{margin:0;padding:6px 8px;border:1px solid #ffffff44;background:#ffffff22;color:#fff;font-size:10px;min-width:68px}
+body[data-page="nurse-home"] .content{padding-top:4px}
+body[data-page="nurse-home"] .content>div:first-child>.sec-hd{height:22px;margin-bottom:4px;color:#fff}
+body[data-page="nurse-home"] .content>div:first-child>.sec-hd .sec-title{font-size:12px;color:#e5fff6;font-weight:400}
+body[data-page="nurse-home"] .sec-more{font-size:11px;color:#718392}
+body[data-page="nurse-home"] .content>div:first-child>.sec-hd .sec-more{color:#e5fff6}
+body[data-page="nurse-home"] #pendingCard{padding:0;border:0;box-shadow:none;overflow:visible;background:transparent}
+body[data-page="nurse-home"] .nurse-today-card{padding:16px;background:#fff;border-radius:12px}
+body[data-page="nurse-home"] .nurse-today-card .sec-hd{margin:0 0 10px}.nurse-today-mark{color:#25bea6;margin-right:5px;font-size:20px}
+body[data-page="nurse-home"] .work-queue{gap:5px}
+body[data-page="nurse-home"] .queue-card{padding:8px 6px;background:#f7f8fa;border-radius:10px}
+body[data-page="nurse-home"] .queue-label{font-size:12px;color:#86909c;font-weight:400}
+body[data-page="nurse-home"] .queue-value{font-size:16px;color:#29303a!important;margin-top:7px;font-weight:700}
+body[data-page="nurse-home"] .queue-note{display:none}
+body[data-page="nurse-home"] #noOrder{padding:28px 16px!important;background:#fff;box-shadow:none!important}
+.nurse-empty-mark{font-size:34px;line-height:1;color:#81cdb6;margin-bottom:12px}
+body[data-page="nurse-home"] #noOrder strong{font-size:14px;font-weight:500;color:#59636d}body[data-page="nurse-home"] #noOrder p{font-size:12px;color:#94a0aa;margin:7px 0 0}
+.nurse-extra-tools{margin-top:6px}.nurse-extra-tools>summary{font-size:12px;color:#86909c;padding:10px 6px;cursor:pointer}.nurse-extra-tools .sec-hd{margin:12px 0 8px}
+/* Shared compact order cards, with field-level content preserved. */
+.nurse-order-card{overflow:hidden;background:#fff;border-radius:12px}.nurse-order-card .order-main{padding:11px 16px 0}
+.nurse-order-card .order-top{display:flex;align-items:center;justify-content:space-between;gap:8px}.nurse-order-card .order-no{font-size:10px;color:#999;font-weight:400;overflow-wrap:anywhere}
+.nurse-order-card .state{padding:1px 4px;border-radius:2px;font-size:11px;font-weight:400;white-space:nowrap}
+.nurse-order-card .state.pending-confirm{color:#f53f3f;background:#ffece8}.nurse-order-card .state.pending-start{color:#ff7d00;background:#fff7e8}.nurse-order-card .state.in-progress{color:#3562db;background:#e6effc}.nurse-order-card .state.completed{color:#00b42a;background:#e8ffea}.nurse-order-card .state.cancelled{color:#86909c;background:#f2f3f5}
+.nurse-patient-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin:14px 0}.nurse-patient-row>div{display:flex;align-items:center;gap:6px;flex-shrink:0}.nurse-patient-row strong{font-size:14px;font-weight:500;color:#333}.nurse-order-card .service-tag{padding:1px 4px;border-radius:2px;font-size:10px;background:#e6effc;color:#3562db;font-weight:400}.nurse-patient-meta{font-size:12px;line-height:1.6;text-align:right;color:#333}
+.nurse-service-row{display:flex;gap:8px;justify-content:space-between;align-items:flex-start;margin:0 0 14px;font-size:12px}.nurse-service-row>span{color:#999;flex-shrink:0}.nurse-service-row>b{font-size:12px;line-height:1.6;color:#333;font-weight:400;text-align:right;overflow-wrap:anywhere}
+.nurse-order-need-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;margin-top:2px}.nurse-order-need-grid>div{padding:7px 6px;background:#f7f8fa;border-radius:10px}.nurse-order-need-grid span{display:block;color:#86909c;font-size:12px;line-height:1.5}.nurse-order-need-grid b{display:block;color:#252831;font-size:14px;font-weight:500;margin-top:4px}.nurse-order-need-grid b.warn{color:#ff6200}
+.nurse-order-card .order-actions{display:flex;align-items:center;justify-content:flex-end;padding:10px 16px;gap:5px}.nurse-order-card .action{height:30px;min-height:30px;padding:0 10px;display:inline-flex;align-items:center;justify-content:center;border:0;background:#f7f8fa;border-radius:6px;font-size:11px;font-weight:400;color:#999;text-decoration:none}.nurse-order-card .action.primary,.nurse-order-card .action.green{min-width:80px;color:#fff;background:linear-gradient(110deg,#29b6a3,#14ceb2)}.nurse-income{font-size:10px;color:#a4acb4;margin-right:auto}.nurse-income b{display:block;font-size:11px;font-weight:400;color:#789084}.nurse-order-card .plan-note{margin:8px 0;padding:8px;background:#f9fafc;border-radius:6px;font-size:12px}.nurse-order-card .cancel-note{font-size:12px;line-height:1.6}
+body[data-page="nurse-orders"] .phone>.scroll{background:linear-gradient(110deg,#e8faf3,#e1f5f6) top/100% 130px no-repeat,var(--n-bg)}
+body[data-page="nurse-orders"] .navbar{background:transparent}
+body[data-page="nurse-orders"] .status-tabs{padding:0 8px 10px;gap:5px;top:44px;background:#f5fbfa;border:0}
+body[data-page="nurse-orders"] .status-tab{min-width:0;flex:1;font-size:10px;border:0;border-radius:3px;background:#fff;padding:4px 2px;color:#86909c;font-weight:400;height:25px}
+body[data-page="nurse-orders"] .status-tab.on{color:#fff;background:#1bc4a8}.status-count{font-size:9px}
+/* Profile: identity on green, two factual stats, concise menu groups. */
+body[data-page="nurse-profile"] .phone>.scroll{background:linear-gradient(110deg,#1eabc0,#14d0a9) top/100% 185px no-repeat,var(--n-bg)}
+body[data-page="nurse-profile"] .status-bar{color:#fff}
+body[data-page="nurse-profile"] .hero{background:transparent!important;padding:44px 0 0;border-radius:0;margin:0}
+body[data-page="nurse-profile"] .hero-top{display:none}
+body[data-page="nurse-profile"] .identity{position:relative;display:flex;align-items:center;margin:0 16px;padding:0;gap:13px;min-height:68px}
+body[data-page="nurse-profile"] .avatar{width:68px;height:68px;min-width:68px;border-radius:50%;background:#eaf8f2;color:#20a78e;border:2px solid #fff;font-size:26px;display:grid;place-items:center}
+body[data-page="nurse-profile"] .identity .name{font-size:20px;color:#fff;font-weight:600}
+body[data-page="nurse-profile"] .identity .id{font-size:12px;color:#f1edcb;margin-top:5px}
+body[data-page="nurse-profile"] .identity .rating{display:none}
+body[data-page="nurse-profile"] .hero-action{position:absolute;right:0;top:17px;min-width:20px;width:24px;height:34px;background:none;border:0;font-size:28px;color:#fff;padding:0;box-shadow:none}
+body[data-page="nurse-profile"] .hero .stats{margin:26px 0 0;display:flex;background:#fff;border-radius:12px;padding:12px 16px;border:0;color:#333;min-height:70px}
+body[data-page="nurse-profile"] .hero .stat{flex:1;background:none;border:0;padding:0}.hero .stat+.stat{border-left:1px solid #f1f3f5}
+body[data-page="nurse-profile"] .hero .stat-val{font-size:18px;font-weight:500;color:#333}
+body[data-page="nurse-profile"] .hero .stat-label{font-size:12px;color:#666;margin-top:3px}
+body[data-page="nurse-profile"] .content{padding:10px 0 20px}
+body[data-page="nurse-profile"] .section{margin:0;border-radius:12px}
+body[data-page="nurse-profile"] .menu{min-height:60px;padding:16px;display:flex;align-items:center;border-color:#f6f7fb;text-decoration:none;color:inherit}
+body[data-page="nurse-profile"] .menu-ico{width:24px;height:24px;min-width:24px;margin-right:10px;border-radius:0;background:transparent!important}
+body[data-page="nurse-profile"] .menu-ico svg{width:23px;height:23px}
+body[data-page="nurse-profile"] .menu-name{font-size:16px;font-weight:400;color:#4a4a4a}
+body[data-page="nurse-profile"] .menu-desc{font-size:11px;color:#a0a6ad;margin-top:3px}
+body[data-page="nurse-profile"] .arrow{font-size:24px;color:#c4c4c4;font-weight:300}
+.nurse-logout{background:#fff;border:0;border-radius:12px;padding:18px;color:#444;font:400 16px inherit;width:100%;cursor:pointer}
+/* Messages, details and nursing records follow the same calm surface system. */
+body[data-page="nurse-messages"] .phone>.scroll-area{background:linear-gradient(140deg,#edf9fa,#fff) top/100% 300px no-repeat,#fff}
+body[data-page="nurse-messages"] .top-bar{background:transparent;border:0}.nurse-messages-heading{font-size:16px;font-weight:500}
+body[data-page="nurse-messages"] .cat-tabs{background:transparent;border-color:#f0f2f5;padding:0 16px;gap:16px}.cat-tab{font-weight:400}
+body[data-page="nurse-messages"] .msg-item{box-shadow:none;background:#fff;padding:16px;border-radius:0;border-bottom:1px solid #e5e6eb;align-items:flex-start}
+body[data-page="nurse-messages"] .msg-avatar{width:48px;height:48px;border-radius:50%;background:#ecfaf8;color:#1bc4a8}
+body[data-page="nurse-messages"] .msg-avatar.system{background:#e5e8ef;color:#4e5969}
+body[data-page="nurse-messages"] .msg-name{font-size:16px;font-weight:400}.msg-time{font-size:11px!important;color:#a0a6b1}
+body[data-page="nurse-messages"] .msg-preview{font-size:13px;color:#86909c;margin-top:9px;font-weight:400}
+body[data-page="nurse-order-detail"] .content{padding:0;gap:10px}
+body[data-page="nurse-order-detail"] :is(.hero-card,.section-card,.sof-card){border-radius:0;box-shadow:none;background:#fff;border:0}
+body[data-page="nurse-order-detail"] .hero-card{padding:16px}
+body[data-page="nurse-order-detail"] .hero-name{font-size:16px;color:#333}
+body[data-page="nurse-order-detail"] .hero-meta{font-size:12px;color:#8c8c8c;line-height:1.6}
+body[data-page="nurse-order-detail"] .hero-info{background:transparent;gap:12px}
+body[data-page="nurse-order-detail"] .bottom-actions{flex-shrink:0;padding:10px 16px 18px;background:#fff;gap:12px}
+body[data-page="nurse-order-detail"] .bottom-actions button{min-height:40px;border-radius:8px;font-size:14px;border:0;background:#e5f8f2;color:#1bc4a8}
+body[data-page="nurse-order-detail"] .bottom-actions .btn-green{background:linear-gradient(110deg,#29b6a3,#14ceb2);color:#fff}
+body[data-page="nurse-logs"] .form{padding:16px;gap:16px;display:flex;flex-direction:column}
+body[data-page="nurse-logs"] :is(.field-input,.field-textarea,.service-title-input){background:#f9fafe;border-color:#e8ebf1;border-radius:12px;box-shadow:none;font-size:13px}
+body[data-page="nurse-logs"] .field-label{font-size:13px;font-weight:400}
+body[data-page="nurse-logs"] .quick-tag,body[data-page="nurse-logs"] .service-option{background:#f7f8fa;border:0;color:#86909c;border-radius:12px;font-weight:500;min-height:34px;font-size:12px}
+body[data-page="nurse-logs"] .quick-tag.on,body[data-page="nurse-logs"] .service-option.on{background:#ddf7f1;color:#0eb998}
+body[data-page="nurse-logs"] .primary-btn{min-height:44px;border-radius:8px;font-size:15px;font-weight:500}
+.nurse-log-time{display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f1f4;padding:0 0 16px}.nurse-log-time label{font-size:13px;color:#333;white-space:nowrap}.nurse-log-time input{font:400 13px inherit;flex:1;min-width:0;border:0;background:none;color:#333;text-align:right}
+body[data-page="nurse-certification"] :is(.card,.nc-card,.section){background:#fff;border:0;box-shadow:none;border-radius:12px}
+body[data-page="nurse-certification"] :is(.field-input,.f-input,.nc-input){background:#f9fafe;border-color:#e6e9ee;border-radius:10px}
+body[data-page="nurse-certification"] :is(.submit-btn,.btn-submit){background:linear-gradient(90deg,#ff9e55,#ff6430);box-shadow:none;border-radius:8px}
+body[data-page^="nurse-"] [hidden]{display:none!important}
+@media(max-width:519px){body[data-page^="nurse-"] .frame{padding:0}body[data-page^="nurse-"] .phone{max-width:430px;height:100vh;height:100dvh;border-radius:0}}
+
+body[data-page="nurse-messages"] .top-bar{position:relative;min-height:44px;height:44px;padding:6px 16px;display:flex;justify-content:center;align-items:center}body[data-page="nurse-messages"] .top-bar h1{font-size:16px;font-weight:500;margin:0}.nurse-message-back{position:absolute;left:16px;top:3px;border:0;background:none;width:25px;height:36px;font-size:28px;color:#333}.nurse-message-unread{position:absolute;left:16px;top:12px;font-size:12px;color:#657584}body[data-page="nurse-messages"] .msg-list{padding:0;gap:0}.nurse-category-message{width:100%;display:flex;gap:16px;border:0;text-align:left;font:inherit;cursor:pointer}.nurse-category-message .msg-body{flex:1;min-width:0}.nurse-category-message .msg-row{display:flex;justify-content:space-between;align-items:center;gap:10px}.nurse-category-message .msg-preview{display:block;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
