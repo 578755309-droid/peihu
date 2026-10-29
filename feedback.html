@@ -148,14 +148,9 @@ body[data-page="feedback"] .fb-footer .submit-btn{flex:1;width:auto!important;he
         <input type="tel" id="sysContact" placeholder="请输入手机号，便于客服与您联系" maxlength="11">
       </div>
     </div>
-    <!-- 我的反馈记录：默认隐藏，点击底部「反馈记录」后展示 -->
-    <div id="recSection" style="display:none">
-      <div class="sec-title" id="recTitle">我的反馈记录</div>
-      <div id="recList"></div>
-    </div>
   </div>
   <div class="fb-footer">
-    <button class="rec-link" onclick="toggleRecords()" aria-label="查看我的反馈记录" aria-expanded="false" aria-controls="recSection">
+    <button class="rec-link" onclick="location.href='feedback-records.html'" aria-label="查看我的反馈记录">
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="12" height="13.5" rx="2.5"/><path d="M7.5 7.5h5M7.5 10.5h5M7.5 13.5h3"/></svg>
       <span>反馈记录</span>
     </button>
@@ -195,16 +190,6 @@ body[data-page="feedback"] .fb-footer .submit-btn{flex:1;width:auto!important;he
     var act=document.querySelector('.fb-tab.act');
     window.submitFeedback(act&&act.dataset.cat?act.dataset.cat:'业务问题');
   };
-  /* 反馈记录默认收起，点击底部按钮展开并定位 */
-  window.toggleRecords=function(){
-    var section=document.getElementById('recSection');
-    var btn=document.querySelector('.rec-link');
-    var show=section.style.display==='none';
-    section.style.display=show?'':'none';
-    if(btn)btn.setAttribute('aria-expanded',show?'true':'false');
-    if(show){var title=document.getElementById('recTitle');if(title)title.scrollIntoView({behavior:'smooth',block:'start'});}
-  };
-
   /* 关联订单下拉：合并服务订单与商城订单 */
   function fillOrders(){
     var opts='<option value="">不关联订单</option>';
@@ -289,28 +274,8 @@ body[data-page="feedback"] .fb-footer .submit-btn{flex:1;width:auto!important;he
     photoStore[cat]=[];
     window['redraw_'+cat]();
     showToast('提交成功，客服将在 24 小时内处理');
-    renderRecords();
   };
 
-  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  function renderRecords(){
-    var list=loadFeedbacks();
-    var box=document.getElementById('recList');
-    if(!list.length){box.innerHTML='<div class="rec-empty">暂无反馈记录</div>';return;}
-    box.innerHTML=list.map(function(f){
-      return '<div class="rec-item">'
-        +'<div class="rec-head"><span class="rec-tag '+(f.category==='业务问题'?'biz':'sys')+'">'+esc(f.category)+'</span>'
-        +'<span style="font-size:13px;font-weight:600">'+esc(f.type)+'</span>'
-        +'<span class="rec-state '+(f.status==='待处理'?'wait':'done')+'">'+esc(f.status)+'</span></div>'
-        +'<div class="rec-desc">'+esc(f.desc)+'</div>'
-        +(f.orderNo?'<div class="rec-meta">关联订单：'+esc(f.orderNo)+'</div>':'')
-        +(f.page?'<div class="rec-meta">发生页面：'+esc(f.page)+'</div>':'')
-        +'<div class="rec-meta">'+esc(f.id)+' · '+esc(f.createdAt)+'</div>'
-        +(f.reply?'<div class="rec-reply"><b>官方回复'+(f.repliedAt?' · '+esc(f.repliedAt):'')+'：</b>'+esc(f.reply)+'</div>':'')
-        +'</div>';
-    }).join('');
-  }
-  renderRecords();
 })();
 </script>
 <script src="youkang-bridge.js"></script>

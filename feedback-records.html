@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <script src="vendor/vue.global.prod.js"></script>
+  <script src="ui/icons.js"></script>
+  <script src="ui/vue-ui.js"></script>
+  <script src="common-ui.js"></script>
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>反馈记录 · 佑小邦</title>
+<style>
+:root{--purple:#1CD8B7;--purple-dark:#0FA98C;--purple-light:#DDF7F1;--purple-bg:#F5F5F5;--card:#fff;--text:#1A1828;--text2:#6B6880;--text3:#AEACC0;--border:#EDE9F5;--red:#EF4444;--green:#22C55E;--sh:0 2px 16px rgba(0,0,0,0.1)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:var(--purple-bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.frame{display:flex;justify-content:center;min-height:100vh;background:#F5F5F5}
+.phone{width:100%;max-width:430px;display:flex;flex-direction:column;background:var(--purple-bg);min-height:100vh}
+@media(min-width:520px){.frame{align-items:flex-start;padding:20px 0 40px}.phone{height:900px;min-height:unset;border-radius:12px;overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,0.1),0 2px 8px rgba(0,0,0,.06)}}
+@media(min-width:520px){.phone{height:calc(100vh - 60px);min-height:560px}}
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.scroll-area::-webkit-scrollbar{display:none}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 16px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.back{width:32px;height:32px;border:0;background:var(--purple-bg);border-radius:12px;display:grid;place-items:center;cursor:pointer;flex-shrink:0}
+.back svg{width:18px;height:18px}
+.topbar-title{font-size:16px;font-weight:600}
+.rec-item{background:#fff;border-radius:12px;padding:14px;margin:10px 16px;box-shadow:var(--sh)}
+.rec-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rec-tag{padding:3px 8px;border-radius:12px;font-size:11px;font-weight:600}
+.rec-tag.biz{background:#DBEAFE;color:#2563EB}
+.rec-tag.sys{background:#FEF3C7;color:#D97706}
+.rec-state{margin-left:auto;font-size:12px;font-weight:600}
+.rec-state.wait{color:#D97706}
+.rec-state.done{color:var(--green)}
+.rec-desc{font-size:14px;font-weight:600;color:var(--text);line-height:1.6}
+.rec-meta{margin-top:6px;font-size:12px;color:var(--text3);font-weight:600}
+.rec-reply{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--purple-light);font-size:13px;line-height:1.6;color:var(--text2)}
+.rec-reply b{color:var(--purple-dark)}
+.rec-empty{text-align:center;color:var(--text3);font-size:13px;font-weight:600;padding:24px 0 30px}
+</style>  <link rel="stylesheet" href="visual-theme.css" />
+  <link rel="stylesheet" href="ui/vue-ui.css" />
+  <link rel="stylesheet" href="ui/mobile-ui.css">
+<script src="youkang-store.js"></script>
+</head>
+<body data-surface="mobile" data-page="feedback-records">
+<div class="frame"><div class="phone">
+  <div class="topbar">
+    <button class="back" onclick="backToFeedback()" aria-label="返回意见与反馈"><svg viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="#1A1828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="topbar-title">反馈记录</div>
+  </div>
+  <main class="scroll-area" aria-label="我的反馈记录">
+    <div id="recList"></div>
+  </main>
+</div></div>
+<script>
+(function(){
+  window.backToFeedback=function(){
+    var previous;
+    try{previous=new URL(document.referrer);}catch(e){}
+    if(previous&&previous.origin===location.origin&&previous.pathname===new URL('feedback.html',location.href).pathname){history.back();}
+    else{location.href='feedback.html';}
+  };
+  function loadFeedbacks(){
+    try{var list=JSON.parse(localStorage.getItem('ankebang_feedbacks')||'[]');return Array.isArray(list)?list:[];}catch(e){return[];}
+  }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function renderRecords(){
+    var list=loadFeedbacks();
+    var box=document.getElementById('recList');
+    if(!list.length){box.innerHTML='<div class="rec-empty">暂无反馈记录</div>';return;}
+    box.innerHTML=list.map(function(f){
+      return '<div class="rec-item">'
+        +'<div class="rec-head"><span class="rec-tag '+(f.category==='业务问题'?'biz':'sys')+'">'+esc(f.category)+'</span>'
+        +'<span style="font-size:13px;font-weight:600">'+esc(f.type)+'</span>'
+        +'<span class="rec-state '+(f.status==='待处理'?'wait':'done')+'">'+esc(f.status)+'</span></div>'
+        +'<div class="rec-desc">'+esc(f.desc)+'</div>'
+        +(f.orderNo?'<div class="rec-meta">关联订单：'+esc(f.orderNo)+'</div>':'')
+        +(f.page?'<div class="rec-meta">发生页面：'+esc(f.page)+'</div>':'')
+        +'<div class="rec-meta">'+esc(f.id)+' · '+esc(f.createdAt)+'</div>'
+        +(f.reply?'<div class="rec-reply"><b>官方回复'+(f.repliedAt?' · '+esc(f.repliedAt):'')+'：</b>'+esc(f.reply)+'</div>':'')
+        +'</div>';
+    }).join('');
+  }
+  renderRecords();
+  window.addEventListener('pageshow',renderRecords);
+  window.addEventListener('storage',function(event){
+    if(event.key==='ankebang_feedbacks'||event.key===null)renderRecords();
+  });
+})();
+</script>
+<script src="youkang-bridge.js"></script>
+</body>
+</html>
