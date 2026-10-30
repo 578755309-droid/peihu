@@ -29,3 +29,6 @@ body[data-youkang="user"] .yk-phone.checkout-sync .yk-content{padding:0 0 20px;g
 
 .yk-poster{padding:0;display:block;background:none;border:0;overflow:hidden}.yk-poster>svg{display:block;width:100%;height:auto}.yk-vector-action{text-align:center;margin:2px 0 10px}.yk-cover-art svg,.yk-art svg{width:100%;height:auto}.yk-empty svg{height:auto}.yk-cover-art{width:220px;margin-top:-16px;margin-bottom:-18px}.yk-checkout-art svg{width:100px;height:auto}
 .yk-poster #ykQR svg{width:202px;height:202px}
+
+/* Share landing: poster and actions first; records and rules are separate routes. */
+.yk-promotion-links{display:flex;flex-direction:column;gap:0;background:#fff;border-radius:12px;padding:0 16px;margin-top:4px}.yk-promotion-links a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;color:#31534a;text-decoration:none;font-size:14px}.yk-promotion-links a+a{border-top:1px solid #edf1ef}.yk-promotion-links a>span:last-child{font-size:22px;color:#a1b1a9}.yk-promotion-rule-link{display:flex;justify-content:space-between;padding:12px 8px;color:#0fa98c;font-size:13px;text-decoration:none}
