@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>个人资料 · 佑小邦</title>
+<script src="vendor/vue.global.prod.js"></script><script src="ui/icons.js"></script><script src="ui/vue-ui.js"></script><script src="common-ui.js"></script><script src="youkang-store.js"></script>
+<link rel="stylesheet" href="ui/vue-ui.css"><link rel="stylesheet" href="user-profile.css"></head>
+<body data-surface="mobile" data-page="user-profile"><div class="frame"><div class="phone" id="userProfile" v-cloak>
+<div class="status-bar"><span>9:41</span><svg width="54" height="13" viewBox="0 0 54 13" fill="currentColor" aria-hidden="true"><rect x="0" y="7" width="3" height="6" rx="1"/><rect x="5" y="5" width="3" height="8" rx="1"/><rect x="10" y="2" width="3" height="11" rx="1"/><rect x="15" width="3" height="13" rx="1"/><rect x="29" y="2" width="20" height="10" rx="2" fill="none" stroke="currentColor"/><rect x="31" y="4" width="14" height="6" rx="1"/><rect x="50" y="5" width="2" height="4" rx="1"/></svg></div>
+<header class="navbar"><button type="button" class="back" @click="back" aria-label="返回我的页面"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m14 6-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h1>个人资料</h1><span class="nav-space"></span></header>
+<main><section class="intro"><div class="intro-icon"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg></div><div><h2>完善资料，让陪伴更贴心</h2><p>在这里管理你的个人信息</p></div></section>
+<form id="profileForm" @submit.prevent="save"><section class="card"><label class="avatar-row" for="avatarFile"><span>头像</span><span class="avatar-action"><span class="avatar"><img v-if="form.avatar" :src="form.avatar" alt="我的头像"><span v-else>{{ form.nickname.slice(0,1) || '我' }}</span></span><span class="chevron">›</span></span></label><input class="file-input" type="file" id="avatarFile" accept="image/jpeg,image/png,image/webp" @change="upload" :disabled="busy">
+<label class="row" for="nickname"><span>昵称</span><input id="nickname" v-model="form.nickname" maxlength="20" placeholder="请输入昵称" autocomplete="nickname" required></label>
+<label class="row" for="gender"><span>性别</span><span class="control"><select id="gender" v-model="form.gender"><option value="">未设置</option><option>男</option><option>女</option><option>保密</option></select><span class="chevron">›</span></span></label>
+<label class="row" for="birthday"><span>生日</span><input id="birthday" type="date" v-model="form.birthday" :max="today" aria-label="生日"></label></section>
+<section class="card account"><h2>账号信息</h2><div class="row"><span>用户ID</span><span class="value">{{ userId }}</span></div><div class="row"><span>用户身份</span><span class="role">普通用户</span></div></section>
+<p class="hint">个人资料仅用于为你提供更贴心的服务。</p><p class="feedback" role="status" aria-live="polite">{{ status }}</p>
+</form></main><footer><button class="save" form="profileForm" type="submit" :disabled="busy">{{ busy ? '头像处理中…' : '保存资料' }}</button></footer>
+</div></div><script src="user-profile.js"></script></body></html>
